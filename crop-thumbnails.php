@@ -1,15 +1,14 @@
 <?php
 /** 
  * Plugin name: Crop Thumbnails
- * Plugin URI: ---
+ * Plugin URI: http://wordpress.org/extend/plugins/crop-thumbnails/
  * Author: Volkmar Kantor
  * Author URI: http://www.totalmedial.de
- * Version: 0.5.0
+ * Version: 0.6.0
  * Description: Crop your thumbnails, the easy way.
  * Text Domain: cpt_lang
  * 
- * 
- * Lisence: GPL v3
+ * License: GPL v3
  * Copyright 2012  Volkmar Kantor  (email : info@totalmedial.de)
 
  * This program is free software: you can redistribute it and/or modify
@@ -28,7 +27,7 @@
 
 //cpt - stands for crop-post-thumbnail
 define('CPT_LANG','cpt_lang');
-define('CPT_VERSION','0.5.0');
+define('CPT_VERSION','0.6.0');
 
 function cpt_plugin_init() {
 	load_plugin_textdomain( CPT_LANG, false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );

@@ -6,6 +6,17 @@ class CropThumbnailsSettings {
 	
 	function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
+		if(is_admin()) {
+			add_filter('plugin_action_links', array($this,'addSettingsLinkToPluginPage'), 10, 2);
+		}
+	}
+	
+	function addSettingsLinkToPluginPage($links, $file) {
+	    if ($file === 'crop-thumbnails/crop-thumbnails.php'){
+	        $settings_link = '<a href="options-general.php?page=page-cpt" title="">'.__('Settings',CPT_LANG).'</a>';
+	        array_unshift( $links, $settings_link );
+	    }
+	    return $links;
 	}
 	
 	function addOptionsPage() {
@@ -24,6 +35,22 @@ class CropThumbnailsSettings {
 			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes',CPT_LANG); ?>" class="button-primary" />
 			</form>
 		
+		<div style="border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center;">
+			<h3><?php _e('Support the plugin-author',CPT_LANG) ?></h3>
+			<p><?php _e('You can support the plugin-author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!',CPT_LANG); ?></p>
+			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+				<input type="hidden" name="cmd" value="_donations">
+				<input type="hidden" name="business" value="volkmar.kantor@gmx.de">
+				<input type="hidden" name="lc" value="DE">
+				<input type="hidden" name="item_name" value="Volkmar Kantor - totalmedial.de">
+				<input type="hidden" name="item_number" value="crop-thumbnails">
+				<input type="hidden" name="no_note" value="0">
+				<input type="hidden" name="currency_code" value="EUR">
+				<input type="hidden" name="bn" value="PP-DonationsBF:btn_donateCC_LG.gif:NonHostedGuest">
+				<input type="image" src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal.">
+				<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+			</form>
+		</div>
 		</div>
 		<?php
 	}
