@@ -48,11 +48,11 @@ Currently not.
 
 == Screenshots ==
 
-1. You have access to Crop-Thumbnails on post / page / custom-types.
-2. All images attached to this post. You have to choose the one you want to crop.
+1. You have access to Crop-Thumbnails on post / page / custom-post-types.
+2. All images attached to this post, will shown in a overlay. You have to choose the one you want to crop.
 3. Choose one or more images (with the same ratio).
 4. Crop-Thumbnails is also integrated in the media library.
-5. Choose what image-sizes should be hidden on what post-types, for better usability.
+5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
 
