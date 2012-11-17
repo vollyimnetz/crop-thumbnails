@@ -39,6 +39,7 @@ If you had viewed your image on the site before, your browser has cached the ima
 Currently not.
 
 = What ideas for further releases you have? =
+* allow cropping window in frontside
 * allow not cropped image-sizes
 * allow new crop sizes beside the ones added with the add_image_size() function
 * reset standard image
@@ -47,10 +48,10 @@ Currently not.
 
 == Screenshots ==
 
-1. All images attached to this post. You have to choose the one you want to crop.
-2. Choose one or more images (with the same ratio).
-3. You have access to Crop-Thumbnails on post / page / custom-types.
-4. Crop-Thumbnails integrated in the media library.
+1. You have access to Crop-Thumbnails on post / page / custom-types.
+2. All images attached to this post. You have to choose the one you want to crop.
+3. Choose one or more images (with the same ratio).
+4. Crop-Thumbnails is also integrated in the media library.
 5. Choose what image-sizes should be hidden on what post-types, for better usability.
 
 == Changelog ==
