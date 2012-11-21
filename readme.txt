@@ -43,8 +43,6 @@ Currently not.
 * allow not cropped image-sizes
 * allow new crop sizes beside the ones added with the add_image_size() function
 * reset standard image
-* write test cases
-* currently the last selected image-size in the crop-editor decides how big the min-boundaries are --> the one with the biggest dimmensions have to use for the min-boundaries
 
 == Screenshots ==
 
@@ -55,6 +53,10 @@ Currently not.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.7.0 =
+* workflow-enhancement: change the way the plugin handled same image-ratios (faster editing and less warnings)
+* the image-size with the biggest dimensions now is used for the min-boundaries (jcrop)
+* if the min-boundaries (jcrop) are bigger than original image the min-boundaries turned off
 
 = 0.6.0 = 
 * add a settings link in the plugin-listing

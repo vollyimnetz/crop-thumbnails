@@ -98,6 +98,7 @@ class CropPostThumbnailsEditor {
 			
 			//the content
 			ob_start();?>
+			<div class="header"><strong><?php _e('Choose the image you want to crop.',CPT_LANG); ?></strong></div>
 			<ul class="image-list">
 			<?php
 			$counter = 1;
@@ -170,7 +171,7 @@ class CropPostThumbnailsEditor {
 jQuery(document).ready(function($) {
 	cpt_lang = new Object();
 	cpt_lang['bug'] = "<?php _e('bug - this case shouldnt be happend',CPT_LANG);?>";
-	cpt_lang['wrongRatio'] = "<?php _e("Wrong ratio!<br \>OK - release images selected so far.<br \>Cancel - keep selected images so far.",CPT_LANG);?>";
+	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is to small to be cropped in good quality with this thumbnail-size.',CPT_LANG);?>";
 	cpt_lang['selectOne'] = "<?php _e('First, select one image. Then, click once again.',CPT_LANG);?>";
 	cpt_ajax_nonce = "<?php echo wp_create_nonce($cptSettings->getNonceBase()); ?>";
 });
@@ -201,19 +202,20 @@ jQuery(document).ready(function($) {
 			<div class="waitingWindow hidden"><?php _e('Please wait until the Images are cropped.',CPT_LANG); ?></div>
 			<div class="mainWindow">
 				<div class="selectionArea left">
-					<h3><?php _e('Raw'); ?>: <?php echo $orig_img[1].' '.__('pixel',CPT_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CPT_LANG) ?></h3>
+					<h3><?php _e('Raw',CPT_LANG); ?>: <?php echo $orig_img[1].' '.__('pixel',CPT_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CPT_LANG) ?></h3>
 					<img src="<?php echo $orig_img[0]?>" data-values='{"id":<?php echo $image_obj->ID; ?>,"parentId":<?php echo $post_id_attached ?>,"width":<?php echo $orig_img[1]?>,"height":<?php echo $orig_img[2] ?>}' />
 					<button id="cpt-generate" class="button"><?php _e('save crop',CPT_LANG);?></button>
+					<h4><?php _e('Quick-Instructions',CPT_LANG);?></h4>
 					<ul class="step-info">
 						<li><?php _e('Step 1: Choose an image from the right.',CPT_LANG); ?></li>
 						<li><?php _e('Step 2: Use the mouse change the size of the rectangle on the image above.',CPT_LANG); ?></li>
 						<li><?php _e('Step 3: Click on "save crop".',CPT_LANG); ?></li>
-						<li><?php _e('Hint: If you have one image selected, you can click on "select images with same ratio", to select all with the ratio of these image.',CPT_LANG); ?></li>
 					</ul>
 				</div>
 				<div class="right">
-					<button id="cpt-same-ratio" class="button"><?php _e('select images with same ratio',CPT_LANG)?></button>
-					<button id="cpt-deselect" class="button"><?php _e('deselect all',CPT_LANG)?></button>
+					<input type="checkbox" name="cpt-same-ratio" value="1" id="cpt-same-ratio" checked="checked" />
+					<label for="cpt-same-ratio" class="lbl-cpt-same-ratio"><?php _e('select images with same ratio at once',CPT_LANG); ?></label>
+					<button id="cpt-deselect" class="button"><?php _e('deselect all',CPT_LANG); ?></button>
 					<ul class="thumbnail-list">
 						<?php 
 						foreach($all_image_sizes as $img_size_name=>$value) :
@@ -232,9 +234,15 @@ jQuery(document).ready(function($) {
 								}
 								$img_data = wp_get_attachment_image_src($image_obj->ID, $img_size_name);
 								$ratio = ($value['width']/$gcd) / ($value['height']/$gcd);
+								
+								$_lowResWarning = '';
+								if($this->isLowRes($value,$orig_img)) {
+									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image to small for good crop-quality!',CPT_LANG).'</span>';
+								}
+								
 							?>
 							<li class="<?php echo $_class; ?>" rel="<?php echo $print_ratio; ?>">
-								<strong><?php echo $img_size_name; ?></strong>
+								<strong><?php echo $img_size_name.$_lowResWarning; ?></strong>
 								<span class="dimensions"><?php _e('Dimensions:',CPT_LANG) ?> <?php echo $value['width'].' '.__('pixel',CPT_LANG)?> x <?php echo $value['height'].' '.__('pixel',CPT_LANG) ?> <?php echo $print_cropped ?></span>
 								<span class="ratio"><?php _e('Ratio:',CPT_LANG) ?> <?php echo $print_ratio; ?></span>
 								<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='{"name":"<?php echo $img_size_name; ?>","width":<?php echo $value['width']; ?>,"height":<?php echo $value['height']; ?>,"ratio":<?php echo $ratio ?>,"crop":<?php echo $crop ?>}' />
@@ -312,6 +320,19 @@ jQuery(document).ready(function($) {
 			}
 		}
 		return $images;
+	}
+	
+	/**
+	 * Checks if the thumb-image-dimensions are bigger than the actuall image.
+	 * @param array thumbnail-data from the add_image_size-funtion (width, height)
+	 * @param array original image-data-array (url, width, height)
+	 * @return true if the original is smaller than the thumbnail-size
+	 */
+	function isLowRes($thumb,$orig) {
+		if($thumb['width']>$orig[1] || $thumb['height']>$orig[2]) {
+			return true;
+		}
+		return false;
 	}
 	
 	function isUserPermitted() {

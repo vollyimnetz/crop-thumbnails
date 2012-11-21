@@ -8,47 +8,47 @@ jQuery(document).ready(function($) {
 	//cropping object: holds jcrop-object and image to use the crop on
 	var cropping = {api:-1, img : $('.selectionArea img')};
 	
-	//active ration: use as object to get call by reference
-	var active_ratio = {'state':''};//initial
-	
 	/*needed cause the js-logic is currently not handle the hidden objects in dependence with "select all of the same ratio"*/
 	$('.thumbnail-list li.hidden').remove();
 	
 	cropping.img.fadeTo(0, 0.3);
 	
+	//handle click on an entry
 	$('.thumbnail-list li').click(function() {
-		if(isRatioGood($(this),active_ratio,cropping)) {
-			$(this).toggleClass('active');
-		
-			//check if something is active
-			if($('.thumbnail-list li.active').length>0) {
-				activateArea(cropping,$(this));
-			} else {
+		selectAllWithSameRatio($(this));
+		activateArea(cropping);
+	});
+	
+	
+	//handle checkbox for selecting all with same ratio
+	$('#cpt-same-ratio').change(function() {
+		var active = $('.thumbnail-list li.active');
+		if($(this).attr('checked')==='checked') {
+			if(active.length>0) {
+				selectAllWithSameRatio($(active[0]));
+				activateArea(cropping);
+			}
+		} else {
+			if(active.length>1) {
+				$('.thumbnail-list li').removeClass('active');
 				deactivateArea(cropping);
 			}
 		}
 	});
 	
-	$('#cpt-same-ratio').click(function() {
-		var active = $('.thumbnail-list li.active');
-		if(active.length>0) {
-			var tmpratio = $(active[0]).attr('rel');
-			var tmp = $('.thumbnail-list li[rel="'+tmpratio+'"]');
-			if(tmp.length>1) { tmp.addClass('active'); }
-		} else {
-			alert(cpt_lang.selectOne);
-		}
-	});
 	
 	$('#cpt-deselect').click(function() {
 		$('.thumbnail-list li.active').removeClass('active');
 		deactivateArea(cropping);
-		active_ratio.state = '';
 	});
 	
 	
 	$('#cpt-generate').click(function() {
 		var active = $('.thumbnail-list li.active');
+		if(active.length===0) {
+			alert(cpt_lang['selectOne']);
+			return;
+		}
 		var selection = cropping.api.tellSelect();
 		if(active.length>0 && selection.w>0 && selection.h>0) {
 			doProcessing(active,cropping);
@@ -113,47 +113,14 @@ jQuery(document).ready(function($) {
 		});
 	}
 	
-	/**
-	 * 
-     * @param {Object} elem clicked list element
-     * @param {Object} active_ratio object to hold the last/current ratio stand
-	 */
-	function isRatioGood(elem,active_ratio,cropping) {
-		var ratio = elem.attr('rel');
-		if( active_ratio.state=='' ) {
-			if(elem.hasClass('active')) {
-				//bug - this case shouldnt be happend
-				alert(cpt_lang.bug);
-			} else {
-				active_ratio.state=ratio;
-				return true;
-			}
-		} else {//ratio already defined
-			if(elem.hasClass('active')) {
-				//good
-				if($('.thumbnail-list li.active').length==1) {
-					active_ratio.state = '';
-				}
-				return true;
-			} else {
-				if(ratio==active_ratio.state) {
-					//good
-					return true;
-				} else {
-					//bad
-					var text = cpt_lang.wrongRatio;
-					text = text.replace( (new RegExp("<br \>","g")) ,'\n');
-					
-					//want to release selection?
-					if(confirm(text)) {
-						//release selection
-						$('.thumbnail-list li.active').removeClass('active');
-						deactivateArea(cropping);
-						active_ratio.state = '';
-					}
-					return false;
-				}
-			}
+	function selectAllWithSameRatio(elem) {
+		$('.thumbnail-list li').removeClass('active');
+		if($('#cpt-same-ratio').attr('checked')==='checked') {
+			var ratio = elem.attr('rel');
+			var elements = $('.thumbnail-list li[rel="'+ratio+'"]');
+			elements.addClass('active');
+		} else {
+			elem.addClass('active');
 		}
 	}
 	
@@ -166,21 +133,44 @@ jQuery(document).ready(function($) {
 	
 	function activateArea(c,li) {
 		deactivateArea(c);
+		var allActiveThumbs = $('.thumbnail-list li.active img');
+		var largestWidth = 0;
+		var largestHeight = 0;
+		var ratio = 0;
+		allActiveThumbs.each(function() {
+			if(ratio === 0) {
+				ratio = $(this).data('values').ratio;//initial
+			}
+			if(ratio != $(this).data('values').ratio) {
+				alert(cpt_lang['bug']);
+			}
+			
+			//we only need to check in one dimension, cause per definition all images have to use the same ratio
+			if($(this).data('values').width > largestWidth) {
+				largestWidth = $(this).data('values').width;
+				largestHeight = $(this).data('values').height; 
+			}
+		});
 		
-		var thumb = $(li.find('img')[0]);
 		
-		var scale = c.img.width() / thumb.data('values').width;
+		var scale = c.img.width() / largestWidth;
 		var preSelect = [ 0, 0, Math.round(scale*c.img.width()), Math.round(scale*c.img.height()) ];
-		var minSize = [ thumb.data('values').width, thumb.data('values').height ];
+		var minSize = [ largestWidth, largestHeight ];
+		
+		
 		
 		var options = {}
 		options.boxWidth = c.img.width();
 		options.boxHeight = c.img.height();
 		options.trueSize = [cropping.img.data('values').width,c.img.data('values').height];
-		options.aspectRatio = thumb.data('values').ratio;
+		options.aspectRatio = ratio;
 		options.setSelect = preSelect;
-		options.minSize = minSize;
-		//console.log('options',options);
+		if(largestWidth>cropping.img.data('values').width || largestHeight>cropping.img.data('values').height) {
+			alert(cpt_lang['warningOriginalToSmall']);
+		} else {
+			options.minSize = minSize;
+		}
+		console.log('options',options);
 		
 		c.api = $.Jcrop(c.img, options);
 	}

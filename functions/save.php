@@ -53,12 +53,23 @@ class CptSaveThumbnail {
 			$_changed_image_format = false;
 			$_processing_error = array();
 			foreach($targetImgData as $_imageSize) {
+				$_delete_old_file = '';
 				if(!$this->isImageSizeValid($_imageSize,$imageSizes)) {
 					continue;
 				}
 				if(empty($post_metadata['sizes'][$_imageSize->name])) {
 					$_changed_image_format = true;
+				} else {
+					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
+					if($post_metadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width)
+							|| $post_metadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
+							
+						$_delete_old_file = $post_metadata['sizes'][$_imageSize->name]['file'];
+						$_changed_image_format = true;		
+					}
 				}
+				
+				
 				
 				$_filepath = $this->generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
 				$_filepath_info = pathinfo($_filepath);
@@ -84,6 +95,9 @@ class CptSaveThumbnail {
 					$_processing_error[] = sprintf(__('Cant generate filesize "%s".',CPT_LANG),$_imageSize->name);
 					$_error = true;
 				} else {
+					if(!empty($_delete_old_file)) {
+						@unlink($_filepath_info['dirname'].'/'.$_delete_old_file);
+					}
 					if(!@copy($result,$_filepath)) {
 						$_processing_error[] = sprintf(__('Cant copy temporary file to media-library.',CPT_LANG));
 						$_error = true;
