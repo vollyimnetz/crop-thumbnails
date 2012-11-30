@@ -1,5 +1,4 @@
 <?php
-
 class CropPostThumbnailsEditor {
 	
 	function __construct() {
@@ -116,11 +115,13 @@ class CropPostThumbnailsEditor {
 			$cptContent = ob_get_clean();
 			//END the content
 		}
+		$this->cleanWPHead();
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
 		include_once( dirname(__FILE__).'/../html/template.php' );
 		return true;
 	}
+
 
 	/**
 	 * Display the crop editor.
@@ -157,13 +158,6 @@ class CropPostThumbnailsEditor {
 		$orig_img = wp_get_attachment_image_src($image_obj->ID, 'full'); 
 		$cache_breaker = time();//a additional parameter that will be added to the image-urls to prevent the browser to show a cached image
 		
-		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jcrop' );
-		wp_enqueue_script( 'json2' );
-		wp_enqueue_script( 'cpt-crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)));
-		
-		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
-		wp_enqueue_style( 'jcrop' );
 		
 		//the javascript
 		ob_start(); ?>
@@ -201,7 +195,7 @@ jQuery(document).ready(function($) {
 			<?php if($headline) :?><div class="header"><a class="back" href="<?php echo admin_url( 'admin-ajax.php'); ?>?action=croppostthumb_ajax&post_id=<?php echo $current_parent_post_id; ?>"><?php _e('back to image-list',CPT_LANG); ?></a></div><?php endif; ?>
 			<div class="waitingWindow hidden"><?php _e('Please wait until the Images are cropped.',CPT_LANG); ?></div>
 			<div class="mainWindow">
-				<div class="selectionArea left">
+				<div class="selectionArea cptLeftPane">
 					<h3><?php _e('Raw',CPT_LANG); ?>: <?php echo $orig_img[1].' '.__('pixel',CPT_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CPT_LANG) ?></h3>
 					<img src="<?php echo $orig_img[0]?>" data-values='{"id":<?php echo $image_obj->ID; ?>,"parentId":<?php echo $post_id_attached ?>,"width":<?php echo $orig_img[1]?>,"height":<?php echo $orig_img[2] ?>}' />
 					<button id="cpt-generate" class="button"><?php _e('save crop',CPT_LANG);?></button>
@@ -212,7 +206,7 @@ jQuery(document).ready(function($) {
 						<li><?php _e('Step 3: Click on "save crop".',CPT_LANG); ?></li>
 					</ul>
 				</div>
-				<div class="right">
+				<div class="cptRightPane">
 					<input type="checkbox" name="cpt-same-ratio" value="1" id="cpt-same-ratio" checked="checked" />
 					<label for="cpt-same-ratio" class="lbl-cpt-same-ratio"><?php _e('select images with same ratio at once',CPT_LANG); ?></label>
 					<button id="cpt-deselect" class="button"><?php _e('deselect all',CPT_LANG); ?></button>
@@ -258,6 +252,19 @@ jQuery(document).ready(function($) {
 		$cptContent = ob_get_clean();
 		//END the content
 		
+		
+		$this->cleanWPHead();
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jcrop' );
+		wp_enqueue_script( 'json2' );
+		if(cptGetWpVersion() < 3.5) {
+			wp_enqueue_script( 'cpt-crop',  plugins_url('js/vers-0-7-0/cpt-crop.js',dirname(__FILE__)));
+		} else {
+			wp_enqueue_script( 'cpt-crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)));
+		}
+		
+		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
+		wp_enqueue_style( 'jcrop' );
 		include_once( dirname(__FILE__).'/../html/template.php' );
 		
 		$content_width = $_remember_content_width;//reset the content-width
@@ -344,13 +351,24 @@ jQuery(document).ready(function($) {
 		return $return;
 	}
 	
+	/**
+	 * For adding the "thickbox"-style in the mediathek 
+	 */
 	function adminHeaderCSS() {
 		global $pagenow;
-		if ( $pagenow == 'upload.php' ) {
+		if (   $pagenow == 'post.php'
+			|| $pagenow == 'post-new.php'
+			|| $pagenow == 'page.php' 
+			|| $pagenow == 'page-new.php'
+			|| $pagenow == 'upload.php') {
 			wp_enqueue_style( 'thickbox' );
 		}
 	}
 	
+	
+	/**
+	 * For adding the "crop-thumbnail"-link on posts, pages and the mediathek
+	 */
 	function adminHeaderJS() {
 		global $pagenow;
 
@@ -359,8 +377,25 @@ jQuery(document).ready(function($) {
 			|| $pagenow == 'page.php' 
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
-			wp_enqueue_script('cpt-js', plugins_url( 'js/cpt-main.js', dirname(__FILE__) ), array('jquery','jquery-ui-tabs','thickbox'));
+				
+			if(cptGetWpVersion() < 3.5) {
+				wp_enqueue_script('cpt-js', plugins_url( 'js/vers-0-7-0/cpt-main.js', dirname(__FILE__) ), array('jquery','jquery-ui-tabs','thickbox'));
+			} else {
+				wp_enqueue_script('cpt-js', plugins_url( 'js/cpt-main.js', dirname(__FILE__) ), array('jquery','jquery-ui-tabs','thickbox'));
+			}
 		}
+	}
+	
+	/**
+	 * This is for use inside the plugin only.
+	 * Removes all other styles and scripts, to make sure the crop-thumbnail is not compromited by other plugins 
+	 */
+	function cleanWPHead() {
+		global $wp_scripts, $wp_styles;
+		$wp_scripts = new WP_Scripts();
+		$wp_styles = new WP_Styles();
+		remove_all_actions('wp_print_styles');
+		remove_all_actions('wp_print_scripts');
 	}
 	
 	/**

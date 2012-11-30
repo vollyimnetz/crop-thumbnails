@@ -9,13 +9,13 @@
 .image-list .cursor, .image-list .cursor * { cursor:pointer;} 
 
 .header {background-color:#efefef; padding:5px; position: relative; z-index: 1000;}
-.cpt-crop-view .right {width:300px; float:right; border-left:3px solid #efefef; padding:5px 5px 0 10px; }
+.cpt-crop-view .cptRightPane {width:300px; float:right; border-left:3px solid #efefef; padding:5px 5px 0 10px; }
 .thumbnail-list { border-top: 3px solid #efefef; padding-top:5px; margin-top:5px; }
 .thumbnail-list li { padding:5px; border:1px solid white; cursor:pointer; }
 .thumbnail-list li:hover { border:1px solid #aad6f4; }
 .thumbnail-list li.active { background-color:#aad6f4; border:1px solid #aad6f4; }
 .thumbnail-list li span { display:block; font-size:0.8em; }
-.thumbnail-list li img { max-width:100%; height: auto;}
+.thumbnail-list li img { max-width:100%; height: auto; max-height:250px;}
 .thumbnail-list li .lowResWarning { font-style: italic; color:#990000;}
 
 .lbl-cpt-same-ratio {font-size:0.9em;}

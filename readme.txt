@@ -3,7 +3,7 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 3.1
-Tested up to: 3.4
+Tested up to: 3.5
 Stable tag: trunk
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -30,19 +30,24 @@ You can use the built in installer and upgrader, or you can install the plugin m
 
 = What languages are supported? =
 * English
-* German
+* German (de_DE)
+* brazilian portuguese (pt_BR) - thanks to Alex Meusburger
 
 = I have cropped the image but the old one is used on the page. =
 If you had viewed your image on the site before, your browser has cached the image. Go tell them to reload the fresh image from the server by hitting "F5".
+
+= I have cropped the image but in the featured-image box in the editor the croped version dont show up =
+Refresh or Update the editor page.  
+Note that the image in the featured-image box will only be a preview, to show what image is choosed. The theme defines what image-size is used on the front-end. 
 
 = Is it possible to crop an non-cropped image-size? =
 Currently not.
 
 = What ideas for further releases you have? =
 * allow cropping window in frontside
-* allow not cropped image-sizes
-* allow new crop sizes beside the ones added with the add_image_size() function
-* reset standard image
+* allow new crop sizes beside the ones added with the add_image_size() function (for using less disk space)
+* reset standard image-crop
+* let the user generate all image-sizes at once by define a "central point of interest"
 
 == Screenshots ==
 
@@ -53,6 +58,12 @@ Currently not.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.7.1 =
+* add language: brazilian portuguese (pt_br)
+* bug fix: fixes for the upcoming Wordpress 3.5
+* bug fix: in crop editor, if an original image is larger than a single selected image-size, the predefined selection will now be on maximum possible size
+* bug fix: ensure that other plugins can´t add styles and scripts into the crop-thumbnail-iframe 
+
 = 0.7.0 =
 * workflow-enhancement: change the way the plugin handled same image-ratios (faster editing and less warnings)
 * the image-size with the biggest dimensions now is used for the min-boundaries (jcrop)

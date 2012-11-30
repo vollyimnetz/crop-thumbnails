@@ -127,8 +127,7 @@ jQuery(document).ready(function($) {
 	
 	function deactivateArea(c) {
 		if(c.api!=-1) {
-			c.api.release();
-			c.api.disable();
+			c.api.destroy();
 		}
 	}
 	
@@ -146,13 +145,13 @@ jQuery(document).ready(function($) {
 				alert(cpt_lang['bug']);
 			}
 			
-			//we only need to check in one dimension, cause per definition all selected images have to use the same ratio
+			//we only need to check in one dimension, cause per definition all images have to use the same ratio
 			if($(this).data('values').width > largestWidth) {
 				largestWidth = $(this).data('values').width;
 				largestHeight = $(this).data('values').height; 
 			}
 		});
-
+		
 		
 		var scale = c.img.width() / largestWidth;
 		var preSelect = [ 0, 0, Math.round(scale*c.img.width()), Math.round(scale*c.img.height()) ];
