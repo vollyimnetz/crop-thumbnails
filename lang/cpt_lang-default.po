@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-21 01:56+0100\n"
-"PO-Revision-Date: 2012-11-21 01:56+0100\n"
+"POT-Creation-Date: 2012-12-03 14:35+0100\n"
+"PO-Revision-Date: 2012-12-03 14:54+0100\n"
 "Last-Translator: Volkmar Kantor <volkmar.kantor@gmx.de>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_attr__;esc_html_e\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
@@ -17,103 +17,120 @@ msgstr ""
 msgid "Crop your thumbnails, the easy way."
 msgstr ""
 
-#: ../functions/editor.php:52
+#: ../functions/editor.php:23
+#: ../functions/editor.php:43
 msgid "An error happend!"
 msgstr ""
 
-#: ../functions/editor.php:76
-#: ../functions/editor.php:196
+#: ../functions/editor.php:39
+msgid "No featured Image set for this post until now."
+msgstr ""
+
+#: ../functions/editor.php:75
+#: ../functions/editor.php:187
 msgid "Cropping is disabled for this post-type."
 msgstr ""
 
-#: ../functions/editor.php:78
+#: ../functions/editor.php:77
 msgid "No images in this post yet. You have to upload some via upload dialog."
 msgstr ""
 
-#: ../functions/editor.php:101
+#: ../functions/editor.php:98
 msgid "Choose the image you want to crop."
 msgstr ""
 
-#: ../functions/editor.php:107
+#: ../functions/editor.php:104
 msgid "Post Thumbnail"
 msgstr ""
 
-#: ../functions/editor.php:107
+#: ../functions/editor.php:104
 #, php-format
 msgid "Image %d"
 msgstr ""
 
-#: ../functions/editor.php:173
+#: ../functions/editor.php:164
 msgid "bug - this case shouldnt be happend"
 msgstr ""
 
-#: ../functions/editor.php:174
+#: ../functions/editor.php:165
 msgid "Warning: the original image is to small to be cropped in good quality with this thumbnail-size."
 msgstr ""
 
-#: ../functions/editor.php:175
+#: ../functions/editor.php:166
 msgid "First, select one image. Then, click once again."
 msgstr ""
 
-#: ../functions/editor.php:201
+#: ../functions/editor.php:192
 msgid "back to image-list"
 msgstr ""
 
-#: ../functions/editor.php:202
+#: ../functions/editor.php:193
 msgid "Please wait until the Images are cropped."
 msgstr ""
 
-#: ../functions/editor.php:205
+#: ../functions/editor.php:196
 msgid "Raw"
 msgstr ""
 
-#: ../functions/editor.php:205
-#: ../functions/editor.php:246
+#: ../functions/editor.php:196
+#: ../functions/editor.php:237
 msgid "pixel"
 msgstr ""
 
-#: ../functions/editor.php:207
+#: ../functions/editor.php:198
 msgid "save crop"
 msgstr ""
 
-#: ../functions/editor.php:208
+#: ../functions/editor.php:199
 msgid "Quick-Instructions"
 msgstr ""
 
-#: ../functions/editor.php:210
+#: ../functions/editor.php:201
 msgid "Step 1: Choose an image from the right."
 msgstr ""
 
-#: ../functions/editor.php:211
+#: ../functions/editor.php:202
 msgid "Step 2: Use the mouse change the size of the rectangle on the image above."
 msgstr ""
 
-#: ../functions/editor.php:212
+#: ../functions/editor.php:203
 msgid "Step 3: Click on \"save crop\"."
 msgstr ""
 
-#: ../functions/editor.php:217
+#: ../functions/editor.php:208
 msgid "select images with same ratio at once"
 msgstr ""
 
-#: ../functions/editor.php:218
+#: ../functions/editor.php:209
 msgid "deselect all"
 msgstr ""
 
-#: ../functions/editor.php:230
+#: ../functions/editor.php:221
 msgid "cropped"
 msgstr ""
 
-#: ../functions/editor.php:240
+#: ../functions/editor.php:231
 msgid "Original image to small for good crop-quality!"
 msgstr ""
 
-#: ../functions/editor.php:246
+#: ../functions/editor.php:237
 msgid "Dimensions:"
 msgstr ""
 
-#: ../functions/editor.php:247
+#: ../functions/editor.php:238
 msgid "Ratio:"
+msgstr ""
+
+#: ../functions/editor.php:421
+msgid "Crop Thumbnails"
+msgstr ""
+
+#: ../functions/editor.php:425
+msgid "Crop Featured Image"
+msgstr ""
+
+#: ../functions/editor.php:439
+msgid "Crop Thumbnail"
 msgstr ""
 
 #: ../functions/save.php:95
@@ -154,19 +171,12 @@ msgid "ERROR: Can`t find original Image-Metadata!"
 msgstr ""
 
 #: ../functions/settings.php:16
+#: ../functions/settings.php:30
 msgid "Settings"
 msgstr ""
 
 #: ../functions/settings.php:23
 msgid "Crop Post Thumbnail Page"
-msgstr ""
-
-#: ../functions/settings.php:23
-msgid "Crop Thumbnails"
-msgstr ""
-
-#: ../functions/settings.php:30
-msgid "Crop Thumbnails - Settings"
 msgstr ""
 
 #: ../functions/settings.php:35

@@ -17,38 +17,38 @@ class CropPostThumbnailsEditor {
 	 * this function is called for/from the thickbox - returns ordanary html
 	 */
 	function ajaxWindow() {
-		$failure = false;
+		$this->cleanWPHead();
+		$failure_msg = '';
 		if(!$this->isUserPermitted()) {
-			$failure = true;
-			
+			$failure_msg = __('An error happend!',CPT_LANG);
+		} else {
+			switch(true) {
+				case isset($_REQUEST['post_id'])://full programm
+					$this->byPostId();
+					break;
+				case isset($_REQUEST['image_id'])://only one image
+					$this->byImageId();
+					break;
+				case isset($_REQUEST['image_by_post_id'])://only one image
+					$id = get_post_thumbnail_id(intval($_REQUEST['image_by_post_id']));
+					if(!empty($id)) {
+						$_REQUEST['image_id'] = $id;
+						$_REQUEST['parent_post_id'] = intval($_REQUEST['image_by_post_id']); 
+						$this->byImageId();
+					} else {
+						$failure_msg = '<div class="listEmptyMsg">'.__('No featured Image set for this post until now.',CPT_LANG).'</div>';
+					}
+					break;
+				default:
+					$failure_msg = __('An error happend!',CPT_LANG);
+					break; 
+			}
 		}
 		
-		$data = null;
-		switch(true) {
-			case isset($_REQUEST['post_id'])://full programm
-				$this->byPostId();
-				break;
-			case isset($_REQUEST['image_id'])://only one image
-				$this->byImageId();
-				break;
-			case isset($_REQUEST['image_by_post_id'])://only one image
-				$id = get_post_thumbnail_id(intval($_REQUEST['image_by_post_id']));
-				if(!empty($id)) {
-					$_REQUEST['image_id'] = $id;
-					$_REQUEST['parent_post_id'] = intval($_REQUEST['image_by_post_id']); 
-					$this->byImageId();
-				} else {
-					$failure = true;
-				}
-				break;
-			default:
-				$failure = true;
-				break; 
-		}
-		if($failure==false) {
-			
-		} else {
-			_e('An error happend!',CPT_LANG);
+		if(!empty($failure_msg)) {
+			wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
+			$cptContent = $failure_msg;
+			include_once( dirname(__FILE__).'/../html/template.php' );
 		}
 		die();//to prevent to send back a "0"
 	}
@@ -76,8 +76,6 @@ class CropPostThumbnailsEditor {
 		} elseif($data==false) {
 			$cptContent = '<div class="listEmptyMsg">'.__('No images in this post yet. You have to upload some via upload dialog.',CPT_LANG).'</div>';
 		} else {
-			
-			
 			//the dynamic javascript
 			ob_start(); ?>
 	<script>
@@ -115,7 +113,6 @@ class CropPostThumbnailsEditor {
 			$cptContent = ob_get_clean();
 			//END the content
 		}
-		$this->cleanWPHead();
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
 		include_once( dirname(__FILE__).'/../html/template.php' );
@@ -253,7 +250,6 @@ jQuery(document).ready(function($) {
 		//END the content
 		
 		
-		$this->cleanWPHead();
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jcrop' );
 		wp_enqueue_script( 'json2' );
@@ -371,20 +367,17 @@ jQuery(document).ready(function($) {
 	 */
 	function adminHeaderJS() {
 		global $pagenow;
-
 		if (   $pagenow == 'post.php'
 			|| $pagenow == 'post-new.php'
 			|| $pagenow == 'page.php' 
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
-				
-			if(cptGetWpVersion() < 3.5) {
-				wp_enqueue_script('cpt-js', plugins_url( 'js/vers-0-7-0/cpt-main.js', dirname(__FILE__) ), array('jquery','jquery-ui-tabs','thickbox'));
-			} else {
-				wp_enqueue_script('cpt-js', plugins_url( 'js/cpt-main.js', dirname(__FILE__) ), array('jquery','jquery-ui-tabs','thickbox'));
-			}
+			
+			wp_enqueue_script('thickbox', false, array('jquery','jquery-ui-tabs'));
+			add_action('admin_footer',array($this,'cptAddLinksToAdmin'));
 		}
 	}
+	
 	
 	/**
 	 * This is for use inside the plugin only.
@@ -404,6 +397,51 @@ jQuery(document).ready(function($) {
 	function gcd($a, $b){
 		$b = ( $a == 0 )? 0 : $b;
 		return ( $a % $b )? $this->gcd($b, abs($a - $b)) : $b;
+	}
+	
+	
+	
+	/**
+	 * adds the links into post-types and the media-library
+	 */
+	function cptAddLinksToAdmin() {
+?>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+	var boxViewportHeight = $(window).height() - 100;
+	//add link on posts and pages
+	if ($('body.post-php, body.page-php, body.page-new.php, body.post-new-php').length > 0) {
+		var post_id_hidden = $('form#post #post_ID');
+		if (post_id_hidden) {
+
+			post_id_hidden = parseInt(post_id_hidden.val());
+
+			/** add link on top of editor **/
+			$('#wp-content-media-buttons').append('<a style="margin:0 2em;" class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;post_id=' + post_id_hidden + '&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnails',CPT_LANG) ?>"><?php esc_html_e('Crop Thumbnails',CPT_LANG); ?></a>');
+			
+			
+			/** add link to featured image box **/
+			var featuredImageLink = $('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_by_post_id=' + post_id_hidden + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Featured Image',CPT_LANG) ?>"><?php esc_html_e('Crop Featured Image',CPT_LANG); ?></a>')
+				.css({'margin':'5px', 'padding':'5px','display':'inline-block','line-height':'1'})
+				.addClass('button');
+			$('#postimagediv .inside').after(featuredImageLink);
+		}
+	}
+
+	/** add link on mediathek **/
+	if ($('body.upload-php').length > 0) {
+		$('#the-list tr').each(function() {
+			if ($(this).find('td.media-icon img').attr('src').lastIndexOf("/wp-includes/images/") == -1) {
+				var post_id = parseInt($(this).attr('id').substr(5));
+				var last_span = $(this).find('.column-title .row-actions span:last-child');
+				last_span.append(' | ');
+				last_span.parent().append('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_id=' + post_id + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnail',CPT_LANG) ?>"><?php esc_html_e('Crop Thumbnail',CPT_LANG); ?></a>')
+			}
+		});
+	}
+});
+</script>
+<?php
 	}
 }
 

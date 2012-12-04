@@ -20,14 +20,14 @@ class CropThumbnailsSettings {
 	}
 	
 	function addOptionsPage() {
-		add_options_page(__('Crop Post Thumbnail Page',CPT_LANG), __('Crop Thumbnails',CPT_LANG), 'manage_options', 'page-cpt', array($this,'optionsPage'));
+		add_options_page(__('Crop Post Thumbnail Page',CPT_LANG), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
 		add_action('admin_init', array($this,'settingsInitialisation'));
 	}
 	
 	function optionsPage() { ?>
 		<div class="wrap">
 		<div id="icon-options-general" class="icon32"><br /></div>
-		<h2><?php esc_attr_e('Crop Thumbnails - Settings',CPT_LANG); ?></h2>
+		<h2>Crop-Thumbnails <?php esc_attr_e('Settings',CPT_LANG); ?></h2>
 			<form action="options.php" method="post">
 			<?php settings_fields($this->uniqeSettingsId); ?>
 			<?php do_settings_sections('page1'); ?>

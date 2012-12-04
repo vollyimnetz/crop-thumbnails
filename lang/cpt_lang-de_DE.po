@@ -2,119 +2,136 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-21 01:56+0100\n"
-"PO-Revision-Date: 2012-11-21 02:02+0100\n"
+"POT-Creation-Date: 2012-12-03 14:55+0100\n"
+"PO-Revision-Date: 2012-12-03 14:55+0100\n"
 "Last-Translator: Volkmar Kantor <volkmar.kantor@gmx.de>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-KeywordsList: __;_e;esc_attr_e\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_html_e;esc_html__\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../crop-thumbnails.php:35
+#: ../crop-thumbnails.php:34
 msgid "Crop your thumbnails, the easy way."
 msgstr "Zuschnitt ihrer Artikelbilder - einfach gemacht."
 
-#: ../functions/editor.php:52
+#: ../functions/editor.php:23
+#: ../functions/editor.php:43
 msgid "An error happend!"
 msgstr "Es ist ein Fehler aufgetretten!"
 
-#: ../functions/editor.php:76
-#: ../functions/editor.php:196
+#: ../functions/editor.php:39
+msgid "No featured Image set for this post until now."
+msgstr "Bisher ist kein Artikelbild gesetzt worden."
+
+#: ../functions/editor.php:75
+#: ../functions/editor.php:187
 msgid "Cropping is disabled for this post-type."
 msgstr "Das Zuschneiden ist für diesen Eintragstyp deaktiviert."
 
-#: ../functions/editor.php:78
+#: ../functions/editor.php:77
 msgid "No images in this post yet. You have to upload some via upload dialog."
 msgstr "Zu diesem Eintrag wurden bisher keine Bilder hinzugefügt."
 
-#: ../functions/editor.php:101
+#: ../functions/editor.php:98
 msgid "Choose the image you want to crop."
 msgstr "Wählen Sie das Bild aus, das Sie zuschneiden wollen."
 
-#: ../functions/editor.php:107
+#: ../functions/editor.php:104
 msgid "Post Thumbnail"
 msgstr "Artikel-Vorschaubild"
 
-#: ../functions/editor.php:107
+#: ../functions/editor.php:104
 #, php-format
 msgid "Image %d"
 msgstr "Bild %d"
 
-#: ../functions/editor.php:173
+#: ../functions/editor.php:164
 msgid "bug - this case shouldnt be happend"
 msgstr "BUG - dieser Fall hätte nie eintretten drüfen - Plugin-Autor benachrichtigen."
 
-#: ../functions/editor.php:174
+#: ../functions/editor.php:165
 msgid "Warning: the original image is to small to be cropped in good quality with this thumbnail-size."
 msgstr "Warung: das Original-Bild ist zu klein um für diese Thumbnail-Größe es in guter Qualität zuzuschneiden."
 
-#: ../functions/editor.php:175
+#: ../functions/editor.php:166
 msgid "First, select one image. Then, click once again."
 msgstr "Erst ein Bild auswählen, danach erneut probieren."
 
-#: ../functions/editor.php:201
+#: ../functions/editor.php:192
 msgid "back to image-list"
 msgstr "Zurück zur Bild-Übersicht"
 
-#: ../functions/editor.php:202
+#: ../functions/editor.php:193
 msgid "Please wait until the Images are cropped."
 msgstr "Bitte warten Sie bis die Bilder zugeschnitten wurden."
 
-#: ../functions/editor.php:205
+#: ../functions/editor.php:196
 msgid "Raw"
 msgstr "Original-Bild"
 
-#: ../functions/editor.php:205
-#: ../functions/editor.php:246
+#: ../functions/editor.php:196
+#: ../functions/editor.php:237
 msgid "pixel"
 msgstr "Pixel"
 
-#: ../functions/editor.php:207
+#: ../functions/editor.php:198
 msgid "save crop"
 msgstr "Zuschnitt übernehmen"
 
-#: ../functions/editor.php:208
+#: ../functions/editor.php:199
 msgid "Quick-Instructions"
 msgstr "Schnell-Anleitung"
 
-#: ../functions/editor.php:210
+#: ../functions/editor.php:201
 msgid "Step 1: Choose an image from the right."
 msgstr "Schritt 1: Wählen Sie ein Bild von der rechten Seite."
 
-#: ../functions/editor.php:211
+#: ../functions/editor.php:202
 msgid "Step 2: Use the mouse change the size of the rectangle on the image above."
 msgstr "Schritt 2: Benutzen Sie die Maus um die Größe des Rechtecks im oberen Bild zu ändern."
 
-#: ../functions/editor.php:212
+#: ../functions/editor.php:203
 msgid "Step 3: Click on \"save crop\"."
 msgstr "Schritt 3: Klicken Sie auf \"Zuschnitt übernehmen\"."
 
-#: ../functions/editor.php:217
+#: ../functions/editor.php:208
 msgid "select images with same ratio at once"
 msgstr "bei gleichem Seitenverhältnis gemeinsam auswählen"
 
-#: ../functions/editor.php:218
+#: ../functions/editor.php:209
 msgid "deselect all"
 msgstr "nichts auswählen"
 
-#: ../functions/editor.php:230
+#: ../functions/editor.php:221
 msgid "cropped"
 msgstr "zugeschnitten"
 
-#: ../functions/editor.php:240
+#: ../functions/editor.php:231
 msgid "Original image to small for good crop-quality!"
 msgstr "Original-Bild ist zu klein für guten Bildzuschnitt!"
 
-#: ../functions/editor.php:246
+#: ../functions/editor.php:237
 msgid "Dimensions:"
 msgstr "Größe:"
 
-#: ../functions/editor.php:247
+#: ../functions/editor.php:238
 msgid "Ratio:"
 msgstr "Seitenverhältnis:"
+
+#: ../functions/editor.php:421
+msgid "Crop Thumbnails"
+msgstr "Bilder Zuschneiden"
+
+#: ../functions/editor.php:425
+msgid "Crop Featured Image"
+msgstr "Artikelbild zuschneiden"
+
+#: ../functions/editor.php:439
+msgid "Crop Thumbnail"
+msgstr "Bild zuschneiden"
 
 #: ../functions/save.php:95
 #, php-format
@@ -154,20 +171,13 @@ msgid "ERROR: Can`t find original Image-Metadata!"
 msgstr "Fehler: Konnte Original-Bild-Metadaten nicht finden!"
 
 #: ../functions/settings.php:16
+#: ../functions/settings.php:30
 msgid "Settings"
 msgstr "Einstellungen"
 
 #: ../functions/settings.php:23
 msgid "Crop Post Thumbnail Page"
 msgstr "Crop-Post-Thumbnail Seite"
-
-#: ../functions/settings.php:23
-msgid "Crop Thumbnails"
-msgstr "Crop Thumbnails"
-
-#: ../functions/settings.php:30
-msgid "Crop Thumbnails - Settings"
-msgstr "Crop Thumbnails - Einstellungen"
 
 #: ../functions/settings.php:35
 msgid "Save Changes"
@@ -197,6 +207,8 @@ msgstr "Crop Thumbnails wurde erstellt um das Zuschneiden von Bildern für den B
 msgid "Crop-Thumbnails will only show croped images - sizes with no crop will always be hidden."
 msgstr "Crop Thumbnails wird nur Bilder anzeigen die einen Zuschnitt besitzen. Bildgrößen ohne Zuschnitt werden immer ausgeblendet."
 
+#~ msgid "Crop Thumbnails - Settings"
+#~ msgstr "Crop Thumbnails - Einstellungen"
 #~ msgid ""
 #~ "Wrong ratio!<br \\>OK - release images selected so far.<br \\>Cancel - "
 #~ "keep selected images so far."

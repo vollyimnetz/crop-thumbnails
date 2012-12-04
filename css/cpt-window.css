@@ -23,7 +23,7 @@
 .selectionArea { width:300px; padding:5px; float:left; }
 .selectionArea img { max-width:300px; height:auto; }
 .selectionArea h3 { margin:0;}
-#cpt-generate { width: 300px; height:2em; padding:0.5em 0; display:block; }
+#cpt-generate { width: 300px; height:2em; padding:0.5em 0; display:block; line-height: 0;}
 
 h4 { margin-bottom:0em;}
 .step-info { font-size:0.9em; }

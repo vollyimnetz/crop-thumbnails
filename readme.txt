@@ -58,6 +58,10 @@ Currently not.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.7.2 =
+* bug fix: change the way the link in the featured Image-Box is set
+* languages: some adjustments
+ 
 = 0.7.1 =
 * add language: brazilian portuguese (pt_br)
 * bug fix: fixes for the upcoming Wordpress 3.5
