@@ -62,6 +62,9 @@ Currently not.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.8.1 =
+* fix warning: when settings are saved
+
 = 0.8.0 =
 * change Constant from CPT_LANG to CROP_THUMBS_LANG
 * change Constant from CPT_VERSION to CROP_THUMBS_VERSION

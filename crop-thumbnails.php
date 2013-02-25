@@ -4,7 +4,7 @@
  * Plugin URI: http://wordpress.org/extend/plugins/crop-thumbnails/
  * Author: Volkmar Kantor
  * Author URI: http://www.totalmedial.de
- * Version: 0.8.0
+ * Version: 0.8.1
  * Description: Crop your thumbnails, the easy way.
  * 
  * License: GPL v3

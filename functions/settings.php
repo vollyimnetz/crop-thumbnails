@@ -171,21 +171,26 @@ class CropThumbnailsSettings {
 		$sizes = $this->getImageSizes();
 		
 		$post_types = $this->getPostTypes();
-		
+
 		$storeInDb = array();
 		//check input[hide_post_type] --> are the post_types real there
-		foreach($input['hide_post_type'] as $_post_type_name=>$value) {
-			if(isset($post_types[$_post_type_name])) {
-				$storeInDb['hide_post_type'][$_post_type_name] = '1';
+		if(!empty($input['hide_post_type'])) {
+			foreach($input['hide_post_type'] as $_post_type_name=>$value) {
+				if(isset($post_types[$_post_type_name])) {
+					$storeInDb['hide_post_type'][$_post_type_name] = '1';
+				}
 			}
 		}
 		
+		
 		//check $input[sizes] --> are post_types correct, are sizes real there
-		foreach($input['hide_size'] as $_post_type_name=>$size_type) {
-			if(isset($post_types[$_post_type_name])) {
-				foreach($size_type as $_size_name=>$value) {
-					if(isset($sizes[$_size_name])) {
-						$storeInDb['hide_size'][$_post_type_name][$_size_name] = '1';
+		if(!empty($input['hide_size'])) {
+			foreach($input['hide_size'] as $_post_type_name=>$size_type) {
+				if(isset($post_types[$_post_type_name])) {
+					foreach($size_type as $_size_name=>$value) {
+						if(isset($sizes[$_size_name])) {
+							$storeInDb['hide_size'][$_post_type_name][$_size_name] = '1';
+						}
 					}
 				}
 			}
