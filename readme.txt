@@ -48,6 +48,10 @@ Currently not.
 * allow new crop sizes beside the ones added with the add_image_size() function (for using less disk space)
 * reset standard image-crop
 * let the user generate all image-sizes at once by define a "central point of interest"
+* maybe use the new WP_Image_Editor class
+* add a option-button for dont use the minSize-Boundary of jcrop
+* put editor-options into a collapsible menu
+
 
 == Screenshots ==
 
@@ -58,6 +62,17 @@ Currently not.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.8.0 =
+* change Constant from CPT_LANG to CROP_THUMBS_LANG
+* change Constant from CPT_VERSION to CROP_THUMBS_VERSION
+* bug fix: wrong calculated scale in the cpt-crop.js (selection will again always fill the maximum space)
+* change behavior: on landscape-ratio-images the selection will be initial in the middle of the image (portrait-ratio-images stay the same - i asume that portrait-ratio images are mostly portraits)
+* add current jcrop (version v0.9.12) directly into the plugin to get rid of the subversion of cpt-crop.js for an prior version of jcrop in wordpress 3.4
+* add settings-option to display debug (js and/or data)
+* handle image-sizes with zero width or height
+* fix notices: not set variables
+* fix warnings: if an image-size is zero
+
 = 0.7.2 =
 * bug fix: change the way the link in the featured Image-Box is set
 * languages: some adjustments

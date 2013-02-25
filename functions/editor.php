@@ -1,6 +1,8 @@
 <?php
 class CropPostThumbnailsEditor {
 	
+	private $debugOutput = '';
+	
 	function __construct() {
 		if ( is_admin() ) {
 			//add style and javascript
@@ -20,11 +22,11 @@ class CropPostThumbnailsEditor {
 		$this->cleanWPHead();
 		$failure_msg = '';
 		if(!$this->isUserPermitted()) {
-			$failure_msg = __('An error happend!',CPT_LANG);
+			$failure_msg = __('An error happend!',CROP_THUMBS_LANG);
 		} else {
 			switch(true) {
 				case isset($_REQUEST['post_id'])://full programm
-					$this->byPostId();
+					$this->listImages();
 					break;
 				case isset($_REQUEST['image_id'])://only one image
 					$this->byImageId();
@@ -36,17 +38,17 @@ class CropPostThumbnailsEditor {
 						$_REQUEST['parent_post_id'] = intval($_REQUEST['image_by_post_id']); 
 						$this->byImageId();
 					} else {
-						$failure_msg = '<div class="listEmptyMsg">'.__('No featured Image set for this post until now.',CPT_LANG).'</div>';
+						$failure_msg = '<div class="listEmptyMsg">'.__('No featured Image set for this post until now.',CROP_THUMBS_LANG).'</div>';
 					}
 					break;
 				default:
-					$failure_msg = __('An error happend!',CPT_LANG);
+					$failure_msg = __('An error happend!',CROP_THUMBS_LANG);
 					break; 
 			}
 		}
 		
 		if(!empty($failure_msg)) {
-			wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
+			wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CROP_THUMBS_VERSION);
 			$cptContent = $failure_msg;
 			include_once( dirname(__FILE__).'/../html/template.php' );
 		}
@@ -57,7 +59,7 @@ class CropPostThumbnailsEditor {
 	 * Display a list of images that are attached to this post_id.
 	 * Hightlight the post-thumbnail (if it is attached to this post_id)
 	 */
-	function byPostId() {
+	function listImages() {
 		global $cptSettings;
 		$options = $cptSettings->getOptions();
 		
@@ -72,9 +74,9 @@ class CropPostThumbnailsEditor {
 		$cptContent = '';
 		
 		if($this->shouldBeHiddenOnPostType($options,$parent_post_type)) {
-			 $cptContent = '<div class="postTypeDisabledMsg">'.__('Cropping is disabled for this post-type.',CPT_LANG).'</div>';
+			 $cptContent = '<div class="postTypeDisabledMsg">'.__('Cropping is disabled for this post-type.',CROP_THUMBS_LANG).'</div>';
 		} elseif($data==false) {
-			$cptContent = '<div class="listEmptyMsg">'.__('No images in this post yet. You have to upload some via upload dialog.',CPT_LANG).'</div>';
+			$cptContent = '<div class="listEmptyMsg">'.__('No images in this post yet. You have to upload some via upload dialog.',CROP_THUMBS_LANG).'</div>';
 		} else {
 			//the dynamic javascript
 			ob_start(); ?>
@@ -95,13 +97,13 @@ class CropPostThumbnailsEditor {
 			
 			//the content
 			ob_start();?>
-			<div class="header"><strong><?php _e('Choose the image you want to crop.',CPT_LANG); ?></strong></div>
+			<div class="header"><strong><?php _e('Choose the image you want to crop.',CROP_THUMBS_LANG); ?></strong></div>
 			<ul class="image-list">
 			<?php
 			$counter = 1;
 			foreach($data as $key=>$image) : ?>
 				<li class="entry cursor<?php echo (isset($image->is_post_thumbnail) ? ' post-thumbnail' : ''); ?>" rel="<?php echo $image->ID;?>">
-					<h3><?php echo (isset($image->is_post_thumbnail) ? __('Post Thumbnail',CPT_LANG) : sprintf(__('Image %d',CPT_LANG),$counter));?></h3>
+					<h3><?php echo (isset($image->is_post_thumbnail) ? __('Post Thumbnail',CROP_THUMBS_LANG) : sprintf(__('Image %d',CROP_THUMBS_LANG),$counter));?></h3>
 					<?php $img_data = wp_get_attachment_image_src($image->ID, 'thumbnail');?>
 					<img src="<?php echo $img_data[0].'?'.time(); ?>" />
 				</li>
@@ -114,7 +116,7 @@ class CropPostThumbnailsEditor {
 			//END the content
 		}
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
+		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CROP_THUMBS_VERSION);
 		include_once( dirname(__FILE__).'/../html/template.php' );
 		return true;
 	}
@@ -134,6 +136,7 @@ class CropPostThumbnailsEditor {
 		
 		
 		$options = $cptSettings->getOptions();
+		$this->addDebug('options', print_r($options,true));
 		$image_obj = get_post(intval($_REQUEST['image_id']));
 		
 		//$post_id_attached holds the id of the post the image is attached to - can be null/empty
@@ -145,26 +148,37 @@ class CropPostThumbnailsEditor {
 		//$current_parent_post_type
 		$current_parent_post_type = '';
 		$current_parent_post_id = -1;
-		$_tmp = get_post(intval($_REQUEST['parent_post_id']));
-		if(!empty($_REQUEST['parent_post_id']) && !empty($_tmp)) {
-			$current_parent_post_type = $_tmp->post_type; 
-			$current_parent_post_id = $_tmp->ID;
+		
+		if(!empty($_REQUEST['parent_post_id'])) {
+			$_tmp = get_post(intval($_REQUEST['parent_post_id']));
+			if(!empty($_tmp)) {
+				$current_parent_post_type = $_tmp->post_type; 
+				$current_parent_post_id = $_tmp->ID;
+			}
 		}
 		
 		$all_image_sizes = $cptSettings->getImageSizes();
-		$orig_img = wp_get_attachment_image_src($image_obj->ID, 'full'); 
+		$this->addDebug('all_image_sizes', print_r($all_image_sizes,true));
+		
+		$orig_img = wp_get_attachment_image_src($image_obj->ID, 'full');
+		$orig_img['gcd'] = $this->gcd($orig_img[1],$orig_img[2]);
+		$orig_img['ratio'] = ($orig_img[1]/$orig_img['gcd']) / ($orig_img[2]/$orig_img['gcd']);
+		$orig_img['print_ratio'] = ($orig_img[1]/$orig_img['gcd']).':'.($orig_img[2]/$orig_img['gcd']);
+		
 		$cache_breaker = time();//a additional parameter that will be added to the image-urls to prevent the browser to show a cached image
 		
+		$this->addDebug('img-postmeta',print_r(wp_get_attachment_metadata($image_obj->ID, true),true));
 		
 		//the javascript
 		ob_start(); ?>
 <script>
 jQuery(document).ready(function($) {
 	cpt_lang = new Object();
-	cpt_lang['bug'] = "<?php _e('bug - this case shouldnt be happend',CPT_LANG);?>";
-	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is to small to be cropped in good quality with this thumbnail-size.',CPT_LANG);?>";
-	cpt_lang['selectOne'] = "<?php _e('First, select one image. Then, click once again.',CPT_LANG);?>";
+	cpt_lang['bug'] = "<?php _e('bug - this case shouldnt be happend',CROP_THUMBS_LANG);?>";
+	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is to small to be cropped in good quality with this thumbnail-size.',CROP_THUMBS_LANG);?>";
+	cpt_lang['selectOne'] = "<?php _e('First, select one image. Then, click once again.',CROP_THUMBS_LANG);?>";
 	cpt_ajax_nonce = "<?php echo wp_create_nonce($cptSettings->getNonceBase()); ?>";
+	cpt_debug_js = <?php echo (!empty($options['debug_js'])) ? 'true;' : 'false;'; ?>
 });
 </script>
 		<?php
@@ -184,58 +198,87 @@ jQuery(document).ready(function($) {
 		
 		if($this->shouldBeHiddenOnPostType($options,$current_parent_post_type)) : ?>
 			<div class="cpt-crop-view">
-				<div class="postTypeDisabledMsg"><?php _e('Cropping is disabled for this post-type.',CPT_LANG); ?></div>
+				<div class="postTypeDisabledMsg"><?php _e('Cropping is disabled for this post-type.',CROP_THUMBS_LANG); ?></div>
 			</div>
 		<?php else : ?>
 		
 		<div class="cpt-crop-view">
-			<?php if($headline) :?><div class="header"><a class="back" href="<?php echo admin_url( 'admin-ajax.php'); ?>?action=croppostthumb_ajax&post_id=<?php echo $current_parent_post_id; ?>"><?php _e('back to image-list',CPT_LANG); ?></a></div><?php endif; ?>
-			<div class="waitingWindow hidden"><?php _e('Please wait until the Images are cropped.',CPT_LANG); ?></div>
+			<?php if($headline) :?><div class="header"><a class="back" href="<?php echo admin_url( 'admin-ajax.php'); ?>?action=croppostthumb_ajax&post_id=<?php echo $current_parent_post_id; ?>"><?php _e('back to image-list',CROP_THUMBS_LANG); ?></a></div><?php endif; ?>
+			<div class="waitingWindow hidden"><?php _e('Please wait until the Images are cropped.',CROP_THUMBS_LANG); ?></div>
 			<div class="mainWindow">
 				<div class="selectionArea cptLeftPane">
-					<h3><?php _e('Raw',CPT_LANG); ?>: <?php echo $orig_img[1].' '.__('pixel',CPT_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CPT_LANG) ?></h3>
+					<h3><?php _e('Raw',CROP_THUMBS_LANG); ?>: <?php echo $orig_img[1].' '.__('pixel',CROP_THUMBS_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CROP_THUMBS_LANG) ?> (<?php echo $orig_img['print_ratio']; ?>)</h3>
 					<img src="<?php echo $orig_img[0]?>" data-values='{"id":<?php echo $image_obj->ID; ?>,"parentId":<?php echo $post_id_attached ?>,"width":<?php echo $orig_img[1]?>,"height":<?php echo $orig_img[2] ?>}' />
-					<button id="cpt-generate" class="button"><?php _e('save crop',CPT_LANG);?></button>
-					<h4><?php _e('Quick-Instructions',CPT_LANG);?></h4>
+					<button id="cpt-generate" class="button"><?php _e('save crop',CROP_THUMBS_LANG);?></button>
+					<h4><?php _e('Quick-Instructions',CROP_THUMBS_LANG);?></h4>
 					<ul class="step-info">
-						<li><?php _e('Step 1: Choose an image from the right.',CPT_LANG); ?></li>
-						<li><?php _e('Step 2: Use the mouse change the size of the rectangle on the image above.',CPT_LANG); ?></li>
-						<li><?php _e('Step 3: Click on "save crop".',CPT_LANG); ?></li>
+						<li><?php _e('Step 1: Choose an image from the right.',CROP_THUMBS_LANG); ?></li>
+						<li><?php _e('Step 2: Use the mouse change the size of the rectangle on the image above.',CROP_THUMBS_LANG); ?></li>
+						<li><?php _e('Step 3: Click on "save crop".',CROP_THUMBS_LANG); ?></li>
 					</ul>
 				</div>
 				<div class="cptRightPane">
 					<input type="checkbox" name="cpt-same-ratio" value="1" id="cpt-same-ratio" checked="checked" />
-					<label for="cpt-same-ratio" class="lbl-cpt-same-ratio"><?php _e('select images with same ratio at once',CPT_LANG); ?></label>
-					<button id="cpt-deselect" class="button"><?php _e('deselect all',CPT_LANG); ?></button>
+					<label for="cpt-same-ratio" class="lbl-cpt-same-ratio"><?php _e('select images with same ratio at once',CROP_THUMBS_LANG); ?></label>
+					<button id="cpt-deselect" class="button"><?php _e('deselect all',CROP_THUMBS_LANG); ?></button>
 					<ul class="thumbnail-list">
-						<?php 
+						<?php
 						foreach($all_image_sizes as $img_size_name=>$value) :
-							if(!$this->shouldSizeBeHidden($options,$img_size_name,$current_parent_post_type)) :
-								$gcd = $this->gcd($value['width'],$value['height']);
-								$print_ratio = $value['width']/$gcd.':'.$value['height']/$gcd;
+							if(!$this->shouldSizeBeHidden($options,$img_size_name,$value,$current_parent_post_type)) :
+								$ratio = null;			//reset
+								$gcd = null;			//reset
+								$print_ratio = null;	//reset
+								$print_cropped = '';	//reset
+								$crop = 0;				//reset
+								$special_warning = '';  //reset
 								
-								$print_cropped = '';
-								$crop = 0;
-								$_class= '';
+								/** define ratio **/
+								if($value['width'] != 0 && $value['height']!=0) {
+									$gcd = $this->gcd($value['width'],$value['height']);//get greatest common divisor
+									$ratio = ($value['width']/$gcd) / ($value['height']/$gcd);//get ratio
+									$print_ratio = $value['width']/$gcd.':'.$value['height']/$gcd;
+								} else {
+									//keep ratio same as original image
+									$gcd = $orig_img['gcd'];
+									$ratio = $orig_img['ratio'];
+									$print_ratio = $orig_img['print_ratio'];
+								}
+								
+								
 								if(!empty($value['crop'])) {
-									$print_cropped = ' ('.__('cropped',CPT_LANG).')';
+									//cropped
+									$print_cropped = ' ('.__('cropped',CROP_THUMBS_LANG).')';
 									$crop = 1;
 								} else {
-									$_class = 'hidden';
+									//not cropped
+									/* -- maybe use this behaviour in a later version --
+									$print_cropped = ' ('.__('maximum',CROP_THUMBS_LANG).')';
+									$print_ratio = __('free choice',CROP_THUMBS_LANG);
+									 */
+									 
+									$print_cropped = ' ('.__('maximum',CROP_THUMBS_LANG).')';
+									$crop = 1;
+									//keep ratio same as original image
+									$gcd = $orig_img['gcd'];
+									$ratio = $orig_img['ratio'];
+									$print_ratio = $orig_img['print_ratio'];
 								}
+								
+								$print_dimensions = $value['width'].' '.__('pixel',CROP_THUMBS_LANG).' x '.$value['height'].' '.__('pixel',CROP_THUMBS_LANG).$print_cropped;
+								
 								$img_data = wp_get_attachment_image_src($image_obj->ID, $img_size_name);
-								$ratio = ($value['width']/$gcd) / ($value['height']/$gcd);
+								
 								
 								$_lowResWarning = '';
 								if($this->isLowRes($value,$orig_img)) {
-									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image to small for good crop-quality!',CPT_LANG).'</span>';
+									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image to small for good crop-quality!',CROP_THUMBS_LANG).'</span>';
 								}
 								
 							?>
-							<li class="<?php echo $_class; ?>" rel="<?php echo $print_ratio; ?>">
-								<strong><?php echo $img_size_name.$_lowResWarning; ?></strong>
-								<span class="dimensions"><?php _e('Dimensions:',CPT_LANG) ?> <?php echo $value['width'].' '.__('pixel',CPT_LANG)?> x <?php echo $value['height'].' '.__('pixel',CPT_LANG) ?> <?php echo $print_cropped ?></span>
-								<span class="ratio"><?php _e('Ratio:',CPT_LANG) ?> <?php echo $print_ratio; ?></span>
+							<li rel="<?php echo $print_ratio; ?>">
+								<strong><?php echo $img_size_name.$_lowResWarning; ?></strong><?php echo $special_warning; ?>
+								<span class="dimensions"><?php _e('Dimensions:',CROP_THUMBS_LANG) ?> <?php echo $print_dimensions; ?></span>
+								<span class="ratio"><?php _e('Ratio:',CROP_THUMBS_LANG) ?> <?php echo $print_ratio; ?></span>
 								<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='{"name":"<?php echo $img_size_name; ?>","width":<?php echo $value['width']; ?>,"height":<?php echo $value['height']; ?>,"ratio":<?php echo $ratio ?>,"crop":<?php echo $crop ?>}' />
 							</li>
 							<?php endif; ?>
@@ -247,20 +290,18 @@ jQuery(document).ready(function($) {
 		<?php
 		endif;
 		$cptContent = ob_get_clean();
+		$cptContent.= $this->getDebugOutput($options);
 		//END the content
 		
 		
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jcrop' );
+		wp_enqueue_script( 'my_jcrop', plugins_url('js/jcrop/js/jquery.Jcrop.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 		wp_enqueue_script( 'json2' );
-		if(cptGetWpVersion() < 3.5) {
-			wp_enqueue_script( 'cpt-crop',  plugins_url('js/vers-0-7-0/cpt-crop.js',dirname(__FILE__)));
-		} else {
-			wp_enqueue_script( 'cpt-crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)));
-		}
+		wp_enqueue_script( 'cpt-crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','my_jcrop','json2'), CROP_THUMBS_VERSION);
 		
-		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CPT_VERSION);
-		wp_enqueue_style( 'jcrop' );
+		wp_enqueue_style( 'cpt-window', plugins_url('css/cpt-window.css',dirname(__FILE__)), array('wp-admin'), CROP_THUMBS_VERSION);
+		wp_enqueue_style( 'my_jcrop', plugins_url('js/jcrop/css/jquery.Jcrop.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		
 		include_once( dirname(__FILE__).'/../html/template.php' );
 		
 		$content_width = $_remember_content_width;//reset the content-width
@@ -284,16 +325,29 @@ jQuery(document).ready(function($) {
 	 * @param string name post-type (i.e. post, page, ...)
 	 * @return boolean true if Image-size should be hidden
 	 */
-	function shouldSizeBeHidden($options,$img_size_name,$post_type='') {
-		if(empty($post_type)) {
-			return false;
+	function shouldSizeBeHidden($options, $img_size_name, $img_size, $post_type='') {
+		$_return = false;
+		if(!empty($post_type)) {
+			//we are NOT in the mediathek
+			
+			//-if hide_size
+			if(!empty($options['hide_size'][$post_type][$img_size_name])) {
+				$_return = true;
+			}
+	
+			//if not a crop-size and allow_non_cropped
+			if(empty($img_size['crop']) && empty($options['allow_non_cropped'])) {
+				$_return = true;
+			}
+		} else {
+			//we are in the mediathek
+			
+			//-if not a crop-size and allow_non_cropped
+			if(empty($img_size['crop']) && empty($options['allow_non_cropped'])) {
+				$_return = true;
+			}
 		}
-		
-		if(empty($options['hide_size'][$post_type][$img_size_name])) {
-			return false;
-		}
-		
-		return true;
+		return $_return;
 	}
 
 
@@ -400,6 +454,18 @@ jQuery(document).ready(function($) {
 	}
 	
 	
+	function addDebug($title, $output) {
+		$this->debugOutput.= '---'.$title.'---<br />'.$output.'<br />';
+	}
+	
+	
+	function getDebugOutput($options) {
+		if(!empty($options['debug_data'])) {
+			return '<div class="cpt-debug closed"><a class="cpt-debug-handle" href="#">show debug</a><div class="content">'.nl2br(str_replace("    ","&nbsp;&nbsp;",$this->debugOutput)).'</div></div>';
+		}
+		return '';
+	}
+	
 	
 	/**
 	 * adds the links into post-types and the media-library
@@ -417,11 +483,11 @@ jQuery(document).ready(function($) {
 			post_id_hidden = parseInt(post_id_hidden.val());
 
 			/** add link on top of editor **/
-			$('#wp-content-media-buttons').append('<a style="margin:0 2em;" class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;post_id=' + post_id_hidden + '&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnails',CPT_LANG) ?>"><?php esc_html_e('Crop Thumbnails',CPT_LANG); ?></a>');
+			$('#wp-content-media-buttons').append('<a style="margin:0 2em;" class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;post_id=' + post_id_hidden + '&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>"><?php esc_html_e('Crop Thumbnails',CROP_THUMBS_LANG); ?></a>');
 			
 			
 			/** add link to featured image box **/
-			var featuredImageLink = $('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_by_post_id=' + post_id_hidden + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Featured Image',CPT_LANG) ?>"><?php esc_html_e('Crop Featured Image',CPT_LANG); ?></a>')
+			var featuredImageLink = $('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_by_post_id=' + post_id_hidden + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>"><?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?></a>')
 				.css({'margin':'5px', 'padding':'5px','display':'inline-block','line-height':'1'})
 				.addClass('button');
 			$('#postimagediv .inside').after(featuredImageLink);
@@ -435,7 +501,7 @@ jQuery(document).ready(function($) {
 				var post_id = parseInt($(this).attr('id').substr(5));
 				var last_span = $(this).find('.column-title .row-actions span:last-child');
 				last_span.append(' | ');
-				last_span.parent().append('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_id=' + post_id + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnail',CPT_LANG) ?>"><?php esc_html_e('Crop Thumbnail',CPT_LANG); ?></a>')
+				last_span.parent().append('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_id=' + post_id + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnail',CROP_THUMBS_LANG) ?>"><?php esc_html_e('Crop Thumbnail',CROP_THUMBS_LANG); ?></a>')
 			}
 		});
 	}

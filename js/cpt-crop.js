@@ -55,6 +55,12 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
+	
+	$('.cpt-debug .cpt-debug-handle').click(function(e) {
+		e.preventDefault();
+		$('.cpt-debug').toggleClass('closed');
+	});
+	
 	/********************************/
 	function doProcessing(active,cropping) {
 		/*console.log('doProcessing');*/
@@ -66,8 +72,6 @@ jQuery(document).ready(function($) {
 		
 		$('.mainWindow').hide();
 		$('.waitingWindow').show();
-		
-		/*console.log('selection',cropping.api.tellSelect());*/
 		
 		$.ajax({ 
 			data:{ 
@@ -83,19 +87,28 @@ jQuery(document).ready(function($) {
 				$('.waitingWindow').hide();
 			},
 			success : function( response ) {
-				var result = JSON.parse(response);
-				/*console.log(result);*/
-				if(typeof result.success == "number") {
+				try {
+					var result = JSON.parse(response);
 					
-					if(result.changed_image_format) {
-						window.location.reload();
-					} else {
-						doCacheBreaker(result.success);
+					if(cpt_debug_js) { 
+						console.log('Save Function Debug',result.debug);
 					}
-				} else {
-					//saving fail
-					alert(result.error);
+					
+					if(typeof result.success == "number") {
+						
+						if(result.changed_image_format) {
+							window.location.reload();
+						} else {
+							doCacheBreaker(result.success);
+						}
+					} else {
+						//saving fail
+						alert(result.error);
+					}
+				} catch(e) {
+					alert(e.message+"\n"+response);
 				}
+				
 			}
 		});
 	}
@@ -132,51 +145,91 @@ jQuery(document).ready(function($) {
 		}
 	}
 	
-	function activateArea(c,li) {
+	function activateArea(c) {
 		deactivateArea(c);
 		var allActiveThumbs = $('.thumbnail-list li.active img');
 		var largestWidth = 0;
 		var largestHeight = 0;
 		var ratio = 0;
+		var crop = true;
+		
+		
+		//get the options
 		allActiveThumbs.each(function() {
+			var img_data = $(this).data('values');
 			if(ratio === 0) {
-				ratio = $(this).data('values').ratio;//initial
+				ratio = img_data.ratio;//initial
 			}
-			if(ratio != $(this).data('values').ratio) {
-				alert(cpt_lang['bug']);
+			if(ratio != img_data.ratio) {
+				//alert(cpt_lang['bug']);
+				//TODO: test if this is still needed
 			}
 			
 			//we only need to check in one dimension, cause per definition all selected images have to use the same ratio
-			if($(this).data('values').width > largestWidth) {
-				largestWidth = $(this).data('values').width;
-				largestHeight = $(this).data('values').height; 
+			if(img_data.width > largestWidth) {
+				largestWidth = img_data.width;
+				largestHeight = img_data.height; 
+			}
+			
+			//crop also has to be the same on all selected images
+			if(img_data.crop==1) {
+				crop = true;
+			} else {
+				crop = false;
 			}
 		});
 
+		var scale = 0;
+		if(ratio>=0) {
+			scale = c.img.data('values').height / largestHeight;
+		} else {
+			scale = c.img.data('values').width / largestWidth;
+		}
 		
-		var scale = c.img.width() / largestWidth;
 		var preSelect = [ 0, 0, Math.round(scale*c.img.width()), Math.round(scale*c.img.height()) ];
 		var minSize = [ largestWidth, largestHeight ];
+		// END get the options
 		
-		
-		
+		//set the options
 		var options = {}
 		options.boxWidth = c.img.width();
 		options.boxHeight = c.img.height();
 		options.trueSize = [cropping.img.data('values').width,c.img.data('values').height];
 		options.aspectRatio = ratio;
 		options.setSelect = preSelect;
+		
 		if(largestWidth>cropping.img.data('values').width || largestHeight>cropping.img.data('values').height) {
 			alert(cpt_lang['warningOriginalToSmall']);
-			if(ratio>=0) {
-				options.setSelect = [ 0, 0, cropping.img.data('values').width, Math.round(scale*c.img.height()) ];
-			} else {
-				options.setSelect = [ 0, 0, Math.round(scale*c.img.width()) , cropping.img.data('values').height];
-			}
 		} else {
 			options.minSize = minSize;
 		}
-		//console.log('options',options);
+		
+		//correct some options
+		if(ratio>=0) {
+			//add a offset to move the selection in the middle
+			var crop_offset = (cropping.img.data('values').width - scale * largestWidth ) / 2;
+			options.setSelect = [ crop_offset, 0, cropping.img.data('values').width, Math.round(scale*c.img.height()) ];
+		} else {
+			//no offset cause in most cases the the selection is needed in the upper corner (human portrait)
+			options.setSelect = [ 0, 0, Math.round(scale*c.img.width()) , cropping.img.data('values').height];
+		}
+		
+		if(scale===Infinity) {
+			options.setSelect = [ 0, 0, Math.round(scale*c.img.width()) , cropping.img.data('values').height];
+		}
+		
+		//free scaling
+		if(!crop) {
+			options.aspectRatio = false;
+			options.setSelect = [0,0,cropping.img.data('values').width,cropping.img.data('values').height];
+			console.log('free scaling');
+		}
+		
+		//debug
+		if(cpt_debug_js) { 
+			console.log('choosed image - data',c.img.data('values'));
+			console.log('JCrop - options',options); 
+		}
 		
 		c.api = $.Jcrop(c.img, options);
 	}
