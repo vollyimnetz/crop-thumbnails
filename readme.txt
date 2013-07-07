@@ -13,7 +13,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 == Description ==
 
 The plugin enhance functionality to crop your thumbnails individuell and simple. It add links on backend to enter all images you had attached to a post, page or custom-post.
-In the Crop-Editor you can choose one or more (if they have the same ratio) image-sizes and cut-off the part of the image you want.
+In the Crop-Editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
 It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
 
@@ -32,6 +32,12 @@ You can use the built in installer and upgrader, or you can install the plugin m
 * English
 * German (de_DE)
 * brazilian portuguese (pt_BR) - thanks to Alex Meusburger
+* Ukrainian (uk) - thanks to Jurko Chervony from www.skinik.name
+
+= What internal rules use the plugin for cropping? =
+* The plugin will only crop image-sizes where crop is set to "true" (hard crop mode - see: http://codex.wordpress.org/Function_Reference/add_image_size).
+* If you had set one of image dimension in add_image_size to "0" or "9999" (an set crop to true) the plugin will crop it in the ratio of the original image.
+* You are able to crop all images with the same ratio at once (default) or and any imagesize (and ratio) seperate.
 
 = I have cropped the image but the old one is used on the page. =
 If you had viewed your image on the site before, your browser has cached the image. Go tell them to reload the fresh image from the server by hitting "F5".
@@ -43,15 +49,15 @@ Note that the image in the featured-image box will only be a preview, to show wh
 = Is it possible to crop an non-cropped image-size? =
 Currently not.
 
-= What ideas for further releases you have? =
-* allow cropping window in frontside
-* allow new crop sizes beside the ones added with the add_image_size() function (for using less disk space)
-* reset standard image-crop
-* let the user generate all image-sizes at once by define a "central point of interest"
-* maybe use the new WP_Image_Editor class
-* add a option-button for dont use the minSize-Boundary of jcrop
-* put editor-options into a collapsible menu
+= Is it possible to adjust the css-style of the crop-thumbnail window? =
+Yes, for a simple test, copy the css/cpt-window.css file into your template_directory and make some change.
+Then add this code into the functions.php of your template.
 
+`add_filter('crop_post_thumbnail_window_css','myCustomStyle');
+function myCustomStyle($content) {
+	$content = get_bloginfo('template_directory').'/cpt-window.css';
+	return $content;
+}`
 
 == Screenshots ==
 
@@ -62,6 +68,11 @@ Currently not.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.8.2 =
+* add filter for customize the style of the crop-thumbnail content ('crop_post_thumbnail_window_css')
+* add a fix for dynamic height/width images (http://wordpress.org/support/topic/dynamic-widthheight)
+* add ukrainian lang (thanks to Jurko Chervony from www.skinik.name)
+
 = 0.8.1 =
 * fix warning: when settings are saved
 

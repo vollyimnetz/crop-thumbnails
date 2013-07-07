@@ -82,8 +82,8 @@ class CptSaveThumbnail {
 				
 				$crop_width = $_imageSize->width;
 				$crop_height = $_imageSize->height;
-				if(!$_imageSize->crop || $_imageSize->width==0 || $_imageSize->height==0) {
-					//handle images with no crop
+				if(!$_imageSize->crop || $_imageSize->width==0 || $_imageSize->height==0 || $_imageSize->width==9999 || $_imageSize->height==9999) {
+					//handle images with soft-crop width/height value and crop set to "true"
 					$crop_width = $selection->x2 - $selection->x;
 					$crop_height = $selection->y2 - $selection->y;
 				}

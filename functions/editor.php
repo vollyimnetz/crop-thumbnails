@@ -48,7 +48,8 @@ class CropPostThumbnailsEditor {
 		}
 		
 		if(!empty($failure_msg)) {
-			wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CROP_THUMBS_VERSION);
+			$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
+			wp_enqueue_style( 'cpt-window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
 			$cptContent = $failure_msg;
 			include_once( dirname(__FILE__).'/../html/template.php' );
 		}
@@ -116,7 +117,9 @@ class CropPostThumbnailsEditor {
 			//END the content
 		}
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_style( 'cpt-window',plugins_url('css/cpt-window.css',dirname(__FILE__)),array('wp-admin'),CROP_THUMBS_VERSION);
+		
+		$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
+		wp_enqueue_style( 'cpt-window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
 		include_once( dirname(__FILE__).'/../html/template.php' );
 		return true;
 	}
@@ -224,6 +227,14 @@ jQuery(document).ready(function($) {
 					<ul class="thumbnail-list">
 						<?php
 						foreach($all_image_sizes as $img_size_name=>$value) :
+							
+							if ($value['height'] == 9999) {
+								$value['height'] = 0;
+							}
+							if ($value['width'] == 9999) {
+								$value['width'] = 0;
+							}
+							
 							if(!$this->shouldSizeBeHidden($options,$img_size_name,$value,$current_parent_post_type)) :
 								$ratio = null;			//reset
 								$gcd = null;			//reset
@@ -231,6 +242,7 @@ jQuery(document).ready(function($) {
 								$print_cropped = '';	//reset
 								$crop = 0;				//reset
 								$special_warning = '';  //reset
+								
 								
 								/** define ratio **/
 								if($value['width'] != 0 && $value['height']!=0) {
@@ -299,7 +311,8 @@ jQuery(document).ready(function($) {
 		wp_enqueue_script( 'json2' );
 		wp_enqueue_script( 'cpt-crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','my_jcrop','json2'), CROP_THUMBS_VERSION);
 		
-		wp_enqueue_style( 'cpt-window', plugins_url('css/cpt-window.css',dirname(__FILE__)), array('wp-admin'), CROP_THUMBS_VERSION);
+		$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
+		wp_enqueue_style( 'cpt-window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
 		wp_enqueue_style( 'my_jcrop', plugins_url('js/jcrop/css/jquery.Jcrop.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 		
 		include_once( dirname(__FILE__).'/../html/template.php' );
