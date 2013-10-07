@@ -68,6 +68,11 @@ function myCustomStyle($content) {
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.8.3 =
+* fix a bug for systems with comma as dezimal seperator (http://wordpress.org/support/topic/doesnt-save-the-cropped-image-anywhere?replies=12#post-4563377)
+* reduce capabilities from "edit_pages" AND "upload_files" to only "upload_files"
+* more informations logged in the console if an error occurs while saving
+
 = 0.8.2 =
 * add filter for customize the style of the crop-thumbnail content ('crop_post_thumbnail_window_css')
 * add a fix for dynamic height/width images (http://wordpress.org/support/topic/dynamic-widthheight)
