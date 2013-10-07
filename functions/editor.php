@@ -291,7 +291,7 @@ jQuery(document).ready(function($) {
 								<strong><?php echo $img_size_name.$_lowResWarning; ?></strong><?php echo $special_warning; ?>
 								<span class="dimensions"><?php _e('Dimensions:',CROP_THUMBS_LANG) ?> <?php echo $print_dimensions; ?></span>
 								<span class="ratio"><?php _e('Ratio:',CROP_THUMBS_LANG) ?> <?php echo $print_ratio; ?></span>
-								<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='{"name":"<?php echo $img_size_name; ?>","width":<?php echo $value['width']; ?>,"height":<?php echo $value['height']; ?>,"ratio":<?php echo $ratio ?>,"crop":<?php echo $crop ?>}' />
+								<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='{"name":"<?php echo $img_size_name; ?>","width":<?php echo $value['width']; ?>,"height":<?php echo $value['height']; ?>,"ratio":<?php echo number_format($ratio, 13, '.', ''); ?>,"crop":<?php echo $crop ?>}' />
 							</li>
 							<?php endif; ?>
 						<?php endforeach; ?>
