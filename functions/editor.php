@@ -407,7 +407,7 @@ jQuery(document).ready(function($) {
 	
 	function isUserPermitted() {
 		$return = false;
-		if(current_user_can('upload_files') && current_user_can('edit_pages')) {
+		if(current_user_can('upload_files')) {
 			$return = true;
 		}
 		//TODO maybe add noence (is it needed? there are no file- or db-operations)
