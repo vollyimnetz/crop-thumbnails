@@ -130,6 +130,7 @@ class CptSaveThumbnail {
 					$post_metadata['sizes'][$_imageSize->name] = $_new_meta;
 				} else {
 					$this->addDebug('error on '.$_filepath_info['basename']);
+					$this->addDebug(implode(' | ',$_processing_error));
 				}
 			}
 			
