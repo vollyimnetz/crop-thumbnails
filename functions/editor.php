@@ -22,7 +22,7 @@ class CropPostThumbnailsEditor {
 		$this->cleanWPHead();
 		$failure_msg = '';
 		if(!$this->isUserPermitted()) {
-			$failure_msg = __('An error happend!',CROP_THUMBS_LANG);
+			$failure_msg = __('You are not allowed to do this.',CROP_THUMBS_LANG);
 		} else {
 			switch(true) {
 				case isset($_REQUEST['post_id'])://full programm

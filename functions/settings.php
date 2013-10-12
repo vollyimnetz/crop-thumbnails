@@ -136,6 +136,9 @@ class CropThumbnailsSettings {
 		echo '</ul>';
 	}
 
+	/**
+	 * currently not used
+	 */
 	function callback_allow_non_cropped() {
 		$options = get_option($this->optionsKey);
 		$_id = 'allow_non_cropped';

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-03 14:35+0100\n"
-"PO-Revision-Date: 2012-12-03 14:54+0100\n"
+"POT-Creation-Date: 2013-10-08 00:33+0100\n"
+"PO-Revision-Date: 2013-10-08 00:33+0100\n"
 "Last-Translator: Volkmar Kantor <volkmar.kantor@gmx.de>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -11,199 +11,254 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_attr__;esc_html_e\n"
 "X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 1.5.4\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../crop-thumbnails.php:35
+#: ../crop-thumbnails.php:34
 msgid "Crop your thumbnails, the easy way."
 msgstr ""
 
-#: ../functions/editor.php:23
-#: ../functions/editor.php:43
-msgid "An error happend!"
+#: ../functions/editor.php:25
+msgid "You are not allowed to do this."
 msgstr ""
 
-#: ../functions/editor.php:39
+#: ../functions/editor.php:41
 msgid "No featured Image set for this post until now."
 msgstr ""
 
-#: ../functions/editor.php:75
-#: ../functions/editor.php:187
+#: ../functions/editor.php:45
+msgid "An error happend!"
+msgstr ""
+
+#: ../functions/editor.php:78 ../functions/editor.php:204
 msgid "Cropping is disabled for this post-type."
 msgstr ""
 
-#: ../functions/editor.php:77
+#: ../functions/editor.php:80
 msgid "No images in this post yet. You have to upload some via upload dialog."
 msgstr ""
 
-#: ../functions/editor.php:98
+#: ../functions/editor.php:101
 msgid "Choose the image you want to crop."
 msgstr ""
 
-#: ../functions/editor.php:104
+#: ../functions/editor.php:107
 msgid "Post Thumbnail"
 msgstr ""
 
-#: ../functions/editor.php:104
+#: ../functions/editor.php:107
 #, php-format
 msgid "Image %d"
 msgstr ""
 
-#: ../functions/editor.php:164
+#: ../functions/editor.php:180
 msgid "bug - this case shouldnt be happend"
 msgstr ""
 
-#: ../functions/editor.php:165
-msgid "Warning: the original image is to small to be cropped in good quality with this thumbnail-size."
+#: ../functions/editor.php:181
+msgid ""
+"Warning: the original image is to small to be cropped in good quality with "
+"this thumbnail-size."
 msgstr ""
 
-#: ../functions/editor.php:166
+#: ../functions/editor.php:182
 msgid "First, select one image. Then, click once again."
 msgstr ""
 
-#: ../functions/editor.php:192
+#: ../functions/editor.php:209
 msgid "back to image-list"
 msgstr ""
 
-#: ../functions/editor.php:193
+#: ../functions/editor.php:210
 msgid "Please wait until the Images are cropped."
 msgstr ""
 
-#: ../functions/editor.php:196
+#: ../functions/editor.php:213
 msgid "Raw"
 msgstr ""
 
-#: ../functions/editor.php:196
-#: ../functions/editor.php:237
+#: ../functions/editor.php:213 ../functions/editor.php:279
 msgid "pixel"
 msgstr ""
 
-#: ../functions/editor.php:198
+#: ../functions/editor.php:215
 msgid "save crop"
 msgstr ""
 
-#: ../functions/editor.php:199
+#: ../functions/editor.php:216
 msgid "Quick-Instructions"
 msgstr ""
 
-#: ../functions/editor.php:201
+#: ../functions/editor.php:218
 msgid "Step 1: Choose an image from the right."
 msgstr ""
 
-#: ../functions/editor.php:202
-msgid "Step 2: Use the mouse change the size of the rectangle on the image above."
+#: ../functions/editor.php:219
+msgid ""
+"Step 2: Use the mouse change the size of the rectangle on the image above."
 msgstr ""
 
-#: ../functions/editor.php:203
+#: ../functions/editor.php:220
 msgid "Step 3: Click on \"save crop\"."
 msgstr ""
 
-#: ../functions/editor.php:208
+#: ../functions/editor.php:225
 msgid "select images with same ratio at once"
 msgstr ""
 
-#: ../functions/editor.php:209
+#: ../functions/editor.php:226
 msgid "deselect all"
 msgstr ""
 
-#: ../functions/editor.php:221
+#: ../functions/editor.php:262
 msgid "cropped"
 msgstr ""
 
-#: ../functions/editor.php:231
+#: ../functions/editor.php:271
+msgid "maximum"
+msgstr ""
+
+#: ../functions/editor.php:286
 msgid "Original image to small for good crop-quality!"
 msgstr ""
 
-#: ../functions/editor.php:237
+#: ../functions/editor.php:292
 msgid "Dimensions:"
 msgstr ""
 
-#: ../functions/editor.php:238
+#: ../functions/editor.php:293
 msgid "Ratio:"
 msgstr ""
 
-#: ../functions/editor.php:421
+#: ../functions/editor.php:499
 msgid "Crop Thumbnails"
 msgstr ""
 
-#: ../functions/editor.php:425
+#: ../functions/editor.php:503
 msgid "Crop Featured Image"
 msgstr ""
 
-#: ../functions/editor.php:439
+#: ../functions/editor.php:517
 msgid "Crop Thumbnail"
 msgstr ""
 
-#: ../functions/save.php:95
+#: ../functions/save.php:105
 #, php-format
 msgid "Cant generate filesize \"%s\"."
 msgstr ""
 
-#: ../functions/save.php:102
+#: ../functions/save.php:112
 msgid "Cant copy temporary file to media-library."
 msgstr ""
 
-#: ../functions/save.php:106
+#: ../functions/save.php:116
 msgid "Cant delete temporary file."
 msgstr ""
 
-#: ../functions/save.php:172
+#: ../functions/save.php:204
 msgid "ERROR: Security Check failed (maybe a timeout - please try again)."
 msgstr ""
 
-#: ../functions/save.php:176
+#: ../functions/save.php:208
 msgid "ERROR: Submitted data are not complete."
 msgstr ""
 
-#: ../functions/save.php:184
+#: ../functions/save.php:216
 msgid "A cropping with this dimensions on these Image ist not possible."
 msgstr ""
 
-#: ../functions/save.php:195
+#: ../functions/save.php:227
 msgid "ERROR: Can`t find original Image in Database!"
 msgstr ""
 
-#: ../functions/save.php:198
+#: ../functions/save.php:230
 msgid "ERROR: Can`t find original Imagefile!"
 msgstr ""
 
-#: ../functions/save.php:201
+#: ../functions/save.php:233
 msgid "ERROR: Can`t find original Image-Metadata!"
 msgstr ""
 
-#: ../functions/settings.php:16
-#: ../functions/settings.php:30
+#: ../functions/settings.php:24 ../functions/settings.php:38
 msgid "Settings"
 msgstr ""
 
-#: ../functions/settings.php:23
+#: ../functions/settings.php:31
 msgid "Crop Post Thumbnail Page"
 msgstr ""
 
-#: ../functions/settings.php:35
+#: ../functions/settings.php:44
 msgid "Save Changes"
 msgstr ""
 
-#: ../functions/settings.php:39
+#: ../functions/settings.php:49
 msgid "Support the plugin-author"
 msgstr ""
 
-#: ../functions/settings.php:40
-msgid "You can support the plugin-author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!"
+#: ../functions/settings.php:50
+msgid ""
+"You can support the plugin-author <br />(and let him know you love this "
+"plugin) <br />by donating via Paypal. Thanks a lot!"
 msgstr ""
 
-#: ../functions/settings.php:60
+#: ../functions/settings.php:72
 msgid "Sizes and Posttypes"
 msgstr ""
 
-#: ../functions/settings.php:61
-msgid "Choose the image-sizes you want to hide. Choose a post-type to prevent any use of the plugin for these entries."
+#: ../functions/settings.php:73
+msgid ""
+"Choose the image-sizes you want to hide. Choose a post-type to prevent any "
+"use of the plugin for these entries."
 msgstr ""
 
-#: ../functions/settings.php:66
-msgid "Crop-Thumbnails is created to make cropping easy for the user. Often times the user only need to crop one, in dependence of the post-type. But the system will create also all other sizes. So, here you can select for what post-type what sizes should be visible in the plugin interface."
+#: ../functions/settings.php:81
+msgid "Developer Settings"
 msgstr ""
 
-#: ../functions/settings.php:67
-msgid "Crop-Thumbnails will only show croped images - sizes with no crop will always be hidden."
+#: ../functions/settings.php:83
+msgid "Enable JS-Debug."
 msgstr ""
 
+#: ../functions/settings.php:85
+msgid "Enable Data-Debug."
+msgstr ""
+
+#: ../functions/settings.php:90
+msgid ""
+"Crop-Thumbnails is created to make cropping easy for the user. Often times "
+"the user only need to crop one, in dependence of the post-type. But the "
+"system will create also all other sizes. So, here you can select for what "
+"post-type what sizes should be visible in the plugin interface."
+msgstr ""
+
+#: ../functions/settings.php:91
+msgid ""
+"Crop-Thumbnails will only show croped images - sizes with no crop will "
+"always be hidden."
+msgstr ""
+
+#: ../functions/settings.php:146
+msgid ""
+"ATTENTION: be aware that you can break things, when you activate this. When "
+"activated your are able to cut those images to a spezific dimension that are "
+"not cropped. The name of the image will not change. You should be extra "
+"carefull when:"
+msgstr ""
+
+#: ../functions/settings.php:148
+msgid ""
+"you had inserted the image before on any page or post. (There may be height "
+"and width stored directly in the page-content.)"
+msgstr ""
+
+#: ../functions/settings.php:149
+msgid ""
+"you use a plugin that expect the original image size. (The original image-"
+"size is also \"stored\" in the filename.)"
+msgstr ""
+
+#: ../functions/settings.php:151
+msgid ""
+"The \"full\" image-size will never be cropped, otherwise you are not able to "
+"restore any image-size."
+msgstr ""
