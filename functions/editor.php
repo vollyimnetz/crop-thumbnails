@@ -461,9 +461,21 @@ jQuery(document).ready(function($) {
 	/**
 	 * Greatest cummon divisor
 	 */
-	function gcd($a, $b){
+	function gcd($a, $b) {
+		if(function_exists('gmp_gcd')) {
+			$gcd = gmp_strval(gmp_gcd($a,$b));
+			$this->addDebug("gcd-version", "gmp_gcd:".$gcd);
+			return ($gcd);
+		} else {
+			$gcd = $this->my_gcd($a,$b);
+			$this->addDebug("gcd-version", "my_gcd:".$gcd);
+			return $gcd;
+		}
+	}
+	
+	function my_gcd($a, $b) {
 		$b = ( $a == 0 )? 0 : $b;
-		return ( $a % $b )? $this->gcd($b, abs($a - $b)) : $b;
+		return ( $a % $b )? $this->my_gcd($b, abs($a - $b)) : $b;
 	}
 	
 	
