@@ -1,0 +1,300 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Crop-Post-Thumbnails\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-08 00:33+0100\n"
+"PO-Revision-Date: 2013-11-11 16:50+0100\n"
+"Last-Translator: Max Gruson <mgruson@live.nl>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_attr__;esc_html_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../crop-thumbnails.php:34
+msgid "Crop your thumbnails, the easy way."
+msgstr "Snijd de thumbnails bij op een makkelijke manier."
+
+#: ../functions/editor.php:25
+msgid "You are not allowed to do this."
+msgstr "Je hebt geen toestemming dit te doen."
+
+#: ../functions/editor.php:41
+msgid "No featured Image set for this post until now."
+msgstr "Er is nog geen Uitgelichte afbeelding ingesteld tot nu toe."
+
+#: ../functions/editor.php:45
+msgid "An error happend!"
+msgstr "Er heeft een error plaatsgevonden!"
+
+#: ../functions/editor.php:78 ../functions/editor.php:204
+msgid "Cropping is disabled for this post-type."
+msgstr "Bijsnijden is uitgeschakeld voor dit berichttype."
+
+#: ../functions/editor.php:80
+msgid "No images in this post yet. You have to upload some via upload dialog."
+msgstr ""
+"Er zijn nog geen afbeeldingen in dit bericht. Je kunt afbeeldingen uploaden "
+"via het upload scherm."
+
+#: ../functions/editor.php:101
+msgid "Choose the image you want to crop."
+msgstr "Kies de afbeelding die je bij wilt snijden."
+
+#: ../functions/editor.php:107
+msgid "Post Thumbnail"
+msgstr "Bericht afbeelding."
+
+#: ../functions/editor.php:107
+#, php-format
+msgid "Image %d"
+msgstr "Afbeelding %d"
+
+#: ../functions/editor.php:180
+msgid "bug - this case shouldnt be happend"
+msgstr "Bug - Dit zou niet plaatsgevonden moeten hebben."
+
+#: ../functions/editor.php:181
+msgid ""
+"Warning: the original image is to small to be cropped in good quality with "
+"this thumbnail-size."
+msgstr ""
+"Waarschuwing: de originele afbeelding is te klein om met behoud van "
+"kwaliteit bijgesneden te kunnen worden tot deze grootte."
+
+#: ../functions/editor.php:182
+msgid "First, select one image. Then, click once again."
+msgstr "Selecteer eerst een afbeelding. Klik vervolgens opnieuw."
+
+#: ../functions/editor.php:209
+msgid "back to image-list"
+msgstr "Keer terug naar de lijst met afbeeldingen"
+
+#: ../functions/editor.php:210
+msgid "Please wait until the Images are cropped."
+msgstr "Wacht a.u.b. tot de afbeeldingen zijn bijgesneden."
+
+#: ../functions/editor.php:213
+msgid "Raw"
+msgstr "Volledig"
+
+#: ../functions/editor.php:213 ../functions/editor.php:279
+msgid "pixel"
+msgstr "pixels"
+
+#: ../functions/editor.php:215
+msgid "save crop"
+msgstr "Bijgesneden afbeelding opslaan"
+
+#: ../functions/editor.php:216
+msgid "Quick-Instructions"
+msgstr "Korte instructie"
+
+#: ../functions/editor.php:218
+msgid "Step 1: Choose an image from the right."
+msgstr "Stap 1: Kies een afbeelding aan de rechterkant van dit scherm."
+
+#: ../functions/editor.php:219
+msgid ""
+"Step 2: Use the mouse change the size of the rectangle on the image above."
+msgstr ""
+"Stap 2: Gebruik de muis om de grootte van de rechthoek in de afbeelding "
+"hierboven aan te passen."
+
+#: ../functions/editor.php:220
+msgid "Step 3: Click on \"save crop\"."
+msgstr "Stap 3: Klik op \"bijgesneden afbeelding opslaan\"."
+
+#: ../functions/editor.php:225
+msgid "select images with same ratio at once"
+msgstr "Selecteer afbeeldingen met eenzelfde aspect-ratio tegelijkertijd"
+
+#: ../functions/editor.php:226
+msgid "deselect all"
+msgstr "Deselecteer alles"
+
+#: ../functions/editor.php:262
+msgid "cropped"
+msgstr "Bijgesneden"
+
+#: ../functions/editor.php:271
+msgid "maximum"
+msgstr "Maximum"
+
+#: ../functions/editor.php:286
+msgid "Original image to small for good crop-quality!"
+msgstr ""
+"De originele afbeelding is te klein om met goede kwaliteit bij te snijden!"
+
+#: ../functions/editor.php:292
+msgid "Dimensions:"
+msgstr "Grootte:"
+
+#: ../functions/editor.php:293
+msgid "Ratio:"
+msgstr "Aspect-ratio:"
+
+#: ../functions/editor.php:499
+msgid "Crop Thumbnails"
+msgstr "Snijd thumbnails bij"
+
+#: ../functions/editor.php:503
+msgid "Crop Featured Image"
+msgstr "Snijd uitgelichte afbeelding bij"
+
+#: ../functions/editor.php:517
+msgid "Crop Thumbnail"
+msgstr "Snijd thumbnail bij"
+
+#: ../functions/save.php:105
+#, php-format
+msgid "Cant generate filesize \"%s\"."
+msgstr "Kan de bestandsgrootte \"%s\" niet aanmaken."
+
+#: ../functions/save.php:112
+msgid "Cant copy temporary file to media-library."
+msgstr ""
+"Het tijdelijke bestand kan niet gekopieerd worden naar de mediabibliotheek."
+
+#: ../functions/save.php:116
+msgid "Cant delete temporary file."
+msgstr "Het tijdelijke bestand kan niet verwijderd worden."
+
+#: ../functions/save.php:204
+msgid "ERROR: Security Check failed (maybe a timeout - please try again)."
+msgstr ""
+"ERROR: Beveiligingscheck is mislukt (dit is mogelijk een timeout - probeer "
+"het opnieuw)."
+
+#: ../functions/save.php:208
+msgid "ERROR: Submitted data are not complete."
+msgstr "ERROR: Toegevoegde data is niet volledig!"
+
+#: ../functions/save.php:216
+msgid "A cropping with this dimensions on these Image ist not possible."
+msgstr ""
+"Het bijsnijden met deze afmetingen is niet mogelijk bij deze afbeelding."
+
+#: ../functions/save.php:227
+msgid "ERROR: Can`t find original Image in Database!"
+msgstr ""
+"ERROR: De originele afbeelding kan niet in de database gevonden worden!"
+
+#: ../functions/save.php:230
+msgid "ERROR: Can`t find original Imagefile!"
+msgstr "ERROR: De originele afbeelding kan niet gevonden worden!"
+
+#: ../functions/save.php:233
+msgid "ERROR: Can`t find original Image-Metadata!"
+msgstr ""
+"ERROR: De originele metadata van de de afbeelding kunnen niet gevonden "
+"worden!"
+
+#: ../functions/settings.php:24 ../functions/settings.php:38
+msgid "Settings"
+msgstr "Instellingen"
+
+#: ../functions/settings.php:31
+msgid "Crop Post Thumbnail Page"
+msgstr "Bericht thumbnail bijsnijd pagina"
+
+#: ../functions/settings.php:44
+msgid "Save Changes"
+msgstr "Sla veranderingen op"
+
+#: ../functions/settings.php:49
+msgid "Support the plugin-author"
+msgstr "Ondersteun de pluginontwikkelaar"
+
+#: ../functions/settings.php:50
+msgid ""
+"You can support the plugin-author <br />(and let him know you love this "
+"plugin) <br />by donating via Paypal. Thanks a lot!"
+msgstr ""
+"Je kunt de pluginontwikkelaar ondersteunen <br /> (en hem laten weten dat je "
+"deze plugin gaaf vindt) <br /> door te doneren via Paypal. Alvast bedankt!"
+
+#: ../functions/settings.php:72
+msgid "Sizes and Posttypes"
+msgstr "Afbeeldingsgroottes en berichttypes"
+
+#: ../functions/settings.php:73
+msgid ""
+"Choose the image-sizes you want to hide. Choose a post-type to prevent any "
+"use of the plugin for these entries."
+msgstr ""
+"Kies de afbeeldingsgroottes die je wilt verbergen. Kies een berichttype om "
+"elk gebruik van de plugin daarbij te voorkomen."
+
+#: ../functions/settings.php:81
+msgid "Developer Settings"
+msgstr "Opties voor ontwikkelaars"
+
+#: ../functions/settings.php:83
+msgid "Enable JS-Debug."
+msgstr "Zet JS-Debug aan."
+
+#: ../functions/settings.php:85
+msgid "Enable Data-Debug."
+msgstr "Zet Data-Debug aan."
+
+#: ../functions/settings.php:90
+msgid ""
+"Crop-Thumbnails is created to make cropping easy for the user. Often times "
+"the user only need to crop one, in dependence of the post-type. But the "
+"system will create also all other sizes. So, here you can select for what "
+"post-type what sizes should be visible in the plugin interface."
+msgstr ""
+"Crop-Thumbnails is gemaakt om het bijsnijden van afbeeldingen makkelijker te "
+"maken voor de gebruiker. Het komt vaak voor dat de gebruiker slechts naar "
+"één enkele grootte moet bijsnijden, afhankelijk van het berichttype. Ondanks "
+"dat maakt WordPress ook andere groottes aan. Daarom kun je hier selecteren "
+"welke afbeeldingsgrootte bij welk berichttype zichtbaar moet zijn in het "
+"menu van de plugin."
+
+#: ../functions/settings.php:91
+msgid ""
+"Crop-Thumbnails will only show croped images - sizes with no crop will "
+"always be hidden."
+msgstr ""
+"Crop-Thumbnails laat alleen bijgesneden afbeeldingen zien. Afbeeldingen die "
+"niet bijgesneden zijn zullen altijd verborgen blijven."
+
+#: ../functions/settings.php:146
+msgid ""
+"ATTENTION: be aware that you can break things, when you activate this. When "
+"activated your are able to cut those images to a spezific dimension that are "
+"not cropped. The name of the image will not change. You should be extra "
+"carefull when:"
+msgstr ""
+"LET OP: Het is mogelijk dat er dingen misgaan als je deze optie activeert. "
+"Op het moment dat je dit activeert kun je afbeeldingen bijsnijden tot een "
+"specifieke grootte die niet oorspronkelijk bijgesneden zijn. De naam van de "
+"afbeelding zal niet veranderen. Je moet extra voorzichtig zijn als:"
+
+#: ../functions/settings.php:148
+msgid ""
+"you had inserted the image before on any page or post. (There may be height "
+"and width stored directly in the page-content.)"
+msgstr ""
+"Je hebt de afbeelding al eerder toegevoegd in een pagina of bericht. (Er kan "
+"een hoogte en breedte direct aangegeven zijn in de inhoud.)"
+
+#: ../functions/settings.php:149
+msgid ""
+"you use a plugin that expect the original image size. (The original image-"
+"size is also \"stored\" in the filename.)"
+msgstr ""
+"Je gebruikt een plugin die de originele afbeeldingsgroottes verwacht. (De "
+"oorspronkelijke afbeeldingsgrootte is ook \"opgeslagen\" in de bestandsnaam.)"
+
+#: ../functions/settings.php:151
+msgid ""
+"The \"full\" image-size will never be cropped, otherwise you are not able to "
+"restore any image-size."
+msgstr ""
+"De \"ful'\" afbeeldingsgrootte zal nooit bijgesneden worden, anders kunnen "
+"afbeeldingsgroottes niet hersteld worden."
