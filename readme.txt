@@ -3,7 +3,7 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 3.1
-Tested up to: 3.6.1
+Tested up to: 3.7.1
 Stable tag: trunk
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -68,6 +68,10 @@ function myCustomStyle($content) {
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.8.4 =
+* fix a bug that may occure on some systems with xdebug enabled and low xdebug.max_nesting_level (see: http://wordpress.org/support/topic/error-when-trying-to-crop-a-certain-image)
+* add dutch language (thanks to Max Gruson)
+
 = 0.8.3 =
 * fix a bug for systems with comma as dezimal seperator (http://wordpress.org/support/topic/doesnt-save-the-cropped-image-anywhere?replies=12#post-4563377)
 * reduce capabilities from "edit_pages" AND "upload_files" to only "upload_files"
@@ -76,7 +80,7 @@ function myCustomStyle($content) {
 = 0.8.2 =
 * add filter for customize the style of the crop-thumbnail content ('crop_post_thumbnail_window_css')
 * add a fix for dynamic height/width images (http://wordpress.org/support/topic/dynamic-widthheight)
-* add ukrainian lang (thanks to Jurko Chervony from www.skinik.name)
+* add ukrainian language (thanks to Jurko Chervony from www.skinik.name)
 
 = 0.8.1 =
 * fix warning: when settings are saved
