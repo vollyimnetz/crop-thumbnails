@@ -128,6 +128,8 @@ class CptSaveThumbnail {
 						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
 					}
 					$post_metadata['sizes'][$_imageSize->name] = $_new_meta;
+					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
+					do_action( 'cpt_save_new_thumb', $_full_filepath );					
 				} else {
 					$this->addDebug('error on '.$_filepath_info['basename']);
 					$this->addDebug(implode(' | ',$_processing_error));

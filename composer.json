@@ -1,0 +1,13 @@
+{
+    "name": "vollyimnetz/crop-thumbnails",
+    "type": "wordpress-plugin",
+    "description": "Easily modify the crop for image thumbnails",
+    "keywords": ["wordpress", "thumbnail", "crop"],
+    "license": "GPLv2+",
+    "authors": [
+        {
+            "name": "Volkmar Kantor",
+            "homepage" : "http://www.totalmedial.de/"
+        }
+    ]
+}

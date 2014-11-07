@@ -119,11 +119,12 @@ class CropThumbnailsSettings {
 						$_checked = true;
 					}
 					if($data['crop']=='1') : 
+						$thumb_label = apply_filters( 'cpt_image_size_label', $thumb_name, $data );
 						 ?>
 						<li>
 							<label for="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
 								<input id="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
-								<?php echo $thumb_name;?> - <?php echo $data['width'];?>x<?php echo $data['height'];?> <?php /* echo ($data['crop'] == '1' ? '(cropped)' : '') */?>
+								<?php echo $thumb_label;?> - <?php echo $data['width'];?>x<?php echo $data['height'];?> <?php /* echo ($data['crop'] == '1' ? '(cropped)' : '') */?>
 							</label>
 						</li>
 					<?php endif; ?>

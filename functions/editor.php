@@ -286,9 +286,10 @@ jQuery(document).ready(function($) {
 									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image to small for good crop-quality!',CROP_THUMBS_LANG).'</span>';
 								}
 								
+								$img_size_label = apply_filters( 'cpt_image_size_label', $img_size_name, $value );
 							?>
 							<li rel="<?php echo $print_ratio; ?>">
-								<strong><?php echo $img_size_name.$_lowResWarning; ?></strong><?php echo $special_warning; ?>
+								<strong><?php echo $img_size_label.$_lowResWarning; ?></strong><?php echo $special_warning; ?>
 								<span class="dimensions"><?php _e('Dimensions:',CROP_THUMBS_LANG) ?> <?php echo $print_dimensions; ?></span>
 								<span class="ratio"><?php _e('Ratio:',CROP_THUMBS_LANG) ?> <?php echo $print_ratio; ?></span>
 								<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='{"name":"<?php echo $img_size_name; ?>","width":<?php echo $value['width']; ?>,"height":<?php echo $value['height']; ?>,"ratio":<?php echo number_format($ratio, 13, '.', ''); ?>,"crop":<?php echo $crop ?>}' />
