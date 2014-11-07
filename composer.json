@@ -1,5 +1,5 @@
 {
-    "name": "wpackagist/crop-thumbnails",
+    "name": "vollyimnetz/crop-thumbnails",
     "type": "wordpress-plugin",
     "description": "Easily modify the crop for image thumbnails",
     "keywords": ["wordpress", "thumbnail", "crop"],
