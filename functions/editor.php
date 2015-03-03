@@ -509,7 +509,7 @@ jQuery(document).ready(function($) {
 			post_id_hidden = parseInt(post_id_hidden.val());
 
 			/** add link on top of editor **/
-			$('#wp-content-media-buttons').append('<a style="margin:0 2em;" class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;post_id=' + post_id_hidden + '&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>"><?php esc_html_e('Crop Thumbnails',CROP_THUMBS_LANG); ?></a>');
+			$('#wp-content-media-buttons').append('<a style="margin:0 2em;" class="button thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;post_id=' + post_id_hidden + '&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>"><?php esc_html_e('Crop Thumbnails',CROP_THUMBS_LANG); ?></a>');
 			
 			
 			/** add link to featured image box **/
