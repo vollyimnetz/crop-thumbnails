@@ -8,6 +8,8 @@ class CropPostThumbnailsEditor {
 			//add style and javascript
 			add_action( 'admin_print_styles', array(&$this, 'adminHeaderCSS') );
 			add_action( 'admin_print_scripts', array(&$this, 'adminHeaderJS') );
+
+			add_filter( 'attachment_fields_to_edit', array($this,'add_button_to_attachment_edit_view'), 10, 2 );
 		}
 
 		/* for the html inside the thickbox */
@@ -496,10 +498,10 @@ jQuery(document).ready(function($) {
 	 * adds the links into post-types and the media-library
 	 */
 	function addLinksToAdmin() {
+
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	var boxViewportHeight = $(window).height() - 100;
 	//add link on posts and pages
 	if ($('body.post-php, body.page-php, body.page-new.php, body.post-new-php').length > 0) {
 		var post_id_hidden = $('form#post #post_ID');
@@ -512,8 +514,7 @@ jQuery(document).ready(function($) {
 			 */
 			var buttonContent = '';
 			buttonContent+= '<a ';
-				buttonContent+= 'class="thickbox button crop-thumbnail" ';
-				buttonContent+= 'href="' + ajaxurl + '?action=croppostthumb_ajax&amp;post_id=' + post_id_hidden + '&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" ';
+				buttonContent+= 'class="button cropThumbnailBox"  href="#" data-cropthumbnail=\'{"post_id":'+ post_id_hidden +'}\' ';
 				buttonContent+= 'title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>"';
 			buttonContent+= '>';
 			buttonContent+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
@@ -527,8 +528,7 @@ jQuery(document).ready(function($) {
 			 */
 			buttonContent = '';
 			buttonContent+= '<a ';
-			buttonContent+= 'class="thickbox button crop-thumbnail" ';
-			buttonContent+= 'href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_by_post_id=' + post_id_hidden + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" ';
+			buttonContent+= 'class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_by_post_id":'+ post_id_hidden +',"viewmode":"single"}\' ';
 			buttonContent+= 'title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>"';
 			buttonContent+= '>';
 			buttonContent+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
@@ -548,13 +548,80 @@ jQuery(document).ready(function($) {
 				var post_id = parseInt($(this).attr('id').substr(5));
 				var last_span = $(this).find('.column-title .row-actions span:last-child');
 				last_span.append(' | ');
-				last_span.parent().append('<a class="thickbox" href="' + ajaxurl + '?action=croppostthumb_ajax&amp;image_id=' + post_id + '&amp;viewmode=single&amp;TB_iframe=1&amp;width=800&amp;height=' + boxViewportHeight + '" title="<?php esc_attr_e('Crop Thumbnail',CROP_THUMBS_LANG) ?>"><?php esc_html_e('Crop Thumbnail',CROP_THUMBS_LANG); ?></a>')
+
+				var buttonContent = '';
+				buttonContent+= '<a ';
+				buttonContent+= 'class="cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' ';
+				buttonContent+= 'title="<?php esc_attr_e('Crop Thumbnail',CROP_THUMBS_LANG) ?>"';
+				buttonContent+= '>';
+				buttonContent+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
+				buttonContent+= '<?php esc_html_e('Crop Thumbnail',CROP_THUMBS_LANG); ?>';
+				buttonContent+= '</a>';
+
+
+				last_span.parent().append( buttonContent);
 			}
 		});
 	}
+
+	/**
+	 * Create Listener for click-events with element-class ".cropThumbnailBox".
+	 */
+	$(document).on('click', '.cropThumbnailBox', function(e) {
+		e.preventDefault();
+
+		//thickbox dimensions (will not adjust on viewport change)
+		var boxViewportHeight = $(window).height() - 100;
+		var boxViewportWidth = $(window).width() - 50;
+		if(boxViewportWidth>800) {//do not want to have width bigger than 800 - maybe later, if i have refined the reponsive design
+			boxViewportWidth = 800;
+		}
+
+		//get the data from the link
+		var data = $(this).data('cropthumbnail');
+
+		//construct the thickbox-parameter
+		var url = ajaxurl+'?action=croppostthumb_ajax';
+		for(var v in data) {
+			console.log(v);
+			url+='&amp;'+v+'='+data[v];
+		}
+		url+= '&amp;TB_iframe=1&amp;width='+boxViewportWidth+'&amp;height=' + boxViewportHeight;
+
+		//call the thickbox
+		tb_show($(this).attr('title'), url);
+		//TODO fix the wrong close-event in editor-view - edit-media-dialog
+
+		//push thickbox above media-modal
+		$('#TB_overlay').css('z-index','999999');
+		$('#TB_window').css('z-index','999999');
+	});
 });
 </script>
 <?php
+	}
+
+	/**
+	 * Add an field to the attachment edit dialog
+	 * @see http://code.tutsplus.com/tutorials/creating-custom-fields-for-attachments-in-wordpress--net-13076
+	 * @see https://make.wordpress.org/core/2012/12/12/attachment-editing-now-with-full-post-edit-ui/
+	 * @param array $form_fields
+	 * @param object $post
+	 */
+	public function add_button_to_attachment_edit_view( $form_fields, $post ) {
+
+		$html = '';
+		$html.= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' ';
+		$html.= 'title="'.esc_attr__('Crop Thumbnail',CROP_THUMBS_LANG).'">';
+		$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Thumbnails',CROP_THUMBS_LANG);
+		$html.= '</a>';
+
+		$form_fields['cropthumbnails'] = array(
+			'label' => 'Crop Thumbnails',//no i18n cause it should be obvious what plugin is used here
+			'input' => 'html',
+			'html' => $html
+		);
+		return $form_fields;
 	}
 }
 
