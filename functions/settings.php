@@ -258,7 +258,6 @@ class CropThumbnailsSettings {
 				);
 			}
 		}
-		#print_r($sizes);
 		return $sizes;
 	}
 
