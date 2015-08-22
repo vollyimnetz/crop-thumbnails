@@ -569,11 +569,12 @@ jQuery(document).ready(function($) {
 
 	/**
 	 * Create Listener for click-events with element-class ".cropThumbnailBox".
+	 * Open the modal box.
 	 */
 	$(document).on('click', '.cropThumbnailBox', function(e) {
 		e.preventDefault();
 
-		//thickbox dimensions (will not adjust on viewport change)
+		//modal-box dimensions (will not adjust on viewport change)
 		var boxViewportHeight = $(window).height() - 100;
 		var boxViewportWidth = $(window).width() - 50;
 		if(boxViewportWidth>800) {//do not want to have width bigger than 800 - maybe later, if i have refined the reponsive design
@@ -589,9 +590,9 @@ jQuery(document).ready(function($) {
 			url+='&amp;'+v+'='+data[v];
 		}
 
-
 		var content = $('<div><iframe src="'+url+'"></iframe></div>');
 		var overlay;
+		var isModalClassInitialSet = $('body').hasClass('modal-open');
 		content.dialog({
 				'dialogClass' : 'cropThumbnailModal',
 				'modal' : true,
@@ -606,18 +607,28 @@ jQuery(document).ready(function($) {
 					if(overlay!==undefined) {
 						overlay.unbind('click');
 					}
+
+					//remove modal-open class (disable the scrollbars)
+					if(!isModalClassInitialSet) {
+						$('body').removeClass('modal-open');
+					}
 					$(this).dialog('destroy');
+				},
+				open : function(event, ui) {
+					overlay = $('.ui-widget-overlay.ui-front');
+					overlay.click(function() {
+						content.dialog('close');
+					});
+
+					//add body class (disable the scrollbars)
+					$('body').addClass('modal-open');
+
+					//correct the z-index
+					$('.cropThumbnailModal').css('z-index','999999');
+					overlay.css('z-index','999998');
 				}
 			})
 			.dialog('open');
-
-		overlay = $('.ui-widget-overlay.ui-front');
-		overlay.click(function() {
-			content.dialog('close');
-		});
-
-		$('.cropThumbnailModal.ui-dialog').css('z-index','999999');
-		overlay.css('z-index','999998');
 	});
 });
 </script>
