@@ -235,10 +235,13 @@ class CropThumbnailsSettings {
 
 
 	/**
-	 * Creates an array of all image sizes:
-	 * array[sizename][height]
-	 * array[sizename][width]
-	 * array[sizename][crop] = boolean
+	 * <pre>
+	 * Creates an array of all image sizes.
+	 * @return {array} array of all image sizes
+	 *                       array[<sizename>]['height'] = int
+	 *                       array[<sizename>]['width'] = int
+	 *                       array[<sizename>]['crop'] = boolean
+	 * </pre>
 	 */
 	function getImageSizes() {
 		global $_wp_additional_image_sizes;//array with the available image sizes
