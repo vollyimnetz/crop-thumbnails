@@ -583,7 +583,6 @@ jQuery(document).ready(function($) {
 		//construct the thickbox-parameter
 		var url = ajaxurl+'?action=croppostthumb_ajax';
 		for(var v in data) {
-			console.log(v);
 			url+='&amp;'+v+'='+data[v];
 		}
 		url+= '&amp;TB_iframe=1&amp;width='+boxViewportWidth+'&amp;height=' + boxViewportHeight;
