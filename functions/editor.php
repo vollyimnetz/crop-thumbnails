@@ -590,52 +590,30 @@ jQuery(document).ready(function($) {
 		url+= '&amp;TB_iframe=1&amp;width='+boxViewportWidth+'&amp;height=' + boxViewportHeight;
 
 
-		//call the thickbox
-		//tb_show($(this).attr('title'), url);
-
-		var dlg = $("<div id='myFancyDialog' />").text('content').appendTo("body");
-		dlg.dialog({
-			'dialogClass' : 'cropThumbnailModal',
-			'modal' : true,
-			'autoOpen' : false,
-			'closeOnEscape' : true,
-			close : function(event, ui ) {
-				console.log('destroy is called');
-				$(this).dialog('destroy');
-			},
-			'buttons' : [
-				{
-					'text' : 'Close',
-					'class' : 'button-primary',
-					'click' : function() {
-						$(this).dialog('close');
+		var dlg = $("<div id='myFancyDialog' />").text('<iframe src="" />').appendTo("body");
+		$('body')
+			.dialog({
+				'dialogClass' : 'cropThumbnailModal',
+				'modal' : true,
+				'autoOpen' : false,
+				'closeOnEscape' : true,
+				close : function(event, ui ) {
+					console.log('destroy is called');
+					$(this).dialog('destroy');
+				},
+				'buttons' : [
+					{
+						'text' : 'Close',
+						'class' : 'button-primary',
+						'click' : function() {
+							$(this).dialog('close');
+						}
 					}
-				}
-			]
-		}).dialog('open');
+				]
+			})
+			.dialog('open');
 		$('.ui-dialog.ui-front').css('z-index','999999');
 		$('.ui-widget-overlay.ui-front').css('z-index','999998');
-
-		/**
-		 * various fixes for the thickbox - modal dialog
-		 */
-		//push thickbox above media-modal
-		$('#TB_overlay').css('z-index','999999');
-		$('#TB_window').css('z-index','999999');
-
-		//got an JS-Bug in post-view
-		//--> if the attachment-view is oppened and the thickbox will be addionaly oppened
-		//--> produces a js-error when click on the close / on the overlay
-		//--> will close the attachment-view first
-		$('#TB_overlay').unbind('click').click(function(e) {
-			e.preventDefault();
-			tb_remove();
-		});
-		$('#TB_closeWindowButton').unbind('click').click(function(e) {
-			e.preventDefault();
-			tb_remove();
-			//not fixed yet - double click needed
-		});
 	});
 });
 </script>
