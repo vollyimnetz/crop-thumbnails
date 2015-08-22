@@ -589,11 +589,28 @@ jQuery(document).ready(function($) {
 
 		//call the thickbox
 		tb_show($(this).attr('title'), url);
-		//TODO fix the wrong close-event in editor-view - edit-media-dialog
 
+
+		/**
+		 * various fixes for the thickbox - modal dialog
+		 */
 		//push thickbox above media-modal
 		$('#TB_overlay').css('z-index','999999');
 		$('#TB_window').css('z-index','999999');
+
+		//got an JS-Bug in post-view
+		//--> if the attachment-view is oppened and the thickbox will be addionaly oppened
+		//--> produces a js-error when click on the close / on the overlay
+		//--> will close the attachment-view first
+		$('#TB_overlay').unbind('click').click(function(e) {
+			e.preventDefault();
+			tb_remove();
+		});
+		$('#TB_closeWindowButton').unbind('click').click(function(e) {
+			e.preventDefault();
+			tb_remove();
+			//not fixed yet - double click needed
+		});
 	});
 });
 </script>
@@ -612,11 +629,11 @@ jQuery(document).ready(function($) {
 		$html = '';
 		$html.= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' ';
 		$html.= 'title="'.esc_attr__('Crop Thumbnail',CROP_THUMBS_LANG).'">';
-		$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Thumbnails',CROP_THUMBS_LANG);
+		$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Thumbnail',CROP_THUMBS_LANG);
 		$html.= '</a>';
 
 		$form_fields['cropthumbnails'] = array(
-			'label' => 'Crop Thumbnails',//no i18n cause it should be obvious what plugin is used here
+			'label' => '<small>Crop Thumbnails</small>',//no i18n cause it should be obvious what plugin is used here
 			'input' => 'html',
 			'html' => $html
 		);
