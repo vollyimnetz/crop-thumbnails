@@ -426,9 +426,8 @@ jQuery(document).ready(function($) {
 			|| $pagenow == 'page.php'
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
-			wp_enqueue_style( 'thickbox' );
-			wp_enqueue_script('jquery-ui-dialog');
 			wp_enqueue_style("wp-jquery-ui-dialog");
+			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/options.css',dirname(__FILE__)));
 		}
 	}
 
@@ -444,7 +443,7 @@ jQuery(document).ready(function($) {
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
 
-			wp_enqueue_script('thickbox', false, array('jquery','jquery-ui-tabs'));
+			wp_enqueue_script('jquery-ui-dialog');
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
@@ -587,33 +586,36 @@ jQuery(document).ready(function($) {
 		for(var v in data) {
 			url+='&amp;'+v+'='+data[v];
 		}
-		url+= '&amp;TB_iframe=1&amp;width='+boxViewportWidth+'&amp;height=' + boxViewportHeight;
 
 
-		var dlg = $("<div id='myFancyDialog' />").text('<iframe src="" />').appendTo("body");
-		$('body')
-			.dialog({
+		var content = $('<div><iframe src="'+url+'"></iframe></div>');
+		var overlay;
+		content.dialog({
 				'dialogClass' : 'cropThumbnailModal',
 				'modal' : true,
+				'title' : $(this).attr('title'),
+				'resizable' : false,
+				'draggable' : false,
 				'autoOpen' : false,
 				'closeOnEscape' : true,
+				'height' : boxViewportHeight,
+				'width' : boxViewportWidth,
 				close : function(event, ui ) {
-					console.log('destroy is called');
-					$(this).dialog('destroy');
-				},
-				'buttons' : [
-					{
-						'text' : 'Close',
-						'class' : 'button-primary',
-						'click' : function() {
-							$(this).dialog('close');
-						}
+					if(overlay!==undefined) {
+						overlay.unbind('click');
 					}
-				]
+					$(this).dialog('destroy');
+				}
 			})
 			.dialog('open');
-		$('.ui-dialog.ui-front').css('z-index','999999');
-		$('.ui-widget-overlay.ui-front').css('z-index','999998');
+
+		overlay = $('.ui-widget-overlay.ui-front');
+		overlay.click(function() {
+			content.dialog('close');
+		});
+
+		$('.cropThumbnailModal.ui-dialog').css('z-index','999999');
+		overlay.css('z-index','999998');
 	});
 });
 </script>
