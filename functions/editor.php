@@ -441,7 +441,7 @@ jQuery(document).ready(function($) {
 			|| $pagenow == 'upload.php') {
 
 			wp_enqueue_script('thickbox', false, array('jquery','jquery-ui-tabs'));
-			add_action('admin_footer',array($this,'cptAddLinksToAdmin'));
+			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
 
@@ -495,7 +495,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * adds the links into post-types and the media-library
 	 */
-	function cptAddLinksToAdmin() {
+	function addLinksToAdmin() {
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
@@ -544,7 +544,7 @@ jQuery(document).ready(function($) {
 	/** add link on mediathek **/
 	if ($('body.upload-php').length > 0) {
 		$('#the-list tr').each(function() {
-			if ($(this).find('td.media-icon img').attr('src').lastIndexOf("/wp-includes/images/") == -1) {
+			if ($(this).find('td span.media-icon').hasClass('image-icon')) {
 				var post_id = parseInt($(this).attr('id').substr(5));
 				var last_span = $(this).find('.column-title .row-actions span:last-child');
 				last_span.append(' | ');
