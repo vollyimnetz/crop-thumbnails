@@ -3,6 +3,8 @@ class CropPostThumbnailsEditor {
 
 	private $debugOutput = '';
 
+	private $allowedMime = array('image/jpeg','image/png');
+
 	function __construct() {
 		if ( is_admin() ) {
 			//add style and javascript
@@ -385,7 +387,7 @@ jQuery(document).ready(function($) {
 
 		foreach($images as $key=>$value) {
 			$mime = $value->post_mime_type;
-			if(	$mime !='image/jpeg' AND $mime !='image/png') {
+			if( !in_array($mime,$this->allowedMime) ) {
 				unset($images[$key]);
 			} elseif($value->ID==$post_thumbnail_id) {
 				$images[$key]->is_post_thumbnail = true;
@@ -631,17 +633,19 @@ jQuery(document).ready(function($) {
 	 */
 	public function add_button_to_attachment_edit_view( $form_fields, $post ) {
 
-		$html = '';
-		$html.= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' ';
-		$html.= 'title="'.esc_attr__('Crop Thumbnail',CROP_THUMBS_LANG).'">';
-		$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Thumbnail',CROP_THUMBS_LANG);
-		$html.= '</a>';
+		if(in_array($post->post_mime_type,$this->allowedMime)) {
+			$html = '';
+			$html.= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' ';
+			$html.= 'title="'.esc_attr__('Crop Thumbnail',CROP_THUMBS_LANG).'">';
+			$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Thumbnail',CROP_THUMBS_LANG);
+			$html.= '</a>';
 
-		$form_fields['cropthumbnails'] = array(
-			'label' => '<small>Crop Thumbnails</small>',//no i18n cause it should be obvious what plugin is used here
-			'input' => 'html',
-			'html' => $html
-		);
+			$form_fields['cropthumbnails'] = array(
+				'label' => '<small>Crop Thumbnails</small>',//no i18n cause it should be obvious what plugin is used here
+				'input' => 'html',
+				'html' => $html
+			);
+		}
 		return $form_fields;
 	}
 }
