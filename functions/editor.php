@@ -427,6 +427,8 @@ jQuery(document).ready(function($) {
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
 			wp_enqueue_style( 'thickbox' );
+			wp_enqueue_script('jquery-ui-dialog');
+			wp_enqueue_style("wp-jquery-ui-dialog");
 		}
 	}
 
@@ -587,9 +589,32 @@ jQuery(document).ready(function($) {
 		}
 		url+= '&amp;TB_iframe=1&amp;width='+boxViewportWidth+'&amp;height=' + boxViewportHeight;
 
-		//call the thickbox
-		tb_show($(this).attr('title'), url);
 
+		//call the thickbox
+		//tb_show($(this).attr('title'), url);
+
+		var dlg = $("<div id='myFancyDialog' />").text('content').appendTo("body");
+		dlg.dialog({
+			'dialogClass' : 'cropThumbnailModal',
+			'modal' : true,
+			'autoOpen' : false,
+			'closeOnEscape' : true,
+			close : function(event, ui ) {
+				console.log('destroy is called');
+				$(this).dialog('destroy');
+			},
+			'buttons' : [
+				{
+					'text' : 'Close',
+					'class' : 'button-primary',
+					'click' : function() {
+						$(this).dialog('close');
+					}
+				}
+			]
+		}).dialog('open');
+		$('.ui-dialog.ui-front').css('z-index','999999');
+		$('.ui-widget-overlay.ui-front').css('z-index','999998');
 
 		/**
 		 * various fixes for the thickbox - modal dialog
