@@ -15,7 +15,8 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 The plugin enhance functionality to crop your automatic cropped post-thumbnails individuell and simple. It add links in the backend to enter all images you had attached to a post, page or custom-post.
 In the Crop-Editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
-Further Features
+= Further Features =
+
 * It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
 * You could provide your users a custom style for the Editor-Window.
 
