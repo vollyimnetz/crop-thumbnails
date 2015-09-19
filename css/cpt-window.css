@@ -16,6 +16,7 @@
 .thumbnail-list li.active { background-color:#aad6f4; border:1px solid #aad6f4; }
 .thumbnail-list li span { display:block; font-size:0.8em; }
 .thumbnail-list li img { max-width:100%; height: auto; max-height:250px;}
+.thumbnail-list li h3 { font-size:1em; }
 .thumbnail-list li .lowResWarning,
 .thumbnail-list li .badParameterWarning { font-style: italic; color:#990000;}
 

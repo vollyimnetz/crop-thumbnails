@@ -1,2 +1,15 @@
 .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
 .cpt_settings_submit { margin-top:2em; }
+
+.cropThumbnailModal.ui-dialog { padding:0; border-radius: 0; border:0; }
+
+/*dialog headline*/
+.cropThumbnailModal.ui-dialog .ui-dialog-title { font-size:13px; font-family:'Open Sans', sans-serif; margin: 0; padding:0 29px 0 10px; line-height: 29px; }
+.cropThumbnailModal.ui-dialog .ui-dialog-titlebar { padding:0; border:0; height: 29px; border-bottom:1px solid #DFDFDF; border-radius: 0; }
+.cropThumbnailModal.ui-dialog .ui-button.ui-dialog-titlebar-close { width: 29px; height: 29px; margin: 0; }
+.cropThumbnailModal.ui-dialog .ui-button.ui-dialog-titlebar-close:before { line-height: 29px; }
+.cropThumbnailModal.ui-dialog .ui-dialog-titlebar-close span { display: none; }
+
+/*dialog content*/
+.cropThumbnailModal.ui-dialog .ui-dialog-content { padding:0; overflow: hidden; }
+.cropThumbnailModal.ui-dialog .ui-dialog-content iframe { width:100%; height: 100%; }
