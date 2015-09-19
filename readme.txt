@@ -8,14 +8,18 @@ Stable tag: trunk
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-"Crop Thumbnails" made it easy to get exacly that specific image-detail you want to show. Crop your images the simple way.
+"Crop Thumbnails" made it easy to get exacly that specific image-detail you want to show in the automatic cropped post-thumbnails.
 
 == Description ==
 
-The plugin enhance functionality to crop your thumbnails individuell and simple. It add links on backend to enter all images you had attached to a post, page or custom-post.
+The plugin enhance functionality to crop your automatic cropped post-thumbnails individuell and simple. It add links in the backend to enter all images you had attached to a post, page or custom-post.
 In the Crop-Editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
-It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
+The plugin targets advanced users and theme-developers.
+
+Further Features
+* It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
+* You could provide your users a custom style for the Editor-Window.
 
 == Installation ==
 
@@ -47,7 +51,7 @@ Refresh or Update the editor page.
 Note that the image in the featured-image box will only be a preview, to show what image is choosed. The theme defines what image-size is used on the front-end.
 
 = Is it possible to crop an non-cropped image-size? =
-Currently not.
+No. You should 
 
 = Is it possible to adjust the css-style of the crop-thumbnail window? =
 Yes, for a simple test, copy the css/cpt-window.css file into your template_directory and make some change.
@@ -59,6 +63,14 @@ function myCustomStyle($content) {
 	return $content;
 }`
 
+= I have show the cropped image in the backend in an custom meta-box. It does not update after the modal-dialog closed. Is there a way to fix this =
+Yeah, there is a way. After the crop-thumbnails-modal closed it triggeres a javascript event on the body element. You could use jQuery to cache-break your cropped thumbnail (in backend-view).
+The event called "cropThumbnailModalClosed". The plugin also provides a global function that could be called (only in post-edit-view and mediathek) to do the cache-break.
+Example-Code:
+`$('body').on('cropThumbnailModalClosed',function() {
+	CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
+});`
+
 == Screenshots ==
 
 1. You have access to Crop-Thumbnails on post / page / custom-post-types.
@@ -68,6 +80,12 @@ function myCustomStyle($content) {
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+
+= 0.10.0 =
+* refactoring some parts of the code to make it more modular
+* adding a cache breaker to the backend, so in post-view and mediathek the image should be refreshed after the modal-dialog closes
+* provide a javascript-event ('cropThumbnailModalClosed') after the modal is closed (see F.A.Q. for details)
+
 = 0.9.0 =
 * add crop-thumbnail-button to the default attachement-screens so i could accessed better
 * change modal-dialog from thickbox to ui-dialog
