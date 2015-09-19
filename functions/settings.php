@@ -241,13 +241,19 @@ class CropThumbnailsSettings {
 	 *                       array[<sizename>]['height'] = int
 	 *                       array[<sizename>]['width'] = int
 	 *                       array[<sizename>]['crop'] = boolean
+	 *                       array[<sizename>]['name'] = string --> readable name if provided in "image_size_names_choose", else sizename
 	 * </pre>
 	 */
 	function getImageSizes() {
 		global $_wp_additional_image_sizes;//array with the available image sizes
-		$tmp_sizes = get_intermediate_image_sizes();
+		$tmp_sizes = array_flip(get_intermediate_image_sizes());
+		foreach($tmp_sizes as $key=>$value) {
+			$tmp_sizes[$key] = $key;
+		}
+		$tmp_sizes = apply_filters( 'image_size_names_choose', $tmp_sizes );
+		
 		$sizes = array();
-		foreach( $tmp_sizes as $_size ) {
+		foreach( $tmp_sizes as $_size=>$theName ) {
 
 			if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
 				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
@@ -260,6 +266,7 @@ class CropThumbnailsSettings {
 					'crop'   => (bool) $_wp_additional_image_sizes[ $_size ]['crop']
 				);
 			}
+			$sizes[ $_size ]['name'] = $theName;
 		}
 		return $sizes;
 	}

@@ -15,8 +15,6 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 The plugin enhance functionality to crop your automatic cropped post-thumbnails individuell and simple. It add links in the backend to enter all images you had attached to a post, page or custom-post.
 In the Crop-Editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
-The plugin targets advanced users and theme-developers.
-
 Further Features
 * It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
 * You could provide your users a custom style for the Editor-Window.
@@ -51,7 +49,9 @@ Refresh or Update the editor page.
 Note that the image in the featured-image box will only be a preview, to show what image is choosed. The theme defines what image-size is used on the front-end.
 
 = Is it possible to crop an non-cropped image-size? =
-No. You should 
+No. The purpose of this plugin is to provide control for the wordpress automatic crop. If you want to crop let's say the full-size image you should
+* a) upload it in a better format in the first place
+* OR b) use the Standard Wordpress-Image editor to crop the image.
 
 = Is it possible to adjust the css-style of the crop-thumbnail window? =
 Yes, for a simple test, copy the css/cpt-window.css file into your template_directory and make some change.
@@ -85,6 +85,7 @@ Example-Code:
 * refactoring some parts of the code to make it more modular
 * adding a cache breaker to the backend, so in post-view and mediathek the image should be refreshed after the modal-dialog closes
 * provide a javascript-event ('cropThumbnailModalClosed') after the modal is closed (see F.A.Q. for details)
+* provide the human-readable Name of the Crop-Size (if available), using the "image_size_names_choose" filter
 
 = 0.9.0 =
 * add crop-thumbnail-button to the default attachement-screens so i could accessed better
