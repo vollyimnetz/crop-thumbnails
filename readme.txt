@@ -44,10 +44,6 @@ You can use the built in installer and upgrader, or you can install the plugin m
 = I have cropped the image but the old one is used on the page. =
 If you had viewed your image on the site before, your browser has cached the image. Go tell them to reload the fresh image from the server by hitting "F5".
 
-= I have cropped the image but in the featured-image box in the editor the croped version dont show up =
-Refresh or Update the editor page.
-Note that the image in the featured-image box will only be a preview, to show what image is choosed. The theme defines what image-size is used on the front-end.
-
 = Is it possible to crop an non-cropped image-size? =
 No. The purpose of this plugin is to provide control for the wordpress automatic crop. If you want to crop let's say the full-size image you should
 * a) upload it in a better format in the first place
@@ -61,6 +57,16 @@ Then add this code into the functions.php of your template.
 function myCustomStyle($content) {
 	$content = get_bloginfo('template_directory').'/cpt-window.css';
 	return $content;
+}`
+
+= Can i make the modal-dialog fullscreen? =
+Yes, i added a filter with some settings for the modal-dialog, so you can adjust the size:
+`add_filter('crop_thumbnails_modal_window_settings','crop_thumbnails_modal_window_settings_override');
+function crop_thumbnails_modal_window_settings_override($param) {
+	$param['limitToWidth'] = false; //You may set a number, then thats the maximum width the modal can be. On small screens it will be smaller (see offsets). Set to FALSE if you want no limit.
+	$param['maxWidthOffset'] = 0; //window-width minus "width_offset" equals modal-width
+	$param['maxHeightOffset'] = 0; //window-width minus "height_offset" equals modal-height
+	return $param;
 }`
 
 = I have show the cropped image in the backend in an custom meta-box. It does not update after the modal-dialog closed. Is there a way to fix this =
@@ -86,6 +92,8 @@ Example-Code:
 * adding a cache breaker to the backend, so in post-view and mediathek the image should be refreshed after the modal-dialog closes
 * provide a javascript-event ('cropThumbnailModalClosed') after the modal is closed (see F.A.Q. for details)
 * provide the human-readable Name of the Crop-Size (if available), using the "image_size_names_choose" filter
+* provide some size settings for the modal-dialog - via filter "crop_thumbnails_modal_window_settings"
+* mini language update
 
 = 0.9.0 =
 * add crop-thumbnail-button to the default attachement-screens so i could accessed better

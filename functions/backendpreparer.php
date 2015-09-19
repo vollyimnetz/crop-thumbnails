@@ -146,13 +146,35 @@ jQuery(document).ready(function($) {
 	 */
 	$(document).on('click', '.cropThumbnailBox', function(e) {
 		e.preventDefault();
+		
+		<?php
+		/*****************************************************************************/
+		/**
+		 * Theme-Developers can adjust the size of the modal-dialog via filter.
+		 */
+		$modal_window_settings = array(
+			'limitToWidth' => 800, //thats the maximum width the modal can be. On small screens it will be smaller (see offsets), set to FALSE if you want no limit
+			'maxWidthOffset' => 50, //window-width minus "width_offset" equals modal-width
+			'maxHeightOffset' => 100, //window-width minus "height_offset" equals modal-height
+		);
+		$modal_window_settings = apply_filters('crop_thumbnails_modal_window_settings',$modal_window_settings);
+		
+		$jsLimitOutput = '';
+		if($modal_window_settings['limitToWidth']!==false) {
+			$value = abs(intval($modal_window_settings['limitToWidth']));
+			
+			$jsLimitOutput.= 'if(boxViewportWidth>'.$value.') { boxViewportWidth = '.$value.'; }';
+		}
+		/*****************************************************************************/
+		?>
 
 		//modal-box dimensions (will not adjust on viewport change)
-		var boxViewportHeight = $(window).height() - 100;
-		var boxViewportWidth = $(window).width() - 50;
-		if(boxViewportWidth>800) {//do not want to have width bigger than 800 - maybe later, if i have refined the reponsive design
-			boxViewportWidth = 800;
-		}
+		var boxViewportHeight = $(window).height() - <?php echo abs(intval($modal_window_settings['maxHeightOffset'])); ?>;
+		var boxViewportWidth = window.outerWidth - <?php echo abs(intval($modal_window_settings['maxWidthOffset'])); ?>;
+		
+		<?php echo $jsLimitOutput; ?>
+	
+		
 
 		//get the data from the link
 		var data = $(this).data('cropthumbnail');
