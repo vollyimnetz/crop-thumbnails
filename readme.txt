@@ -78,6 +78,11 @@ Example-Code:
 	CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
 });`
 
+= I want to contribute code. =
+Fantastic, i published the code on github: https://github.com/vollyimnetz/crop-thumbnails. But be warned, i am carefully evaluate new features.
+
+If you fork and planning to publish the forked plugin, please contact me.
+
 == Screenshots ==
 
 1. You have access to Crop-Thumbnails on post / page / custom-post-types.
@@ -87,6 +92,9 @@ Example-Code:
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+
+= 0.10.1 =
+* small enhancement for developers: add the 'same_ratio_active' parameter in the ajax-request (https://wordpress.org/support/topic/return-same-ratio-daja-in-ajax-request)
 
 = 0.10.0 =
 * refactoring some parts of the code to make it more modular
