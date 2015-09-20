@@ -80,7 +80,8 @@ jQuery(document).ready(function($) {
 				cookie: encodeURIComponent(document.cookie),
 				selection: JSON.stringify(cropping.api.tellSelect()),
 				raw_values: JSON.stringify(cropping.img.data('values')),
-				active_values: JSON.stringify(active_array)
+				active_values: JSON.stringify(active_array),
+				same_ratio_active: $('#cpt-same-ratio').is('checked')
 			},
 			complete : function() {
 				$('.mainWindow').show();

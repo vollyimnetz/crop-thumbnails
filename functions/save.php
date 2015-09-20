@@ -13,6 +13,7 @@ class CptSaveThumbnail {
 	 *    * $_REQUEST['selection'] - json-object - data of the selection/crop
 	 *    * $_REQUEST['raw_values'] - json-object - data of the original image
 	 *    * $_REQUEST['active_values'] - json-array - array with data of the images to crop
+	 *    * $_REQUEST['same_ratio_active'] - boolean - was the same_ratio_checkbox checked or not
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
 	 * Called die() at the end. 
 	 */
