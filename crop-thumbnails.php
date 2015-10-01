@@ -6,6 +6,7 @@
  * Author URI: http://www.totalmedial.de
  * Version: 0.10.1
  * Description: Crop your thumbnails, the easy way.
+ * Text Domain: crop-thumbnails
  *
  * License: GPL v3
  * Copyright 2012  Volkmar Kantor  (email : info@totalmedial.de)
