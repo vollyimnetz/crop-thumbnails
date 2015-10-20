@@ -59,7 +59,7 @@ msgstr ""
 
 #: ../functions/editor.php:181
 msgid ""
-"Warning: the original image is to small to be cropped in good quality with "
+"Warning: the original image is too small to be cropped in good quality with "
 "this thumbnail-size."
 msgstr ""
 "Warung: das Original-Bild ist zu klein um es für diese Thumbnail-Größe in "
@@ -125,7 +125,7 @@ msgid "maximum"
 msgstr "Maximum"
 
 #: ../functions/editor.php:286
-msgid "Original image to small for good crop-quality!"
+msgid "Original image too small for good crop-quality!"
 msgstr "Original-Bild ist zu klein für guten Bildzuschnitt!"
 
 #: ../functions/editor.php:292

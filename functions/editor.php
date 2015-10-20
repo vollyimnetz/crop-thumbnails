@@ -178,7 +178,7 @@ class CropPostThumbnailsEditor {
 jQuery(document).ready(function($) {
 	cpt_lang = new Object();
 	cpt_lang['bug'] = "<?php _e('bug - this case shouldnt be happend',CROP_THUMBS_LANG);?>";
-	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is to small to be cropped in good quality with this thumbnail-size.',CROP_THUMBS_LANG);?>";
+	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is too small to be cropped in good quality with this thumbnail-size.',CROP_THUMBS_LANG);?>";
 	cpt_lang['selectOne'] = "<?php _e('First, select one image. Then, click once again.',CROP_THUMBS_LANG);?>";
 	cpt_ajax_nonce = "<?php echo wp_create_nonce($cptSettings->getNonceBase()); ?>";
 	cpt_debug_js = <?php echo (!empty($options['debug_js'])) ? 'true;' : 'false;'; ?>
@@ -283,7 +283,7 @@ jQuery(document).ready(function($) {
 
 								$_lowResWarning = '';
 								if($this->isLowRes($value,$orig_img)) {
-									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image to small for good crop-quality!',CROP_THUMBS_LANG).'</span>';
+									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image too small for good crop-quality!',CROP_THUMBS_LANG).'</span>';
 								}
 
 								?>
