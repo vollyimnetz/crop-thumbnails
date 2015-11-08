@@ -93,6 +93,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 
+= 0.10.2 =
+* make the modal-dialog more robust against css-overriding of other plugins
+
 = 0.10.1 =
 * small enhancement for developers: add the 'same_ratio_active' parameter in the ajax-request (https://wordpress.org/support/topic/return-same-ratio-daja-in-ajax-request)
 

@@ -221,16 +221,13 @@ jQuery(document).ready(function($) {
 				},
 				open : function(event, ui) {
 					overlay = $('.ui-widget-overlay.ui-front');
+					overlay.addClass('cropThumbnailModalOverlay');
 					overlay.click(function() {
 						content.dialog('close');
 					});
 
 					//add body class (disable the scrollbars)
 					$('body').addClass('modal-open');
-
-					//correct the z-index
-					$('.cropThumbnailModal').css('z-index','999999');
-					overlay.css('z-index','999998');
 				}
 			})
 			.dialog('open');
