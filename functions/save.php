@@ -103,7 +103,7 @@ class CptSaveThumbnail {
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[] = sprintf(__('Can\'t generate filesize "%s".',CROP_THUMBS_LANG),$_imageSize->name);
+					$_processing_error[] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$_imageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($_delete_old_file)) {
