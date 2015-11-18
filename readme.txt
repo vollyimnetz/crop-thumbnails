@@ -92,6 +92,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.10.3 =
+* small language adjustments
 
 = 0.10.2 =
 * make the modal-dialog more robust against css-overriding of other plugins
