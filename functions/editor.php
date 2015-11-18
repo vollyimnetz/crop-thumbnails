@@ -38,11 +38,11 @@ class CropPostThumbnailsEditor {
 						$_REQUEST['parent_post_id'] = intval($_REQUEST['image_by_post_id']);
 						$this->byImageId();
 					} else {
-						$failure_msg = '<div class="listEmptyMsg">'.__('No featured Image set for this post until now.',CROP_THUMBS_LANG).'</div>';
+						$failure_msg = '<div class="listEmptyMsg">'.__('No featured image set for this post until now.',CROP_THUMBS_LANG).'</div>';
 					}
 					break;
 				default:
-					$failure_msg = __('An error happend!',CROP_THUMBS_LANG);
+					$failure_msg = __('An error occurred!',CROP_THUMBS_LANG);
 					break;
 			}
 		}
@@ -77,7 +77,7 @@ class CropPostThumbnailsEditor {
 		if($this->shouldBeHiddenOnPostType($options,$parent_post_type)) {
 			 $cptContent = '<div class="postTypeDisabledMsg">'.__('Cropping is disabled for this post-type.',CROP_THUMBS_LANG).'</div>';
 		} elseif($data==false) {
-			$cptContent = '<div class="listEmptyMsg">'.__('No images in this post yet. You have to upload some via upload dialog.',CROP_THUMBS_LANG).'</div>';
+			$cptContent = '<div class="listEmptyMsg">'.__('No images attached to this post yet. Please upload some via the upload dialog.',CROP_THUMBS_LANG).'</div>';
 		} else {
 			//the dynamic javascript
 			ob_start(); ?>
@@ -177,9 +177,9 @@ class CropPostThumbnailsEditor {
 <script>
 jQuery(document).ready(function($) {
 	cpt_lang = new Object();
-	cpt_lang['bug'] = "<?php _e('bug - this case shouldnt be happend',CROP_THUMBS_LANG);?>";
-	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is to small to be cropped in good quality with this thumbnail-size.',CROP_THUMBS_LANG);?>";
-	cpt_lang['selectOne'] = "<?php _e('First, select one image. Then, click once again.',CROP_THUMBS_LANG);?>";
+	cpt_lang['bug'] = "<?php _e('Bug--this should not have occurred.',CROP_THUMBS_LANG);?>";
+	cpt_lang['warningOriginalToSmall'] = "<?php _e('Warning: the original image is too small to be cropped in good quality with this thumbnail size.',CROP_THUMBS_LANG);?>";
+	cpt_lang['selectOne'] = "<?php _e('First, select an image. Then, click once again.',CROP_THUMBS_LANG);?>";
 	cpt_ajax_nonce = "<?php echo wp_create_nonce($cptSettings->getNonceBase()); ?>";
 	cpt_debug_js = <?php echo (!empty($options['debug_js'])) ? 'true;' : 'false;'; ?>
 });
@@ -206,23 +206,23 @@ jQuery(document).ready(function($) {
 		<?php else : ?>
 
 		<div class="cpt-crop-view">
-			<?php if($headline) :?><div class="header"><a class="back" href="<?php echo admin_url( 'admin-ajax.php'); ?>?action=croppostthumb_ajax&post_id=<?php echo $current_parent_post_id; ?>"><?php _e('back to image-list',CROP_THUMBS_LANG); ?></a></div><?php endif; ?>
-			<div class="waitingWindow hidden"><?php _e('Please wait until the Images are cropped.',CROP_THUMBS_LANG); ?></div>
+			<?php if($headline) :?><div class="header"><a class="back" href="<?php echo admin_url( 'admin-ajax.php'); ?>?action=croppostthumb_ajax&post_id=<?php echo $current_parent_post_id; ?>"><?php _e('back to image list',CROP_THUMBS_LANG); ?></a></div><?php endif; ?>
+			<div class="waitingWindow hidden"><?php _e('Please wait until the images are cropped.',CROP_THUMBS_LANG); ?></div>
 			<div class="mainWindow">
 				<div class="selectionArea cptLeftPane">
 					<h3><?php _e('Raw',CROP_THUMBS_LANG); ?>: <?php echo $orig_img[1].' '.__('pixel',CROP_THUMBS_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CROP_THUMBS_LANG) ?> (<?php echo $orig_img['print_ratio']; ?>)</h3>
 					<img src="<?php echo $orig_img[0]?>" data-values='{"id":<?php echo $image_obj->ID; ?>,"parentId":<?php echo $post_id_attached ?>,"width":<?php echo $orig_img[1]?>,"height":<?php echo $orig_img[2] ?>}' />
-					<button id="cpt-generate" class="button"><?php _e('save crop',CROP_THUMBS_LANG);?></button>
-					<h4><?php _e('Quick-Instructions',CROP_THUMBS_LANG);?></h4>
+					<button id="cpt-generate" class="button"><?php _e('Save Crop',CROP_THUMBS_LANG);?></button>
+					<h4><?php _e('Quick Instructions',CROP_THUMBS_LANG);?></h4>
 					<ul class="step-info">
 						<li><?php _e('Step 1: Choose an image from the right.',CROP_THUMBS_LANG); ?></li>
-						<li><?php _e('Step 2: Use the mouse change the size of the rectangle on the image above.',CROP_THUMBS_LANG); ?></li>
-						<li><?php _e('Step 3: Click on "save crop".',CROP_THUMBS_LANG); ?></li>
+						<li><?php _e('Step 2: Use your mouse to change the size of the rectangle on the image above.',CROP_THUMBS_LANG); ?></li>
+						<li><?php _e('Step 3: Click on "Save Crop".',CROP_THUMBS_LANG); ?></li>
 					</ul>
 				</div>
 				<div class="cptRightPane">
 					<input type="checkbox" name="cpt-same-ratio" value="1" id="cpt-same-ratio" checked="checked" />
-					<label for="cpt-same-ratio" class="lbl-cpt-same-ratio"><?php _e('select images with same ratio at once',CROP_THUMBS_LANG); ?></label>
+					<label for="cpt-same-ratio" class="lbl-cpt-same-ratio"><?php _e('Crop all images with same ratio at once',CROP_THUMBS_LANG); ?></label>
 					<button id="cpt-deselect" class="button"><?php _e('deselect all',CROP_THUMBS_LANG); ?></button>
 					<ul class="thumbnail-list">
 						<?php
@@ -283,7 +283,7 @@ jQuery(document).ready(function($) {
 
 								$_lowResWarning = '';
 								if($this->isLowRes($value,$orig_img)) {
-									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image to small for good crop-quality!',CROP_THUMBS_LANG).'</span>';
+									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image size too small for good crop quality!',CROP_THUMBS_LANG).'</span>';
 								}
 
 								?>

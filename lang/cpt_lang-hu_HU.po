@@ -2,223 +2,246 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-03 14:35+0100\n"
-"PO-Revision-Date: 2013-07-09 08:40+0100\n"
+"POT-Creation-Date: 2015-11-18 22:26+0100\n"
+"PO-Revision-Date: 2015-11-18 22:26+0100\n"
 "Last-Translator: Volkmar Kantor <volkmar.kantor@gmx.de>\n"
 "Language-Team: \n"
+"Language: hu_HU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_attr__;esc_html_e\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.7.6\n"
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../crop-thumbnails.php:35
 msgid "Crop your thumbnails, the easy way."
 msgstr "Tökéletes kisképek, egyszerűen!"
 
-#: ../functions/editor.php:23 ../functions/editor.php:43
-msgid "An error happend!"
-msgstr "Ajaj! Hiba történt."
+#: ../functions/backendpreparer.php:84 ../functions/backendpreparer.php:87
+msgid "Crop Thumbnails"
+msgstr "Kiskép szerkesztő"
 
-#: ../functions/editor.php:39
-msgid "No featured Image set for this post until now."
+#: ../functions/backendpreparer.php:98 ../functions/backendpreparer.php:101
+msgid "Crop Featured Image"
+msgstr "Kiemeltkép vágása"
+
+#: ../functions/backendpreparer.php:127 ../functions/backendpreparer.php:130
+#: ../functions/backendpreparer.php:252
+msgid "Crop Thumbnail"
+msgstr "Kiskép vágása"
+
+#: ../functions/editor.php:25
+msgid "You are not allowed to do this."
+msgstr ""
+
+#: ../functions/editor.php:41
+msgid "No featured image set for this post until now."
 msgstr "Ehhez a bejegyzéshez még nincs kiemelt kép beállítva"
 
-#: ../functions/editor.php:75 ../functions/editor.php:187
+#: ../functions/editor.php:45
+msgid "An error occurred!"
+msgstr "Ajaj! Hiba történt."
+
+#: ../functions/editor.php:78 ../functions/editor.php:204
 msgid "Cropping is disabled for this post-type."
 msgstr "Ajaj! Képvágáshoz nincs jogosultságod ebben a bejegyzéstípusban."
 
-#: ../functions/editor.php:77
-msgid "No images in this post yet. You have to upload some via upload dialog."
+#: ../functions/editor.php:80
+msgid ""
+"No images attached to this post yet. Please upload some via the upload "
+"dialog."
 msgstr ""
 "Ehhez a bejegyzéshez nincs még feltöltött kép. Fel kellene tölteni párat."
 
-#: ../functions/editor.php:98
+#: ../functions/editor.php:101
 msgid "Choose the image you want to crop."
 msgstr "Válasz egy képet a vágáshoz."
 
-#: ../functions/editor.php:104
+#: ../functions/editor.php:107
 msgid "Post Thumbnail"
 msgstr "Kiemelt kép"
 
-#: ../functions/editor.php:104
+#: ../functions/editor.php:107
 #, php-format
 msgid "Image %d"
 msgstr "(?)Kép %d"
 
-#: ../functions/editor.php:164
-msgid "bug - this case shouldnt be happend"
+#: ../functions/editor.php:180
+msgid "Bug--this should not have occurred."
 msgstr "Program hiba! Ennek elvileg nem kellett volna megtörténnie."
 
-#: ../functions/editor.php:165
+#: ../functions/editor.php:181
 msgid ""
-"Warning: the original image is to small to be cropped in good quality with "
-"this thumbnail-size."
+"Warning: the original image is too small to be cropped in good quality with "
+"this thumbnail size."
 msgstr ""
 "Hiba! Az eredeti kép túl kicsi a minőségvesztés nélküli átméretezéshez."
 
-#: ../functions/editor.php:166
-msgid "First, select one image. Then, click once again."
+#: ../functions/editor.php:182
+msgid "First, select an image. Then, click once again."
 msgstr "Válaszd ki a vágandó képet és kattints rá kétszer."
 
-#: ../functions/editor.php:192
-msgid "back to image-list"
+#: ../functions/editor.php:209
+msgid "back to image list"
 msgstr "Vissza a képlistához"
 
-#: ../functions/editor.php:193
-msgid "Please wait until the Images are cropped."
+#: ../functions/editor.php:210
+msgid "Please wait until the images are cropped."
 msgstr "Átméretezés... pár pillanat és kész."
 
-#: ../functions/editor.php:196
+#: ../functions/editor.php:213
 msgid "Raw"
 msgstr "(nemtudni)Nyers/Eredeti"
 
-#: ../functions/editor.php:196 ../functions/editor.php:237
+#: ../functions/editor.php:213 ../functions/editor.php:279
 msgid "pixel"
 msgstr "pixel"
 
-#: ../functions/editor.php:198
-msgid "save crop"
+#: ../functions/editor.php:215
+msgid "Save Crop"
 msgstr "Vágás kész!"
 
-#: ../functions/editor.php:199
-msgid "Quick-Instructions"
+#: ../functions/editor.php:216
+msgid "Quick Instructions"
 msgstr "Gyorstalpaló"
 
-#: ../functions/editor.php:201
+#: ../functions/editor.php:218
 msgid "Step 1: Choose an image from the right."
 msgstr "1. Lépés: Válaszd ki a képet a jobboldalon."
 
-#: ../functions/editor.php:202
+#: ../functions/editor.php:219
 msgid ""
-"Step 2: Use the mouse change the size of the rectangle on the image above."
+"Step 2: Use your mouse to change the size of the rectangle on the image "
+"above."
 msgstr ""
 "2. Lépés: Az egérrel állítsd be a kijelölés méretét és pozícióját a fennti "
 "képen."
 
-#: ../functions/editor.php:203
-msgid "Step 3: Click on \"save crop\"."
+#: ../functions/editor.php:220
+msgid "Step 3: Click on \"Save Crop\"."
 msgstr "3. Lépés: Kattints a \"Vágás kész!\" gombra."
 
-#: ../functions/editor.php:208
-msgid "select images with same ratio at once"
+#: ../functions/editor.php:225
+msgid "Crop all images with same ratio at once"
 msgstr "Azonos méretarányú képek kiválasztása"
 
-#: ../functions/editor.php:209
+#: ../functions/editor.php:226
 msgid "deselect all"
 msgstr "Kijelölés törlése"
 
-#: ../functions/editor.php:221
+#: ../functions/editor.php:262
 msgid "cropped"
 msgstr "vágott"
 
-#: ../functions/editor.php:231
-msgid "Original image to small for good crop-quality!"
+#: ../functions/editor.php:271
+msgid "maximum"
+msgstr ""
+
+#: ../functions/editor.php:286
+msgid "Original image size too small for good crop quality!"
 msgstr "Az eredeti kép túl kicsi a jó minőségű átméretezéshez!"
 
-#: ../functions/editor.php:237
+#: ../functions/editor.php:292
 msgid "Dimensions:"
 msgstr "Méretek:"
 
-#: ../functions/editor.php:238
+#: ../functions/editor.php:293
 msgid "Ratio:"
 msgstr "Méretarány:"
 
-#: ../functions/editor.php:421
-msgid "Crop Thumbnails"
-msgstr "Kiskép szerkesztő"
-
-#: ../functions/editor.php:425
-msgid "Crop Featured Image"
-msgstr "Kiemeltkép vágása"
-
-#: ../functions/editor.php:439
-msgid "Crop Thumbnail"
-msgstr "Kiskép vágása"
-
-#: ../functions/save.php:95
+#: ../functions/save.php:106
 #, php-format
-msgid "Cant generate filesize \"%s\"."
-msgstr "Nemtudom legenerálni a fájlméretet: \"%s\"."
+msgid "Can't generate filesize '%s'."
+msgstr "Nemtudom legenerálni a fájlméretet: '%s'."
 
-#: ../functions/save.php:102
-msgid "Cant copy temporary file to media-library."
+#: ../functions/save.php:113
+msgid "Can't copy temporary file to media library."
 msgstr "Nem tudom átmásolni az ideiglenes fájlt a médiatárba."
 
-#: ../functions/save.php:106
-msgid "Cant delete temporary file."
+#: ../functions/save.php:117
+msgid "Can't delete temporary file."
 msgstr "Nem tudom törölni az ideiglenes fájlt."
 
-#: ../functions/save.php:172
+#: ../functions/save.php:205
 msgid "ERROR: Security Check failed (maybe a timeout - please try again)."
 msgstr ""
 "Hiba! A biztonsági ellenőrzés meghiúsult (talán időtúllépés miatt - próbáld "
 "újra)"
 
-#: ../functions/save.php:176
-msgid "ERROR: Submitted data are not complete."
+#: ../functions/save.php:209
+msgid "ERROR: Submitted data is incomplete."
 msgstr "Hiba! Az elküldött adatok hiányosak."
 
-#: ../functions/save.php:184
-msgid "A cropping with this dimensions on these Image ist not possible."
+#: ../functions/save.php:217
+msgid "Cropping to these dimensions on this image is not possible."
 msgstr "Ajaj! Ezt a képet nem lehet a megadott méretre vágni."
 
-#: ../functions/save.php:195
-msgid "ERROR: Can`t find original Image in Database!"
+#: ../functions/save.php:228
+msgid "ERROR: Can't find original image in database!"
 msgstr "Hiba! Nem találom az eredeti képet az adatbázisban!"
 
-#: ../functions/save.php:198
-msgid "ERROR: Can`t find original Imagefile!"
+#: ../functions/save.php:231
+msgid "ERROR: Can't find original image file!"
 msgstr "Hiba! Nem találom az eredeti képet a tárhelyen!"
 
-#: ../functions/save.php:201
-msgid "ERROR: Can`t find original Image-Metadata!"
+#: ../functions/save.php:234
+msgid "ERROR: Can't find original image metadata!"
 msgstr "Hiba! Nem találom az eredeti képinformációkat."
 
-#: ../functions/settings.php:16 ../functions/settings.php:30
+#: ../functions/settings.php:24 ../functions/settings.php:38
 msgid "Settings"
 msgstr "Beállítások"
 
-#: ../functions/settings.php:23
+#: ../functions/settings.php:31
 msgid "Crop Post Thumbnail Page"
 msgstr "Kisképvágó oldal"
 
-#: ../functions/settings.php:35
+#: ../functions/settings.php:44
 msgid "Save Changes"
 msgstr "Módosítások mentése"
 
-#: ../functions/settings.php:39
-msgid "Support the plugin-author"
+#: ../functions/settings.php:49
+msgid "Support the plugin author"
 msgstr "Támogasd a bővitmény készítőjét"
 
-#: ../functions/settings.php:40
+#: ../functions/settings.php:50
 msgid ""
-"You can support the plugin-author <br />(and let him know you love this "
+"You can support the plugin author <br />(and let him know you love this "
 "plugin) <br />by donating via Paypal. Thanks a lot!"
 msgstr ""
 "Támogathatod a bővitmény készítőjét <br /> (Így tudatva vele, hogy tetszik "
 "ez a bővítmény) <br /> azzal, ha adományozol Paypalon. Köszönjük!"
 
-#: ../functions/settings.php:60
-msgid "Sizes and Posttypes"
+#: ../functions/settings.php:72
+msgid "Sizes and Post Types"
 msgstr "Méretek és bejegyzés típusok"
 
-#: ../functions/settings.php:61
-msgid ""
-"Choose the image-sizes you want to hide. Choose a post-type to prevent any "
-"use of the plugin for these entries."
+#: ../functions/settings.php:73
+msgid "Choose the image size options you want to hide for each post type."
 msgstr ""
 "Válaszd ki a képméreteket amiket nem szerkeszthetnek, vagy letilthatod az "
 "egész bejegyzés típusra is a képvágást."
 
-#: ../functions/settings.php:66
+#: ../functions/settings.php:81
+msgid "Developer Settings"
+msgstr ""
+
+#: ../functions/settings.php:83
+msgid "Enable JS-Debug."
+msgstr ""
+
+#: ../functions/settings.php:85
+msgid "Enable Data-Debug."
+msgstr ""
+
+#: ../functions/settings.php:90
 msgid ""
-"Crop-Thumbnails is created to make cropping easy for the user. Often times "
-"the user only need to crop one, in dependence of the post-type. But the "
-"system will create also all other sizes. So, here you can select for what "
-"post-type what sizes should be visible in the plugin interface."
+"Crop-Thumbnails is designed to make cropping images easy. For some post "
+"types, not all crop sizes are needed, but the plugin will automatically "
+"create all the crop sizes. Here you can select which crop sizes are "
+"available in the cropping interface for each post type.."
 msgstr ""
 "A Crop-Thumbnails Plugin azzal a céllal készült, hogy kicsit kibővítse a "
 "WordPress amúgy remek képkezelőjét. Bár a rendszer a feltöltött képeket "
@@ -227,10 +250,36 @@ msgstr ""
 "automatikus vágás. Ezzel a bővítménnyel beállíthatjuk, hogy a felhasználók "
 "mely méreteken és/ vagy bejegyzési típusoknál használhatják."
 
-#: ../functions/settings.php:67
+#: ../functions/settings.php:91
 msgid ""
-"Crop-Thumbnails will only show croped images - sizes with no crop will "
+"Crop-Thumbnails will only show cropped images. Sizes with no crop will "
 "always be hidden."
 msgstr ""
 "A Képvágó mindíg a vágott méreteket mutatja. Az eredeti \"nyers\" nyers "
 "képeket nem."
+
+#: ../functions/settings.php:149
+msgid ""
+"ATTENTION: be aware that you can break things, when you activate this. When "
+"activated your are able to cut those images to a spezific dimension that are "
+"not cropped. The name of the image will not change. You should be extra "
+"carefull when:"
+msgstr ""
+
+#: ../functions/settings.php:151
+msgid ""
+"you had inserted the image before on any page or post. (There may be height "
+"and width stored directly in the page-content.)"
+msgstr ""
+
+#: ../functions/settings.php:152
+msgid ""
+"you use a plugin that expect the original image size. (The original image-"
+"size is also \"stored\" in the filename.)"
+msgstr ""
+
+#: ../functions/settings.php:154
+msgid ""
+"The \"full\" image-size will never be cropped, otherwise you are not able to "
+"restore any image-size."
+msgstr ""
