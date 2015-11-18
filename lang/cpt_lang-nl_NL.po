@@ -23,11 +23,11 @@ msgid "You are not allowed to do this."
 msgstr "Je hebt geen toestemming dit te doen."
 
 #: ../functions/editor.php:41
-msgid "No featured Image set for this post until now."
+msgid "No featured image set for this post until now."
 msgstr "Er is nog geen Uitgelichte afbeelding ingesteld tot nu toe."
 
 #: ../functions/editor.php:45
-msgid "An error happend!"
+msgid "An error occurred!"
 msgstr "Er heeft een error plaatsgevonden!"
 
 #: ../functions/editor.php:78 ../functions/editor.php:204
@@ -35,7 +35,7 @@ msgid "Cropping is disabled for this post-type."
 msgstr "Bijsnijden is uitgeschakeld voor dit berichttype."
 
 #: ../functions/editor.php:80
-msgid "No images in this post yet. You have to upload some via upload dialog."
+msgid "No images attached to this post yet. Please upload some via the upload dialog."
 msgstr ""
 "Er zijn nog geen afbeeldingen in dit bericht. Je kunt afbeeldingen uploaden "
 "via het upload scherm."
@@ -54,27 +54,27 @@ msgid "Image %d"
 msgstr "Afbeelding %d"
 
 #: ../functions/editor.php:180
-msgid "bug - this case shouldnt be happend"
+msgid "Bug--this should not have occurred."
 msgstr "Bug - Dit zou niet plaatsgevonden moeten hebben."
 
 #: ../functions/editor.php:181
 msgid ""
-"Warning: the original image is to small to be cropped in good quality with "
-"this thumbnail-size."
+"Warning: the original image is too small to be cropped in good quality with "
+"this thumbnail size."
 msgstr ""
 "Waarschuwing: de originele afbeelding is te klein om met behoud van "
 "kwaliteit bijgesneden te kunnen worden tot deze grootte."
 
 #: ../functions/editor.php:182
-msgid "First, select one image. Then, click once again."
+msgid "First, select an image. Then, click once again."
 msgstr "Selecteer eerst een afbeelding. Klik vervolgens opnieuw."
 
 #: ../functions/editor.php:209
-msgid "back to image-list"
+msgid "back to image list"
 msgstr "Keer terug naar de lijst met afbeeldingen"
 
 #: ../functions/editor.php:210
-msgid "Please wait until the Images are cropped."
+msgid "Please wait until the images are cropped."
 msgstr "Wacht a.u.b. tot de afbeeldingen zijn bijgesneden."
 
 #: ../functions/editor.php:213
@@ -86,11 +86,11 @@ msgid "pixel"
 msgstr "pixels"
 
 #: ../functions/editor.php:215
-msgid "save crop"
+msgid "Save Crop"
 msgstr "Bijgesneden afbeelding opslaan"
 
 #: ../functions/editor.php:216
-msgid "Quick-Instructions"
+msgid "Quick Instructions"
 msgstr "Korte instructie"
 
 #: ../functions/editor.php:218
@@ -99,17 +99,17 @@ msgstr "Stap 1: Kies een afbeelding aan de rechterkant van dit scherm."
 
 #: ../functions/editor.php:219
 msgid ""
-"Step 2: Use the mouse change the size of the rectangle on the image above."
+"Step 2: Use your mouse to change the size of the rectangle on the image above."
 msgstr ""
 "Stap 2: Gebruik de muis om de grootte van de rechthoek in de afbeelding "
 "hierboven aan te passen."
 
 #: ../functions/editor.php:220
-msgid "Step 3: Click on \"save crop\"."
+msgid "Step 3: Click on \"Save Crop\"."
 msgstr "Stap 3: Klik op \"bijgesneden afbeelding opslaan\"."
 
 #: ../functions/editor.php:225
-msgid "select images with same ratio at once"
+msgid "Crop all images with same ratio at once"
 msgstr "Selecteer afbeeldingen met eenzelfde aspect-ratio tegelijkertijd"
 
 #: ../functions/editor.php:226
@@ -125,7 +125,7 @@ msgid "maximum"
 msgstr "Maximum"
 
 #: ../functions/editor.php:286
-msgid "Original image to small for good crop-quality!"
+msgid "Original image size too small for good crop quality!"
 msgstr ""
 "De originele afbeelding is te klein om met goede kwaliteit bij te snijden!"
 
@@ -155,12 +155,12 @@ msgid "Cant generate filesize \"%s\"."
 msgstr "Kan de bestandsgrootte \"%s\" niet aanmaken."
 
 #: ../functions/save.php:112
-msgid "Cant copy temporary file to media-library."
+msgid "Can't copy temporary file to media library."
 msgstr ""
 "Het tijdelijke bestand kan niet gekopieerd worden naar de mediabibliotheek."
 
 #: ../functions/save.php:116
-msgid "Cant delete temporary file."
+msgid "Can't delete temporary file."
 msgstr "Het tijdelijke bestand kan niet verwijderd worden."
 
 #: ../functions/save.php:204
@@ -170,25 +170,25 @@ msgstr ""
 "het opnieuw)."
 
 #: ../functions/save.php:208
-msgid "ERROR: Submitted data are not complete."
+msgid "ERROR: Submitted data is incomplete."
 msgstr "ERROR: Toegevoegde data is niet volledig!"
 
 #: ../functions/save.php:216
-msgid "A cropping with this dimensions on these Image ist not possible."
+msgid "Cropping to these dimensions on this image is not possible."
 msgstr ""
 "Het bijsnijden met deze afmetingen is niet mogelijk bij deze afbeelding."
 
 #: ../functions/save.php:227
-msgid "ERROR: Can`t find original Image in Database!"
+msgid "ERROR: Can't find original image in database!"
 msgstr ""
 "ERROR: De originele afbeelding kan niet in de database gevonden worden!"
 
 #: ../functions/save.php:230
-msgid "ERROR: Can`t find original Imagefile!"
+msgid "ERROR: Can't find original image file!"
 msgstr "ERROR: De originele afbeelding kan niet gevonden worden!"
 
 #: ../functions/save.php:233
-msgid "ERROR: Can`t find original Image-Metadata!"
+msgid "ERROR: Can't find original image metadata!"
 msgstr ""
 "ERROR: De originele metadata van de de afbeelding kunnen niet gevonden "
 "worden!"
@@ -206,25 +206,25 @@ msgid "Save Changes"
 msgstr "Sla veranderingen op"
 
 #: ../functions/settings.php:49
-msgid "Support the plugin-author"
+msgid "Support the plugin author"
 msgstr "Ondersteun de pluginontwikkelaar"
 
 #: ../functions/settings.php:50
 msgid ""
-"You can support the plugin-author <br />(and let him know you love this "
+"You can support the plugin author <br />(and let him know you love this "
 "plugin) <br />by donating via Paypal. Thanks a lot!"
 msgstr ""
 "Je kunt de pluginontwikkelaar ondersteunen <br /> (en hem laten weten dat je "
 "deze plugin gaaf vindt) <br /> door te doneren via Paypal. Alvast bedankt!"
 
 #: ../functions/settings.php:72
-msgid "Sizes and Posttypes"
+msgid "Sizes and Post Types"
 msgstr "Afbeeldingsgroottes en berichttypes"
 
 #: ../functions/settings.php:73
 msgid ""
-"Choose the image-sizes you want to hide. Choose a post-type to prevent any "
-"use of the plugin for these entries."
+"Choose the image size options you want to hide for each post type. "
+
 msgstr ""
 "Kies de afbeeldingsgroottes die je wilt verbergen. Kies een berichttype om "
 "elk gebruik van de plugin daarbij te voorkomen."
@@ -243,10 +243,10 @@ msgstr "Zet Data-Debug aan."
 
 #: ../functions/settings.php:90
 msgid ""
-"Crop-Thumbnails is created to make cropping easy for the user. Often times "
-"the user only need to crop one, in dependence of the post-type. But the "
-"system will create also all other sizes. So, here you can select for what "
-"post-type what sizes should be visible in the plugin interface."
+"Crop-Thumbnails is designed to make cropping images easy. For some post types, "
+"not all crop sizes are needed, but the "
+"plugin will automatically create all the crop sizes. Here you can select which crop sizes "
+"are available in the cropping interface for each post type.."
 msgstr ""
 "Crop-Thumbnails is gemaakt om het bijsnijden van afbeeldingen makkelijker te "
 "maken voor de gebruiker. Het komt vaak voor dat de gebruiker slechts naar "
@@ -257,7 +257,7 @@ msgstr ""
 
 #: ../functions/settings.php:91
 msgid ""
-"Crop-Thumbnails will only show croped images - sizes with no crop will "
+"Crop-Thumbnails will only show cropped images. Sizes with no crop will "
 "always be hidden."
 msgstr ""
 "Crop-Thumbnails laat alleen bijgesneden afbeeldingen zien. Afbeeldingen die "

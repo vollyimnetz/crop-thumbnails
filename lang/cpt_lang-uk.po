@@ -21,11 +21,11 @@ msgid "Crop your thumbnails, the easy way."
 msgstr "Обрізайте мініатюри простим методом."
 
 #: ../functions/editor.php:23 ../functions/editor.php:43
-msgid "An error happend!"
+msgid "An error occurred!"
 msgstr "Виникла помилка!"
 
 #: ../functions/editor.php:39
-msgid "No featured Image set for this post until now."
+msgid "No featured image set for this post until now."
 msgstr ""
 
 #: ../functions/editor.php:75 ../functions/editor.php:187
@@ -33,7 +33,7 @@ msgid "Cropping is disabled for this post-type."
 msgstr "Обрізання картинок вимкнене для цього типу матеріалу."
 
 #: ../functions/editor.php:77
-msgid "No images in this post yet. You have to upload some via upload dialog."
+msgid "No images attached to this post yet. Please upload some via the upload dialog."
 msgstr ""
 
 #: ../functions/editor.php:98
@@ -50,25 +50,25 @@ msgid "Image %d"
 msgstr ""
 
 #: ../functions/editor.php:164
-msgid "bug - this case shouldnt be happend"
+msgid "Bug--this should not have occurred."
 msgstr ""
 
 #: ../functions/editor.php:165
 msgid ""
-"Warning: the original image is to small to be cropped in good quality with "
-"this thumbnail-size."
+"Warning: the original image is too small to be cropped in good quality with "
+"this thumbnail size."
 msgstr ""
 
 #: ../functions/editor.php:166
-msgid "First, select one image. Then, click once again."
+msgid "First, select an image. Then, click once again."
 msgstr "Спочатку виберіть справа зображення. Потім натисніть кнопку ще раз."
 
 #: ../functions/editor.php:192
-msgid "back to image-list"
+msgid "back to image list"
 msgstr ""
 
 #: ../functions/editor.php:193
-msgid "Please wait until the Images are cropped."
+msgid "Please wait until the images are cropped."
 msgstr "Будь ласка, зачекайте. Триває обробка зображення."
 
 #: ../functions/editor.php:196
@@ -80,11 +80,11 @@ msgid "pixel"
 msgstr "пікселів"
 
 #: ../functions/editor.php:198
-msgid "save crop"
+msgid "Save Crop"
 msgstr "Обрізати"
 
 #: ../functions/editor.php:199
-msgid "Quick-Instructions"
+msgid "Quick Instructions"
 msgstr "Коротка інструкція"
 
 #: ../functions/editor.php:201
@@ -93,15 +93,15 @@ msgstr "1) Оберіть розмір зображення справа."
 
 #: ../functions/editor.php:202
 msgid ""
-"Step 2: Use the mouse change the size of the rectangle on the image above."
+"Step 2: Use your mouse to change the size of the rectangle on the image above."
 msgstr "2) Переміщуйте виділену область, яку слід залишити на картинці."
 
 #: ../functions/editor.php:203
-msgid "Step 3: Click on \"save crop\"."
+msgid "Step 3: Click on \"Save Crop\"."
 msgstr "3) Натисніть кнопку «Обрізати»."
 
 #: ../functions/editor.php:208
-msgid "select images with same ratio at once"
+msgid "Crop all images with same ratio at once"
 msgstr "Одразу виділити область з потрібними пропорціями"
 
 #: ../functions/editor.php:209
@@ -113,7 +113,7 @@ msgid "cropped"
 msgstr "обрізано"
 
 #: ../functions/editor.php:231
-msgid "Original image to small for good crop-quality!"
+msgid "Original image size too small for good crop quality!"
 msgstr ""
 
 #: ../functions/editor.php:237
@@ -142,11 +142,11 @@ msgid "Cant generate filesize \"%s\"."
 msgstr ""
 
 #: ../functions/save.php:102
-msgid "Cant copy temporary file to media-library."
+msgid "Can't copy temporary file to media library."
 msgstr "Неможливо скопіювати тимчасовий файл до медіа-бібліотеки."
 
 #: ../functions/save.php:106
-msgid "Cant delete temporary file."
+msgid "Can't delete temporary file."
 msgstr "Неможливо видалити тимчасовий файл."
 
 #: ../functions/save.php:172
@@ -154,23 +154,23 @@ msgid "ERROR: Security Check failed (maybe a timeout - please try again)."
 msgstr ""
 
 #: ../functions/save.php:176
-msgid "ERROR: Submitted data are not complete."
+msgid "ERROR: Submitted data is incomplete."
 msgstr ""
 
 #: ../functions/save.php:184
-msgid "A cropping with this dimensions on these Image ist not possible."
+msgid "Cropping to these dimensions on this image is not possible."
 msgstr "Неможливо обрізати це зображення з такими розмірами."
 
 #: ../functions/save.php:195
-msgid "ERROR: Can`t find original Image in Database!"
+msgid "ERROR: Can't find original image in database!"
 msgstr ""
 
 #: ../functions/save.php:198
-msgid "ERROR: Can`t find original Imagefile!"
+msgid "ERROR: Can't find original image file!"
 msgstr ""
 
 #: ../functions/save.php:201
-msgid "ERROR: Can`t find original Image-Metadata!"
+msgid "ERROR: Can't find original image metadata!"
 msgstr ""
 
 #: ../functions/settings.php:16 ../functions/settings.php:30
@@ -186,35 +186,35 @@ msgid "Save Changes"
 msgstr "Зберегти зміни"
 
 #: ../functions/settings.php:39
-msgid "Support the plugin-author"
+msgid "Support the plugin author"
 msgstr "Підтримайте розробника плаґіну"
 
 #: ../functions/settings.php:40
 msgid ""
-"You can support the plugin-author <br />(and let him know you love this "
+"You can support the plugin author <br />(and let him know you love this "
 "plugin) <br />by donating via Paypal. Thanks a lot!"
 msgstr ""
 "Ви можете підтримати розвиток плаґіну<br /> переказавши кошти автору через "
 "Paypal."
 
 #: ../functions/settings.php:60
-msgid "Sizes and Posttypes"
+msgid "Sizes and Post Types"
 msgstr "Розміри і типи матеріалів"
 
 #: ../functions/settings.php:61
 msgid ""
-"Choose the image-sizes you want to hide. Choose a post-type to prevent any "
-"use of the plugin for these entries."
+"Choose the image size options you want to hide for each post type. "
+
 msgstr ""
 "Виберіть розміри картинок, які Ви хочете приховати. Також можете вказати "
 "типи матеріалів, де слід заборонити обрізання картинок."
 
 #: ../functions/settings.php:66
 msgid ""
-"Crop-Thumbnails is created to make cropping easy for the user. Often times "
-"the user only need to crop one, in dependence of the post-type. But the "
-"system will create also all other sizes. So, here you can select for what "
-"post-type what sizes should be visible in the plugin interface."
+"Crop-Thumbnails is designed to make cropping images easy. For some post types, "
+"not all crop sizes are needed, but the "
+"plugin will automatically create all the crop sizes. Here you can select which crop sizes "
+"are available in the cropping interface for each post type.."
 msgstr ""
 "Цей плаґін створенно, щоб Ви могли легко і зручно обрізати зображення. Можна "
 "вказати для яких типів матеріалів дозволити обрізання картинок, а також які "
@@ -222,6 +222,6 @@ msgstr ""
 
 #: ../functions/settings.php:67
 msgid ""
-"Crop-Thumbnails will only show croped images - sizes with no crop will "
+"Crop-Thumbnails will only show cropped images. Sizes with no crop will "
 "always be hidden."
 msgstr "Ті розміри зображень, які Ви не дозволили обрізати — буде приховано."

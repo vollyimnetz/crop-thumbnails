@@ -26,11 +26,11 @@ msgstr "Cortando suas miniaturas de uma maneira mais simples"
 # @ cpt_lang
 #: functions/editor.php:23
 #: functions/editor.php:43
-msgid "An error happend!"
+msgid "An error occurred!"
 msgstr "Ocorreu um erro!"
 
 #: functions/editor.php:39
-msgid "No featured Image set for this post until now."
+msgid "No featured image set for this post until now."
 msgstr "Sem Imagem Destacada definida para este post até o momento."
 
 # @ cpt_lang
@@ -41,7 +41,7 @@ msgstr "O corte está desativado para este tipo de post."
 
 # @ cpt_lang
 #: functions/editor.php:77
-msgid "No images in this post yet. You have to upload some via upload dialog."
+msgid "No images attached to this post yet. Please upload some via the upload dialog."
 msgstr "Não há imagens neste post ainda. Você tem que carregar alguma através da caixa de diálogo de upload."
 
 # @ cpt_lang
@@ -62,27 +62,27 @@ msgstr "Imagem %d"
 
 # @ cpt_lang
 #: functions/editor.php:164
-msgid "bug - this case shouldnt be happend"
+msgid "Bug--this should not have occurred."
 msgstr "bug - isso não devia ter acontececido"
 
 # @ cpt_lang
 #: functions/editor.php:165
-msgid "Warning: the original image is to small to be cropped in good quality with this thumbnail-size."
+msgid "Warning: the original image is too small to be cropped in good quality with this thumbnail size."
 msgstr "Atenção: a imagem original é muito pequena para ser cortada em boa qualidade neste tamanho de miniatura."
 
 # @ cpt_lang
 #: functions/editor.php:166
-msgid "First, select one image. Then, click once again."
+msgid "First, select an image. Then, click once again."
 msgstr "Primeiro, selecione uma imagem. Em seguida, clique novamente."
 
 # @ cpt_lang
 #: functions/editor.php:192
-msgid "back to image-list"
+msgid "back to image list"
 msgstr "volte a lista de imagens"
 
 # @ cpt_lang
 #: functions/editor.php:193
-msgid "Please wait until the Images are cropped."
+msgid "Please wait until the images are cropped."
 msgstr "Por favor, aguarde até que as imagens sejam cortadas."
 
 # @ cpt_lang
@@ -98,12 +98,12 @@ msgstr "pixel"
 
 # @ cpt_lang
 #: functions/editor.php:198
-msgid "save crop"
+msgid "Save Crop"
 msgstr "Cortar e Salvar"
 
 # @ cpt_lang
 #: functions/editor.php:199
-msgid "Quick-Instructions"
+msgid "Quick Instructions"
 msgstr "Instruções Rápidas"
 
 # @ cpt_lang
@@ -113,17 +113,17 @@ msgstr "Passo 1: Escolha uma imagem à direita."
 
 # @ cpt_lang
 #: functions/editor.php:202
-msgid "Step 2: Use the mouse change the size of the rectangle on the image above."
+msgid "Step 2: Use your mouse to change the size of the rectangle on the image above."
 msgstr "Passo 2: Use o mouse para alterar o tamanho do retângulo na imagem acima."
 
 # @ cpt_lang
 #: functions/editor.php:203
-msgid "Step 3: Click on \"save crop\"."
+msgid "Step 3: Click on \"Save Crop\"."
 msgstr "Passo 3: Clique em \"Cortar e Salvar\"."
 
 # @ cpt_lang
 #: functions/editor.php:208
-msgid "select images with same ratio at once"
+msgid "Crop all images with same ratio at once"
 msgstr "Selecionar imagens com mesma proporção de uma só vez"
 
 # @ cpt_lang
@@ -138,7 +138,7 @@ msgstr "Cortadas"
 
 # @ cpt_lang
 #: functions/editor.php:231
-msgid "Original image to small for good crop-quality!"
+msgid "Original image size too small for good crop quality!"
 msgstr "Imagem original muito pequena para um corte de qualidade!"
 
 # @ cpt_lang
@@ -173,12 +173,12 @@ msgstr "Não é possível gerar o tamanho \"%s\"."
 
 # @ cpt_lang
 #: functions/save.php:102
-msgid "Cant copy temporary file to media-library."
+msgid "Can't copy temporary file to media library."
 msgstr "Não é possível copiar arquivo temporário para a biblioteca de mídia."
 
 # @ cpt_lang
 #: functions/save.php:106
-msgid "Cant delete temporary file."
+msgid "Can't delete temporary file."
 msgstr "Não é possível excluir arquivo temporário."
 
 # @ cpt_lang
@@ -188,27 +188,27 @@ msgstr "ERRO: Verificação de Segurança falhou (talvez pelo tempo limite ter s
 
 # @ cpt_lang
 #: functions/save.php:176
-msgid "ERROR: Submitted data are not complete."
+msgid "ERROR: Submitted data is incomplete."
 msgstr "ERRO: Dados enviados não estão completos."
 
 # @ cpt_lang
 #: functions/save.php:184
-msgid "A cropping with this dimensions on these Image ist not possible."
+msgid "Cropping to these dimensions on this image is not possible."
 msgstr "Um corte com estas dimensões sobre esta imagem não é possível."
 
 # @ cpt_lang
 #: functions/save.php:195
-msgid "ERROR: Can`t find original Image in Database!"
+msgid "ERROR: Can't find original image in database!"
 msgstr "ERRO: Não é possível localizar a imagem original no banco de dados!"
 
 # @ cpt_lang
 #: functions/save.php:198
-msgid "ERROR: Can`t find original Imagefile!"
+msgid "ERROR: Can't find original image file!"
 msgstr "ERRO: Não é possível encontrar arquivo de imagem original!"
 
 # @ cpt_lang
 #: functions/save.php:201
-msgid "ERROR: Can`t find original Image-Metadata!"
+msgid "ERROR: Can't find original image metadata!"
 msgstr "ERRO: Não é possível encontrar os metadados da imagem original!"
 
 # @ cpt_lang
@@ -229,31 +229,31 @@ msgstr "Salvar Mudanças"
 
 # @ cpt_lang
 #: functions/settings.php:39
-msgid "Support the plugin-author"
+msgid "Support the plugin author"
 msgstr "Apoiar o autor do plugin"
 
 # @ cpt_lang
 #: functions/settings.php:40
-msgid "You can support the plugin-author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!"
+msgid "You can support the plugin author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!"
 msgstr "Você pode apoiar o autor do plugin <br />(e deixá-lo saber que você ama este plugin)<br /> doando via Paypal. Muito obrigado!"
 
 # @ cpt_lang
 #: functions/settings.php:60
-msgid "Sizes and Posttypes"
+msgid "Sizes and Post Types"
 msgstr "Tamanhos e Tipos de Post"
 
 # @ cpt_lang
 #: functions/settings.php:61
-msgid "Choose the image-sizes you want to hide. Choose a post-type to prevent any use of the plugin for these entries."
+msgid "Choose the image size options you want to hide for each post type."
 msgstr "Escolha os tamanhos de imagem que você deseja esconder. Escolha um tipo de post para evitar qualquer uso do plugin para essas entradas."
 
 # @ cpt_lang
 #: functions/settings.php:66
-msgid "Crop-Thumbnails is created to make cropping easy for the user. Often times the user only need to crop one, in dependence of the post-type. But the system will create also all other sizes. So, here you can select for what post-type what sizes should be visible in the plugin interface."
+msgid "Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type.."
 msgstr "Crop-Thumbnails é criado para fazer recorte fácil para o usuário. Muitas vezes o utilizador necessita somente de um recorte, pois depende dele em seu post. Mas o sistema irá criar também todos os outros tamanhos. Então, aqui você pode selecionar para que as miniaturas de seu post sejam visíveis na interface do plugin."
 
 # @ cpt_lang
 #: functions/settings.php:67
-msgid "Crop-Thumbnails will only show croped images - sizes with no crop will always be hidden."
+msgid "Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden."
 msgstr "Crop-Thumbnails só irá mostrar imagens cortadas - tamanhos sem cortes serão sempre escondidos."
 

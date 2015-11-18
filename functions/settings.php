@@ -46,8 +46,8 @@ class CropThumbnailsSettings {
 			</form>
 
 			<div class="<?php echo $this->cssPrefix; ?>paypal">
-				<h3><?php _e('Support the plugin-author',CROP_THUMBS_LANG) ?></h3>
-				<p><?php _e('You can support the plugin-author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!',CROP_THUMBS_LANG); ?></p>
+				<h3><?php _e('Support the plugin author',CROP_THUMBS_LANG) ?></h3>
+				<p><?php _e('You can support the plugin author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!',CROP_THUMBS_LANG); ?></p>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 					<input type="hidden" name="cmd" value="_donations">
 					<input type="hidden" name="business" value="volkmar.kantor@gmx.de">
@@ -69,8 +69,8 @@ class CropThumbnailsSettings {
 		register_setting( $this->uniqeSettingsId, $this->optionsKey, array($this,'validateSettings') );
 
 		$_sectionID = 'choose_sizes_section';
-		add_settings_section($_sectionID, __('Sizes and Posttypes',CROP_THUMBS_LANG), array($this,'sectionDescriptionChooseSizes'), 'page1');
-		add_settings_field('sizes', __('Choose the image-sizes you want to hide. Choose a post-type to prevent any use of the plugin for these entries.',CROP_THUMBS_LANG), array($this,'callback_choose_size'), 'page1', $_sectionID);
+		add_settings_section($_sectionID, __('Sizes and Post Types',CROP_THUMBS_LANG), array($this,'sectionDescriptionChooseSizes'), 'page1');
+		add_settings_field('sizes', __('Choose the image size options you want to hide for each post type.',CROP_THUMBS_LANG), array($this,'callback_choose_size'), 'page1', $_sectionID);
 		/*
 		$_sectionID = 'experimental';
 		add_settings_section($_sectionID, __('Experimental Settings',CROP_THUMBS_LANG), array($this,'emptySectionDescription'), 'page1');
@@ -87,8 +87,8 @@ class CropThumbnailsSettings {
 
 	function sectionDescriptionChooseSizes() {?>
 		<p>
-			<?php _e('Crop-Thumbnails is created to make cropping easy for the user. Often times the user only need to crop one, in dependence of the post-type. But the system will create also all other sizes. So, here you can select for what post-type what sizes should be visible in the plugin interface.',CROP_THUMBS_LANG) ?>
-			<br /><strong><?php _e('Crop-Thumbnails will only show croped images - sizes with no crop will always be hidden.',CROP_THUMBS_LANG); ?></strong>
+			<?php _e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..',CROP_THUMBS_LANG) ?>
+			<br /><strong><?php _e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.',CROP_THUMBS_LANG); ?></strong>
 		</p>
 		<?php
 	}
