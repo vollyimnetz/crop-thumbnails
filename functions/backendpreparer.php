@@ -124,10 +124,10 @@ jQuery(document).ready(function($) {
 				var buttonContent = '';
 				buttonContent+= '<a ';
 				buttonContent+= 'class="cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' ';
-				buttonContent+= 'title="<?php esc_attr_e('Crop Thumbnail',CROP_THUMBS_LANG) ?>"';
+				buttonContent+= 'title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>"';
 				buttonContent+= '>';
 				buttonContent+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
-				buttonContent+= '<?php esc_html_e('Crop Thumbnail',CROP_THUMBS_LANG); ?>';
+				buttonContent+= '<?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
 				buttonContent+= '</a>';
 
 
@@ -249,12 +249,12 @@ jQuery(document).ready(function($) {
 		if(in_array($post->post_mime_type,$this->allowedMime)) {
 			$html = '';
 			$html.= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' ';
-			$html.= 'title="'.esc_attr__('Crop Thumbnail',CROP_THUMBS_LANG).'">';
-			$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Thumbnail',CROP_THUMBS_LANG);
+			$html.= 'title="'.esc_attr__('Crop Featured Image',CROP_THUMBS_LANG).'">';
+			$html.= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>'.esc_html__('Crop Featured Image',CROP_THUMBS_LANG);
 			$html.= '</a>';
 
 			$form_fields['cropthumbnails'] = array(
-				'label' => '<small>Crop Thumbnails</small>',//no i18n cause it should be obvious what plugin is used here
+				'label' => '&nbsp;',
 				'input' => 'html',
 				'html' => $html
 			);
