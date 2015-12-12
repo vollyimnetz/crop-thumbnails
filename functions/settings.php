@@ -3,7 +3,7 @@ class CropThumbnailsSettings {
 	private $uniqeSettingsId = 'cpt-settings';
 	private $optionsKey = 'crop-post-thumbs';
 	private $cssPrefix = 'cpt_settings_';
-	private $standardSizes = array('thumbnail','medium','large');
+	private $defaultSizes = array('thumbnail','medium','medium_large','large');
 
 	function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
@@ -255,7 +255,7 @@ class CropThumbnailsSettings {
 		$sizes = array();
 		foreach( $tmp_sizes as $_size=>$theName ) {
 
-			if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+			if ( in_array( $_size, $this->defaultSizes ) ) {
 				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
 				$sizes[ $_size ]['height'] = intval(get_option( $_size . '_size_h' ));
 				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );

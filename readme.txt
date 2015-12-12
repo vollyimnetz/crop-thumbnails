@@ -94,6 +94,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 == Changelog ==
 = 0.10.4 =
 * i18n of the button in the image-media-view changed
+* add 'medium_large' size to (intern) default-sizes
 
 = 0.10.3 =
 * small language adjustments
