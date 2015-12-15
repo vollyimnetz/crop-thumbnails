@@ -103,6 +103,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.10.6 =
+* improve the bugfix of 0.10.5 (sorry for that)
+
 = 0.10.5 =
 * bugfix: proper handling of non latin characters in filenames
 

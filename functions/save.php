@@ -249,11 +249,11 @@ class CptSaveThumbnail {
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];
-		$name = wp_basename($file, ".$ext");
-		$suffix = "{$w}x{$h}";
-		$destfilename = "{$dir}/{$name}-{$suffix}.{$ext}";
+		$name = wp_basename($file, '.'.$ext);
+		$suffix = $w.'x'.$h;
+		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
 		
-		return html_entity_decode($destfilename);
+		return $destfilename;
 	}
 }
 ?>
