@@ -285,13 +285,23 @@ jQuery(document).ready(function($) {
 								if($this->isLowRes($value,$orig_img)) {
 									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image size too small for good crop quality!',CROP_THUMBS_LANG).'</span>';
 								}
+								
+								$jsonDataValues = array(
+									'name' => $img_size_name,
+									'width' => $value['width'],
+									'height' => $value['height'],
+									'ratio' => $ratio,
+									'crop' => $crop
+								);
+								$jsonDataValues = apply_filters('crop_thumbnails_editor_jsonDataValues', $jsonDataValues);
+								$print_ratio = apply_filters('crop_thumbnails_editor_printratio', $print_ratio, $img_size_name);
 
 								?>
 								<li rel="<?php echo $print_ratio; ?>">
 									<strong title="<?php esc_attr_e($img_size_name) ?>"><?php echo $value['name'] ?><?php echo $_lowResWarning; ?></strong><?php echo $special_warning; ?>
 									<span class="dimensions"><?php _e('Dimensions:',CROP_THUMBS_LANG) ?> <?php echo $print_dimensions; ?></span>
 									<span class="ratio"><?php _e('Ratio:',CROP_THUMBS_LANG) ?> <?php echo $print_ratio; ?></span>
-									<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='{"name":"<?php echo $img_size_name; ?>","width":<?php echo $value['width']; ?>,"height":<?php echo $value['height']; ?>,"ratio":<?php echo number_format($ratio, 13, '.', ''); ?>,"crop":<?php echo $crop ?>}' />
+									<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values="<?php esc_attr_e(json_encode($jsonDataValues)); ?>" />
 								</li>
 							<?php endif; ?>
 						<?php endforeach; ?>

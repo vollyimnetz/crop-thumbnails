@@ -60,6 +60,17 @@ function myCustomStyle($content) {
 	return $content;
 }`
 
+= I have two image-sizes that have nearly the same ratio. I want to make use of the feature "Crop all images with same ratio at once", but cause the ratios are slightly different they wont be selected together.
+You can add the following filter in the functions.php of your theme to adjust the ratio of one or more specified image-sizes.
+CAUTION: use only when the ratios are really close.
+`add_filter( 'crop_thumbnails_editor_printratio', 'my_crop_thumbnails_editor_printratio', 10, 2);
+function my_crop_thumbnails_editor_printratio( $printRatio, $imageSizeName) {
+	if($imageSizeName === 'strange-image-ratio') {
+		$printRatio = '4:3';//do override ratio
+	}
+	return $printRatio;
+}`
+
 = Can i make the modal-dialog fullscreen? =
 Yes, i added a filter with some settings for the modal-dialog, so you can adjust the size:
 `add_filter('crop_thumbnails_modal_window_settings','crop_thumbnails_modal_window_settings_override');
@@ -97,6 +108,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 * add 'medium_large' size to (intern) default-sizes
 * add action-hook 'crop_thumbnails_after_save_new_thumb' after save the new thumbnail
 * add filter-hook 'crop_thumbnails_before_update_metadata' before update metadata
+* add filter-hook 'crop_thumbnails_editor_jsonDataValues' in the editor, to adjust dataValues
+* add filter-hook 'crop_thumbnails_editor_printratio' in the editor (see F.A.Q. for details of usage)
 
 = 0.10.3 =
 * small language adjustments

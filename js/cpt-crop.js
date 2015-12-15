@@ -162,8 +162,7 @@ jQuery(document).ready(function($) {
 				ratio = img_data.ratio;//initial
 			}
 			if(ratio != img_data.ratio) {
-				//alert(cpt_lang['bug']);
-				//TODO: test if this is still needed
+				console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+img_data.name+'".');
 			}
 
 			//we only need to check in one dimension, cause per definition all selected images have to use the same ratio
