@@ -253,7 +253,7 @@ class CptSaveThumbnail {
 		$suffix = "{$w}x{$h}";
 		$destfilename = "{$dir}/{$name}-{$suffix}.{$ext}";
 		
-		return $destfilename;
+		return html_entity_decode($destfilename);
 	}
 }
 ?>

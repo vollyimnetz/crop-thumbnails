@@ -103,6 +103,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.10.5 =
+* bugfix: proper handling of non latin characters in filenames
+
 = 0.10.4 =
 * i18n of the button in the image-media-view changed
 * add 'medium_large' size to (intern) default-sizes (fix notice)
