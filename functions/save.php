@@ -15,7 +15,7 @@ class CptSaveThumbnail {
 	 *    * $_REQUEST['active_values'] - json-array - array with data of the images to crop
 	 *    * $_REQUEST['same_ratio_active'] - boolean - was the same_ratio_checkbox checked or not
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
-	 * Called die() at the end. 
+	 * Called die() at the end.
 	 */
 	function saveThumbnail() {
 		global $cptSettings;
@@ -73,8 +73,6 @@ class CptSaveThumbnail {
 					}
 				}
 				
-				
-				
 				$_filepath = $this->generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
 				$_filepath_info = pathinfo($_filepath);
 				$_tmp_filepath = $tmp_dir.$_filepath_info['basename'];
@@ -129,14 +127,18 @@ class CptSaveThumbnail {
 						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
 					}
 					$post_metadata['sizes'][$_imageSize->name] = $_new_meta;
+					
+					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
+					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $_imageSize->name, $_new_meta );
 				} else {
 					$this->addDebug('error on '.$_filepath_info['basename']);
 					$this->addDebug(implode(' | ',$_processing_error));
 				}
-			}
+			}//END foreach
 			
 			//we have to update the posts metadate
 			//otherwise new sizes will not be updated
+			$post_metadata = apply_filters('crop_thumbnails_before_update_metadata', $post_metadata, $obj->ID);
 			wp_update_attachment_metadata( $obj->ID, $post_metadata);
 			
 			//generate result;

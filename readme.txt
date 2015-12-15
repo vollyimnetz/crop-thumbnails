@@ -95,6 +95,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 = 0.10.4 =
 * i18n of the button in the image-media-view changed
 * add 'medium_large' size to (intern) default-sizes
+* add action-hook 'crop_thumbnails_after_save_new_thumb' after save the new thumbnail
+* add filter-hook 'crop_thumbnails_before_update_metadata' before update metadata
 
 = 0.10.3 =
 * small language adjustments
