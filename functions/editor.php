@@ -286,6 +286,8 @@ jQuery(document).ready(function($) {
 									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image size too small for good crop quality!',CROP_THUMBS_LANG).'</span>';
 								}
 								
+								$img_size_label = apply_filters( 'cpt_image_size_label', $value['name'], $value );
+
 								$jsonDataValues = array(
 									'name' => $img_size_name,
 									'width' => $value['width'],
@@ -298,7 +300,7 @@ jQuery(document).ready(function($) {
 
 								?>
 								<li rel="<?php echo $print_ratio; ?>">
-									<strong title="<?php esc_attr_e($img_size_name) ?>"><?php echo $value['name'] ?><?php echo $_lowResWarning; ?></strong><?php echo $special_warning; ?>
+									<strong title="<?php esc_attr_e($img_size_name) ?>"><?php echo esc_html( $img_size_label ); ?><?php echo $_lowResWarning; ?></strong><?php echo $special_warning; ?>
 									<span class="dimensions"><?php _e('Dimensions:',CROP_THUMBS_LANG) ?> <?php echo $print_dimensions; ?></span>
 									<span class="ratio"><?php _e('Ratio:',CROP_THUMBS_LANG) ?> <?php echo $print_ratio; ?></span>
 									<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values="<?php esc_attr_e(json_encode($jsonDataValues)); ?>" />
