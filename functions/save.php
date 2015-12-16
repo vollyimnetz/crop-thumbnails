@@ -8,13 +8,14 @@ class CptSaveThumbnail {
 	
 	/**
 	 * Handle-function called via ajax request.
-	 * Check and crop multiple Images. Update with wp_update_attachment_metadata if needed.
+	 * Check and crop multiple images. Update with wp_update_attachment_metadata if needed.
 	 * Input parameters:
 	 *    * $_REQUEST['selection'] - json-object - data of the selection/crop
 	 *    * $_REQUEST['raw_values'] - json-object - data of the original image
 	 *    * $_REQUEST['active_values'] - json-array - array with data of the images to crop
+	 *    * $_REQUEST['same_ratio_active'] - boolean - was the same_ratio_checkbox checked or not
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
-	 * Called die() at the end. 
+	 * Called die() at the end.
 	 */
 	function saveThumbnail() {
 		global $cptSettings;
@@ -47,8 +48,8 @@ class CptSaveThumbnail {
 			#$debug.= "\nsource:".$sourceImgPath."\n";
 			
 			/**
-			 * will be true if the image format issnt in the attachements metadata, 
-			 * and wordpress dont know about the image-file
+			 * will be true if the image format isn't in the attachements metadata, 
+			 * and Wordpress doesn't know about the image file
 			 */
 			$_changed_image_format = false;
 			$_processing_error = array();
@@ -57,7 +58,7 @@ class CptSaveThumbnail {
 				$this->addDebug(print_r($_imageSize,true));
 				$_delete_old_file = '';
 				if(!$this->isImageSizeValid($_imageSize,$dbImageSizes)) {
-					$this->addDebug("Image Size not valid.");
+					$this->addDebug("Image size not valid.");
 					continue;
 				}
 				if(empty($post_metadata['sizes'][$_imageSize->name])) {
@@ -71,8 +72,6 @@ class CptSaveThumbnail {
 						$_changed_image_format = true;		
 					}
 				}
-				
-				
 				
 				$_filepath = $this->generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
 				$_filepath_info = pathinfo($_filepath);
@@ -102,18 +101,18 @@ class CptSaveThumbnail {
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[] = sprintf(__('Cant generate filesize "%s".',CROP_THUMBS_LANG),$_imageSize->name);
+					$_processing_error[] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$_imageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($_delete_old_file)) {
 						@unlink($_filepath_info['dirname'].'/'.$_delete_old_file);
 					}
 					if(!@copy($result,$_filepath)) {
-						$_processing_error[] = sprintf(__('Cant copy temporary file to media-library.',CROP_THUMBS_LANG));
+						$_processing_error[] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
 						$_error = true;
 					}
 					if(!@unlink($result)) {
-						$_processing_error[] = sprintf(__('Cant delete temporary file.',CROP_THUMBS_LANG));
+						$_processing_error[] = sprintf(__("Can't delete temporary file.",CROP_THUMBS_LANG));
 						$_error = true;
 					}
 				}
@@ -128,16 +127,18 @@ class CptSaveThumbnail {
 						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
 					}
 					$post_metadata['sizes'][$_imageSize->name] = $_new_meta;
+					
 					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
-					do_action( 'cpt_save_new_thumb', $_full_filepath );					
+					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $_imageSize->name, $_new_meta );
 				} else {
 					$this->addDebug('error on '.$_filepath_info['basename']);
 					$this->addDebug(implode(' | ',$_processing_error));
 				}
-			}
+			}//END foreach
 			
 			//we have to update the posts metadate
 			//otherwise new sizes will not be updated
+			$post_metadata = apply_filters('crop_thumbnails_before_update_metadata', $post_metadata, $obj->ID);
 			wp_update_attachment_metadata( $obj->ID, $post_metadata);
 			
 			//generate result;
@@ -207,7 +208,7 @@ class CptSaveThumbnail {
 		}
 		
 		if(!isset($selection->x) || !isset($selection->y) || !isset($selection->x2) || !isset($selection->y2)) {
-			throw new Exception(__('ERROR: Submitted data are not complete.',CROP_THUMBS_LANG), 1);
+			throw new Exception(__('ERROR: Submitted data is incomplete.',CROP_THUMBS_LANG), 1);
 		}
 		$selection->x = intval($selection->x);
 		$selection->y = intval($selection->y);
@@ -215,7 +216,7 @@ class CptSaveThumbnail {
 		$selection->y2 = intval($selection->y2);
 		
 		if($selection->x < 0 || $selection->y < 0) {
-			throw new Exception(__('A cropping with this dimensions on these Image ist not possible.',CROP_THUMBS_LANG), 1);
+			throw new Exception(__('Cropping to these dimensions on this image is not possible.',CROP_THUMBS_LANG), 1);
 		}
 		
 		/**
@@ -226,13 +227,13 @@ class CptSaveThumbnail {
 		*/
 		
 		if(empty($obj)) {
-			throw new Exception(__('ERROR: Can`t find original Image in Database!',CROP_THUMBS_LANG), 1);
+			throw new Exception(__("ERROR: Can't find original image in database!",CROP_THUMBS_LANG), 1);
 		}
 		if(empty($sourceImgPath)) {
-			throw new Exception(__('ERROR: Can`t find original Imagefile!',CROP_THUMBS_LANG), 1);
+			throw new Exception(__("ERROR: Can't find original image file!",CROP_THUMBS_LANG), 1);
 		}
 		if(empty($post_metadata)) {
-			throw new Exception(__('ERROR: Can`t find original Image-Metadata!',CROP_THUMBS_LANG), 1);
+			throw new Exception(__("ERROR: Can't find original image metadata!",CROP_THUMBS_LANG), 1);
 		}
 	}
 
@@ -248,11 +249,10 @@ class CptSaveThumbnail {
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];
-		$name = wp_basename($file, ".$ext");
-		$suffix = "{$w}x{$h}";
-		$destfilename = "{$dir}/{$name}-{$suffix}.{$ext}";
+		$name = wp_basename($file, '.'.$ext);
+		$suffix = $w.'x'.$h;
+		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
 		
 		return $destfilename;
 	}
 }
-?>

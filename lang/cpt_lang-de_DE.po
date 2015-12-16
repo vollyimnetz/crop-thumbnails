@@ -2,32 +2,46 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-08 00:31+0100\n"
-"PO-Revision-Date: 2013-10-08 00:33+0100\n"
+"POT-Creation-Date: 2015-11-18 22:25+0100\n"
+"PO-Revision-Date: 2015-11-18 22:25+0100\n"
 "Last-Translator: Volkmar Kantor <volkmar.kantor@gmx.de>\n"
 "Language-Team: \n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: __;_e;esc_attr_e;esc_html_e;esc_html__\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.7.6\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../crop-thumbnails.php:34
+#: ../crop-thumbnails.php:35
 msgid "Crop your thumbnails, the easy way."
 msgstr "Zuschnitt ihrer Artikelbilder - einfach gemacht."
+
+#: ../functions/backendpreparer.php:84 ../functions/backendpreparer.php:87
+msgid "Crop Thumbnails"
+msgstr "Bilder Zuschneiden"
+
+#: ../functions/backendpreparer.php:98 ../functions/backendpreparer.php:101
+msgid "Crop Featured Image"
+msgstr "Artikelbild zuschneiden"
+
+#: ../functions/backendpreparer.php:127 ../functions/backendpreparer.php:130
+#: ../functions/backendpreparer.php:253
+msgid "Crop Thumbnail"
+msgstr "Bild zuschneiden"
 
 #: ../functions/editor.php:25
 msgid "You are not allowed to do this."
 msgstr "Sie haben keine Rechte diese Aktion auszuführen."
 
 #: ../functions/editor.php:41
-msgid "No featured Image set for this post until now."
+msgid "No featured image set for this post until now."
 msgstr "Bisher ist kein Artikelbild gesetzt worden."
 
 #: ../functions/editor.php:45
-msgid "An error happend!"
+msgid "An error occurred!"
 msgstr "Es ist ein Fehler aufgetretten!"
 
 #: ../functions/editor.php:78 ../functions/editor.php:204
@@ -35,7 +49,9 @@ msgid "Cropping is disabled for this post-type."
 msgstr "Das Zuschneiden ist für diesen Eintragstyp deaktiviert."
 
 #: ../functions/editor.php:80
-msgid "No images in this post yet. You have to upload some via upload dialog."
+msgid ""
+"No images attached to this post yet. Please upload some via the upload "
+"dialog."
 msgstr "Zu diesem Eintrag wurden bisher keine Bilder hinzugefügt."
 
 #: ../functions/editor.php:101
@@ -52,28 +68,28 @@ msgid "Image %d"
 msgstr "Bild %d"
 
 #: ../functions/editor.php:180
-msgid "bug - this case shouldnt be happend"
+msgid "Bug--this should not have occurred."
 msgstr ""
 "BUG - dieser Fall hätte nie eintretten drüfen - Plugin-Autor benachrichtigen."
 
 #: ../functions/editor.php:181
 msgid ""
-"Warning: the original image is to small to be cropped in good quality with "
-"this thumbnail-size."
+"Warning: the original image is too small to be cropped in good quality with "
+"this thumbnail size."
 msgstr ""
-"Warung: das Original-Bild ist zu klein um für diese Thumbnail-Größe es in "
+"Warung: das Original-Bild ist zu klein um es für diese Thumbnail-Größe in "
 "guter Qualität zuzuschneiden."
 
 #: ../functions/editor.php:182
-msgid "First, select one image. Then, click once again."
+msgid "First, select an image. Then, click once again."
 msgstr "Erst ein Bild auswählen, danach erneut probieren."
 
 #: ../functions/editor.php:209
-msgid "back to image-list"
+msgid "back to image list"
 msgstr "Zurück zur Bild-Übersicht"
 
 #: ../functions/editor.php:210
-msgid "Please wait until the Images are cropped."
+msgid "Please wait until the images are cropped."
 msgstr "Bitte warten Sie bis die Bilder zugeschnitten wurden."
 
 #: ../functions/editor.php:213
@@ -85,11 +101,11 @@ msgid "pixel"
 msgstr "Pixel"
 
 #: ../functions/editor.php:215
-msgid "save crop"
+msgid "Save Crop"
 msgstr "Zuschnitt übernehmen"
 
 #: ../functions/editor.php:216
-msgid "Quick-Instructions"
+msgid "Quick Instructions"
 msgstr "Schnell-Anleitung"
 
 #: ../functions/editor.php:218
@@ -98,17 +114,18 @@ msgstr "Schritt 1: Wählen Sie ein Bild von der rechten Seite."
 
 #: ../functions/editor.php:219
 msgid ""
-"Step 2: Use the mouse change the size of the rectangle on the image above."
+"Step 2: Use your mouse to change the size of the rectangle on the image "
+"above."
 msgstr ""
 "Schritt 2: Benutzen Sie die Maus um die Größe des Rechtecks im oberen Bild "
 "zu ändern."
 
 #: ../functions/editor.php:220
-msgid "Step 3: Click on \"save crop\"."
+msgid "Step 3: Click on \"Save Crop\"."
 msgstr "Schritt 3: Klicken Sie auf \"Zuschnitt übernehmen\"."
 
 #: ../functions/editor.php:225
-msgid "select images with same ratio at once"
+msgid "Crop all images with same ratio at once"
 msgstr "bei gleichem Seitenverhältnis gemeinsam auswählen"
 
 #: ../functions/editor.php:226
@@ -124,7 +141,7 @@ msgid "maximum"
 msgstr "Maximum"
 
 #: ../functions/editor.php:286
-msgid "Original image to small for good crop-quality!"
+msgid "Original image size too small for good crop quality!"
 msgstr "Original-Bild ist zu klein für guten Bildzuschnitt!"
 
 #: ../functions/editor.php:292
@@ -135,56 +152,44 @@ msgstr "Größe:"
 msgid "Ratio:"
 msgstr "Seitenverhältnis:"
 
-#: ../functions/editor.php:499
-msgid "Crop Thumbnails"
-msgstr "Bilder Zuschneiden"
-
-#: ../functions/editor.php:503
-msgid "Crop Featured Image"
-msgstr "Artikelbild zuschneiden"
-
-#: ../functions/editor.php:517
-msgid "Crop Thumbnail"
-msgstr "Bild zuschneiden"
-
-#: ../functions/save.php:105
+#: ../functions/save.php:106
 #, php-format
-msgid "Cant generate filesize \"%s\"."
-msgstr "Cant generate filesize \"%s\"."
+msgid "Can't generate filesize '%s'."
+msgstr "Die Bildgröße '%s' konnte nicht generiert werden."
 
-#: ../functions/save.php:112
-msgid "Cant copy temporary file to media-library."
+#: ../functions/save.php:113
+msgid "Can't copy temporary file to media library."
 msgstr "Kopieren vom temporären Verzeichnis in die Mediathek fehlgeschlagen."
 
-#: ../functions/save.php:116
-msgid "Cant delete temporary file."
+#: ../functions/save.php:117
+msgid "Can't delete temporary file."
 msgstr "Löschen der temporären Datei fehlgeschlagen."
 
-#: ../functions/save.php:204
+#: ../functions/save.php:205
 msgid "ERROR: Security Check failed (maybe a timeout - please try again)."
 msgstr ""
 "Fehler: Sicherheitsüberprüfung fehlgeschlagen (vielleicht eine "
 "Zeitüberschreitung - bitte versuchen Sie es noch einmal)."
 
-#: ../functions/save.php:208
-msgid "ERROR: Submitted data are not complete."
+#: ../functions/save.php:209
+msgid "ERROR: Submitted data is incomplete."
 msgstr "Fehler: Übermittelte Daten sind nicht vollständig."
 
-#: ../functions/save.php:216
-msgid "A cropping with this dimensions on these Image ist not possible."
+#: ../functions/save.php:217
+msgid "Cropping to these dimensions on this image is not possible."
 msgstr ""
 "Das Zuschneiden mit diesen Einstellungen ist bei diesem Bild nicht möglich."
 
-#: ../functions/save.php:227
-msgid "ERROR: Can`t find original Image in Database!"
+#: ../functions/save.php:228
+msgid "ERROR: Can't find original image in database!"
 msgstr "Fehler: Konnte die Original Bild nicht in der Datenbank finden!"
 
-#: ../functions/save.php:230
-msgid "ERROR: Can`t find original Imagefile!"
+#: ../functions/save.php:231
+msgid "ERROR: Can't find original image file!"
 msgstr "Fehler: Konnte die Original-Bilddatei nicht finden!"
 
-#: ../functions/save.php:233
-msgid "ERROR: Can`t find original Image-Metadata!"
+#: ../functions/save.php:234
+msgid "ERROR: Can't find original image metadata!"
 msgstr "Fehler: Konnte Original-Bild-Metadaten nicht finden!"
 
 #: ../functions/settings.php:24 ../functions/settings.php:38
@@ -200,12 +205,12 @@ msgid "Save Changes"
 msgstr "Einstellungen speichern"
 
 #: ../functions/settings.php:49
-msgid "Support the plugin-author"
+msgid "Support the plugin author"
 msgstr "Unterstützen Sie den Plugin Entwickler"
 
 #: ../functions/settings.php:50
 msgid ""
-"You can support the plugin-author <br />(and let him know you love this "
+"You can support the plugin author <br />(and let him know you love this "
 "plugin) <br />by donating via Paypal. Thanks a lot!"
 msgstr ""
 "Sie können den Entwickler unterstützen <br />(und ihn so wissen lassen, dass "
@@ -213,15 +218,13 @@ msgstr ""
 "lassen. <br />Vielen Dank!"
 
 #: ../functions/settings.php:72
-msgid "Sizes and Posttypes"
+msgid "Sizes and Post Types"
 msgstr "Größen und Eintragstypen"
 
 #: ../functions/settings.php:73
-msgid ""
-"Choose the image-sizes you want to hide. Choose a post-type to prevent any "
-"use of the plugin for these entries."
+msgid "Choose the image size options you want to hide for each post type."
 msgstr ""
-"Wählen sie die Bildgrößen die ausgeblendet werden sollen. Wählen Sie einen "
+"Wählen sie die Bildgrößen die ausgeblendet werden sollen. Wählen Sie  einen "
 "Eintragstyp um das Zuschneiden in diesen Einträge komplett zu verhindern."
 
 #: ../functions/settings.php:81
@@ -239,10 +242,10 @@ msgstr "Daten-Debug einschalten"
 
 #: ../functions/settings.php:90
 msgid ""
-"Crop-Thumbnails is created to make cropping easy for the user. Often times "
-"the user only need to crop one, in dependence of the post-type. But the "
-"system will create also all other sizes. So, here you can select for what "
-"post-type what sizes should be visible in the plugin interface."
+"Crop-Thumbnails is designed to make cropping images easy. For some post "
+"types, not all crop sizes are needed, but the plugin will automatically "
+"create all the crop sizes. Here you can select which crop sizes are "
+"available in the cropping interface for each post type.."
 msgstr ""
 "Crop Thumbnails wurde erstellt um das Zuschneiden von Bildern für den "
 "Benutzer zu erleichtern. Oft muss der Nutzer nur eine Bildgröße zuschneiden, "
@@ -252,13 +255,13 @@ msgstr ""
 
 #: ../functions/settings.php:91
 msgid ""
-"Crop-Thumbnails will only show croped images - sizes with no crop will "
+"Crop-Thumbnails will only show cropped images. Sizes with no crop will "
 "always be hidden."
 msgstr ""
 "Crop Thumbnails wird nur Bilder anzeigen die einen Zuschnitt besitzen. "
 "Bildgrößen ohne Zuschnitt werden immer ausgeblendet."
 
-#: ../functions/settings.php:146
+#: ../functions/settings.php:149
 msgid ""
 "ATTENTION: be aware that you can break things, when you activate this. When "
 "activated your are able to cut those images to a spezific dimension that are "
@@ -266,23 +269,32 @@ msgid ""
 "carefull when:"
 msgstr ""
 
-#: ../functions/settings.php:148
+#: ../functions/settings.php:151
 msgid ""
 "you had inserted the image before on any page or post. (There may be height "
 "and width stored directly in the page-content.)"
 msgstr ""
 
-#: ../functions/settings.php:149
+#: ../functions/settings.php:152
 msgid ""
 "you use a plugin that expect the original image size. (The original image-"
 "size is also \"stored\" in the filename.)"
 msgstr ""
 
-#: ../functions/settings.php:151
+#: ../functions/settings.php:154
 msgid ""
 "The \"full\" image-size will never be cropped, otherwise you are not able to "
 "restore any image-size."
 msgstr ""
+
+#~ msgid "Cant generate filesize \"%s\"."
+#~ msgstr "Cant generate filesize \"%s\"."
+
+#~ msgid "Choose the image size options you want to hide for each post type. "
+#~ msgstr ""
+#~ "Wählen sie die Bildgrößen die ausgeblendet werden sollen. Wählen Sie "
+#~ "einen Eintragstyp um das Zuschneiden in diesen Einträge komplett zu "
+#~ "verhindern."
 
 #~ msgid "Crop Thumbnails - Settings"
 #~ msgstr "Crop Thumbnails - Einstellungen"

@@ -1,2 +1,19 @@
 .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
 .cpt_settings_submit { margin-top:2em; }
+
+
+/**** MODAL - DIALOG ****/
+.cropThumbnailModal { z-index:999999999 !important; }
+.cropThumbnailModalOverlay { z-index:999999998 !important; }
+.cropThumbnailModal.ui-dialog { padding:0 !important; border-radius: 0 !important; border:0 !important; }
+
+/*dialog headline*/
+.cropThumbnailModal.ui-dialog .ui-dialog-title { font-size:13px !important; font-family:'Open Sans', sans-serif !important; margin: 0 !important; padding:0 29px 0 10px !important; line-height: 29px !important; width: 100% !important; box-sizing: border-box !important; }
+.cropThumbnailModal.ui-dialog .ui-dialog-titlebar { padding:0 !important; border:0 !important; height: 29px !important; border-bottom:1px solid #DFDFDF !important; border-radius: 0 !important; }
+.cropThumbnailModal.ui-dialog .ui-button.ui-dialog-titlebar-close { width: 29px !important; height: 29px !important; margin: 0 !important; top:0 !important; right:0 !important; }
+.cropThumbnailModal.ui-dialog .ui-button.ui-dialog-titlebar-close:before { line-height: 29px !important; }
+.cropThumbnailModal.ui-dialog .ui-dialog-titlebar-close span { display: none !important; }
+
+/*dialog content*/
+.cropThumbnailModal.ui-dialog .ui-dialog-content { padding:0 !important; overflow: hidden !important; }
+.cropThumbnailModal.ui-dialog .ui-dialog-content iframe { width:100% !important; height: 100% !important; }
