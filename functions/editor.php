@@ -301,7 +301,7 @@ jQuery(document).ready(function($) {
 									<strong title="<?php esc_attr_e($img_size_name) ?>"><?php echo $value['name'] ?><?php echo $_lowResWarning; ?></strong><?php echo $special_warning; ?>
 									<span class="dimensions"><?php _e('Dimensions:',CROP_THUMBS_LANG) ?> <?php echo $print_dimensions; ?></span>
 									<span class="ratio"><?php _e('Ratio:',CROP_THUMBS_LANG) ?> <?php echo $print_ratio; ?></span>
-									<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values="<?php esc_attr_e(json_encode($jsonDataValues)); ?>" />
+									<img src="<?php echo $img_data[0]?>?<?php echo $cache_breaker ?>" data-values='<?php esc_attr_e(json_encode($jsonDataValues)); ?>' />
 								</li>
 							<?php endif; ?>
 						<?php endforeach; ?>
