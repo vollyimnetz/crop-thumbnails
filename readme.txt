@@ -103,6 +103,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 
 == Changelog ==
+= 0.10.7 =
+* fix a behaviour where the 'image_size_names_choose'-filter could remove image-sizes from the settings page
+* add a seperate filter 'crop_thumbnails_image_sizes' to remove/adjust image-sizes used by the plugin (use carefully)
+
 = 0.10.6 =
 * improve the bugfix of 0.10.5 (sorry for that)
 

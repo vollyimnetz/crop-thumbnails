@@ -246,14 +246,16 @@ class CropThumbnailsSettings {
 	 */
 	function getImageSizes() {
 		global $_wp_additional_image_sizes;//array with the available image sizes
-		$tmp_sizes = array_flip(get_intermediate_image_sizes());
-		foreach($tmp_sizes as $key=>$value) {
-			$tmp_sizes[$key] = $key;
+		$image_size_names = array_flip(get_intermediate_image_sizes());
+		foreach($image_size_names as $key=>$value) {
+			$image_size_names[$key] = $key;
 		}
-		$tmp_sizes = apply_filters( 'image_size_names_choose', $tmp_sizes );
+		
+		$tmp_sizes = apply_filters( 'image_size_names_choose', $image_size_names );
+		$image_size_names = array_merge($image_size_names,$tmp_sizes);
 		
 		$sizes = array();
-		foreach( $tmp_sizes as $_size=>$theName ) {
+		foreach( $image_size_names as $_size=>$theName ) {
 
 			if ( in_array( $_size, $this->defaultSizes ) ) {
 				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
@@ -268,6 +270,7 @@ class CropThumbnailsSettings {
 			}
 			$sizes[ $_size ]['name'] = $theName;
 		}
+		$sizes = apply_filters('crop_thumbnails_image_sizes',$sizes);
 		return $sizes;
 	}
 
