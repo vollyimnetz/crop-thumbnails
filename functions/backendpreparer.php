@@ -170,7 +170,7 @@ jQuery(document).ready(function($) {
 
 		//modal-box dimensions (will not adjust on viewport change)
 		var boxViewportHeight = $(window).height() - <?php echo abs(intval($modal_window_settings['maxHeightOffset'])); ?>;
-		var boxViewportWidth = window.outerWidth - <?php echo abs(intval($modal_window_settings['maxWidthOffset'])); ?>;
+		var boxViewportWidth = $(window).outerWidth() - <?php echo abs(intval($modal_window_settings['maxWidthOffset'])); ?>;
 		
 		<?php echo $jsLimitOutput; ?>
 	
@@ -188,49 +188,51 @@ jQuery(document).ready(function($) {
 		var content = $('<div><iframe src="'+url+'"></iframe></div>');
 		var overlay;
 		var isModalClassInitialSet = $('body').hasClass('modal-open');
-		content.dialog({
-				dialogClass : 'cropThumbnailModal',
-				modal : true,
-				title : $(this).attr('title'),
-				resizable : false,
-				draggable : false,
-				autoOpen : false,
-				closeOnEscape : true,
-				height : boxViewportHeight,
-				width : boxViewportWidth,
-				close : function(event, ui ) {
-					if(overlay!==undefined) {
-						overlay.unbind('click');
-					}
-
-					//remove modal-open class (disable the scrollbars)
-					if(!isModalClassInitialSet) {
-						$('body').removeClass('modal-open');
-					}
-					$(this).dialog('destroy');
-					
-					/**
-					 * We will trigger that the modal of the crop thumbnail is closed.
-					 * So everyone that is up to, could build a cache-breaker on their images.
-					 * HOW-TO cache-break:
-					 * $('body').on('cropThumbnailModalClosed',function() {
-					 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
-					 * });
-					 */
-					$('body').trigger('cropThumbnailModalClosed');
-				},
-				open : function(event, ui) {
-					overlay = $('.ui-widget-overlay.ui-front');
-					overlay.addClass('cropThumbnailModalOverlay');
-					overlay.click(function() {
-						content.dialog('close');
-					});
-
-					//add body class (disable the scrollbars)
-					$('body').addClass('modal-open');
+		
+		var dialogOptions = {
+			dialogClass : 'cropThumbnailModal',
+			modal : true,
+			title : $(this).attr('title'),
+			resizable : false,
+			draggable : false,
+			autoOpen : false,
+			closeOnEscape : true,
+			height : boxViewportHeight,
+			width : boxViewportWidth,
+			close : function(event, ui ) {
+				if(overlay!==undefined) {
+					overlay.unbind('click');
 				}
-			})
-			.dialog('open');
+
+				//remove modal-open class (disable the scrollbars)
+				if(!isModalClassInitialSet) {
+					$('body').removeClass('modal-open');
+				}
+				$(this).dialog('destroy');
+				
+				/**
+				 * We will trigger that the modal of the crop thumbnail is closed.
+				 * So everyone that is up to, could build a cache-breaker on their images.
+				 * HOW-TO cache-break:
+				 * $('body').on('cropThumbnailModalClosed',function() {
+				 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
+				 * });
+				 */
+				$('body').trigger('cropThumbnailModalClosed');
+			},
+			open : function(event, ui) {
+				overlay = $('.ui-widget-overlay.ui-front');
+				overlay.addClass('cropThumbnailModalOverlay');
+				overlay.click(function() {
+					content.dialog('close');
+				});
+
+				//add body class (disable the scrollbars)
+				$('body').addClass('modal-open');
+			}
+		};
+		
+		content.dialog(dialogOptions).dialog('open');
 	});
 });
 </script>
