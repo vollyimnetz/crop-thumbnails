@@ -3,7 +3,7 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 4.0
-Tested up to: 4.4
+Tested up to: 4.5
 Stable tag: trunk
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -31,11 +31,20 @@ You can use the built in installer and upgrader, or you can install the plugin m
 
 == Frequently Asked Questions ==
 
-= What languages are supported? =
-* English
-* German (de_DE)
-* brazilian portuguese (pt_BR) - thanks to Alex Meusburger
-* Ukrainian (uk) - thanks to Jurko Chervony from www.skinik.name
+= How do i add custom image sizes? =
+The plugin do not add additional image sizes, it only make it possible to edit the crop area. You can add image sizes with normal wordpress functions (see: https://developer.wordpress.org/reference/functions/add_image_size/).
+
+Simply add the code to the functions.php of your theme, i.e.:
+`add_action( 'after_setup_theme', 'my_adjust_image_sizes' );
+function my_adjust_image_sizes() {
+    //add an cropped image-size with 800 x 250 Pixels
+    add_image_size( 'my-custom-image-size', 800, 250, true );
+}`
+
+After you add the image-size any futher image uploads will produce a cropped image "my-custom-image-size" which you can use in post-loop:
+`if ( has_post_thumbnail() ) { 
+    the_post_thumbnail( 'my-custom-image-size' ); 
+}`
 
 = What internal rules use the plugin for cropping? =
 * The plugin will only crop image-sizes where crop is set to "true" (hard crop mode - see: http://codex.wordpress.org/Function_Reference/add_image_size).
@@ -47,6 +56,7 @@ If you had viewed your image on the site before, your browser has cached the ima
 
 = Is it possible to crop an non-cropped image-size? =
 No. The purpose of this plugin is to provide control for the wordpress automatic crop. If you want to crop let's say the full-size image you should
+
 * a) upload it in a better format in the first place
 * OR b) use the Standard Wordpress-Image editor to crop the image.
 
@@ -60,7 +70,7 @@ function myCustomStyle($content) {
 	return $content;
 }`
 
-= I have two image-sizes that have nearly the same ratio. I want to make use of the feature "Crop all images with same ratio at once", but cause the ratios are slightly different they wont be selected together.
+= I have two image-sizes that have nearly the same ratio. I want to make use of the feature "Crop all images with same ratio at once", but cause the ratios are slightly different they wont be selected together. =
 You can add the following filter in the functions.php of your theme to adjust the ratio of one or more specified image-sizes.
 CAUTION: use only when the ratios are really close.
 `add_filter( 'crop_thumbnails_editor_printratio', 'my_crop_thumbnails_editor_printratio', 10, 2);
@@ -89,6 +99,12 @@ Example-Code:
 	CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
 });`
 
+= What languages are supported? =
+* English
+* German (de_DE)
+* brazilian portuguese (pt_BR) - thanks to Alex Meusburger
+* Ukrainian (uk) - thanks to Jurko Chervony from www.skinik.name
+
 = I want to contribute code. =
 Fantastic, i published the code on github: https://github.com/vollyimnetz/crop-thumbnails. But be warned, i am carefully evaluate new features.
 
@@ -101,6 +117,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 3. Choose one or more images (with the same ratio).
 4. Crop-Thumbnails is also integrated in the media library.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
+6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
 = 0.10.7 =
