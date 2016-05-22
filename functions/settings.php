@@ -240,9 +240,9 @@ class CropThumbnailsSettings {
 				$report[] = '<strong class="success">success</strong> Temporary directory exists';
 			} else {
 				if (!mkdir($this->getUploadDir())) {
-					throw new \Exception('<strong class="fails">fail</strong> creating the temporary directory ('.esc_attr($this->getUploadDir()).') | is the upload-directory writable with PHP?');
+					throw new \Exception('<strong class="fails">fail</strong> Creating the temporary directory ('.esc_attr($this->getUploadDir()).') | is the upload-directory writable with PHP?');
 				} else {
-					$report[] = '<strong class="success">success</strong> temporary directory could be created';
+					$report[] = '<strong class="success">success</strong> Temporary directory could be created';
 				}
 			}
 			
@@ -264,11 +264,11 @@ class CropThumbnailsSettings {
 				'size' => 102610
 			);
 			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, array(), array( 'test_form' => false, 'action'=>'test' ) );
+			$doDeleteTempFile = false;//is be deleted automatically
 			if ( is_wp_error( $attachmentId ) ) {
 				throw new \Exception('<strong class="fails">fail</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
 			} else {
 				$report[] = '<strong class="success">success</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
-				$doDeleteTempFile = false;//is be deleted automatically
 				$doDeleteAttachement = true;
 			}
 			
