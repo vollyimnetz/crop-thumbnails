@@ -75,15 +75,15 @@ class CropThumbnailsSettings {
 		add_settings_section($_sectionID, __('Sizes and Post Types',CROP_THUMBS_LANG), array($this,'sectionDescriptionChooseSizes'), 'page1');
 		add_settings_field('sizes', __('Choose the image size options you want to hide for each post type.',CROP_THUMBS_LANG), array($this,'callback_choose_size'), 'page1', $_sectionID);
 		
+		$_sectionID = 'quick_test';
+		add_settings_section($_sectionID, __('Plugin Test',CROP_THUMBS_LANG), array($this,'sectionDescriptionTest'), 'page1');
+		
 		$_sectionID = 'developer';
 		add_settings_section($_sectionID, __('Developer Settings',CROP_THUMBS_LANG), array($this,'emptySectionDescription'), 'page1');
 		$_tmpID = 'debug_js';
 		add_settings_field($_tmpID, __('Enable JS-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
 		$_tmpID = 'debug_data';
 		add_settings_field($_tmpID, __('Enable Data-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
-		
-		$_sectionID = 'test';
-		add_settings_section($_sectionID, __('Plugin Test',CROP_THUMBS_LANG), array($this,'sectionDescriptionTest'), 'page1');
 	}
 
 	function sectionDescriptionChooseSizes() {?>
@@ -105,23 +105,22 @@ class CropThumbnailsSettings {
 		$image_sizes = $this->getImageSizes();
 
 		//output
-		echo '<ul>';
-		foreach($post_types as $post_type=>$value) { ?>
+		?>
+		<ul>
+			<?php foreach($post_types as $post_type=>$value) : ?>
 			<li>
 				<label for="<?php echo $this->cssPrefix.$post_type; ?>">
 					<input id="<?php echo $this->cssPrefix.$post_type;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
 					<strong><?php echo $value->labels->name; ?></strong>
 				</label>
 				<ul style="margin:1em;">
-				<?php
-
-				foreach($image_sizes as $thumb_name => $data) :
+				
+				<?php foreach($image_sizes as $thumb_name => $data) :
 					$_checked = false;
 					if(!empty($options['hide_size']) && is_array($options['hide_size']) && !empty($options['hide_size'][$post_type][$thumb_name])) {
 						$_checked = true;
 					}
-					if($data['crop']=='1') :
-						 ?>
+					if($data['crop']=='1') : ?>
 						<li>
 							<label for="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
 								<input id="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
@@ -130,12 +129,13 @@ class CropThumbnailsSettings {
 						</li>
 					<?php endif; ?>
 				<?php endforeach ?>
+				
 				</ul>
 				<hr />
 			</li>
-			<?php
-		}
-		echo '</ul>';
+			<?php endforeach; ?>
+		</ul>
+		<?php
 	}
 
 	function callback_debug_js() {
@@ -200,24 +200,36 @@ class CropThumbnailsSettings {
 		
 		<script>
 		jQuery(document).ready(function($) {
+			var currentlyProcessing = false;
+			
+			
 			$('button.cpt_quicktest').click(function(e) {
 				e.preventDefault();
 				
-				var button = $(this);
-				$('#cpt_quicktest').remove();
-				
-				$.ajax({
-					url: ajaxurl + '?action=ctppluginquicktest',
-					type: 'GET',
-					success: function(responseData){ 
-						var output = '<div id="cpt_quicktest">'+responseData+'</div>';
-						button.after(output);
-					},
-					error: function(responseData) {
-						var output = '<div id="cpt_quicktest"><strong class="fails">fail</strong> Failure processing the test - have a look on your server logs.</div>';
-						button.after(output);
-					}
-				});
+				if(!currentlyProcessing) {
+					currentlyProcessing = true;
+					var button = $(this);
+					$('#cpt_quicktest').remove();
+					
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: {
+							action: 'ctppluginquicktest',
+							security: '<?php echo wp_create_nonce( "cpt_quicktest-ajax-nonce" );//only for quicktest ?>'
+						},
+						success: function(responseData){ 
+							var output = '<div id="cpt_quicktest">'+responseData+'</div>';
+							button.after(output);
+							currentlyProcessing = false;
+						},
+						error: function(responseData) {
+							var output = '<div id="cpt_quicktest"><strong class="fails">fail</strong> Failure processing the test - have a look on your server logs.</div>';
+							button.after(output);
+							currentlyProcessing = false;
+						}
+					});
+				}
 			});
 		});
 		</script>
@@ -227,6 +239,10 @@ class CropThumbnailsSettings {
 /* helper functions **********************************************************************************************/
 
 	function ajax_callback_admin_quicktest() {
+		//security
+		if(!current_user_can('manage_options')) die('forbidden');
+		check_ajax_referer('cpt_quicktest-ajax-nonce','security');//only for quicktest
+		
 		$report = [];
 		$doDeleteAttachement = false;
 		$doDeleteTempFile = false;
