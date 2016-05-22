@@ -23,8 +23,6 @@ class CptSaveThumbnail {
 		
 		try {
 			/** get data **/
-			$upload_dir = wp_upload_dir();
-			$tmp_dir = $upload_dir['basedir']."/tmp/";
 			$options = $cptSettings->getOptions();
 			//from $_REQUEST
 			$selection = json_decode(stripcslashes($_REQUEST['selection']));
@@ -75,7 +73,8 @@ class CptSaveThumbnail {
 				
 				$_filepath = $this->generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
 				$_filepath_info = pathinfo($_filepath);
-				$_tmp_filepath = $tmp_dir.$_filepath_info['basename'];
+				
+				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$_filepath_info['basename'];
 				$this->addDebug("filename:".$_filepath);
 				
 				
@@ -105,7 +104,7 @@ class CptSaveThumbnail {
 					$_error = true;
 				} else {
 					if(!empty($_delete_old_file)) {
-						@unlink($_filepath_info['dirname'].'/'.$_delete_old_file);
+						@unlink($_filepath_info['dirname'].DIRECTORY_SEPARATOR.$_delete_old_file);
 					}
 					if(!@copy($result,$_filepath)) {
 						$_processing_error[] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
@@ -218,13 +217,6 @@ class CptSaveThumbnail {
 		if($selection->x < 0 || $selection->y < 0) {
 			throw new Exception(__('Cropping to these dimensions on this image is not possible.',CROP_THUMBS_LANG), 1);
 		}
-		
-		/**
-		$_test = 20948;
-		$obj = get_post($_test);
-		$sourceImgPath = get_attached_file($_test);
-		$post_metadata = wp_get_attachment_metadata($_test, true);//get the attachement metadata of the post
-		*/
 		
 		if(empty($obj)) {
 			throw new Exception(__("ERROR: Can't find original image in database!",CROP_THUMBS_LANG), 1);

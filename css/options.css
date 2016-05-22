@@ -1,6 +1,11 @@
 .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
 .cpt_settings_submit { margin-top:2em; }
 
+#cpt_quicktest { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding:1em; }
+#cpt_quicktest strong {display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; }
+#cpt_quicktest strong.success { background:#00cc00; }
+#cpt_quicktest strong.fails { background:#cc0000; }
+
 
 /**** MODAL - DIALOG ****/
 .cropThumbnailModal { z-index:999999999 !important; }
