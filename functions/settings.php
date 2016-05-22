@@ -333,28 +333,30 @@ class CropThumbnailsSettings {
 			
 		} catch(\Exception $e) {
 			$report[] = $e->getMessage();
-		} finally {
-			//CLEANUP
-			
-			//delete attachement file
-			if($doDeleteAttachement && $attachmentId!==-1) {
-				if ( false === wp_delete_attachment( $attachmentId ) ) {
-					$report[] = '<strong class="fails">fail</strong> Error while deleting test attachment';
-				} else {
-					$report[] = '<strong class="success">success</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
-				}
-			}
-			
-			
-			//deleting testfile form temporary directory
-			if($doDeleteTempFile) {
-				if(!@unlink($tempFile)) {
-					$report[] = '<strong class="fails">fail</strong> Remove testfile from temporary directory';
-				} else {
-					$report[] = '<strong class="success">success</strong> Remove testfile from temporary directory';
-				}
+		}
+		
+		
+		//DO CLEANUP
+		
+		//delete attachement file
+		if($doDeleteAttachement && $attachmentId!==-1) {
+			if ( false === wp_delete_attachment( $attachmentId ) ) {
+				$report[] = '<strong class="fails">fail</strong> Error while deleting test attachment';
+			} else {
+				$report[] = '<strong class="success">success</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
 			}
 		}
+		
+		
+		//deleting testfile form temporary directory
+		if($doDeleteTempFile) {
+			if(!@unlink($tempFile)) {
+				$report[] = '<strong class="fails">fail</strong> Remove testfile from temporary directory';
+			} else {
+				$report[] = '<strong class="success">success</strong> Remove testfile from temporary directory';
+			}
+		}
+		
 		echo join($report,"<br />");
 		exit();
 	}
