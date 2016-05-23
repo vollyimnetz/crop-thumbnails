@@ -120,6 +120,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 0.10.8 =
+* change empty-array-definition to be compatible with old PHP-Versions (prior 5.4)
+
 = 0.10.7 =
 * fix a behaviour where the 'image_size_names_choose'-filter could remove image-sizes from the settings page
 * add a seperate filter 'crop_thumbnails_image_sizes' to remove/adjust image-sizes used by the plugin (use carefully)

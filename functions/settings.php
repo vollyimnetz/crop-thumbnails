@@ -243,7 +243,7 @@ class CropThumbnailsSettings {
 		if(!current_user_can('manage_options')) die('forbidden');
 		check_ajax_referer('cpt_quicktest-ajax-nonce','security');//only for quicktest
 		
-		$report = [];
+		$report = array();
 		$doDeleteAttachement = false;
 		$doDeleteTempFile = false;
 		$attachmentId = -1;
