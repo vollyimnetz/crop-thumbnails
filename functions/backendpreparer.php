@@ -68,6 +68,48 @@ jQuery(document).ready(function($) {
 		}
 	};
 	
+	/**
+	 * Adds a button to the featured image metabox.
+	 * The button will be visible only if a featured image is set.
+	 */
+	function initCropFeaturedImageButton() {
+		/**
+		 * add link to featured image box
+		 */
+		var featuredImageLinkButton = '';
+		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden" style="padding:0 12px; margin-top:0;">';
+		featuredImageLinkButton+= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +'}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
+		featuredImageLinkButton+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
+		featuredImageLinkButton+= '<?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
+		featuredImageLinkButton+= '</a>';
+		$('#postimagediv .inside').after( $(featuredImageLinkButton) );
+		
+		
+		function updateCropFeaturedImageButton() {
+			var currentId = parseInt(wp.media.featuredImage.get());
+			var wrap = $('#postimagediv .cropFeaturedImageWrap');
+			if(currentId===-1) {
+				wrap.addClass('hidden');
+			} else {
+				wrap.removeClass('hidden');
+			}
+			var link = wrap.find('a');
+			var data = link.data('cropthumbnail');
+			data.image_id = currentId;
+			link.data('cropthumbnail',data);
+		}
+		
+		wp.media.featuredImage.frame().on( 'select', function(){
+			updateCropFeaturedImageButton();
+		});
+		
+		$(document).on('click', '#remove-post-thumbnail', function(){
+			updateCropFeaturedImageButton();
+		});
+		
+		updateCropFeaturedImageButton();
+	}
+	
 	/** add link on posts and pages **/
 	if ($('body.post-php, body.page-php, body.page-new.php, body.post-new-php').length > 0) {
 		var post_id_hidden = $('form#post #post_ID');
@@ -79,32 +121,14 @@ jQuery(document).ready(function($) {
 			 * add link on top of editor *
 			 */
 			var buttonContent = '';
-			buttonContent+= '<a ';
-				buttonContent+= 'class="button cropThumbnailBox"  href="#" data-cropthumbnail=\'{"post_id":'+ post_id_hidden +'}\' ';
-				buttonContent+= 'title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>"';
-			buttonContent+= '>';
+			buttonContent+= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"post_id":'+ post_id_hidden +'}\' title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>">';
 			buttonContent+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
 			buttonContent+= '<?php esc_html_e('Crop Thumbnails',CROP_THUMBS_LANG); ?>';
 			buttonContent+= '</a>';
 			$('#wp-content-media-buttons').append(buttonContent);
 
-
-			/**
-			 * add link to featured image box *
-			 */
-			buttonContent = '';
-			buttonContent+= '<a ';
-			buttonContent+= 'class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_by_post_id":'+ post_id_hidden +',"viewmode":"single"}\' ';
-			buttonContent+= 'title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>"';
-			buttonContent+= '>';
-			buttonContent+= '<span class="dashicons dashicons-image-crop" style="color:#82878C;font-size: 14px;vertical-align: middle;"></span>';
-			buttonContent+= '<?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
-			buttonContent+= '</a>';
-
-
-			var featuredImageLink = $(buttonContent).css({'margin':'5px', 'padding':'5px','display':'inline-block','line-height':'1.2'});
-			$('#postimagediv .inside').after(featuredImageLink);
 			
+			initCropFeaturedImageButton();
 			
 			$('body').on('cropThumbnailModalClosed',function() {
 				//lets cache-break the crop-thumbnail-preview-box
