@@ -8,17 +8,17 @@ Stable tag: trunk
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-"Crop Thumbnails" made it easy to get exacly that specific image-detail you want to show in the automatic cropped post-thumbnails.
+"Crop Thumbnails" made it easy to get exacly that specific image-detail you want to show in your featured image or gallery image.
 
 == Description ==
 
-The plugin enhance functionality to crop your automatic cropped post-thumbnails individuell and simple. It add links in the backend to enter all images you had attached to a post, page or custom-post.
+The plugin enhance functionality to crop your automatic cropped images individuell and simple. It add buttons to the edit-pages and media-dialog to access a Crop-Editor.
 In the Crop-Editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
 = Further Features =
 
 * It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
-* You could provide your users a custom style for the Editor-Window.
+* You could provide your users a custom style for the Editor-Window (see F.A.Q.).
 
 == Installation ==
 
@@ -112,16 +112,18 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Screenshots ==
 
-1. You have access to Crop-Thumbnails on post / page / custom-post-types.
+1. You have access to the Crop-Editor on post / page / custom-post-types.
 2. All images attached to this post, will shown in a overlay. You have to choose the one you want to crop.
 3. Choose one or more images (with the same ratio).
-4. Crop-Thumbnails is also integrated in the media library.
+4. The Crop-Editor is also integrated in the media library.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
-= 0.10.8 =
-* fix click on the button in the preview of the featured image
+= 0.10.9 =
+* bugfix click on the button in the featured image box (WP 4.6 and above)
+* button in featured image box is no longer visible if no image is choosed
+* minor style improvements
 
 = 0.10.8 =
 * change empty-array-definition to be compatible with old PHP-Versions (prior 5.4)
