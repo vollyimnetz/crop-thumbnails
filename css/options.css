@@ -18,8 +18,8 @@ a.cropThumbnailBox .wp-media-buttons-icon::before { content: "\f165"; font: norm
 #postimagediv .cropFeaturedImageWrap { padding:0 12px; margin-top:0; }
 
 /**** button in media dialog ****/
-.media-modal .media-sidebar .compat-field-cropthumbnails th { width: 0; min-width: 0; margin:0; }
-.media-modal .media-sidebar .compat-field-cropthumbnails td { width: auto; }
+.media-modal .compat-field-cropthumbnails th { width: 0; min-width: 0; margin:0; }
+.media-modal .compat-field-cropthumbnails td { width: auto; }
 
 
 /**** MODAL - DIALOG ****/
