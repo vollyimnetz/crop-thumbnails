@@ -12,8 +12,8 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-The plugin enhance functionality to crop your automatic cropped images individuell and simple. It add buttons to the edit-pages and media-dialog to access a Crop-Editor.
-In the Crop-Editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
+The plugin enhance functionality to crop your automatic cropped images individuell and simple. It add buttons to the edit-pages and media-dialog to access a crop-editor.
+In the crop-editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
 = Further Features =
 
@@ -112,10 +112,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Screenshots ==
 
-1. You have access to the Crop-Editor on post / page / custom-post-types.
+1. You have access to the crop-editor on post / page / custom-post-types.
 2. All images attached to this post, will shown in a overlay. You have to choose the one you want to crop.
 3. Choose one or more images (with the same ratio).
-4. The Crop-Editor is also integrated in the media library.
+4. The crop-editor is also integrated in the media library.
 5. Choose what image-sizes should be hidden (for what post-types), for better usability.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
