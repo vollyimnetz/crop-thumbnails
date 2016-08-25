@@ -7,6 +7,21 @@
 #cpt_quicktest strong.fails { background:#cc0000; }
 
 
+/**** button icon ****/
+a.cropThumbnailBox .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; speak: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* buttons above editor */
+#wp-content-media-buttons a.cropThumbnailBox .wp-media-buttons-icon::before { font: normal 18px/1 dashicons;  }
+
+
+/**** featured image box ****/
+#postimagediv.closed .cropFeaturedImageWrap { display: none; }
+#postimagediv .cropFeaturedImageWrap { padding:0 12px; margin-top:0; }
+
+/**** button in media dialog ****/
+.media-modal .media-sidebar .compat-field-cropthumbnails th { width: 0; min-width: 0; margin:0; }
+.media-modal .media-sidebar .compat-field-cropthumbnails td { width: auto; }
+
+
 /**** MODAL - DIALOG ****/
 .cropThumbnailModal { z-index:999999999 !important; }
 .cropThumbnailModalOverlay { z-index:999999998 !important; }
