@@ -8,9 +8,9 @@
 
 
 /**** button icon ****/
-a.cropThumbnailBox .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; speak: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+a.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; speak: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 /* buttons above editor */
-#wp-content-media-buttons a.cropThumbnailBox .wp-media-buttons-icon::before { font: normal 18px/1 dashicons;  }
+#wp-content-media-buttons a.cropThumbnailsLink .wp-media-buttons-icon::before { font: normal 18px/1 dashicons;  }
 
 
 /**** featured image box ****/

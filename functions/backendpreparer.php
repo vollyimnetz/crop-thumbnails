@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
 		var baseElem = $('#postimagediv');
 		var featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
-		featuredImageLinkButton+= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
+		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
 		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
 		featuredImageLinkButton+= '</a>';
 		baseElem.find('.inside').after( $(featuredImageLinkButton) );
@@ -125,7 +125,7 @@ jQuery(document).ready(function($) {
 			 * add link on top of editor *
 			 */
 			var buttonContent = '';
-			buttonContent+= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"post_id":'+ post_id_hidden +'}\' title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>">';
+			buttonContent+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"post_id":'+ post_id_hidden +'}\' title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>">';
 			buttonContent+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Thumbnails',CROP_THUMBS_LANG); ?>';
 			buttonContent+= '</a>';
 			$('#wp-content-media-buttons').append(buttonContent);
@@ -148,7 +148,7 @@ jQuery(document).ready(function($) {
 				last_span.append(' | ');
 
 				var buttonContent = '';
-				buttonContent+= '<a class="cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
+				buttonContent+= '<a class="cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
 				buttonContent+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
 				buttonContent+= '</a>';
 
@@ -163,10 +163,10 @@ jQuery(document).ready(function($) {
 	}
 
 	/**
-	 * Create Listener for click-events with element-class ".cropThumbnailBox".
+	 * Create Listener for click-events with element-class ".cropThumbnailsLink".
 	 * Open the modal box.
 	 */
-	$(document).on('click', '.cropThumbnailBox', function(e) {
+	$(document).on('click', '.cropThumbnailsLink', function(e) {
 		e.preventDefault();
 		
 		<?php
@@ -272,7 +272,7 @@ jQuery(document).ready(function($) {
 
 		if(in_array($post->post_mime_type,$this->allowedMime)) {
 			$html = '';
-			$html.= '<a class="button cropThumbnailBox" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' title="'.esc_attr__('Crop Featured Image',CROP_THUMBS_LANG).'">';
+			$html.= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' title="'.esc_attr__('Crop Featured Image',CROP_THUMBS_LANG).'">';
 			$html.= '<span class="wp-media-buttons-icon"></span> '.esc_html__('Crop Featured Image',CROP_THUMBS_LANG);
 			$html.= '</a>';
 
