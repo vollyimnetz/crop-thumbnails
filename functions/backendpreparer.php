@@ -78,6 +78,11 @@ jQuery(document).ready(function($) {
 		 */
 		var baseElem = $('#postimagediv');
 		var featuredImageLinkButton = '';
+		
+		if(!baseElem.length) {
+			return;
+		}
+		
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
 		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
 		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
