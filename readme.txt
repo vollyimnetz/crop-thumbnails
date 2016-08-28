@@ -120,8 +120,11 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 0.10.10 =
+* bugfix: Checks if the current page have a featured image box in the first place
+
 = 0.10.9 =
-* bugfix click on the button in the featured image box (WP 4.6 and above)
+* bugfix: click on the button in the featured image box (WP 4.6 and above)
 * button in featured image box is no longer visible if no image is choosed
 * minor style improvements
 
