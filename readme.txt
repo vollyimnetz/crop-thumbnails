@@ -120,6 +120,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 0.10.11 =
+* bugfix: hide disabled image-sizes in the crop-editor again
+
 = 0.10.10 =
 * bugfix: Checks if the current page have a featured image box in the first place
 
