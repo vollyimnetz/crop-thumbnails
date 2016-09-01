@@ -83,7 +83,7 @@ jQuery(document).ready(function($) {
 		
 		var featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
-		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
+		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image',CROP_THUMBS_LANG) ?>">';
 		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image',CROP_THUMBS_LANG); ?>';
 		featuredImageLinkButton+= '</a>';
 		baseElem.find('.inside').after( $(featuredImageLinkButton) );
