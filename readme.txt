@@ -2,8 +2,8 @@
 Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
-Requires at least: 4.0
-Tested up to: 4.6
+Requires at least: 4.6
+Tested up to: 4.7
 Stable tag: trunk
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -104,6 +104,7 @@ Example-Code:
 * German (de_DE)
 * brazilian portuguese (pt_BR) - thanks to Alex Meusburger
 * Ukrainian (uk) - thanks to Jurko Chervony from www.skinik.name
+* Italian (it) - thanks to akteon18
 
 = I want to contribute code. =
 Fantastic, i published the code on github: https://github.com/vollyimnetz/crop-thumbnails. But be warned, i am carefully evaluate new features.
@@ -120,6 +121,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 0.10.12 =
+* add italian translation (thanks to akteon18)
+
 = 0.10.11 =
 * bugfix: hide disabled image-sizes in the crop-editor again
 
