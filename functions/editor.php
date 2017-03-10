@@ -322,13 +322,13 @@ jQuery(document).ready(function($) {
 
 
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'my_jcrop', plugins_url('js/jcrop/js/jquery.Jcrop.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		wp_enqueue_script( 'cpt_cropperjs', plugins_url('js/cropperjs/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 		wp_enqueue_script( 'json2' );
-		wp_enqueue_script( 'cpt-crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','my_jcrop','json2'), CROP_THUMBS_VERSION);
+		wp_enqueue_script( 'cpt_crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','cpt_cropperjs','json2'), CROP_THUMBS_VERSION);
 
 		$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
-		wp_enqueue_style( 'cpt-window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
-		wp_enqueue_style( 'my_jcrop', plugins_url('js/jcrop/css/jquery.Jcrop.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		wp_enqueue_style( 'cpt_window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
+		wp_enqueue_style( 'cpt_cropperjs', plugins_url('js/cropperjs/cropper.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 
 		include_once( dirname(__FILE__).'/../html/template.php' );
 
