@@ -32,8 +32,8 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_Modal .cpt_ModalContent { width:100%; height: 100%; padding-top:30px; margin-top:-30px; box-sizing: border-box; }
 
 
-#cpt_Modal .cpt_IframeScrollFrame { width:100%; height: 100%; }
-#cpt_Modal iframe { border:0; width:100%; height: 100%; }
+#cpt_Modal .cpt_IframeScrollFrame { width:100%; height: 100%; overflow: auto; overflow-x: hidden; -webkit-overflow-scrolling:touch; }
+#cpt_Modal iframe { border:0; width:100%; height: 100%; display: block; }
 
 /* The Close Button */
 #cpt_Modal .cpt_ModalClose { color: #aaaaaa; position: absolute; right:0; top:0; font-size: 28px; font-weight: bold; padding:4px 8px 8px 8px; }
