@@ -201,4 +201,31 @@ jQuery(document).ready(function($) {
 
 		cropping.api = new Cropper(cropping.img[0], options);
 	}
+	
+	
+	/**
+	 * Add a backToTop-Button
+	 * @param integer show the button below this offset
+	 */
+	function addBackToTopButton(offset) {
+		if(offset===undefined) {
+			offset = 100;
+		}
+		
+		var backToTop = jQuery('<a href="#" id="backToTop"><svg version="1.1" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M 8,3.5 0,11.5 1.5,13 8,6.5 14.5,13 16,11.5 Z"/></svg></a>');
+		jQuery('body').append(backToTop);
+		backToTop.click(function(e) {//handle click
+			e.preventDefault();
+			//do back to top
+			$("html, body").animate({ scrollTop: 0 }, 200);
+		});
+		jQuery(window).scroll(function() {//only show if below offset
+			if( jQuery(this).scrollTop() > offset ) {
+				backToTop.addClass('isVisible');
+			} else {
+				backToTop.removeClass('isVisible');
+			}
+		});
+	}
+	addBackToTopButton();
 });

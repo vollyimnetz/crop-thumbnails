@@ -26,9 +26,9 @@ a.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: no
 /* @see https://www.w3schools.com/howto/howto_css_modals.asp */
 body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
-#cpt_Modal .cpt_ModalDialog { background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 90%; max-width: 800px; height: 90%; margin-top:5vh; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-#cpt_Modal .cpt_ModalHeader { height: 30px; position: relative; }
-#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:16px; font-weight: bold; line-height: 1; padding: 7px 50px 7px 20px; }
+#cpt_Modal .cpt_ModalDialog { background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 100%; max-width: 100%; height: 100%; margin-top:0; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+#cpt_Modal .cpt_ModalHeader { height: 40px; position: relative; }
+#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:20px; font-weight: bold; line-height: 1; padding: 10px 50px 10px 20px; }
 #cpt_Modal .cpt_ModalContent { width:100%; height: 100%; padding-top:30px; margin-top:-30px; box-sizing: border-box; }
 
 
@@ -36,6 +36,13 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_Modal iframe { border:0; width:100%; height: 100%; display: block; }
 
 /* The Close Button */
-#cpt_Modal .cpt_ModalClose { color: #aaaaaa; position: absolute; right:0; top:0; font-size: 28px; font-weight: bold; padding:4px 8px 8px 8px; }
+#cpt_Modal .cpt_ModalClose { color: #aaaaaa; position: absolute; right:0; top:0; font-size: 38px; font-weight: bold; padding:0px 8px 10px 8px; line-height: 30px; }
 #cpt_Modal .cpt_ModalClose:hover,
 #cpt_Modal .cpt_ModalClose:focus { color: #000; text-decoration: none; cursor: pointer; }
+
+@media(min-width:900px) {
+	#cpt_Modal .cpt_ModalDialog { width: 90%; max-width: 800px; height: 90%; margin-top:5vh; }
+	#cpt_Modal .cpt_ModalHeader { height: 30px; }
+	#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:16px; padding: 7px 50px 7px 20px; }
+	#cpt_Modal .cpt_ModalClose { font-size: 28px; padding:0px 8px 2px 8px; line-height: 1; }
+}
