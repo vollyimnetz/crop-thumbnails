@@ -145,7 +145,9 @@ jQuery(document).ready(function($) {
 			<div class="mainWindow">
 				<div class="selectionArea cptLeftPane">
 					<h3><?php _e('Raw',CROP_THUMBS_LANG); ?>: <?php echo $orig_img[1].' '.__('pixel',CROP_THUMBS_LANG)?>  x <?php echo $orig_img[2].' '.__('pixel',CROP_THUMBS_LANG) ?> (<?php echo $orig_img['print_ratio']; ?>)</h3>
-					<img src="<?php echo $orig_img[0]?>" data-values='{"id":<?php echo $image_obj->ID; ?>,"parentId":<?php echo $post_id_attached ?>,"width":<?php echo $orig_img[1]?>,"height":<?php echo $orig_img[2] ?>}' />
+					<div class="cropContainer">
+						<img id="cpt-croppingImage" src="<?php echo $orig_img[0]?>" data-values='{"id":<?php echo $image_obj->ID; ?>,"parentId":<?php echo $post_id_attached ?>,"width":<?php echo $orig_img[1]?>,"height":<?php echo $orig_img[2] ?>}' />
+					</div>
 					<button id="cpt-generate" class="button"><?php _e('Save Crop',CROP_THUMBS_LANG);?></button>
 					<h4><?php _e('Quick Instructions',CROP_THUMBS_LANG);?></h4>
 					<ul class="step-info">

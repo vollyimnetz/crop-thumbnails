@@ -6,7 +6,10 @@ jQuery(document).ready(function($) {
 	$.ajaxSetup({type:'POST', url:adminAjaxPath, cache:false, timeout: (30 * 1000)});
 
 	//cropping object: holds jcrop-object and image to use the crop on
-	var cropping = {api:-1, img : $('.selectionArea img')};
+	var cropping = {
+		api:null, 
+		img : $('.selectionArea img')
+	};
 
 	/*needed cause the js-logic is currently not handle the hidden objects in dependence with "select all of the same ratio"*/
 	$('.thumbnail-list li.hidden').remove();
@@ -49,9 +52,17 @@ jQuery(document).ready(function($) {
 			alert(cpt_lang.selectOne);
 			return;
 		}
-		var selection = cropping.api.tellSelect();
-		if(active.length>0 && selection.w>0 && selection.h>0) {
-			doProcessing(active,cropping);
+		var selection = cropping.api.getData();
+		if(active.length>0 && selection.width>0 && selection.height>0) {
+			var selectionData = {//needed cause while changing from jcrop to cropperjs i do not want to change the api
+				x:selection.x,
+				y:selection.y,
+				x2:selection.x + selection.width,
+				y2:selection.y + selection.height,
+				w:selection.width,
+				h:selection.height
+			};
+			doProcessing(active,cropping,selectionData);
 		}
 	});
 
@@ -62,7 +73,7 @@ jQuery(document).ready(function($) {
 	});
 
 	/********************************/
-	function doProcessing(active,cropping) {
+	function doProcessing(active,cropping,selection) {
 		/*console.log('doProcessing');*/
 
 		var active_array = [];
@@ -78,7 +89,7 @@ jQuery(document).ready(function($) {
 				action: 'cptSaveThumbnail',
 				'_ajax_nonce': cpt_ajax_nonce,
 				cookie: encodeURIComponent(document.cookie),
-				selection: JSON.stringify(cropping.api.tellSelect()),
+				selection: JSON.stringify(selection),
 				raw_values: JSON.stringify(cropping.img.data('values')),
 				active_values: JSON.stringify(active_array),
 				same_ratio_active: $('#cpt-same-ratio').is('checked')
@@ -139,29 +150,38 @@ jQuery(document).ready(function($) {
 	}
 
 
-	function deactivateArea(c) {
-		if(c.api!=-1) {
-			c.api.release();
-			c.api.disable();
+	function deactivateArea(cropping) {
+		if(cropping.api!==null) {
+			cropping.api.destroy();
 		}
 	}
 
-	function activateArea(c) {
-		deactivateArea(c);
+	function activateArea(cropping) {
+		deactivateArea(cropping);
 		var allActiveThumbs = $('.thumbnail-list li.active img');
 		var largestWidth = 0;
 		var largestHeight = 0;
 		var ratio = 0;
-		var crop = true;
 
+		var options = {
+			aspectRatio: 0,
+			viewMode:1,//for prevent negetive values
+			checkOrientation:false,
+			background:false, //do not show the grid background
+			autoCropArea:1,
+			zoomable:false,
+			zoomOnTouch:false,
+			zoomOnWheel:false,
+			//minCropBoxWidth:250,
+		};
 
 		//get the options
 		allActiveThumbs.each(function() {
 			var img_data = $(this).data('values');
 			if(ratio === 0) {
-				ratio = img_data.ratio;//initial
+				options.aspectRatio = img_data.ratio;//initial
 			}
-			if(ratio != img_data.ratio) {
+			if(options.aspectRatio != img_data.ratio) {
 				console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+img_data.name+'".');
 			}
 
@@ -170,67 +190,15 @@ jQuery(document).ready(function($) {
 				largestWidth = img_data.width;
 				largestHeight = img_data.height;
 			}
-
-			//crop also has to be the same on all selected images
-			if(img_data.crop==1) {
-				crop = true;
-			} else {
-				crop = false;
-			}
 		});
 
-		var scale = 0;
-		if(ratio>=0) {
-			scale = c.img.data('values').height / largestHeight;
-		} else {
-			scale = c.img.data('values').width / largestWidth;
-		}
-
-		var preSelect = [ 0, 0, Math.round(scale*c.img.width()), Math.round(scale*c.img.height()) ];
-		var minSize = [ largestWidth, largestHeight ];
-		// END get the options
-
-		//set the options
-		var options = {};
-		options.boxWidth = c.img.width();
-		options.boxHeight = c.img.height();
-		options.trueSize = [cropping.img.data('values').width,c.img.data('values').height];
-		options.aspectRatio = ratio;
-		options.setSelect = preSelect;
-
-		if(largestWidth>cropping.img.data('values').width || largestHeight>cropping.img.data('values').height) {
-			alert(cpt_lang.warningOriginalToSmall);
-		} else {
-			options.minSize = minSize;
-		}
-
-		//correct some options
-		if(ratio>=0) {
-			//add a offset to move the selection in the middle
-			var crop_offset = (cropping.img.data('values').width - scale * largestWidth ) / 2;
-			options.setSelect = [ crop_offset, 0, cropping.img.data('values').width, Math.round(scale*c.img.height()) ];
-		} else {
-			//no offset cause in most cases the the selection is needed in the upper corner (human portrait)
-			options.setSelect = [ 0, 0, Math.round(scale*c.img.width()) , cropping.img.data('values').height];
-		}
-
-		if(scale===Infinity) {
-			options.setSelect = [ 0, 0, Math.round(scale*c.img.width()) , cropping.img.data('values').height];
-		}
-
-		//free scaling
-		if(!crop) {
-			options.aspectRatio = false;
-			options.setSelect = [0,0,cropping.img.data('values').width,cropping.img.data('values').height];
-			console.log('free scaling');
-		}
 
 		//debug
 		if(cpt_debug_js) {
-			console.log('choosed image - data',c.img.data('values'));
-			console.log('JCrop - options',options);
+			console.log('choosed image - data',cropping.img.data('values'));
+			console.log('Cropping options',options);
 		}
 
-		c.api = $.Jcrop(c.img, options);
+		cropping.api = new Cropper(cropping.img[0], options);
 	}
 });

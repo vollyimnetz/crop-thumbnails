@@ -1,5 +1,6 @@
 .cpt-crop-view { position: relative; }
 
+
 .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
 .image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
 .image-list { margin:0;padding:0;}
@@ -23,7 +24,7 @@
 .lbl-cpt-same-ratio {font-size:0.9em;}
 
 .selectionArea { width:300px; padding:5px; float:left; }
-.selectionArea img { max-width:300px; height:auto; }
+.selectionArea .cropContainer img { max-width: 100%; height:auto; }
 .selectionArea h3 { margin:0;}
 #cpt-generate { width: 300px; height:2em; padding:0.5em 0; display:block; line-height: 0;}
 
