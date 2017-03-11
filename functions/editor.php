@@ -25,9 +25,6 @@ class CropPostThumbnailsEditor {
 			$failure_msg = __('You are not allowed to do this.',CROP_THUMBS_LANG);
 		} else {
 			switch(true) {
-				case isset($_REQUEST['post_id'])://full programm
-					$this->listImages();
-					break;
 				case isset($_REQUEST['image_id'])://only one image
 					$this->byImageId();
 					break;
@@ -54,74 +51,6 @@ class CropPostThumbnailsEditor {
 			include_once( dirname(__FILE__).'/../html/template.php' );
 		}
 		die();//to prevent to send back a "0"
-	}
-
-	/**
-	 * Display a list of images that are attached to this post_id.
-	 * Hightlight the post-thumbnail (if it is attached to this post_id)
-	 */
-	function listImages() {
-		global $cptSettings;
-		$options = $cptSettings->getOptions();
-
-		$data = $this->loadPostIdData(intval($_REQUEST['post_id']));
-
-		$parent_post_type = '';
-		$_tmp_post = get_post(intval($_REQUEST['post_id']));
-		if(!empty($_tmp_post)) {
-			$parent_post_type = $_tmp_post->post_type;
-		}
-
-		$cptContent = '';
-
-		if($this->shouldBeHiddenOnPostType($options,$parent_post_type)) {
-			 $cptContent = '<div class="postTypeDisabledMsg">'.__('Cropping is disabled for this post-type.',CROP_THUMBS_LANG).'</div>';
-		} elseif($data==false) {
-			$cptContent = '<div class="listEmptyMsg">'.__('No images attached to this post yet. Please upload some via the upload dialog.',CROP_THUMBS_LANG).'</div>';
-		} else {
-			//the dynamic javascript
-			ob_start(); ?>
-	<script>
-	jQuery(document).ready(function($) {
-		$('.image-list .entry').click(function() {
-			var image_id = $(this).attr('rel');
-			var parent_post_id = <?php echo intval($_REQUEST['post_id']); ?>;
-			document.location.href = ajaxurl+"?action=croppostthumb_ajax&image_id="+image_id+"&parent_post_id="+parent_post_id;
-			return;
-		});
-	});
-	</script>
-			<?php
-			$cptScript = ob_get_clean();
-			//END the javascript
-
-
-			//the content
-			ob_start();?>
-			<div class="header"><strong><?php _e('Choose the image you want to crop.',CROP_THUMBS_LANG); ?></strong></div>
-			<ul class="image-list">
-			<?php
-			$counter = 1;
-			foreach($data as $key=>$image) : ?>
-				<li class="entry cursor<?php echo (isset($image->is_post_thumbnail) ? ' post-thumbnail' : ''); ?>" rel="<?php echo $image->ID;?>">
-					<h3><?php echo (isset($image->is_post_thumbnail) ? __('Post Thumbnail',CROP_THUMBS_LANG) : sprintf(__('Image %d',CROP_THUMBS_LANG),$counter));?></h3>
-					<?php $img_data = wp_get_attachment_image_src($image->ID, 'thumbnail');?>
-					<img src="<?php echo $img_data[0].'?'.time(); ?>" />
-				</li>
-			<?php
-				$counter++;
-			endforeach; ?>
-			</ul>
-			<?php
-			$cptContent = ob_get_clean();
-			//END the content
-		}
-		wp_enqueue_script( 'jquery' );
-
-		$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
-		wp_enqueue_style( 'cpt-window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
-		include_once( dirname(__FILE__).'/../html/template.php' );
-		return true;
 	}
 
 
@@ -322,13 +251,13 @@ jQuery(document).ready(function($) {
 
 
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'cpt_cropperjs', plugins_url('js/cropperjs/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		wp_enqueue_script( 'ctp_cropperjs', plugins_url('js/cropperjs/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 		wp_enqueue_script( 'json2' );
-		wp_enqueue_script( 'cpt_crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','cpt_cropperjs','json2'), CROP_THUMBS_VERSION);
+		wp_enqueue_script( 'cpt_crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','ctp_cropperjs','json2'), CROP_THUMBS_VERSION);
 
 		$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
 		wp_enqueue_style( 'cpt_window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
-		wp_enqueue_style( 'cpt_cropperjs', plugins_url('js/cropperjs/cropper.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		wp_enqueue_style( 'ctp_cropperjs', plugins_url('js/cropperjs/cropper.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 
 		include_once( dirname(__FILE__).'/../html/template.php' );
 

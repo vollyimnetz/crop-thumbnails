@@ -18,7 +18,7 @@ class CropThumbnailsSettings {
 
 	function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']=='page-cpt') {
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/options.css',dirname(__FILE__)));
+			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
 		}
 	}
 

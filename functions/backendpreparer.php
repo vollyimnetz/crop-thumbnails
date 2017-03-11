@@ -1,4 +1,8 @@
-<?php 
+<?php
+
+/**
+ * Adds the Crop-Thumbnail-Editor to the Backend.
+ */
 class CropPostThumbnailsBackendPreparer {
 	
 	private $allowedMime = array('image/jpeg','image/png');
@@ -23,7 +27,7 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
 			wp_enqueue_style("wp-jquery-ui-dialog");
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/options.css',dirname(__FILE__)));
+			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
 		}
 	}
 	
@@ -42,6 +46,32 @@ class CropPostThumbnailsBackendPreparer {
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
+	
+	
+	/**
+	 * Add an field to the attachment edit dialog
+	 * @see http://code.tutsplus.com/tutorials/creating-custom-fields-for-attachments-in-wordpress--net-13076
+	 * @see https://make.wordpress.org/core/2012/12/12/attachment-editing-now-with-full-post-edit-ui/
+	 * @param array $form_fields
+	 * @param object $post
+	 */
+	public function add_button_to_attachment_edit_view( $form_fields, $post ) {
+
+		if(in_array($post->post_mime_type,$this->allowedMime)) {
+			$html = '';
+			$html.= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' title="'.esc_attr__('Crop Featured Image',CROP_THUMBS_LANG).'">';
+			$html.= '<span class="wp-media-buttons-icon"></span> '.esc_html__('Crop Featured Image',CROP_THUMBS_LANG);
+			$html.= '</a>';
+
+			$form_fields['cropthumbnails'] = array(
+				'label' => '&nbsp;',
+				'input' => 'html',
+				'html' => $html
+			);
+		}
+		return $form_fields;
+	}
+	
 	
 	/**
 	 * adds the links into post-types and the media-library
@@ -111,10 +141,6 @@ jQuery(document).ready(function($) {
 			updateCropFeaturedImageButton(-1);
 		});
 		
-		baseElem.on('click', '.handlediv',function() {
-			
-		});
-		
 		updateCropFeaturedImageButton( parseInt(wp.media.featuredImage.get()) );
 	}
 	
@@ -124,15 +150,6 @@ jQuery(document).ready(function($) {
 		if (post_id_hidden) {
 
 			post_id_hidden = parseInt(post_id_hidden.val());
-
-			/**
-			 * add link on top of editor *
-			 */
-			var buttonContent = '';
-			buttonContent+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"post_id":'+ post_id_hidden +'}\' title="<?php esc_attr_e('Crop Thumbnails',CROP_THUMBS_LANG) ?>">';
-			buttonContent+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Thumbnails',CROP_THUMBS_LANG); ?>';
-			buttonContent+= '</a>';
-			$('#wp-content-media-buttons').append(buttonContent);
 
 			handleFeaturedImageBox();
 			
@@ -173,34 +190,6 @@ jQuery(document).ready(function($) {
 	$(document).on('click', '.cropThumbnailsLink', function(e) {
 		e.preventDefault();
 		
-		<?php
-		/*****************************************************************************/
-		/**
-		 * Theme-Developers can adjust the size of the modal-dialog via filter.
-		 */
-		$modal_window_settings = array(
-			'limitToWidth' => 800, //thats the maximum width the modal can be. On small screens it will be smaller (see offsets), set to FALSE if you want no limit
-			'maxWidthOffset' => 50, //window-width minus "width_offset" equals modal-width
-			'maxHeightOffset' => 100, //window-width minus "height_offset" equals modal-height
-		);
-		$modal_window_settings = apply_filters('crop_thumbnails_modal_window_settings',$modal_window_settings);
-		
-		$jsLimitOutput = '';
-		if($modal_window_settings['limitToWidth']!==false) {
-			$value = abs(intval($modal_window_settings['limitToWidth']));
-			
-			$jsLimitOutput.= 'if(boxViewportWidth>'.$value.') { boxViewportWidth = '.$value.'; }';
-		}
-		/*****************************************************************************/
-		?>
-
-		//modal-box dimensions (will not adjust on viewport change)
-		var boxViewportHeight = $(window).height() - <?php echo abs(intval($modal_window_settings['maxHeightOffset'])); ?>;
-		var boxViewportWidth = $(window).outerWidth() - <?php echo abs(intval($modal_window_settings['maxWidthOffset'])); ?>;
-		
-		<?php echo $jsLimitOutput; ?>
-	
-		
 
 		//get the data from the link
 		var data = $(this).data('cropthumbnail');
@@ -210,83 +199,70 @@ jQuery(document).ready(function($) {
 		for(var v in data) {
 			url+='&amp;'+v+'='+data[v];
 		}
-
-		var content = $('<div><iframe src="'+url+'"></iframe></div>');
-		var overlay;
-		var isModalClassInitialSet = $('body').hasClass('modal-open');
+		var title = $(this).attr('title');
 		
-		var dialogOptions = {
-			dialogClass : 'cropThumbnailModal',
-			modal : true,
-			title : $(this).attr('title'),
-			resizable : false,
-			draggable : false,
-			autoOpen : false,
-			closeOnEscape : true,
-			height : boxViewportHeight,
-			width : boxViewportWidth,
-			close : function(event, ui ) {
-				if(overlay!==undefined) {
-					overlay.unbind('click');
-				}
-
-				//remove modal-open class (disable the scrollbars)
-				if(!isModalClassInitialSet) {
-					$('body').removeClass('modal-open');
-				}
-				$(this).dialog('destroy');
-				
-				/**
-				 * We will trigger that the modal of the crop thumbnail is closed.
-				 * So everyone that is up to, could build a cache-breaker on their images.
-				 * HOW-TO cache-break:
-				 * $('body').on('cropThumbnailModalClosed',function() {
-				 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
-				 * });
-				 */
-				$('body').trigger('cropThumbnailModalClosed');
-			},
-			open : function(event, ui) {
-				overlay = $('.ui-widget-overlay.ui-front');
-				overlay.addClass('cropThumbnailModalOverlay');
-				overlay.click(function() {
-					content.dialog('close');
-				});
-
-				//add body class (disable the scrollbars)
-				$('body').addClass('modal-open');
+		
+		var CPT_Modal = function() {
+			var that = this;
+			
+			function removeModal() {
+				$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
+				$('#cpt_Modal').remove();
+				$('body').removeClass('cpt_ModalIsOpen');
 			}
+			
+			/**
+			 * Should be called when the close-button is clicked.
+			 * Will trigger the "cropThumbnailModalClosed"-event to the body on close,
+			 * so everyone that is up to, could build a cache-breaker on their images.
+			 * HOW-TO cache-break:
+			 * $('body').on('cropThumbnailModalClosed',function() {
+			 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
+			 * });
+			 * @var Event
+			 */
+			that.close = function(event) {
+				removeModal();
+				$('body').trigger('cropThumbnailModalClosed');
+			};
+			
+			/**
+			 * Should be called when the background is clicked
+			 * @var Event
+			 */
+			that.closeByBackground = function(event) {
+				if(event.target==document.getElementById('cpt_Modal')) {
+					that.close(event);
+				}
+			};
+			
+			that.open = function(url,title) {
+				var modalHtml = '';
+				modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
+				modalHtml+= '<div class="cpt_ModalDialog">';
+				modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
+				
+				modalHtml+= '<div class="cpt_ModalContent">';
+				modalHtml+= '<div class="cpt_IframeScrollFrame">';
+				modalHtml+= '<iframe src="'+url+'"></iframe>';
+				modalHtml+= '</div>';//end cpt_IframeScrollFrame
+				modalHtml+= '</div>';//end cpt_ModalContent
+				modalHtml+= '</div>';//end cpt_ModalDialog
+				modalHtml+= '</div>';//end cpt_Modal;
+				
+				
+				$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
+				$('#cpt_Modal .cpt_ModalClose').click(that.close);
+				$('#cpt_Modal').click(that.closeByBackground);
+			};
 		};
 		
-		content.dialog(dialogOptions).dialog('open');
+		var modal = new CPT_Modal();
+		modal.open(url,title);
 	});
 });
 </script>
 <?php
-	}
-
-	/**
-	 * Add an field to the attachment edit dialog
-	 * @see http://code.tutsplus.com/tutorials/creating-custom-fields-for-attachments-in-wordpress--net-13076
-	 * @see https://make.wordpress.org/core/2012/12/12/attachment-editing-now-with-full-post-edit-ui/
-	 * @param array $form_fields
-	 * @param object $post
-	 */
-	public function add_button_to_attachment_edit_view( $form_fields, $post ) {
-
-		if(in_array($post->post_mime_type,$this->allowedMime)) {
-			$html = '';
-			$html.= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' title="'.esc_attr__('Crop Featured Image',CROP_THUMBS_LANG).'">';
-			$html.= '<span class="wp-media-buttons-icon"></span> '.esc_html__('Crop Featured Image',CROP_THUMBS_LANG);
-			$html.= '</a>';
-
-			$form_fields['cropthumbnails'] = array(
-				'label' => '&nbsp;',
-				'input' => 'html',
-				'html' => $html
-			);
-		}
-		return $form_fields;
 	}
 }
 $cpt_postView = new CropPostThumbnailsBackendPreparer();

@@ -1,0 +1,41 @@
+.cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
+.cpt_settings_submit { margin-top:2em; }
+
+#cpt_quicktest { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding:1em; }
+#cpt_quicktest strong {display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; }
+#cpt_quicktest strong.success { background:#00cc00; }
+#cpt_quicktest strong.fails { background:#cc0000; }
+
+
+/**** button icon ****/
+a.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; speak: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+/* buttons above editor */
+#wp-content-media-buttons a.cropThumbnailsLink .wp-media-buttons-icon::before { font: normal 18px/1 dashicons;  }
+
+
+/**** featured image box ****/
+#postimagediv.closed .cropFeaturedImageWrap { display: none; }
+#postimagediv .cropFeaturedImageWrap { padding:0 12px; margin-top:0; }
+
+/**** button in media dialog ****/
+.media-modal .compat-field-cropthumbnails th { width: 0; min-width: 0; margin:0; }
+.media-modal .compat-field-cropthumbnails td { width: auto; }
+
+
+/**** MODAL ****/
+/* @see https://www.w3schools.com/howto/howto_css_modals.asp */
+body.cpt_ModalIsOpen { overflow: hidden; }
+#cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+#cpt_Modal .cpt_ModalDialog { background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 90%; max-width: 800px; height: 90%; margin-top:5vh; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+#cpt_Modal .cpt_ModalHeader { height: 30px; position: relative; }
+#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:16px; font-weight: bold; line-height: 1; padding: 7px 50px 7px 20px; }
+#cpt_Modal .cpt_ModalContent { width:100%; height: 100%; padding-top:30px; margin-top:-30px; box-sizing: border-box; }
+
+
+#cpt_Modal .cpt_IframeScrollFrame { width:100%; height: 100%; }
+#cpt_Modal iframe { border:0; width:100%; height: 100%; }
+
+/* The Close Button */
+#cpt_Modal .cpt_ModalClose { color: #aaaaaa; position: absolute; right:0; top:0; font-size: 28px; font-weight: bold; padding:4px 8px 8px 8px; }
+#cpt_Modal .cpt_ModalClose:hover,
+#cpt_Modal .cpt_ModalClose:focus { color: #000; text-decoration: none; cursor: pointer; }

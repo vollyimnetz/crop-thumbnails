@@ -121,6 +121,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 0.10.13 =
+* modal dialog rewriten
+* the action "crop_thumbnails_modal_window_settings" is gone, you can adjust this now via overriding the admin-css
+
 = 0.10.12 =
 * add italian translation (thanks to akteon18)
 
