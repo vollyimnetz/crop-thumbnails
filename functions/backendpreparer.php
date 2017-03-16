@@ -26,8 +26,9 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'page.php'
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
-			wp_enqueue_style("wp-jquery-ui-dialog");
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
+			wp_enqueue_style('cropperjs',plugins_url('js/app/vendor/cropper.min.css',dirname(__FILE__)),array(), CROP_THUMBS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)),array('cropperjs'),CROP_THUMBS_VERSION);
+			
 		}
 	}
 	
@@ -42,7 +43,10 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
 
-			wp_enqueue_script('jquery-ui-dialog');
+			wp_enqueue_script( 'cropperjs', plugins_url('js/app/vendor/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'json2' );
+			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js',dirname(__FILE__)), array('jquery','vue','cropperjs','json2'), CROP_THUMBS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
@@ -81,22 +85,6 @@ class CropPostThumbnailsBackendPreparer {
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	/**
-	 * Provide a global accessable cache-break-function (only available on backend-pages where crop-thumbnail is active --> post-editor, mediathek)
-	 * Calling this function will add a timestamp on the provided Image-Element.
-	 * ATTENTION: using this will also delete all other parameters on the images src-attribute.
-	 * @param {dom-element / jquery-selection} elem
-	 */
-	CROP_THUMBNAILS_DO_CACHE_BREAK = function(elem) {
-		var images = $(elem);
-		for(var i = 0; i<images.length; i++) {
-			var img = $(images[i]);//select image
-			var imageUrl = img.attr('src');
-			var imageUrlArray = imageUrl.split("?");
-			
-			img.attr('src',imageUrlArray[0]+'?&cacheBreak='+(new Date()).getTime());
-		}
-	};
 	
 	/**
 	 * Adds a button to the featured image metabox.
@@ -182,84 +170,6 @@ jQuery(document).ready(function($) {
 			CROP_THUMBNAILS_DO_CACHE_BREAK($('#the-list tr .media-icon img'));
 		});
 	}
-
-	/**
-	 * Create Listener for click-events with element-class ".cropThumbnailsLink".
-	 * Open the modal box.
-	 */
-	$(document).on('click', '.cropThumbnailsLink', function(e) {
-		e.preventDefault();
-		
-
-		//get the data from the link
-		var data = $(this).data('cropthumbnail');
-
-		//construct the thickbox-parameter
-		var url = ajaxurl+'?action=croppostthumb_ajax';
-		for(var v in data) {
-			url+='&amp;'+v+'='+data[v];
-		}
-		var title = $(this).attr('title');
-		
-		
-		var CPT_Modal = function() {
-			var that = this;
-			
-			function removeModal() {
-				$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
-				$('#cpt_Modal').remove();
-				$('body').removeClass('cpt_ModalIsOpen');
-			}
-			
-			/**
-			 * Should be called when the close-button is clicked.
-			 * Will trigger the "cropThumbnailModalClosed"-event to the body on close,
-			 * so everyone that is up to, could build a cache-breaker on their images.
-			 * HOW-TO cache-break:
-			 * $('body').on('cropThumbnailModalClosed',function() {
-			 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
-			 * });
-			 * @var Event
-			 */
-			that.close = function(event) {
-				removeModal();
-				$('body').trigger('cropThumbnailModalClosed');
-			};
-			
-			/**
-			 * Should be called when the background is clicked
-			 * @var Event
-			 */
-			that.closeByBackground = function(event) {
-				if(event.target==document.getElementById('cpt_Modal')) {
-					that.close(event);
-				}
-			};
-			
-			that.open = function(url,title) {
-				var modalHtml = '';
-				modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
-				modalHtml+= '<div class="cpt_ModalDialog">';
-				modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
-				
-				modalHtml+= '<div class="cpt_ModalContent">';
-				modalHtml+= '<div class="cpt_IframeScrollFrame">';
-				modalHtml+= '<iframe src="'+url+'"></iframe>';
-				modalHtml+= '</div>';//end cpt_IframeScrollFrame
-				modalHtml+= '</div>';//end cpt_ModalContent
-				modalHtml+= '</div>';//end cpt_ModalDialog
-				modalHtml+= '</div>';//end cpt_Modal;
-				
-				
-				$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
-				$('#cpt_Modal .cpt_ModalClose').click(that.close);
-				$('#cpt_Modal').click(that.closeByBackground);
-			};
-		};
-		
-		var modal = new CPT_Modal();
-		modal.open(url,title);
-	});
 });
 </script>
 <?php
