@@ -8,16 +8,11 @@ jQuery(document).ready(function($) {
 
 		//get the data from the link
 		var data = $(this).data('cropthumbnail');
+		console.log('cropthumbnail data',data);
 
-		//construct the thickbox-parameter
-		var url = ajaxurl+'?action=croppostthumb_ajax';
-		for(var v in data) {
-			url+='&amp;'+v+'='+data[v];
-		}
 		var title = $(this).attr('title');
 		
-		
 		var modal = new CROP_THUMBNAILS_VUE.modal();
-		modal.open(url,title);
+		modal.open(data.image_id, title);
 	});
 });

@@ -1,0 +1,37 @@
+<div>
+	<div class="cpt-crop-view" v-if="cropData.lang">
+		
+		<div class="waitingWindow hidden" v-if="loading">{{ cropData.lang.waiting }}</div>
+		<div class="mainWindow">
+			<div class="selectionArea cptLeftPane">
+				<h3>{{ cropData.lang.rawImage }}: {{cropData.fullSizeImage.width}} {{ cropData.lang.pixel }}  x {{cropData.fullSizeImage.height}} {{ cropData.lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
+				<div class="cropContainer">
+					<img id="cpt-croppingImage" :src="cropData.fullSizeImage.url" />
+				</div>
+				<button id="cpt-generate" class="button">{{ cropData.lang.label_crop }}</button>
+				<h4>{{ cropData.lang.instructions_header }}</h4>
+				<ul class="step-info">
+					<li>{{ cropData.lang.instructions_step_1 }}</li>
+					<li>{{ cropData.lang.instructions_step_2 }}</li>
+					<li>{{ cropData.lang.instructions_step_3 }}</li>
+				</ul>
+			</div>
+			<div class="cptRightPane">
+				<input type="checkbox" name="cpt-same-ratio"  v-model="selectSameRatio"  />
+				<label for="cpt-same-ratio" class="lbl-cpt-same-ratio">{{cropData.lang.label_same_ratio}}</label>
+				<button id="cpt-deselect" class="button">{{cropData.lang.label_deselect_all}}</button>
+				<ul class="thumbnail-list">
+					<!--
+					<li v-for="i in cropData.imageSizes">
+						<strong>{{i.name}}
+							 <span class="lowResWarning">{{cropData.lang.lowResWarning}}</span>
+						</strong>
+						<span class="dimensions">{{cropData.lang.dimensions}} $print_dimensions;</span>
+						<span class="ratio">{{ cropData.lang.ratio }} <?php echo $print_ratio; ?></span>
+						<img v-src="i.imageObj[0]" />
+					</li>-->
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

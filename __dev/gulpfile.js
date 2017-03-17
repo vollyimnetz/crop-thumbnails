@@ -9,6 +9,7 @@ var gulpUtil = require('gulp-util');
 var uglify = require('gulp-uglify');
 var merge2 = require('merge2');
 var stripComments = require('gulp-strip-comments');
+var vueTpl2Js = require('gulp-vue-template2js');
 
 console.log(gulpUtil.colors.black.bgGreen(' Run "gulp doc" to see the gulpfile-documentation                               '));
 
@@ -21,6 +22,7 @@ var settings = {
 	vendor: {
 		js: [
 			'node_modules/vue/dist/vue.min.js',
+			'node_modules/axios/dist/axios.min.js',
 			'node_modules/cropperjs/dist/cropper.min.js',
 		],
 		css: [
@@ -86,6 +88,7 @@ gulp.task('vendor', ['vendor.misc'], function() {});
 /** START app ****************************************** **/
 gulp.task('app.scripts', function() {
 	return gulp.src([ settings.srcFolder+ '/app/**/*.js', '!'+settings.srcFolder + '/app/**/*.test.js' ])
+		.pipe(vueTpl2Js())
 		.pipe(settings.minifyApp ? uglify({ mangle:true }) : gulpUtil.noop() )
 		.pipe(concat('app.js'))
 		.on('error', swallowError)
@@ -103,7 +106,7 @@ gulp.task('deploy', ['build'],function() {});
  * watch for changes and kick some tasks
  */
 gulp.task('watch', ['build'], function() {
-	gulp.watch(['app/**/*.js'], {cwd:settings.srcFolder}, ['app'] );
+	gulp.watch(['app/**/*.js','app/**/*.tpl.html'], {cwd:settings.srcFolder}, ['app'] );
 });
 
 

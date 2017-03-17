@@ -46,7 +46,8 @@ class CropPostThumbnailsBackendPreparer {
 			wp_enqueue_script( 'cropperjs', plugins_url('js/app/vendor/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 			wp_enqueue_script( 'json2' );
 			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js',dirname(__FILE__)), array('jquery','vue','cropperjs','json2'), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'axios', plugins_url('js/app/vendor/axios.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js',dirname(__FILE__)), array('jquery','vue','axios','cropperjs','json2'), CROP_THUMBS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}

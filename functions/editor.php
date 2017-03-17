@@ -3,6 +3,9 @@
 /**
  * Contains all code inside the croping-window
  */
+
+class CPT_ForbiddenException extends Exception {}
+
 class CropPostThumbnailsEditor {
 
 	private $debugOutput = '';
@@ -12,6 +15,151 @@ class CropPostThumbnailsEditor {
 	function __construct() {
 		/* for the html inside the thickbox */
 		add_action('wp_ajax_croppostthumb_ajax', array($this,'ajaxWindow'));
+		
+		add_action('wp_ajax_cpt_cropdata', array($this, 'provideCropData') );
+	}
+	
+	public function provideCropData() {
+		try {
+			header('Content-Type: application/json; charset=UTF-8');
+			$result = $this->getCropData();
+			echo json_encode($result);
+		} catch(InvalidArgumentException $e) {
+			http_response_code(400);
+			echo 'FAILURE while processing request: '.$e->getMessage();
+		} catch(CPT_ForbiddenException $e) {
+			http_response_code(403);
+			echo 'ERROR not allowed.';
+		} catch(Exception $e) {
+			http_response_code(400);
+			echo 'FAILURE while processing request.';
+		}
+		die();//to prevent to send back a "0"
+	}
+	
+	public function getCropData() {
+		if(!self::isUserPermitted()) {
+			throw new CPT_ForbiddenException();
+		}
+		
+		global $cptSettings;
+		$options = $cptSettings->getOptions();
+		$result = array(
+			'options' => $options,
+			'imageObj' => null,
+			'postTypeFilter' => null,
+			'imageSizes' => $cptSettings->getImageSizes(),
+			'fullSizeImage' => null, //???
+			'lang' => array(
+				'bug' => __('Bug--this should not have occurred.',CROP_THUMBS_LANG),
+				'warningOriginalToSmall' => __('Warning: the original image is too small to be cropped in good quality with this thumbnail size.',CROP_THUMBS_LANG),
+				'selectOne' => __('First, select an image. Then, click once again.',CROP_THUMBS_LANG),
+				'cropDisabled' => __('Cropping is disabled for this post-type.',CROP_THUMBS_LANG),
+				'waiting' => __('Please wait until the images are cropped.',CROP_THUMBS_LANG),
+				'rawImage' => __('Raw',CROP_THUMBS_LANG),
+				'pixel' => __('pixel',CROP_THUMBS_LANG),
+				'instructions_header' => __('Quick Instructions',CROP_THUMBS_LANG),
+				'instructions_step_1' => __('Step 1: Choose an image from the right.',CROP_THUMBS_LANG),
+				'instructions_step_2' => __('Step 2: Use your mouse to change the size of the rectangle on the image above.',CROP_THUMBS_LANG),
+				'instructions_step_3' => __('Step 3: Click on "Save Crop".',CROP_THUMBS_LANG),
+				'label_crop' => __('Save Crop',CROP_THUMBS_LANG),
+				'label_same_ratio' => __('Crop all images with same ratio at once',CROP_THUMBS_LANG),
+				'label_deselect_all' => __('deselect all',CROP_THUMBS_LANG),
+				'dimensions' => __('Dimensions:',CROP_THUMBS_LANG),
+				'ratio' => __('Ratio:',CROP_THUMBS_LANG),
+				'cropped' => __('cropped',CROP_THUMBS_LANG),
+				'lowResWarning' => __('Original image size too small for good crop quality!',CROP_THUMBS_LANG),
+			),
+			'nonce' => wp_create_nonce($cptSettings->getNonceBase())
+		);
+		
+		//simple validation
+		if(empty($_REQUEST['imageId'])) {
+			throw new InvalidArgumentException('Missing Parameter "imageId".');
+		}
+		
+		$result['imageObj'] = get_post(intval($_REQUEST['imageId']));
+		if(empty($result['imageObj']) || $result['imageObj']->post_type!=='attachment') {
+			throw new InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
+		}
+
+		if(!empty($_REQUEST['posttype']) && post_type_exists($_REQUEST['posttype'])) {
+			$result['postTypeFilter'] = $_REQUEST['posttype'];
+		}
+
+		$orig_img = wp_get_attachment_image_src($result['imageObj']->ID, 'full');
+		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
+		$result['fullSizeImage'] = array(
+			'url' => $orig_img[0],
+			'width' => $orig_img[1],
+			'height' => $orig_img[2],
+			'gcd' => $orig_ima_gcd,
+			'ratio' => ($orig_img[1]/$orig_ima_gcd) / ($orig_img[2]/$orig_ima_gcd),
+			'print_ratio' => ($orig_img[1]/$orig_ima_gcd).':'.($orig_img[2]/$orig_ima_gcd),
+		);
+		
+		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
+		
+		if(!$result['hiddenOnPostType']) {
+			
+			foreach($result['imageSizes'] as $imageSizeName => $value) {
+				
+				if(empty($value['crop'])) {
+					//we do not need uncropped image sizes
+					unset($result['imageSizes'][$imageSizeName]);
+					continue;//to the next entry
+				}
+				
+				
+				if ($value['height'] == 9999) { //TODO I do not remember why i add this previosley
+					$value['height'] = 0;
+				}
+				if ($value['width'] == 9999) { //TODO I do not remember why i add this previosley
+					$value['width'] = 0;
+				}
+				
+				
+				if(self::shouldSizeBeHidden($options,$imageSizeName,$value,$result['postTypeFilter'])) {
+					$result['imageSizes'][$imageSizeName]['hideByPostType'] = true;
+				} else {
+					$result['imageSizes'][$imageSizeName]['hideByPostType'] = false;
+				}
+				
+				
+				$ratio = null;			//reset
+				$gcd = null;			//reset
+				$print_ratio = null;	//reset
+				/** define ratio **/
+				if($value['width'] != 0 && $value['height']!=0) {
+					$gcd = $this->gcd($value['width'],$value['height']);//get greatest common divisor
+					$ratio = ($value['width']/$gcd) / ($value['height']/$gcd);//get ratio
+					$print_ratio = $value['width']/$gcd.':'.$value['height']/$gcd;
+				} else {
+					//keep ratio same as original image
+					$gcd = $result['fullSizeImage']['gcd'];
+					$ratio = $result['fullSizeImage']['ratio'];
+					$print_ratio = $result['fullSizeImage']['print_ratio'];
+				}
+				
+				
+				
+				$img_data = wp_get_attachment_image_src($result['imageObj']->ID, $imageSizeName);
+				$jsonDataValues = array(
+					'name' => $imageSizeName,
+					'url' => $img_data[0],
+					'width' => $value['width'],
+					'height' => $value['height'],
+					'gcd' => $gcd,
+					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $print_ratio, $imageSizeName),
+					'ratio' => $ratio,
+					'crop' => true//legacy
+				);
+				$jsonDataValues = apply_filters('crop_thumbnails_editor_jsonDataValues', $jsonDataValues);
+				$result['imageSizes'][$imageSizeName]['imageData'] = $jsonDataValues;
+				
+			}//END froeach
+		}
+		return $result;
 	}
 
 
@@ -21,22 +169,12 @@ class CropPostThumbnailsEditor {
 	function ajaxWindow() {
 		$this->cleanWPHead();
 		$failure_msg = '';
-		if(!$this->isUserPermitted()) {
+		if(!self::isUserPermitted()) {
 			$failure_msg = __('You are not allowed to do this.',CROP_THUMBS_LANG);
 		} else {
 			switch(true) {
 				case isset($_REQUEST['image_id'])://only one image
 					$this->byImageId();
-					break;
-				case isset($_REQUEST['image_by_post_id'])://only one image
-					$id = get_post_thumbnail_id(intval($_REQUEST['image_by_post_id']));
-					if(!empty($id)) {
-						$_REQUEST['image_id'] = $id;
-						$_REQUEST['parent_post_id'] = intval($_REQUEST['image_by_post_id']);
-						$this->byImageId();
-					} else {
-						$failure_msg = '<div class="listEmptyMsg">'.__('No featured image set for this post until now.',CROP_THUMBS_LANG).'</div>';
-					}
 					break;
 				default:
 					$failure_msg = __('An error occurred!',CROP_THUMBS_LANG);
@@ -133,7 +271,7 @@ jQuery(document).ready(function($) {
 		//the content
 		ob_start();
 
-		if($this->shouldBeHiddenOnPostType($options,$current_parent_post_type)) : ?>
+		if(self::shouldBeHiddenOnPostType($options,$current_parent_post_type)) : ?>
 			<div class="cpt-crop-view">
 				<div class="postTypeDisabledMsg"><?php _e('Cropping is disabled for this post-type.',CROP_THUMBS_LANG); ?></div>
 			</div>
@@ -171,7 +309,7 @@ jQuery(document).ready(function($) {
 								$value['width'] = 0;
 							}
 
-							if(!$this->shouldSizeBeHidden($options,$img_size_name,$value,$current_parent_post_type)) :
+							if(!self::shouldSizeBeHidden($options,$img_size_name,$value,$current_parent_post_type)) :
 								$ratio = null;			//reset
 								$gcd = null;			//reset
 								$print_ratio = null;	//reset
@@ -218,7 +356,7 @@ jQuery(document).ready(function($) {
 
 
 								$_lowResWarning = '';
-								if($this->isLowRes($value,$orig_img)) {
+								if(self::isLowRes($value,$orig_img)) {
 									$_lowResWarning = ' <span class="lowResWarning">'.__('Original image size too small for good crop quality!',CROP_THUMBS_LANG).'</span>';
 								}
 								
@@ -267,7 +405,7 @@ jQuery(document).ready(function($) {
 		return true;
 	}
 
-	function shouldBeHiddenOnPostType($options,$post_type) {
+	private static function shouldBeHiddenOnPostType($options,$post_type) {
 		if(empty($post_type)) {
 			return false;
 		}
@@ -284,7 +422,7 @@ jQuery(document).ready(function($) {
 	 * @param string name post-type (i.e. post, page, ...)
 	 * @return boolean true if Image-size should be hidden
 	 */
-	function shouldSizeBeHidden($options, $img_size_name, $img_size, $post_type='') {
+	private static function shouldSizeBeHidden($options, $img_size_name, $img_size, $post_type='') {
 		$_return = false;
 		if(!empty($post_type)) {
 			//we are NOT in the mediathek
@@ -311,47 +449,19 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	 * load all image data of that $post_id
-	 * - adds "is_post_thumbnail" with value true into the entry, if it is the post_thumbnail
-	 */
-	function loadPostIdData($post_id) {
-		$args = array(
-			'post_type' => 'attachment',
-			'numberposts' => -1,
-			'post_parent' => intval($post_id)
-		);
-		$images = get_posts($args);
-
-		$post_thumbnail_id = get_post_thumbnail_id( $post_id );
-		if(!isset($post_thumbnail_id)) {
-			$post_thumbnail_id = -1;
-		}
-
-		foreach($images as $key=>$value) {
-			$mime = $value->post_mime_type;
-			if( !in_array($mime,$this->allowedMime) ) {
-				unset($images[$key]);
-			} elseif($value->ID==$post_thumbnail_id) {
-				$images[$key]->is_post_thumbnail = true;
-			}
-		}
-		return $images;
-	}
-
-	/**
 	 * Checks if the thumb-image-dimensions are bigger than the actuall image.
 	 * @param array thumbnail-data from the add_image_size-funtion (width, height)
 	 * @param array original image-data-array (url, width, height)
 	 * @return true if the original is smaller than the thumbnail-size
 	 */
-	function isLowRes($thumb,$orig) {
+	private static function isLowRes($thumb,$orig) {
 		if($thumb['width']>$orig[1] || $thumb['height']>$orig[2]) {
 			return true;
 		}
 		return false;
 	}
 
-	function isUserPermitted() {
+	private static function isUserPermitted() {
 		$return = false;
 		if(current_user_can('upload_files')) {
 			$return = true;
@@ -376,21 +486,21 @@ jQuery(document).ready(function($) {
 	/**
 	 * Greatest cummon divisor
 	 */
-	function gcd($a, $b) {
+	private function gcd($a, $b) {
 		if(function_exists('gmp_gcd')) {
 			$gcd = gmp_strval(gmp_gcd($a,$b));
 			$this->addDebug("gcd-version", "gmp_gcd:".$gcd);
 			return ($gcd);
 		} else {
-			$gcd = $this->my_gcd($a,$b);
+			$gcd = self::my_gcd($a,$b);
 			$this->addDebug("gcd-version", "my_gcd:".$gcd);
 			return $gcd;
 		}
 	}
 
-	function my_gcd($a, $b) {
+	private static function my_gcd($a, $b) {
 		$b = ( $a == 0 )? 0 : $b;
-		return ( $a % $b )? $this->my_gcd($b, abs($a - $b)) : $b;
+		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
 	}
 
 

@@ -17,7 +17,7 @@ class CptSaveThumbnail {
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
 	 * Called die() at the end.
 	 */
-	function saveThumbnail() {
+	public function saveThumbnail() {
 		global $cptSettings;
 		$json_return = array();
 		
@@ -55,7 +55,7 @@ class CptSaveThumbnail {
 				$this->addDebug('submitted image-data');
 				$this->addDebug(print_r($_imageSize,true));
 				$_delete_old_file = '';
-				if(!$this->isImageSizeValid($_imageSize,$dbImageSizes)) {
+				if(!self::isImageSizeValid($_imageSize,$dbImageSizes)) {
 					$this->addDebug("Image size not valid.");
 					continue;
 				}
@@ -71,7 +71,7 @@ class CptSaveThumbnail {
 					}
 				}
 				
-				$_filepath = $this->generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
+				$_filepath = self::generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
 				$_filepath_info = pathinfo($_filepath);
 				
 				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$_filepath_info['basename'];
@@ -176,7 +176,7 @@ class CptSaveThumbnail {
 	 * @param array all available ImageSizes
 	 * @return boolean true if the newImageSize is in the list of ImageSizes and dimensions are correct
 	 */
-	function isImageSizeValid(&$submitted,$dbData) {
+	private static function isImageSizeValid(&$submitted,$dbData) {
 		if(empty($submitted->name)) {
 			return false;
 		}
@@ -200,7 +200,7 @@ class CptSaveThumbnail {
 	 * @param object metadata of the image-attachement
 	 * @throw Exception if the security validation fails
 	 */
-	function validation($selection,$obj,$sourceImgPath,$post_metadata)  {
+	private function validation($selection,$obj,$sourceImgPath,$post_metadata)  {
 		global $cptSettings;
 		if(!check_ajax_referer($cptSettings->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",CROP_THUMBS_LANG), 1);
@@ -237,7 +237,7 @@ class CptSaveThumbnail {
 	 * @param int height of the new image
 	 * @return string path to the new image
 	 */
-	function generateFilename( $file, $w, $h ){
+	private static function generateFilename( $file, $w, $h ){
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];

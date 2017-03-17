@@ -1,5 +1,6 @@
 
 var CROP_THUMBNAILS_VUE = {
+	app:null,//will be initialized in modal/modal.js
 	components : {}
 };
 
@@ -32,22 +33,37 @@ jQuery(document).ready(function($) {
 
 		//get the data from the link
 		var data = $(this).data('cropthumbnail');
+		console.log('cropthumbnail data',data);
 
-		//construct the thickbox-parameter
-		var url = ajaxurl+'?action=croppostthumb_ajax';
-		for(var v in data) {
-			url+='&amp;'+v+'='+data[v];
-		}
 		var title = $(this).attr('title');
 		
-		
 		var modal = new CROP_THUMBNAILS_VUE.modal();
-		modal.open(url,title);
+		modal.open(data.image_id, title);
 	});
 });
 
-
-
+CROP_THUMBNAILS_VUE.components.cropeditor = {
+	template: "<div><div class=\"cpt-crop-view\" v-if=\"cropData.lang\"><div class=\"waitingWindow hidden\" v-if=\"loading\">{{ cropData.lang.waiting }}</div><div class=\"mainWindow\"><div class=\"selectionArea cptLeftPane\"><h3>{{ cropData.lang.rawImage }}: {{cropData.fullSizeImage.width}} {{ cropData.lang.pixel }} x {{cropData.fullSizeImage.height}} {{ cropData.lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3><div class=\"cropContainer\"> <img id=\"cpt-croppingImage\" :src=\"cropData.fullSizeImage.url\"/></div> <button id=\"cpt-generate\" class=\"button\">{{ cropData.lang.label_crop }}</button><h4>{{ cropData.lang.instructions_header }}</h4><ul class=\"step-info\"><li>{{ cropData.lang.instructions_step_1 }}</li><li>{{ cropData.lang.instructions_step_2 }}</li><li>{{ cropData.lang.instructions_step_3 }}</li></ul></div><div class=\"cptRightPane\"> <input type=\"checkbox\" name=\"cpt-same-ratio\" v-model=\"selectSameRatio\"/> <label for=\"cpt-same-ratio\" class=\"lbl-cpt-same-ratio\">{{cropData.lang.label_same_ratio}}</label> <button id=\"cpt-deselect\" class=\"button\">{{cropData.lang.label_deselect_all}}</button><ul class=\"thumbnail-list\"></ul></div></div></div></div>",
+	props:[
+		'imageId'
+	],
+	data:function() {
+		return {
+			cropData : '',
+			loading : false,
+			selectSameRatio : true
+		};
+	},
+	mounted:function() {
+		var that = this;
+		
+		that.cropData = axios.get('http://localhost/wordpress-dev/wp-admin/admin-ajax.php?action=cpt_cropdata&imageId='+this.imageId)
+			.then(function(response) {
+				that.cropData = response.data;
+				console.log('data loaded',response.data,that.cropData);
+			});
+	}
+};
 
 CROP_THUMBNAILS_VUE.modal = function() {
 	var $ = jQuery;
@@ -70,6 +86,8 @@ CROP_THUMBNAILS_VUE.modal = function() {
 	 * @var Event
 	 */
 	that.close = function(event) {
+		CROP_THUMBNAILS_VUE.app.$destroy();
+		CROP_THUMBNAILS_VUE.app = null;
 		removeModal();
 		$('body').trigger('cropThumbnailModalClosed');
 	};
@@ -84,14 +102,16 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		}
 	};
 	
-	that.open = function(url,title) {
+	that.open = function(imageId,title) {	
+		
+		var id = imageId;
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
 		modalHtml+= '<div class="cpt_ModalDialog">';
 		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
-		modalHtml+= '<cropeditor></cropeditor>'
+		modalHtml+= '<cropeditor image-id="'+id+'"></cropeditor>'
 		modalHtml+= '</div>';//end cpt_ModalContent
 		modalHtml+= '</div>';//end cpt_ModalDialog
 		modalHtml+= '</div>';//end cpt_Modal;
@@ -102,7 +122,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		$('#cpt_Modal').click(that.closeByBackground);
 		
 		
-		var app = new Vue({
+		CROP_THUMBNAILS_VUE.app = new Vue({
 			el:'#cpt_crop_editor',
 			mounted:function() {
 				console.log('cpt_crop_editor mounted');
@@ -117,11 +137,4 @@ CROP_THUMBNAILS_VUE.modal = function() {
 			}
 		});
 	};
-};
-
-CROP_THUMBNAILS_VUE.components.cropeditor = {
-	template: '<div>hallo welt</div>',
-	mounted:function() {
-		console.log('cropeditor mounted');
-	}
 };

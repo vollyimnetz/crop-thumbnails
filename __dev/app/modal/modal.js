@@ -1,6 +1,3 @@
-
-
-
 CROP_THUMBNAILS_VUE.modal = function() {
 	var $ = jQuery;
 	var that = this;
@@ -22,6 +19,8 @@ CROP_THUMBNAILS_VUE.modal = function() {
 	 * @var Event
 	 */
 	that.close = function(event) {
+		CROP_THUMBNAILS_VUE.app.$destroy();
+		CROP_THUMBNAILS_VUE.app = null;
 		removeModal();
 		$('body').trigger('cropThumbnailModalClosed');
 	};
@@ -36,14 +35,16 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		}
 	};
 	
-	that.open = function(url,title) {
+	that.open = function(imageId,title) {	
+		
+		var id = imageId;
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
 		modalHtml+= '<div class="cpt_ModalDialog">';
 		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
-		modalHtml+= '<cropeditor></cropeditor>'
+		modalHtml+= '<cropeditor image-id="'+id+'"></cropeditor>'
 		modalHtml+= '</div>';//end cpt_ModalContent
 		modalHtml+= '</div>';//end cpt_ModalDialog
 		modalHtml+= '</div>';//end cpt_Modal;
@@ -54,7 +55,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		$('#cpt_Modal').click(that.closeByBackground);
 		
 		
-		var app = new Vue({
+		CROP_THUMBNAILS_VUE.app = new Vue({
 			el:'#cpt_crop_editor',
 			mounted:function() {
 				console.log('cpt_crop_editor mounted');

@@ -9,6 +9,7 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "axios": "^0.15.3",
     "cropperjs": "^1.0.0-beta.2",
     "vue": "^2.2.4"
   },
@@ -20,6 +21,7 @@
     "gulp-strip-comments": "^2.4.3",
     "gulp-uglify": "^1.5.1",
     "gulp-util": "^3.0.7",
+    "gulp-vue-template2js": "^1.0.1",
     "lodash": "^4.0.0",
     "merge2": "^1.0.2"
   }
