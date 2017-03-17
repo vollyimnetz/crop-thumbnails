@@ -60,7 +60,10 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .image-list .cursor, .image-list .cursor * { cursor:pointer;} 
 
 #cpt_crop_editor .header {background-color:#efefef; padding:5px; position: relative; z-index: 1000;}
+
+#cpt_crop_editor .mainWindow::after { content: ""; clear: both; display: block; }
 #cpt_crop_editor .cptRightPane { padding:5px 5px 0 10px; border-top:3px solid #ddd; margin-top:1.5em; }
+
 #cpt_crop_editor .thumbnail-list { border-top: 3px solid #efefef; padding-top:5px; margin-top:5px; }
 #cpt_crop_editor .thumbnail-list li { padding:5px; border:2px solid white; cursor:pointer; transition: all .5s ease; }
 #cpt_crop_editor .thumbnail-list li:hover { border:2px solid #aad6f4; background: #fff; outline: none; }
@@ -91,7 +94,6 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .cpt-debug.closed .content { display:none; }
 #cpt_crop_editor .cpt-debug .content { font-family: monospace;margin-top:0.5em; }
 
-#cpt_crop_editor .mainWindow::after { content: ""; clear: both; display: block; }
 @media(min-width:760px) {
 	#cpt_crop_editor .selectionArea { width:410px; float:left; }
 	#cpt_crop_editor .cptRightPane { width:300px; float:right; border:0; border-left:3px solid #ddd; margin-top:0; }
