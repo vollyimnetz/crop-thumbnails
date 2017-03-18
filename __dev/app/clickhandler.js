@@ -8,11 +8,14 @@ jQuery(document).ready(function($) {
 
 		//get the data from the link
 		var data = $(this).data('cropthumbnail');
-		console.log('cropthumbnail data',data);
 
 		var title = $(this).attr('title');
+		var posttype = null;
+		if(data.posttype!==undefined) {
+			posttype = data.posttype;
+		}
 		
 		var modal = new CROP_THUMBNAILS_VUE.modal();
-		modal.open(data.image_id, title);
+		modal.open(data.image_id, posttype, title);
 	});
 });

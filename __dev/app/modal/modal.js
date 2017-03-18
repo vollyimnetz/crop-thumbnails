@@ -35,7 +35,8 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		}
 	};
 	
-	that.open = function(imageId,title) {	
+	that.open = function(imageId,posttype,title) {	
+		
 		
 		var id = imageId;
 		var modalHtml = '';
@@ -44,7 +45,11 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
-		modalHtml+= '<cropeditor image-id="'+id+'"></cropeditor>'
+		modalHtml+= '<cropeditor image-id="'+id+'"';
+		if(typeof posttype === 'string') {
+			modalHtml+= ' posttype="'+posttype+'"';
+		}
+		modalHtml+= '></cropeditor>'
 		modalHtml+= '</div>';//end cpt_ModalContent
 		modalHtml+= '</div>';//end cpt_ModalDialog
 		modalHtml+= '</div>';//end cpt_Modal;

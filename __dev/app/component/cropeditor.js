@@ -1,8 +1,16 @@
 CROP_THUMBNAILS_VUE.components.cropeditor = {
 	template: '@./cropeditor.tpl.html',
-	props:[
-		'imageId'
-	],
+	props:{
+		imageId : {
+			required: true,
+			type:Number
+		},
+		posttype : {
+			required:false,
+			type:String,
+			default:null
+		}
+	},
 	data:function() {
 		return {
 			cropData : null,
@@ -12,19 +20,34 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			lang : null
 		};
 	},
+	computed:{
+		filteredImageSizes : function() {
+			console.log('filteredImageSizes',this.cropData.imageSizes);
+			return this.cropData.imageSizes
+				.filter(function(elem) {
+					return !elem.hideByPostType;
+				});
+		}
+	},
 	mounted:function() {
-		var that = this;
-		
-		that.cropData = axios.get(ajaxurl+'?action=cpt_cropdata&imageId='+this.imageId)
-			.then(function(response) {
-				that.makeAllInactive(response.data.imageSizes);
-				that.addCacheBreak(response.data.imageSizes);
-				that.cropData = response.data;
-				that.lang = that.cropData.lang;
-				console.log('data loaded',response.data,that);
-			});
+		this.loadCropData();
 	},
 	methods:{
+		loadCropData : function() {
+			var that = this;
+			var getParameter = {
+				action : 'cpt_cropdata',
+				imageId : this.imageId,
+				posttype : this.posttype
+			};
+			axios.get(ajaxurl,{ params : getParameter })
+				.then(function(response) {
+					that.makeAllInactive(response.data.imageSizes);
+					that.addCacheBreak(response.data.imageSizes);
+					that.cropData = response.data;
+					that.lang = that.cropData.lang;
+				});
+		},
 		toggleActive : function(image) {
 			var newValue = !image.active;
 			
