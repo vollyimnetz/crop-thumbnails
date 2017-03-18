@@ -20,17 +20,16 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			lang : null
 		};
 	},
+	mounted:function() {
+		this.loadCropData();
+	},
 	computed:{
 		filteredImageSizes : function() {
-			console.log('filteredImageSizes',this.cropData.imageSizes);
 			return this.cropData.imageSizes
 				.filter(function(elem) {
 					return !elem.hideByPostType;
 				});
 		}
-	},
-	mounted:function() {
-		this.loadCropData();
 	},
 	methods:{
 		loadCropData : function() {
