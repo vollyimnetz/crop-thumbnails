@@ -18,9 +18,9 @@
 		<div class="cptRightPane">
 			<input type="checkbox" name="cpt-same-ratio"  v-model="selectSameRatio"  />
 			<label for="cpt-same-ratio" class="lbl-cpt-same-ratio">{{cropData.lang.label_same_ratio}}</label>
-			<button id="cpt-deselect" class="button">{{cropData.lang.label_deselect_all}}</button>
+			<button class="button" type="button" @click="makeAllInactive()">{{cropData.lang.label_deselect_all}}</button>
 			<ul class="thumbnail-list">
-				<li v-for="i in cropData.imageSizes">
+				<li v-for="i in cropData.imageSizes" :class="{'active' : i.active}" @click="toggleActive(i)">
 					<strong>{{i.name}}
 						 <span class="lowResWarning">{{cropData.lang.lowResWarning}}</span>
 					</strong>
