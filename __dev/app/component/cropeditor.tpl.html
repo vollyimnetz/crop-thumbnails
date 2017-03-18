@@ -1,32 +1,35 @@
-<div class="cpteditorInner" v-if="cropData.lang">
+<div class="cpteditorInner" v-if="cropData && lang" :class="{loading:loading}">
 	
-	<div class="waitingWindow hidden" v-if="loading">{{ cropData.lang.waiting }}</div>
+	<div class="cptWaitingWindow" v-if="loading">
+		<div>{{ lang.waiting }}</div>
+	</div>
+	
 	<div class="mainWindow">
 		<div class="selectionArea cptLeftPane">
-			<h3>{{ cropData.lang.rawImage }}: {{cropData.fullSizeImage.width}} {{ cropData.lang.pixel }}  x {{cropData.fullSizeImage.height}} {{ cropData.lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
+			<h3>{{ lang.rawImage }}: {{cropData.fullSizeImage.width}} {{ lang.pixel }}  x {{cropData.fullSizeImage.height}} {{ lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
 			<div class="cropContainer">
 				<img id="cpt-croppingImage" :src="cropData.fullSizeImage.url" />
 			</div>
-			<button id="cpt-generate" class="button">{{ cropData.lang.label_crop }}</button>
-			<h4>{{ cropData.lang.instructions_header }}</h4>
+			<button type="button" class="button cptGenerate" @click="cropThumbnails()" :disabled="!croppingApi">{{ lang.label_crop }}</button>
+			<h4>{{ lang.instructions_header }}</h4>
 			<ul class="step-info">
-				<li>{{ cropData.lang.instructions_step_1 }}</li>
-				<li>{{ cropData.lang.instructions_step_2 }}</li>
-				<li>{{ cropData.lang.instructions_step_3 }}</li>
+				<li>{{ lang.instructions_step_1 }}</li>
+				<li>{{ lang.instructions_step_2 }}</li>
+				<li>{{ lang.instructions_step_3 }}</li>
 			</ul>
 		</div>
 		<div class="cptRightPane">
-			<input type="checkbox" name="cpt-same-ratio"  v-model="selectSameRatio"  />
-			<label for="cpt-same-ratio" class="lbl-cpt-same-ratio">{{cropData.lang.label_same_ratio}}</label>
-			<button class="button" type="button" @click="makeAllInactive()">{{cropData.lang.label_deselect_all}}</button>
+			<input type="checkbox" :id="'cptSameRatio_'+_uid"  v-model="selectSameRatio"  />
+			<label :for="'cptSameRatio_'+_uid" class="cptSameRatioLabel">{{lang.label_same_ratio}}</label>
+			<button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
 			<ul class="thumbnail-list">
 				<li v-for="i in cropData.imageSizes" :class="{'active' : i.active}" @click="toggleActive(i)">
-					<strong>{{i.name}}
-						 <span class="lowResWarning">{{cropData.lang.lowResWarning}}</span>
+					<strong>{{i.nameLabel}}
+						 <span class="lowResWarning">{{lang.lowResWarning}}</span>
 					</strong>
-					<span class="dimensions">{{cropData.lang.dimensions}} {{i.width}} {{ cropData.lang.pixel }}  x {{i.height}} {{ cropData.lang.pixel }}</span>
-					<span class="ratio">{{ cropData.lang.ratio }} {{i.imageData.print_ratio}}</span>
-					<img :src="i.imageData.url" />
+					<span class="dimensions">{{ lang.dimensions }} {{i.width}} {{ lang.pixel }}  x {{i.height}} {{ lang.pixel }}</span>
+					<span class="ratio">{{ lang.ratio }} {{i.printRatio}}</span>
+					<img :src="i.url+'?cacheBreak='+i.cacheBreak" />
 				</li>
 			</ul>
 		</div>

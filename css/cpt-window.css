@@ -1,0 +1,40 @@
+.cpt-crop-view { position: relative; }
+
+.listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
+.image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
+.image-list { margin:0;padding:0;}
+.image-list .entry { width:140px; float:left; border:1px solid #efefef; margin:5px;}
+.image-list .entry h3 { font-weight: normal; font-size:1em; margin:0 5px; }
+.image-list .entry img { width:130px; height:130px; margin:5px; }
+.image-list .cursor, .image-list .cursor * { cursor:pointer;} 
+
+.header {background-color:#efefef; padding:5px; position: relative; z-index: 1000;}
+.cpt-crop-view .cptRightPane {width:300px; float:right; border-left:3px solid #efefef; padding:5px 5px 0 10px; }
+.thumbnail-list { border-top: 3px solid #efefef; padding-top:5px; margin-top:5px; }
+.thumbnail-list li { padding:5px; border:1px solid white; cursor:pointer; }
+.thumbnail-list li:hover { border:1px solid #aad6f4; }
+.thumbnail-list li.active { background-color:#aad6f4; border:1px solid #aad6f4; }
+.thumbnail-list li span { display:block; font-size:0.8em; }
+.thumbnail-list li img { max-width:100%; height: auto; max-height:250px;}
+.thumbnail-list li h3 { font-size:1em; }
+.thumbnail-list li .lowResWarning,
+.thumbnail-list li .badParameterWarning { font-style: italic; color:#990000;}
+
+.lbl-cpt-same-ratio {font-size:0.9em;}
+
+.selectionArea { width:300px; padding:5px; float:left; }
+.selectionArea img { max-width:300px; height:auto; }
+.selectionArea h3 { margin:0;}
+#cpt-generate { width: 300px; height:2em; padding:0.5em 0; display:block; line-height: 0;}
+
+h4 { margin-bottom:0em;}
+.step-info { font-size:0.9em; }
+
+
+.postTypeDisabledMsg, .waitingWindow { font-size: 2em; font-weight:bold; width: 100%; height:10em; text-align: center; padding: 3em 0; background: transparent url(../images/loading.gif) no-repeat center center; }
+.postTypeDisabledMsg { background: none; }
+
+.cpt-debug {clear: left; padding-left:5px;}
+.cpt-debug .cpt-debug-handle { border:1px solid #aaa; background-color:#f1f1f1; padding:0.3em 1em;}
+.cpt-debug.closed .content { display:none; }
+.cpt-debug .content { font-family: monospace;margin-top:0.5em; }

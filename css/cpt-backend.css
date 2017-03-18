@@ -50,6 +50,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 
 #cpt_crop_editor .cpteditorInner { position: relative; overflow-y: auto; height: 100%; }
+#cpt_crop_editor .cpteditorInner.loading { overflow-y: hidden; }
 
 #cpt_crop_editor .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
 #cpt_crop_editor .image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
@@ -80,14 +81,11 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .selectionArea .cropContainer { margin:.3em 0 .5em; }
 #cpt_crop_editor .selectionArea .cropContainer img { max-width: 100%; height:auto; }
 #cpt_crop_editor .selectionArea h3 { margin:0;}
-#cpt_crop_editor #cpt-generate { width: 100%; height:2em; font-size:1.4em; padding:0.5em 0; display:block; line-height: 0;}
+#cpt_crop_editor button.cptGenerate { width: 100%; height:2em; font-size:1.4em; padding:0.5em 0; display:block; line-height: 0;}
 
 #cpt_crop_editor h4 { margin-bottom:0em;}
 #cpt_crop_editor .step-info { font-size:0.9em; }
 
-
-#cpt_crop_editor .postTypeDisabledMsg, .waitingWindow { font-size: 2em; font-weight:bold; width: 100%; height:10em; text-align: center; padding: 3em 0; background: transparent url(../images/loading.gif) no-repeat center center; }
-#cpt_crop_editor .postTypeDisabledMsg { background: none; }
 
 #cpt_crop_editor .cpt-debug {clear: left; padding-left:5px;}
 #cpt_crop_editor .cpt-debug .cpt-debug-handle { border:1px solid #aaa; background-color:#f1f1f1; padding:0.3em 1em;}
@@ -98,6 +96,9 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 	#cpt_crop_editor .selectionArea { width:410px; float:left; }
 	#cpt_crop_editor .cptRightPane { width:300px; float:right; border:0; border-left:3px solid #ddd; margin-top:0; }
 }
+
+#cpt_crop_editor .cptWaitingWindow { position: absolute; top:0; left:0; width: 100%; height: 100%; z-index: 10; background: rgba(255, 255, 255, 0.9); }
+#cpt_crop_editor .cptWaitingWindow>div { position: absolute; top:50%; width: 100%; margin-top:-4em; font-size: 2em; font-weight:bold; text-align: center; line-height: 1.3; padding: 0 0 1.6em; background: transparent url(../images/loading.gif) no-repeat center bottom; }
 
 #cpt_crop_editor #backToTop { position: fixed; z-index:999; background-color: #fff; text-align: center; right:20px; bottom:-60px; width: 50px; height: 50px; transition:all .3s linear; }
 #cpt_crop_editor #backToTop.isVisible { bottom: 20px; opacity: 1; box-shadow: 0 0 10px rgba(0,0,0,0.3); }

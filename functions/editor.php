@@ -48,7 +48,7 @@ class CropPostThumbnailsEditor {
 			'options' => $options,
 			'imageObj' => null,
 			'postTypeFilter' => null,
-			'imageSizes' => $cptSettings->getImageSizes(),
+			'imageSizes' => array_values($cptSettings->getImageSizes()),
 			'fullSizeImage' => null, //???
 			'lang' => array(
 				'bug' => __('Bug--this should not have occurred.',CROP_THUMBS_LANG),
@@ -102,38 +102,32 @@ class CropPostThumbnailsEditor {
 		
 		if(!$result['hiddenOnPostType']) {
 			
-			foreach($result['imageSizes'] as $imageSizeName => $value) {
+			foreach($result['imageSizes'] as $key => $imageSize) {
 				
-				if(empty($value['crop'])) {
+				if(empty($imageSize['crop'])) {
 					//we do not need uncropped image sizes
-					unset($result['imageSizes'][$imageSizeName]);
+					unset($result['imageSizes'][$key]);
 					continue;//to the next entry
 				}
 				
 				
-				if ($value['height'] == 9999) { //TODO I do not remember why i add this previosley
-					$value['height'] = 0;
+				if ($imageSize['height'] == 9999) { //TODO I do not remember why i add this previosley
+					$imageSize['height'] = 0;
 				}
-				if ($value['width'] == 9999) { //TODO I do not remember why i add this previosley
-					$value['width'] = 0;
-				}
-				
-				
-				if(self::shouldSizeBeHidden($options,$imageSizeName,$value,$result['postTypeFilter'])) {
-					$result['imageSizes'][$imageSizeName]['hideByPostType'] = true;
-				} else {
-					$result['imageSizes'][$imageSizeName]['hideByPostType'] = false;
+				if ($imageSize['width'] == 9999) { //TODO I do not remember why i add this previosley
+					$imageSize['width'] = 0;
 				}
 				
 				
-				$ratio = null;			//reset
 				$gcd = null;			//reset
+				$ratio = null;			//reset
 				$print_ratio = null;	//reset
-				/** define ratio **/
-				if($value['width'] != 0 && $value['height']!=0) {
-					$gcd = $this->gcd($value['width'],$value['height']);//get greatest common divisor
-					$ratio = ($value['width']/$gcd) / ($value['height']/$gcd);//get ratio
-					$print_ratio = $value['width']/$gcd.':'.$value['height']/$gcd;
+				
+				/** define ratio and gcd **/
+				if($imageSize['width'] !== 0 && $imageSize['height']!==0) {
+					$gcd = $this->gcd($imageSize['width'],$imageSize['height']);//get greatest common divisor
+					$ratio = ($imageSize['width']/$gcd) / ($imageSize['height']/$gcd);//get ratio
+					$print_ratio = $imageSize['width']/$gcd.':'.$imageSize['height']/$gcd;
 				} else {
 					//keep ratio same as original image
 					$gcd = $result['fullSizeImage']['gcd'];
@@ -142,23 +136,26 @@ class CropPostThumbnailsEditor {
 				}
 				
 				
-				
-				$img_data = wp_get_attachment_image_src($result['imageObj']->ID, $imageSizeName);
+				$img_data = wp_get_attachment_image_src($result['imageObj']->ID, $imageSize['name']);
 				$jsonDataValues = array(
-					'name' => $imageSizeName,
+					'name' => $imageSize['name'],
+					'nameLabel' => $imageSize['name'],//if you want to change the label of this image-size
 					'url' => $img_data[0],
-					'width' => $value['width'],
-					'height' => $value['height'],
+					'width' => $imageSize['width'],
+					'height' => $imageSize['height'],
 					'gcd' => $gcd,
-					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $print_ratio, $imageSizeName),
 					'ratio' => $ratio,
+					'hideByPostType' => self::shouldSizeBeHidden($options,$imageSize,$result['postTypeFilter']),
+					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $print_ratio, $imageSize['name']),
 					'crop' => true//legacy
 				);
-				$jsonDataValues = apply_filters('crop_thumbnails_editor_jsonDataValues', $jsonDataValues);
-				$result['imageSizes'][$imageSizeName]['imageData'] = $jsonDataValues;
+				
+				$result['imageSizes'][$key] = apply_filters('crop_thumbnails_editor_jsonDataValues', $jsonDataValues);
 				
 			}//END froeach
 		}
+		
+		if(is_array($result['imageSizes'])) $result['imageSizes'] = array_values($result['imageSizes']);
 		return $result;
 	}
 
@@ -309,7 +306,7 @@ jQuery(document).ready(function($) {
 								$value['width'] = 0;
 							}
 
-							if(!self::shouldSizeBeHidden($options,$img_size_name,$value,$current_parent_post_type)) :
+							if(!self::shouldSizeBeHidden($options,$value,$current_parent_post_type)) :
 								$ratio = null;			//reset
 								$gcd = null;			//reset
 								$print_ratio = null;	//reset
@@ -391,13 +388,13 @@ jQuery(document).ready(function($) {
 
 
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'ctp_cropperjs', plugins_url('js/cropperjs/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		wp_enqueue_script( 'ctp_cropperjs', plugins_url('js/app/vendor/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 		wp_enqueue_script( 'json2' );
 		wp_enqueue_script( 'cpt_crop',  plugins_url('js/cpt-crop.js',dirname(__FILE__)), array('jquery','ctp_cropperjs','json2'), CROP_THUMBS_VERSION);
 
 		$windowCssPath = apply_filters('crop_post_thumbnail_window_css', plugins_url('css/cpt-window.css',dirname(__FILE__)));
 		wp_enqueue_style( 'cpt_window',$windowCssPath,array('wp-admin'),CROP_THUMBS_VERSION);
-		wp_enqueue_style( 'ctp_cropperjs', plugins_url('js/cropperjs/cropper.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+		wp_enqueue_style( 'ctp_cropperjs', plugins_url('js/app/vendor/cropper.min.css',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
 
 		include_once( dirname(__FILE__).'/../html/template.php' );
 
@@ -418,17 +415,17 @@ jQuery(document).ready(function($) {
 	/**
 	 * Check wether or not the image_size should be hidden for this post_type
 	 * @param array options array
-	 * @param string name of the image-size (i.e. post-thumbnail, ...)
+	 * @param array the image-size (i.e. post-thumbnail, ...)
 	 * @param string name post-type (i.e. post, page, ...)
 	 * @return boolean true if Image-size should be hidden
 	 */
-	private static function shouldSizeBeHidden($options, $img_size_name, $img_size, $post_type='') {
+	private static function shouldSizeBeHidden($options, $img_size, $post_type='') {
 		$_return = false;
 		if(!empty($post_type)) {
 			//we are NOT in the mediathek
 
 			//-if hide_size
-			if(!empty($options['hide_size'][$post_type][$img_size_name])) {
+			if(!empty($options['hide_size'][$post_type][ $img_size['name'] ])) {
 				$_return = true;
 			}
 
