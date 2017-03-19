@@ -75,7 +75,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .cptImageSizelist li h3 { font-size:1em; }
 #cpt_crop_editor .cptImageSizelist li .lowResWarning,
 #cpt_crop_editor .cptImageSizelist li .badParameterWarning { font-style: italic; color:#990000;}
-#cpt_crop_editor .cptImageSizelist .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; }
+#cpt_crop_editor .cptImageSizelist .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; border: 1px solid rgba(0,0,0,0.1); }
 
 @media(min-width:520px) {
 	#cpt_crop_editor .cptImageSizelist li:nth-child(2n+1) { clear:none; }

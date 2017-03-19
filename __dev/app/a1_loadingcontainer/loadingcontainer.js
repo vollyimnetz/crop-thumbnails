@@ -6,7 +6,32 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 			type:String
 		}
 	},
+	data:function() {
+		return {
+			status:null
+		};
+	},
+	watch:{
+		image:function() {
+			console.log('image value changed',this.image);
+			this.setup();
+		}
+	},
 	mounted:function() {
-		console.log('loadingcontainer mounted',this.image);
+		this.setup();
+	},
+	methods:{
+		setup : function() {
+			var that = this;
+			this.setStart();
+			imagesLoaded( this.$el, { background: true }, function() { that.setComplete(); } );
+		},
+		setComplete : function() {
+			console.log('complete');
+			this.status = 'completed';
+		},
+		setStart : function() {
+			this.status = 'started';
+		}
 	}
 };

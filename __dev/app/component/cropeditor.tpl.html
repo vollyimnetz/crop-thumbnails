@@ -17,7 +17,7 @@
 						</strong>
 						<span class="dimensions">{{ lang.dimensions }} {{i.width}} {{ lang.pixel }}  x {{i.height}} {{ lang.pixel }}</span>
 						<span class="ratio">{{ lang.ratio }} {{i.printRatio}}</span>
-						<loadingcontainer image="i.url+'?cacheBreak='+i.cacheBreak">
+						<loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
 							<div class="cptImageBgContainer" :style="{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}">
 							</div>
 						</loadingcontainer>
