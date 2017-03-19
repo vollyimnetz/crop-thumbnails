@@ -59,7 +59,6 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		$('#cpt_Modal .cpt_ModalClose').click(that.close);
 		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
 		
-		
 		CROP_THUMBNAILS_VUE.app = new Vue({
 			el:'#cpt_crop_editor',
 			mounted:function() {

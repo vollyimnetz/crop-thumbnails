@@ -1,11 +1,31 @@
-<div class="cpteditorInner" v-if="cropData && lang" :class="{loading:loading}">
+<div class="cpteditorInner" v-if="cropData && lang" :class="{loading:loading,cropEditorActive:croppingApi!==null}">
 	
 	<div class="cptWaitingWindow" v-if="loading">
 		<div>{{ lang.waiting }}</div>
 	</div>
 	
 	<div class="mainWindow">
-		<div class="selectionArea cptLeftPane">
+		<div class="cptSelectionPane">
+			<input type="checkbox" :id="'cptSameRatio_'+_uid"  v-model="selectSameRatio"  />
+			<label :for="'cptSameRatio_'+_uid" class="cptSameRatioLabel">{{lang.label_same_ratio}}</label>
+			<button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
+			<ul class="cptImageSizelist">
+				<li class="wp-core-ui attachment" v-for="i in filteredImageSizes" :class="{details : i.active}" @click="toggleActive(i)">
+					<div class="cptImageSizeInner">
+						<strong>{{i.nameLabel}}
+							<span class="lowResWarning">{{lang.lowResWarning}}</span>
+						</strong>
+						<span class="dimensions">{{ lang.dimensions }} {{i.width}} {{ lang.pixel }}  x {{i.height}} {{ lang.pixel }}</span>
+						<span class="ratio">{{ lang.ratio }} {{i.printRatio}}</span>
+						<loadingcontainer image="i.url+'?cacheBreak='+i.cacheBreak">
+							<div class="cptImageBgContainer" :style="{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}">
+							</div>
+						</loadingcontainer>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="cptCropPane">
 			<h3>{{ lang.rawImage }}: {{cropData.fullSizeImage.width}} {{ lang.pixel }}  x {{cropData.fullSizeImage.height}} {{ lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
 			<div class="cropContainer">
 				<img id="cpt-croppingImage" :src="cropData.fullSizeImage.url" />
@@ -16,21 +36,6 @@
 				<li>{{ lang.instructions_step_1 }}</li>
 				<li>{{ lang.instructions_step_2 }}</li>
 				<li>{{ lang.instructions_step_3 }}</li>
-			</ul>
-		</div>
-		<div class="cptRightPane">
-			<input type="checkbox" :id="'cptSameRatio_'+_uid"  v-model="selectSameRatio"  />
-			<label :for="'cptSameRatio_'+_uid" class="cptSameRatioLabel">{{lang.label_same_ratio}}</label>
-			<button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
-			<ul class="thumbnail-list">
-				<li v-for="i in filteredImageSizes" :class="{'active' : i.active}" @click="toggleActive(i)">
-					<strong>{{i.nameLabel}}
-						 <span class="lowResWarning">{{lang.lowResWarning}}</span>
-					</strong>
-					<span class="dimensions">{{ lang.dimensions }} {{i.width}} {{ lang.pixel }}  x {{i.height}} {{ lang.pixel }}</span>
-					<span class="ratio">{{ lang.ratio }} {{i.printRatio}}</span>
-					<img :src="i.url+'?cacheBreak='+i.cacheBreak" />
-				</li>
 			</ul>
 		</div>
 	</div>

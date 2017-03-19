@@ -11,6 +11,9 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			default:null
 		}
 	},
+	components: {
+		loadingcontainer : CROP_THUMBNAILS_VUE.components.loadingcontainer
+	},
 	data:function() {
 		return {
 			cropData : null,
@@ -28,6 +31,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			return this.cropData.imageSizes
 				.filter(function(elem) {
 					return !elem.hideByPostType;
+				});
+		},
+		activeImageSizes : function() {
+			return this.cropData.imageSizes
+				.filter(function(elem) {
+					return elem.active;
 				});
 		}
 	},
@@ -64,7 +73,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				image.active = newValue;
 			}
 			
-			if(newValue) {
+			if(this.activeImageSizes.length>0) {
 				this.activateCropArea();
 			} else {
 				this.deactivateCropArea();
@@ -87,15 +96,6 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				i.cacheBreak = Date.now();
 			});
 		},
-		getActiveImageSizes : function() {
-			var result = [];
-			this.cropData.imageSizes.forEach(function(i) {
-				if(i.active) {
-					result.push(i);
-				}
-			});
-			return result;
-		},
 		activateCropArea : function() {
 			this.deactivateCropArea();
 			
@@ -114,8 +114,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			};
 
 			//get the options
-			var activeImageSizes = this.getActiveImageSizes();
-			activeImageSizes.forEach(function(i) {
+			this.activeImageSizes.forEach(function(i) {
 				if(options.aspectRatio === 0) {
 					options.aspectRatio = i.ratio;//initial
 				}
@@ -135,6 +134,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {
 				this.croppingApi.destroy();
+				this.croppingApi = null;
 			}
 		},
 		cropThumbnails : function() {
@@ -142,7 +142,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			
 			function getDataOfActiveImageSizes() {
 				var result = [];
-				that.getActiveImageSizes().forEach(function(i) {
+				that.activeImageSizes.forEach(function(i) {
 					if(i.active) {
 						var tmp = {
 							name: i.name,
@@ -204,7 +204,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 						}
 						if(response.data.success!==undefined) {
 							that.loading = false;
-							that.addCacheBreak(that.getActiveImageSizes());
+							that.addCacheBreak(that.activeImageSizes);
 							return;
 						}
 						that.loading = false;
