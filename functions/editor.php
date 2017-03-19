@@ -104,35 +104,27 @@ class CropPostThumbnailsEditor {
 			
 			foreach($result['imageSizes'] as $key => $imageSize) {
 				
-				if(empty($imageSize['crop'])) {
+				if(empty($imageSize['crop']) || $imageSize['width']<=0 || $imageSize['height']<=0) {
 					//we do not need uncropped image sizes
 					unset($result['imageSizes'][$key]);
 					continue;//to the next entry
 				}
 				
 				
-				if ($imageSize['height'] == 9999) { //TODO I do not remember why i add this previosley
-					$imageSize['height'] = 0;
-				}
-				if ($imageSize['width'] == 9999) { //TODO I do not remember why i add this previosley
-					$imageSize['width'] = 0;
-				}
+				//DEFINE RATIO AND GCD
+				//DEFAULT RATIO - defined by the defined image-size
+				$ratioData = $this->calculateRatioData($imageSize['width'],$imageSize['height']);
 				
 				
-				$gcd = null;			//reset
-				$ratio = null;			//reset
-				$print_ratio = null;	//reset
-				
-				/** define ratio and gcd **/
-				if($imageSize['width'] !== 0 && $imageSize['height']!==0) {
-					$gcd = $this->gcd($imageSize['width'],$imageSize['height']);//get greatest common divisor
-					$ratio = ($imageSize['width']/$gcd) / ($imageSize['height']/$gcd);//get ratio
-					$print_ratio = $imageSize['width']/$gcd.':'.$imageSize['height']/$gcd;
-				} else {
-					//keep ratio same as original image
-					$gcd = $result['fullSizeImage']['gcd'];
-					$ratio = $result['fullSizeImage']['ratio'];
-					$print_ratio = $result['fullSizeImage']['print_ratio'];
+				//DYNAMIC RATIO
+				//the dynamic ratio is defined by the original image size and fix width OR height
+				//@eee https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
+				if($imageSize['width'] === 9999) {
+					//if you define width with 9999 - it crops for the exect defined height but the full width
+					$ratioData = $this->calculateRatioData($result['fullSizeImage']['width'], $imageSize['height']);
+				} elseif($imageSize['height'] === 9999) {
+					//if you define height with 9999 - it crops for the exect defined width but the full height
+					$ratioData = $this->calculateRatioData($imageSize['width'], $result['fullSizeImage']['height']);
 				}
 				
 				
@@ -143,10 +135,10 @@ class CropPostThumbnailsEditor {
 					'url' => $img_data[0],
 					'width' => $imageSize['width'],
 					'height' => $imageSize['height'],
-					'gcd' => $gcd,
-					'ratio' => $ratio,
+					'gcd' => $ratioData['gcd'],
+					'ratio' => $ratioData['ratio'],
+					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $ratioData['printRatio'], $imageSize['name']),
 					'hideByPostType' => self::shouldSizeBeHidden($options,$imageSize,$result['postTypeFilter']),
-					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $print_ratio, $imageSize['name']),
 					'crop' => true//legacy
 				);
 				
@@ -156,6 +148,16 @@ class CropPostThumbnailsEditor {
 		}
 		
 		if(is_array($result['imageSizes'])) $result['imageSizes'] = array_values($result['imageSizes']);
+		return $result;
+	}
+	
+	private function calculateRatioData($width,$height) {
+		$gcd = $this->gcd($width,$height);
+		$result = array(
+			'gcd' => $gcd,
+			'ratio' => ($width/$gcd) / ($height/$gcd),
+			'printRatio' => $width/$gcd.':'.$height/$gcd
+		);
 		return $result;
 	}
 

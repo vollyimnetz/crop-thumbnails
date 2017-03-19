@@ -194,8 +194,18 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 						}
 						if(response.data.error!==undefined) {
 							alert(response.data.error);
-						} else {
+							that.loading = false;
+							return;
+						}
+						if(response.data.changed_image_format!==undefined && response.data.changed_image_format) {
+							that.loadCropData();
+							that.loading = false;
+							return;
+						}
+						if(response.data.success!==undefined) {
+							that.loading = false;
 							that.addCacheBreak(that.getActiveImageSizes());
+							return;
 						}
 						that.loading = false;
 					})
