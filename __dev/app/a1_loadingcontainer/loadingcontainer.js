@@ -8,12 +8,12 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 	},
 	data:function() {
 		return {
-			status:null
+			status:null,
+			imgLoad:null
 		};
 	},
 	watch:{
 		image:function() {
-			console.log('image value changed',this.image);
 			this.setup();
 		}
 	},
@@ -23,11 +23,16 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 	methods:{
 		setup : function() {
 			var that = this;
-			this.setStart();
-			imagesLoaded( this.$el, { background: true }, function() { that.setComplete(); } );
+			that.setStart();
+			setTimeout(function() {
+				that.imgLoad = imagesLoaded( that.$el );
+				that.imgLoad.once('done',function() { 
+					console.log('loaded',that.imgLoad.images);
+					that.setComplete();
+				});
+			},300);
 		},
 		setComplete : function() {
-			console.log('complete');
 			this.status = 'completed';
 		},
 		setStart : function() {
