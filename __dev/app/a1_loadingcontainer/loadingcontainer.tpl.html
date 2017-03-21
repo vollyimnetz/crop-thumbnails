@@ -1,5 +1,8 @@
-<div>
-	{{status}}
+<div class="loadingcontainer" :class="status">
 	<img :src="image" style="display:none;" />
 	<slot></slot>
+	
+	<div class="loading">
+		<div class="cptLoadingSpinner"></div>
+	</div>
 </div>

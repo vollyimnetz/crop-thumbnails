@@ -53,7 +53,9 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .cptCropPane,
 #cpt_crop_editor .cptSelectionPane { box-sizing: border-box; }
 
-@media(min-width:760px) {
+#cpt_crop_editor .cptCropPane { padding:0 20px 20px; }
+
+@media(min-width:520px) {
 	#cpt_crop_editor .cptCropPane { position: absolute; right: 0; top:0; width:350px; height: 100%; overflow-y: auto; border:0; border-left:3px solid #ddd; margin-top:0; padding:10px;}
 	#cpt_crop_editor .cptSelectionPane { position: relative; width:100%; height: 100%; overflow:hidden; padding-right: 350px; }
 	#cpt_crop_editor .cptSelectionPaneInner { width: 100%; overflow-y: auto; height: 100%; }
@@ -83,25 +85,34 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 #cpt_crop_editor .cptImageSizelist { border-top: 3px solid #efefef; padding-top:5px; margin-top:5px; }
 #cpt_crop_editor .cptImageSizelist::after { content: ""; clear: both; display: block; }
-#cpt_crop_editor .cptImageSizelist li { width: 50%; cursor:pointer; }
+#cpt_crop_editor .cptImageSizelist li { width: 50%; cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; transition:box-shadow .5s ease; }
+#cpt_crop_editor .cptImageSizelist li.active { -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; }
 #cpt_crop_editor .cptImageSizelist li:hover,
 #cpt_crop_editor .cptImageSizelist li:focus {background: #eee; }
+@media(min-width:400px) { #cpt_crop_editor .cptImageSizelist li { width: 33.32%; } }
+@media(min-width:520px) { #cpt_crop_editor .cptImageSizelist li { width: 100%; } } 
+@media(min-width:760px) { #cpt_crop_editor .cptImageSizelist li { width: 50%; } }
+@media(min-width:1100px) { #cpt_crop_editor .cptImageSizelist li { width: 33.32%; } }
+@media(min-width:1400px) { #cpt_crop_editor .cptImageSizelist li { width: 25%; } }
+@media(min-width:1600px) { #cpt_crop_editor .cptImageSizelist li { width: 20%; } }
+
 
 #cpt_crop_editor .cptImageSizeInner header,
 #cpt_crop_editor .cptImageSizeInner .dimensions,
 #cpt_crop_editor .cptImageSizeInner .ratio { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+#cpt_crop_editor .cptImageSizeInner { line-height: 1.4; };
 #cpt_crop_editor .cptImageSizeInner header { font-size:1em; font-weight: bold; }
 #cpt_crop_editor .cptImageSizeInner .dimensions { font-size:0.8em; }
 #cpt_crop_editor .cptImageSizeInner .ratio { font-size:0.8em; }
 #cpt_crop_editor .cptImageSizeInner .lowResWarning { font-style: italic; color:#990000; font-size:0.8em; }
 #cpt_crop_editor .cptImageSizeInner .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; box-shadow: 0 0 1px rgba(0,0,0,0.5); box-sizing: border-box; }
+#cpt_crop_editor .cptImageSizeInner .loadingcontainer { position: relative; }
+#cpt_crop_editor .cptImageSizeInner .loadingcontainer .loading { opacity: 0; position: absolute; width: 100%; height: 100%; top:0; left:0; background: #fff; transition: opacity .4s linear; }
+#cpt_crop_editor .cptImageSizeInner .loadingcontainer .cptLoadingSpinner { position: absolute; top:50%; left:50%; margin-left: -15px; margin-top: -15px; }
+#cpt_crop_editor .cptImageSizeInner .loadingcontainer.started .loading { opacity: 1; }
+#cpt_crop_editor .cptImageSizeInner .loadingcontainer.started .cptImageBgContainer { background: none !important; }
 
-@media(min-width:520px) { #cpt_crop_editor .cptImageSizelist li { width: 33.32%; } }
-@media(min-width:760px) { #cpt_crop_editor .cptImageSizelist li { width: 50%; } }
-@media(min-width:1100px) { #cpt_crop_editor .cptImageSizelist li { width: 33.32%; } }
-@media(min-width:1400px) { #cpt_crop_editor .cptImageSizelist li { width: 25%; } }
-@media(min-width:1600px) { #cpt_crop_editor .cptImageSizelist li { width: 20%; } }
 
 #cpt_crop_editor .lbl-cpt-same-ratio {font-size:0.9em;}
 
@@ -117,6 +128,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 #cpt_crop_editor h4 { margin-bottom:0em;}
 #cpt_crop_editor .step-info { font-size:0.9em; }
+
 
 
 #cpt_crop_editor .cpt-debug {clear: left; padding-left:5px;}

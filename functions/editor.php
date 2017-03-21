@@ -86,18 +86,9 @@ class CropPostThumbnailsEditor {
 		if(!empty($_REQUEST['posttype']) && post_type_exists($_REQUEST['posttype'])) {
 			$result['postTypeFilter'] = $_REQUEST['posttype'];
 		}
-
-		$orig_img = wp_get_attachment_image_src($result['imageObj']->ID, 'full');
-		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
-		$result['fullSizeImage'] = array(
-			'url' => $orig_img[0],
-			'width' => $orig_img[1],
-			'height' => $orig_img[2],
-			'gcd' => $orig_ima_gcd,
-			'ratio' => ($orig_img[1]/$orig_ima_gcd) / ($orig_img[2]/$orig_ima_gcd),
-			'print_ratio' => ($orig_img[1]/$orig_ima_gcd).':'.($orig_img[2]/$orig_ima_gcd),
-		);
 		
+		$result['fullSizeImage'] = $this->getUncroppedImageData($result['imageObj']->ID, 'full');
+		$result['largeSizeImage'] = $this->getUncroppedImageData($result['imageObj']->ID, 'large');
 		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
 		
 		if(!$result['hiddenOnPostType']) {
@@ -148,6 +139,21 @@ class CropPostThumbnailsEditor {
 		}
 		
 		if(is_array($result['imageSizes'])) $result['imageSizes'] = array_values($result['imageSizes']);
+		return $result;
+	}
+	
+	private function getUncroppedImageData($ID, $imageSize = 'full') {
+		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
+		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
+		$result = array(
+			'url' => $orig_img[0],
+			'width' => $orig_img[1],
+			'height' => $orig_img[2],
+			'gcd' => $orig_ima_gcd,
+			'ratio' => ($orig_img[1]/$orig_ima_gcd) / ($orig_img[2]/$orig_ima_gcd),
+			'print_ratio' => ($orig_img[1]/$orig_ima_gcd).':'.($orig_img[2]/$orig_ima_gcd),
+			'image_size' => $imageSize
+		);
 		return $result;
 	}
 	

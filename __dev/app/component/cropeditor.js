@@ -197,14 +197,17 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 							that.loading = false;
 							return;
 						}
-						if(response.data.changed_image_format!==undefined && response.data.changed_image_format) {
-							that.loadCropData();
-							that.loading = false;
-							return;
-						}
 						if(response.data.success!==undefined) {
-							that.loading = false;
+							if(response.data.changed_image_format!==undefined) {
+								//update activeImageSizes with the new URLs
+								that.activeImageSizes.forEach(function(value,key) {
+									if(response.data.changed_image_format[value.name]!==undefined) {
+										value.url = response.data.changed_image_format[value.name];
+									}
+								});
+							}
 							that.addCacheBreak(that.activeImageSizes);
+							that.loading = false;
 							return;
 						}
 						that.loading = false;

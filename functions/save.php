@@ -46,10 +46,10 @@ class CptSaveThumbnail {
 			#$debug.= "\nsource:".$sourceImgPath."\n";
 			
 			/**
-			 * will be true if the image format isn't in the attachements metadata, 
+			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
 			 * and Wordpress doesn't know about the image file
 			 */
-			$_changed_image_format = false;
+			$_changed_image_format = array();
 			$_processing_error = array();
 			foreach($targetImgData as $_imageSize) {
 				$this->addDebug('submitted image-data');
@@ -60,14 +60,12 @@ class CptSaveThumbnail {
 					continue;
 				}
 				if(empty($post_metadata['sizes'][$_imageSize->name])) {
-					$_changed_image_format = true;
+					$_changed_image_format[ $_imageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
-					if($post_metadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width)
-							|| $post_metadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
-							
+					if($post_metadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width) || $post_metadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
 						$_delete_old_file = $post_metadata['sizes'][$_imageSize->name]['file'];
-						$_changed_image_format = true;		
+						$_changed_image_format[ $_imageSize->name ] = true;
 					}
 				}
 				
@@ -129,6 +127,12 @@ class CptSaveThumbnail {
 					
 					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
 					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $_imageSize->name, $_new_meta );
+					
+					//return the new file location
+					if(!empty($_changed_image_format[ $_imageSize->name ])) {
+						$orig_img = wp_get_attachment_image_src($sourceImgData->id, $_imageSize->name);
+						$_changed_image_format[ $_imageSize->name ] = $orig_img[0];
+					}
 				} else {
 					$this->addDebug('error on '.$_filepath_info['basename']);
 					$this->addDebug(implode(' | ',$_processing_error));
@@ -146,9 +150,9 @@ class CptSaveThumbnail {
 				//one or more errors happend when generating thumbnails
 				$json_return['processingErrors'] = implode("\n",$_processing_error); 
 			}
-			if($_changed_image_format) {
+			if(!empty($_changed_image_format)) {
 				//there was a change in the image-formats 
-				$json_return['changed_image_format'] = true;
+				$json_return['changed_image_format'] = $_changed_image_format;
 			}
 			$json_return['success'] = time();//time for cache-breaker
 			echo json_encode($json_return);
