@@ -1,0 +1,12 @@
+{
+    "name": "cropthumbnailstests/php",
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "authors": [
+        {
+            "name": "Volkmar Kantor",
+            "email": "volkmar.kantor@gmx.de"
+        }
+    ]
+}
