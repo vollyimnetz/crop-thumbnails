@@ -44,13 +44,13 @@ try {
 		throw new Exception('deploy-mode');
 	}
 	
-	var customSettings = require('./gulpfileCustomSettings.js');
+	var customSettings = require('./developmentSettings.js');
 	if(customSettings.settings!==undefined) {
 		settings = extend(settings,customSettings.settings);
 	}
-	console.log(gulpUtil.colors.black.bgYellow(' Custom GULP-settings loaded.                                                   '));
+	console.log(gulpUtil.colors.black.bgYellow(' Custom settings loaded.                                                        '));
 } catch (e) {
-	console.log(gulpUtil.colors.black.bgYellow(' No custom GULP-settings, proceed with default gulp settings.                   '));
+	console.log(gulpUtil.colors.black.bgYellow(' No custom settings, proceed with default gulp settings.                        '));
 }
 console.log(gulpUtil.colors.black.bgYellow('--------------------------------------------------------------------------------'));
 
@@ -63,7 +63,7 @@ gulp.task('doc',function() {
 	console.log(gulpUtil.colors.black.bgGreen(' "gulp clean" - run to clean the build-folder                                   '));
 	console.log(gulpUtil.colors.black.bgGreen(' "gulp deploy"- build with default settings                                     '));
 	console.log(gulpUtil.colors.black.bgGreen('                                                                                '));
-	console.log(gulpUtil.colors.black.bgGreen(' You can create a "gulpfileCustomSettings.js" to override the settings.         '));
+	console.log(gulpUtil.colors.black.bgGreen(' You can create a "developmentSettings.js" to override the settings.            '));
 	console.log(gulpUtil.colors.black.bgGreen('--------------------------------------------------------------------------------'));
 });
 
