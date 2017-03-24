@@ -330,21 +330,17 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					w:selection.width,
 					h:selection.height
 				};
-				var rawValues = {
-					id : that.cropData.imageObj.ID,
-					parentId:that.cropData.imageObj.post_parent,
-					width:that.cropData.fullSizeImage.width,
-					height:that.cropData.fullSizeImage.height
-				};
 				
 				var params = new URLSearchParams();
 				params.append('action', 'cptSaveThumbnail');
 				params.append('_ajax_nonce', that.cropData.nonce);
 				params.append('cookie', encodeURIComponent(document.cookie));
-				params.append('selection', JSON.stringify(selectionData));
-				params.append('raw_values', JSON.stringify(rawValues));
-				params.append('active_values', JSON.stringify(getDataOfActiveImageSizes()));
-				params.append('same_ratio_active', that.selectSameRatio);
+				params.append('crop_thumbnails', JSON.stringify({
+						'selection' : selectionData,
+						'sourceImageId' : that.cropData.imageObj.ID,
+						'activeImageSizes' : getDataOfActiveImageSizes()
+					})
+				);
 				
 				axios.post(ajaxurl,params)
 					.then(function(response) {

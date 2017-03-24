@@ -1,6 +1,6 @@
 <?php
 $cptSave = new CptSaveThumbnail();
-add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnail') );
+add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnailAjaxWrap') );
 
 class CptSaveThumbnail {
 	
@@ -12,38 +12,32 @@ class CptSaveThumbnail {
 	 * Input parameters:
 	 *    * $_REQUEST['selection'] - json-object - data of the selection/crop
 	 *    * $_REQUEST['raw_values'] - json-object - data of the original image
-	 *    * $_REQUEST['active_values'] - json-array - array with data of the images to crop
-	 *    * $_REQUEST['same_ratio_active'] - boolean - was the same_ratio_checkbox checked or not
+	 *    * $_REQUEST['activeImageSizes'] - json-array - array with data of the images to crop
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
 	 * Called die() at the end.
 	 */
 	public function saveThumbnail() {
 		global $cptSettings;
-		$json_return = array();
+		$jsonResult = array();
 		
 		try {
-			/** get data **/
-			$options = $cptSettings->getOptions();
-			//from $_REQUEST
-			$selection = json_decode(stripcslashes($_REQUEST['selection']));
-			$sourceImgData = json_decode(stripcslashes($_REQUEST['raw_values']));
-			$targetImgData = json_decode(stripcslashes($_REQUEST['active_values']));
+			$input = $this->getValidatedInput();
+			
+			
+			$sourceImgPath = get_attached_file( $input->sourceImageId );
+			if(empty($sourceImgPath)) {
+				throw new Exception(__("ERROR: Can't find original image file!",CROP_THUMBS_LANG), 1);
+			}
+			
+			
+			$postMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
+			if(empty($postMetadata)) {
+				throw new Exception(__("ERROR: Can't find original image metadata!",CROP_THUMBS_LANG), 1);
+			}
 			
 			//from DB
 			$dbImageSizes = $cptSettings->getImageSizes();
 			
-			$obj = get_post($sourceImgData->id);
-			$sourceImgPath = get_attached_file( $obj->ID );
-			$post_metadata = wp_get_attachment_metadata($obj->ID, true);//get the attachement metadata of the post
-			
-			$this->validation($selection,$obj,$sourceImgPath,$post_metadata);
-			
-			
-			#$debug.= "\nselection\n".print_r($selection,true);
-			#$debug.= "\ntargetImgData\n".print_r($sourceImgData,true);
-			#$debug.= "\ntargetImgData\n".print_r($targetImgData,true);
-			#$debug.= "\nimageObject\n".print_r($obj,true);
-			#$debug.= "\nsource:".$sourceImgPath."\n";
 			
 			/**
 			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
@@ -51,7 +45,7 @@ class CptSaveThumbnail {
 			 */
 			$_changed_image_format = array();
 			$_processing_error = array();
-			foreach($targetImgData as $_imageSize) {
+			foreach($input->activeImageSizes as $_imageSize) {
 				$this->addDebug('submitted image-data');
 				$this->addDebug(print_r($_imageSize,true));
 				$_delete_old_file = '';
@@ -59,12 +53,12 @@ class CptSaveThumbnail {
 					$this->addDebug("Image size not valid.");
 					continue;
 				}
-				if(empty($post_metadata['sizes'][$_imageSize->name])) {
+				if(empty($postMetadata['sizes'][$_imageSize->name])) {
 					$_changed_image_format[ $_imageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
-					if($post_metadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width) || $post_metadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
-						$_delete_old_file = $post_metadata['sizes'][$_imageSize->name]['file'];
+					if($postMetadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width) || $postMetadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
+						$_delete_old_file = $postMetadata['sizes'][$_imageSize->name]['file'];
 						$_changed_image_format[ $_imageSize->name ] = true;
 					}
 				}
@@ -80,16 +74,16 @@ class CptSaveThumbnail {
 				$crop_height = $_imageSize->height;
 				if(!$_imageSize->crop || $_imageSize->width==0 || $_imageSize->height==0 || $_imageSize->width==9999 || $_imageSize->height==9999) {
 					//handle images with soft-crop width/height value and crop set to "true"
-					$crop_width = $selection->x2 - $selection->x;
-					$crop_height = $selection->y2 - $selection->y;
+					$crop_width = $input->selection->x2 - $input->selection->x;
+					$crop_height = $input->selection->y2 - $input->selection->y;
 				}
 				
 				$result = wp_crop_image(		// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-					intval($sourceImgData->id),	// * @param string|int $src The source file or Attachment ID.
-					$selection->x,				// * @param int $src_x The start x position to crop from.
-					$selection->y,				// * @param int $src_y The start y position to crop from.
-					$selection->x2 - $selection->x,	// * @param int $src_w The width to crop.
-					$selection->y2 - $selection->y,	// * @param int $src_h The height to crop.
+					$input->sourceImageId,	// * @param string|int $src The source file or Attachment ID.
+					$input->selection->x,				// * @param int $src_x The start x position to crop from.
+					$input->selection->y,				// * @param int $src_y The start y position to crop from.
+					$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
+					$input->selection->y2 - $input->selection->y,	// * @param int $src_h The height to crop.
 					$crop_width,				// * @param int $dst_w The destination width.
 					$crop_height,				// * @param int $dst_h The destination height.
 					false,						// * @param int $src_abs Optional. If the source crop points are absolute.
@@ -123,14 +117,14 @@ class CptSaveThumbnail {
 					if(!empty($dbImageSizes[$_imageSize->name]['crop'])) {
 						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
 					}
-					$post_metadata['sizes'][$_imageSize->name] = $_new_meta;
+					$postMetadata['sizes'][$_imageSize->name] = $_new_meta;
 					
 					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
 					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $_imageSize->name, $_new_meta );
 					
 					//return the new file location
 					if(!empty($_changed_image_format[ $_imageSize->name ])) {
-						$orig_img = wp_get_attachment_image_src($sourceImgData->id, $_imageSize->name);
+						$orig_img = wp_get_attachment_image_src($input->sourceImageId, $_imageSize->name);
 						$_changed_image_format[ $_imageSize->name ] = $orig_img[0];
 					}
 				} else {
@@ -141,26 +135,36 @@ class CptSaveThumbnail {
 			
 			//we have to update the posts metadate
 			//otherwise new sizes will not be updated
-			$post_metadata = apply_filters('crop_thumbnails_before_update_metadata', $post_metadata, $obj->ID);
-			wp_update_attachment_metadata( $obj->ID, $post_metadata);
+			$postMetadata = apply_filters('crop_thumbnails_before_update_metadata', $postMetadata, $input->sourceImageId);
+			wp_update_attachment_metadata( $input->sourceImageId, $postMetadata);
 			
 			//generate result;
-			$json_return['debug'] = $this->getDebugOutput($options);
+			$jsonResult['debug'] = $this->getDebugOutput();
 			if(!empty($_processing_error)) {
 				//one or more errors happend when generating thumbnails
-				$json_return['processingErrors'] = implode("\n",$_processing_error); 
+				$jsonResult['processingErrors'] = implode("\n",$_processing_error); 
 			}
 			if(!empty($_changed_image_format)) {
 				//there was a change in the image-formats 
-				$json_return['changed_image_format'] = $_changed_image_format;
+				$jsonResult['changed_image_format'] = $_changed_image_format;
 			}
-			$json_return['success'] = time();//time for cache-breaker
-			echo json_encode($json_return);
+			$jsonResult['success'] = time();//time for cache-breaker
+			echo json_encode($jsonResult);
 		} catch (Exception $e) {
-			$json_return['debug'] = $this->getDebugOutput($options);
-			$json_return['error'] = $e->getMessage();
-			echo json_encode($json_return);
+			$jsonResult['debug'] = $this->getDebugOutput();
+			$jsonResult['error'] = $e->getMessage();
+			echo json_encode($jsonResult);
 		}
+	}
+	
+	/**
+	 * This function is called by the wordpress-ajax-callback. Its only purpose is to call the
+	 * saveThumbnail function and die().
+	 * All wordpress ajax-functions should call the "die()" function in the end. But this makes
+	 * phpunit tests impossible - so we have to wrap it.
+	 */
+	public function saveThumbnailAjaxWrap() {
+		$this->saveThumbnail();
 		die();
 	}
 
@@ -168,7 +172,7 @@ class CptSaveThumbnail {
 		$this->debug[] = $text;
 	}
 	
-	private function getDebugOutput($options) {
+	private function getDebugOutput() {
 		if(!empty($this->debug)) {
 			return join("\n",$this->debug);
 		}
@@ -195,43 +199,54 @@ class CptSaveThumbnail {
 		//eventually we want to test some more later
 		return true;	
 	}
-
+	
 	/**
-	 * some basic validations and value transformations
-	 * @param array the user submitted selection
-	 * @param object the loaded image-object loaded by $sourceImgData->id
-	 * @param string the server-path to the source-image
-	 * @param object metadata of the image-attachement
+	 * Some basic validations and value transformations
+	 * @return object JSON-Object with submitted data
 	 * @throw Exception if the security validation fails
 	 */
-	private function validation($selection,$obj,$sourceImgPath,$post_metadata)  {
+	private function getValidatedInput() {
 		global $cptSettings;
+		
 		if(!check_ajax_referer($cptSettings->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",CROP_THUMBS_LANG), 1);
 		}
 		
-		if(!isset($selection->x) || !isset($selection->y) || !isset($selection->x2) || !isset($selection->y2)) {
+		
+		if(empty($_REQUEST['crop_thumbnails'])) {
 			throw new Exception(__('ERROR: Submitted data is incomplete.',CROP_THUMBS_LANG), 1);
 		}
-		$selection->x = intval($selection->x);
-		$selection->y = intval($selection->y);
-		$selection->x2 = intval($selection->x2);
-		$selection->y2 = intval($selection->y2);
+		$input = json_decode(stripcslashes($_REQUEST['crop_thumbnails']));
 		
-		if($selection->x < 0 || $selection->y < 0) {
+		
+		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
+			throw new Exception(__('ERROR: Submitted data is incomplete.',CROP_THUMBS_LANG), 1);
+		}
+		
+		
+		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
+			throw new Exception(__('ERROR: Submitted data is incomplete.',CROP_THUMBS_LANG), 1);
+		}
+		
+		
+		$input->selection->x = intval($input->selection->x);
+		$input->selection->y = intval($input->selection->y);
+		$input->selection->x2 = intval($input->selection->x2);
+		$input->selection->y2 = intval($input->selection->y2);
+		
+		if($input->selection->x < 0 || $input->selection->y < 0) {
 			throw new Exception(__('Cropping to these dimensions on this image is not possible.',CROP_THUMBS_LANG), 1);
 		}
 		
-		if(empty($obj)) {
+		
+		$input->sourceImageId = intval($input->sourceImageId);
+		if(empty(get_post($input->sourceImageId))) {
 			throw new Exception(__("ERROR: Can't find original image in database!",CROP_THUMBS_LANG), 1);
 		}
-		if(empty($sourceImgPath)) {
-			throw new Exception(__("ERROR: Can't find original image file!",CROP_THUMBS_LANG), 1);
-		}
-		if(empty($post_metadata)) {
-			throw new Exception(__("ERROR: Can't find original image metadata!",CROP_THUMBS_LANG), 1);
-		}
+		
+		return $input;
 	}
+
 
 	/**
 	 * Generate the Filename (and path) of the thumbnail based on width and height the same way as wordpress do.

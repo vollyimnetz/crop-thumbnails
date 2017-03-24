@@ -5,7 +5,7 @@ class CropThumbnailsSettings {
 	private $cssPrefix = 'cpt_settings_';
 	private $defaultSizes = array('thumbnail','medium','medium_large','large');
 
-	function __construct() {
+	public function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
 		if(is_admin()) {
 			add_filter('plugin_action_links', array($this,'addSettingsLinkToPluginPage'), 10, 2);
@@ -16,13 +16,13 @@ class CropThumbnailsSettings {
 		}
 	}
 
-	function optionsPageStyle() {
+	public function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']=='page-cpt') {
 			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
 		}
 	}
 
-	function addSettingsLinkToPluginPage($links, $file) {
+	public function addSettingsLinkToPluginPage($links, $file) {
 		if ($file === 'crop-thumbnails/crop-thumbnails.php'){
 			$settings_link = '<a href="options-general.php?page=page-cpt" title="">'.__('Settings',CROP_THUMBS_LANG).'</a>';
 			array_unshift( $links, $settings_link );
@@ -30,12 +30,12 @@ class CropThumbnailsSettings {
 		return $links;
 	}
 
-	function addOptionsPage() {
+	public function addOptionsPage() {
 		add_options_page(__('Crop Post Thumbnail Page',CROP_THUMBS_LANG), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
 		add_action('admin_init', array($this,'settingsInitialisation'));
 	}
 
-	function optionsPage() { ?>
+	public function optionsPage() { ?>
 		<div class="wrap">
 		<div id="icon-options-general" class="icon32"><br /></div>
 		<h2>Crop-Thumbnails <?php esc_attr_e('Settings',CROP_THUMBS_LANG); ?></h2>
@@ -68,7 +68,7 @@ class CropThumbnailsSettings {
 		<?php
 	}
 
-	function settingsInitialisation(){
+	public function settingsInitialisation(){
 		register_setting( $this->uniqeSettingsId, $this->optionsKey, array($this,'validateSettings') );
 
 		$_sectionID = 'choose_sizes_section';
@@ -86,7 +86,7 @@ class CropThumbnailsSettings {
 		add_settings_field($_tmpID, __('Enable Data-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
 	}
 
-	function sectionDescriptionChooseSizes() {?>
+	public function sectionDescriptionChooseSizes() {?>
 		<p>
 			<?php _e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..',CROP_THUMBS_LANG) ?>
 			<br /><strong><?php _e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.',CROP_THUMBS_LANG); ?></strong>
@@ -94,10 +94,10 @@ class CropThumbnailsSettings {
 		<?php
 	}
 
-	function emptySectionDescription() {/*empty*/ }
+	public function emptySectionDescription() {/*empty*/ }
 	
 
-	function callback_choose_size() {
+	public function callback_choose_size() {
 		//get all the data
 		$options = get_option($this->optionsKey);
 		#echo '<pre>'.print_r($options,true).'</pre>';
@@ -138,21 +138,21 @@ class CropThumbnailsSettings {
 		<?php
 	}
 
-	function callback_debug_js() {
+	public function callback_debug_js() {
 		$options = get_option($this->optionsKey);
 		$_id = 'debug_js';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
 		echo '<input name="'.$this->optionsKey.'['.$_id.']" id="'.$this->cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
 	}
 
-	function callback_debug_data() {
+	public function callback_debug_data() {
 		$options = get_option($this->optionsKey);
 		$_id = 'debug_data';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
 		echo '<input name="'.$this->optionsKey.'['.$_id.']" id="'.$this->cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
 	}
 
-	function validateSettings($input) {
+	public function validateSettings($input) {
 		$sizes = $this->getImageSizes();
 
 		$post_types = $this->getPostTypes();
@@ -195,7 +195,7 @@ class CropThumbnailsSettings {
 		return $storeInDb;
 	}
 	
-	function sectionDescriptionTest() {?>
+	public function sectionDescriptionTest() {?>
 		<button type="button" class="button-secondary cpt_quicktest">Do plugin quick-test.</button>
 		
 		<script>
@@ -238,7 +238,7 @@ class CropThumbnailsSettings {
 
 /* helper functions **********************************************************************************************/
 
-	function ajax_callback_admin_quicktest() {
+	public function ajax_callback_admin_quicktest() {
 		//security
 		if(!current_user_can('manage_options')) die('forbidden');
 		check_ajax_referer('cpt_quicktest-ajax-nonce','security');//only for quicktest
@@ -298,7 +298,7 @@ class CropThumbnailsSettings {
 				120,                        // * @param int $src_h The height to crop.
 				200,                        // * @param int $dst_w The destination width.
 				25,                         // * @param int $dst_h The destination height.
-				false,						// * @param int $src_abs Optional. If the source crop points are absolute.
+				false,                      // * @param int $src_abs Optional. If the source crop points are absolute.
 				$tempFile                   // * @param string $dst_file Optional. The destination file to write to.
 			);
 			if ( is_wp_error( $cropResult ) ) {
@@ -361,7 +361,7 @@ class CropThumbnailsSettings {
 		exit();
 	}
 
-	function getUploadDir() {
+	public function getUploadDir() {
 		$upload_dir = wp_upload_dir();
 		return $upload_dir['basedir'].DIRECTORY_SEPARATOR.'tmp';
 	}
@@ -370,7 +370,7 @@ class CropThumbnailsSettings {
 	/**
 	 * get the post types and delete some prebuild post types that we dont need
 	 */
-	function getPostTypes() {
+	public function getPostTypes() {
 		$post_types = get_post_types(array(),'objects');
 		unset($post_types['nav_menu_item']);
 		unset($post_types['revision']);
@@ -389,7 +389,7 @@ class CropThumbnailsSettings {
 	 *                       array[<sizename>]['name'] = string --> readable name if provided in "image_size_names_choose", else sizename
 	 * </pre>
 	 */
-	function getImageSizes() {
+	public function getImageSizes() {
 		global $_wp_additional_image_sizes;//array with the available image sizes
 		$image_size_names = array_flip(get_intermediate_image_sizes());
 		foreach($image_size_names as $key=>$value) {
@@ -419,11 +419,11 @@ class CropThumbnailsSettings {
 		return $sizes;
 	}
 
-	function getOptions() {
+	public function getOptions() {
 		return get_option($this->optionsKey);
 	}
 
-	function getNonceBase() {
+	public function getNonceBase() {
 		return 'crop-post-thumbnails-nonce-base';
 	}
 }
