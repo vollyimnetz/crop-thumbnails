@@ -8,13 +8,26 @@ class SaveTest extends TestCase {
 	public function setUp() {
 		\WP_Mock::setUp();
 		
+		//needed by cptSettings
 		\WP_Mock::wpFunction( 'is_admin',[
 			'return' => true
 		]);
+		
 		\WP_Mock::wpFunction( 'check_ajax_referer',[
 			'return' => true
 		]);
-		
+		\WP_Mock::wpFunction( 'wp_basename',[
+			'return' => function($path,$suffix) { 
+				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
+				return urldecode( basename( str_replace( array( '%2F', '%5C' ), '/', urlencode( $path ) ), $suffix ) ); 
+			}
+		]);
+		\WP_Mock::wpFunction( 'trailingslashit',[
+			'return' => function($string) { 
+				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
+				return rtrim( $string, '/\\' ) . '/'; 
+			}
+		]);
 		
 		\WP_Mock::wpFunction( '__',['return' => function($param) { return $param; } ]);
 		
@@ -28,77 +41,12 @@ class SaveTest extends TestCase {
 	}
 	
 	
-	/** @test **/
-	public function should_fail_if_called_without_any_request_data() {
-		
-		/** TEST **/
-		ob_start();
-		self::$cpt->saveThumbnail();
-		$result = json_decode(ob_get_clean());
-		
-		/** CHECK **/
-		$this->assertTrue(isset($result->debug));
-		$this->assertTrue(!empty($result->error));
-		$this->assertEquals($result->error,'ERROR: Submitted data is incomplete.');
-	}
-	
-	/** @test **/
-	public function should_fail_if_image_could_not_be_found() {
-		/** SETUP **/
-		
-		$data = self::getSimpleTestData();
-		$_REQUEST['crop_thumbnails'] = $data;
-		$data = json_decode($data);
-		
-		\WP_Mock::wpFunction('get_post',[]);
-		
-		/** TEST **/
-		ob_start();
-		self::$cpt->saveThumbnail();
-		$result = json_decode(ob_get_clean());
-		
-		/** CHECK **/
-		$this->assertTrue(isset($result->debug));
-		$this->assertTrue(!empty($result->error));
-		$this->assertEquals($result->error,'ERROR: Can\'t find original image in database!');
-	}
-	
-	
-	/** @test **/
-	public function success_only_validation() {
-		/** SETUP **/
-		$data = self::getSimpleTestData();
-		$_REQUEST['crop_thumbnails'] = $data;
-		$data = json_decode($data);
-		
-		\WP_Mock::wpFunction('get_post', [ 
-			'return' => new stdClass()
-		]);
-		\WP_Mock::wpFunction( 'get_attached_file',[
-			'return' => true
-		]);
-		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
-			'return' => true
-		]);
-		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
-			'return' => true
-		]);
-		
-		self::$settingsMock->shouldReceive('getImageSizes')->andReturn([]);
-		
-		/** TEST **/
-		ob_start();
-		self::$cpt->saveThumbnail();
-		$result = json_decode(ob_get_clean());
-		
-		/** CHECK **/
-		$this->assertTrue(isset($result->debug));
-		$this->assertTrue(empty($result->error));
-		$this->assertTrue(!empty($result->success));
-	}
-	
-	
-	/** @test **/
+	/**
+	 * @test 
+	 * This test will check if a request with 3 image sizes will use the correct functions.
+	 * 
+	 * @return {[type] [description]
+	 */
 	public function success_simple() {
 		/** SETUP **/
 		$that = $this;
@@ -133,19 +81,18 @@ class SaveTest extends TestCase {
 		
 		
 		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
-			'return' => true
+			'return' => true,
+			'times' => 1
 		]);
+	
 		
-		\WP_Mock::wpFunction( 'wp_basename',[
-			'return' => function($file) { return basename($file); }
-		]);
-		\WP_Mock::wpFunction( 'trailingslashit',[
-			'return' => function($string) { return rtrim( $string, '/\\' ) . '/'; }
-		]);
-		
+		$dummyBaseFile = __DIR__.'/data/dummy.jpg';
+		$tmpFile = __DIR__.'/data/test-check.jpg';
 		\WP_Mock::wpFunction( 'wp_crop_image',[
-			'return' => function($src,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($that) {
-				return __DIR__.'/data/dummy.jpg';
+			'return' => function($src,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($that,$dummyBaseFile,$tmpFile) {
+				//prepare a file, so the function can copy it to the new location
+				copy($dummyBaseFile, $tmpFile);
+				return $tmpFile;
 			},
 			'times' => 3
 		]);
@@ -157,15 +104,37 @@ class SaveTest extends TestCase {
 		/** TEST **/
 		ob_start();
 		self::$cpt->saveThumbnail();
-		$result = ob_get_clean();
-		
-		$result = json_decode($result);
-		print_r($result);
+		$result = json_decode(ob_get_clean());
 		
 		/** CHECK **/
+		$this->assertTrue(!empty($result),'Invalid JSON returned');
+		$this->assertTrue(!file_exists($tmpFile),'Temporary file where not deleted');
+		
+		$file1 = __DIR__.'/data/test-150x150.jpg';
+		$file2 = __DIR__.'/data/test-500x499.jpg';
+		$file3 = __DIR__.'/data/test-500x500.jpg';
+		
+		//did the function copy the image file correctly?
+		$this->assertTrue(file_exists($file1),'New Image (150x150) was not created.');
+		$this->assertTrue(file_exists($file2),'New Image (500x499) was not created.');
+		$this->assertTrue(file_exists($file3),'New Image (500x500) was not created.');
+		
+		//did the function uses the correct file (the file that was returned by the wp_crop-function)
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (150x150).');
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file2),'The wrong file was coppied (500x499).');
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file3),'The wrong file was coppied (500x500).');
+		
+		//did the function return correct values
 		$this->assertTrue(isset($result->debug));
 		$this->assertTrue(empty($result->error));
+		$this->assertTrue(empty($result->processingErrors));
+		$this->assertTrue(empty($result->changed_image_format));
 		$this->assertTrue(!empty($result->success));
+		
+		/** CLEANUP **/
+		@unlink($file1);
+		@unlink($file2);
+		@unlink($file3);
 	}
 	
 	
