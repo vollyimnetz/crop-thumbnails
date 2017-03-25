@@ -4,7 +4,7 @@ add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnailAjaxWrap')
 
 class CptSaveThumbnail {
 	
-	private $debug = array();
+	private static $debug = array();
 	
 	/**
 	 * Handle-function called via ajax request.
@@ -46,11 +46,11 @@ class CptSaveThumbnail {
 			$_changed_image_format = array();
 			$_processing_error = array();
 			foreach($input->activeImageSizes as $_imageSize) {
-				$this->addDebug('submitted image-data');
-				$this->addDebug(print_r($_imageSize,true));
+				self::addDebug('submitted image-data');
+				self::addDebug(print_r($_imageSize,true));
 				$_delete_old_file = '';
 				if(!self::isImageSizeValid($_imageSize,$dbImageSizes)) {
-					$this->addDebug("Image size not valid.");
+					self::addDebug("Image size not valid.");
 					continue;
 				}
 				if(empty($postMetadata['sizes'][$_imageSize->name])) {
@@ -67,7 +67,7 @@ class CptSaveThumbnail {
 				$_filepath_info = pathinfo($_filepath);
 				
 				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$_filepath_info['basename'];
-				$this->addDebug("filename:".$_filepath);
+				self::addDebug("filename:".$_filepath);
 				
 				
 				$crop_width = $_imageSize->width;
@@ -128,8 +128,8 @@ class CptSaveThumbnail {
 						$_changed_image_format[ $_imageSize->name ] = $orig_img[0];
 					}
 				} else {
-					$this->addDebug('error on '.$_filepath_info['basename']);
-					$this->addDebug(implode(' | ',$_processing_error));
+					self::addDebug('error on '.$_filepath_info['basename']);
+					self::addDebug(implode(' | ',$_processing_error));
 				}
 			}//END foreach
 			
@@ -139,7 +139,7 @@ class CptSaveThumbnail {
 			wp_update_attachment_metadata( $input->sourceImageId, $postMetadata);
 			
 			//generate result;
-			$jsonResult['debug'] = $this->getDebugOutput();
+			$jsonResult['debug'] = self::getDebugOutput();
 			if(!empty($_processing_error)) {
 				//one or more errors happend when generating thumbnails
 				$jsonResult['processingErrors'] = implode("\n",$_processing_error); 
@@ -151,7 +151,7 @@ class CptSaveThumbnail {
 			$jsonResult['success'] = time();//time for cache-breaker
 			echo json_encode($jsonResult);
 		} catch (Exception $e) {
-			$jsonResult['debug'] = $this->getDebugOutput();
+			$jsonResult['debug'] = self::getDebugOutput();
 			$jsonResult['error'] = $e->getMessage();
 			echo json_encode($jsonResult);
 		}
@@ -168,13 +168,13 @@ class CptSaveThumbnail {
 		die();
 	}
 
-	private function addDebug($text) {
-		$this->debug[] = $text;
+	private static function addDebug($text) {
+		self::$debug[] = $text;
 	}
 	
-	private function getDebugOutput() {
-		if(!empty($this->debug)) {
-			return join("\n",$this->debug);
+	private static function getDebugOutput() {
+		if(!empty(self::$debug)) {
+			return join("\n",self::$debug);
 		}
 		return '';
 	}
