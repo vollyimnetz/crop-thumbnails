@@ -106,7 +106,7 @@ class CropPostThumbnailsEditor {
 				//the dynamic ratio is defined by the original image size and fix width OR height
 				//@eee https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
 				if($imageSize['width'] === 9999) {
-					//if you define width with 9999 - it crops for the exect defined height but the full width
+					//if you define width with 9999 - it crops for the exact defined height but the full width
 					$ratioData = $this->calculateRatioData($result['fullSizeImage']['width'], $imageSize['height']);
 				} elseif($imageSize['height'] === 9999) {
 					//if you define height with 9999 - it crops for the exect defined width but the full height

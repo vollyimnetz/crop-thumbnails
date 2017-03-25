@@ -12,8 +12,7 @@ class SaveTest extends TestCase {
 			'return' => true
 		]);
 		\WP_Mock::wpFunction( 'check_ajax_referer',[
-			'return' => true,
-			'times' => 1
+			'return' => true
 		]);
 		
 		
@@ -98,6 +97,99 @@ class SaveTest extends TestCase {
 	}
 	
 	
+	/** @test **/
+	public function success() {
+		/** SETUP **/
+		$that = $this;
+		
+		
+		$testData = self::getSimpleTestData();
+		$_REQUEST['crop_thumbnails'] = $testData;
+		$testData = json_decode($testData);
+		
+		\WP_Mock::wpFunction('get_post', [ 
+			'return' => new stdClass()
+		]);
+		
+		
+		\WP_Mock::wpFunction( 'get_attached_file',[
+			'return' => function($id) use ($that,$testData) {
+				$that->assertEquals($id,$testData->sourceImageId);
+				return TEST_PLUGIN_BASE.'/images/test_image.jpg';
+			},
+			'times' => 1
+		]);
+		
+		
+		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
+			'return' => function($id,$bool) use ($that,$testData) {
+				$that->assertEquals($id,$testData->sourceImageId);
+				$that->assertTrue($bool);
+				return $this->test_get_attachement_metadata();
+			}
+		]);
+		
+		
+		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
+			'return' => true
+		]);
+		
+		/** TEST **/
+		ob_start();
+		self::$cpt->saveThumbnail();
+		$result = json_decode(ob_get_clean());
+		
+		/** CHECK **/
+		$this->assertTrue(isset($result->debug));
+		$this->assertTrue(empty($result->error));
+		$this->assertTrue(!empty($result->success));
+	}
+	
+	public static function test_get_attachement_metadata() {
+		return [
+			'width' => 2400,
+			'height' => 1559,
+			'file' => '2011/12/press_image.jpg',
+			'sizes' => [
+					'thumbnail' => [
+							'file' => 'press_image-150x150.jpg',
+							'width' => 150,
+							'height' => 150,
+							'mime-type' => 'image/jpeg'
+					],
+					'medium' => [
+							'file' => 'press_image-4-300x194.jpg',
+							'width' => 300,
+							'height' => 194,
+							'mime-type' => 'image/jpeg'
+					],
+					'large' => [
+							'file' => 'press_image-1024x665.jpg',
+							'width' => 1024,
+							'height' => 665,
+							'mime-type' => 'image/jpeg'
+					],
+					'post-thumbnail' => [
+							'file' => 'press_image-624x405.jpg',
+							'width' => 624,
+							'height' => 405,
+							'mime-type' => 'image/jpeg'
+					],
+			],
+			'image_meta' => [
+					'aperture' => 5,
+					'credit' => '',
+					'camera' => 'Canon EOS-1Ds Mark III',
+					'caption' => '',
+					'created_timestamp' => 1323190643,
+					'copyright' => '',
+					'focal_length' => 35,
+					'iso' => 800,
+					'shutter_speed' => 0.016666666666667,
+					'title' => ''
+			],
+		];
+	}
 	
 	private static function getSimpleTestData() {
 		return '
