@@ -23,7 +23,7 @@
 						<section class="cptImageSizeInner">
 							<header>{{i.nameLabel}}</header>
 							<!--<div class="lowResWarning">{{lang.lowResWarning}}</div>-->
-							<div class="dimensions">{{ lang.dimensions }} {{i.width}} {{ lang.pixel }}  x {{i.height}} {{ lang.pixel }}</div>
+							<div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
 							<div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
 							<loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
 								<div class="cptImageBgContainer" :style="{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}"></div>
@@ -34,7 +34,7 @@
 			</div>
 		</div>
 		<div class="cptCropPane">
-			<h3>{{ lang.rawImage }}: {{cropData.fullSizeImage.width}} {{ lang.pixel }}  x {{cropData.fullSizeImage.height}} {{ lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
+			<h3>{{ lang.rawImage }}: {{cropData.fullSizeImage.width}} x {{cropData.fullSizeImage.height}} {{ lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
 			<div class="cropContainer">
 				<img class="cptCroppingImage" :src="cropData.fullSizeImage.url" />
 			</div>

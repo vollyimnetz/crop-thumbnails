@@ -30,8 +30,8 @@ class CptSaveThumbnail {
 			}
 			
 			
-			$postMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
-			if(empty($postMetadata)) {
+			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
+			if(empty($imageMetadata)) {
 				throw new Exception(__("ERROR: Can't find original image metadata!",CROP_THUMBS_LANG), 1);
 			}
 			
@@ -45,34 +45,34 @@ class CptSaveThumbnail {
 			 */
 			$_changed_image_format = array();
 			$_processing_error = array();
-			foreach($input->activeImageSizes as $_imageSize) {
+			foreach($input->activeImageSizes as $activeImageSize) {
 				self::addDebug('submitted image-data');
-				self::addDebug(print_r($_imageSize,true));
+				self::addDebug(print_r($activeImageSize,true));
 				$_delete_old_file = '';
-				if(!self::isImageSizeValid($_imageSize,$dbImageSizes)) {
+				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
 					self::addDebug("Image size not valid.");
 					continue;
 				}
-				if(empty($postMetadata['sizes'][$_imageSize->name])) {
-					$_changed_image_format[ $_imageSize->name ] = true;
+				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
+					$_changed_image_format[ $activeImageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
-					if($postMetadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width) || $postMetadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
-						$_delete_old_file = $postMetadata['sizes'][$_imageSize->name]['file'];
-						$_changed_image_format[ $_imageSize->name ] = true;
+					if($imageMetadata['sizes'][$activeImageSize->name]['width'] != intval($activeImageSize->width) || $imageMetadata['sizes'][$activeImageSize->name]['height'] != intval($activeImageSize->height) ) {
+						$_delete_old_file = $imageMetadata['sizes'][$activeImageSize->name]['file'];
+						$_changed_image_format[ $activeImageSize->name ] = true;
 					}
 				}
 				
-				$_filepath = self::generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
+				$_filepath = self::generateFilename($sourceImgPath, $activeImageSize->width, $activeImageSize->height);
 				$_filepath_info = pathinfo($_filepath);
 				
 				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$_filepath_info['basename'];
 				self::addDebug("filename:".$_filepath);
 				
 				
-				$crop_width = $_imageSize->width;
-				$crop_height = $_imageSize->height;
-				if(!$_imageSize->crop || $_imageSize->width==0 || $_imageSize->height==0 || $_imageSize->width==9999 || $_imageSize->height==9999) {
+				$crop_width = $activeImageSize->width;
+				$crop_height = $activeImageSize->height;
+				if(!$activeImageSize->crop || $activeImageSize->width==0 || $activeImageSize->height==0 || $activeImageSize->width==9999 || $activeImageSize->height==9999) {
 					//handle images with soft-crop width/height value and crop set to "true"
 					$crop_width = $input->selection->x2 - $input->selection->x;
 					$crop_height = $input->selection->y2 - $input->selection->y;
@@ -92,7 +92,7 @@ class CptSaveThumbnail {
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$_imageSize->name);
+					$_processing_error[] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$activeImageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($_delete_old_file)) {
@@ -114,18 +114,18 @@ class CptSaveThumbnail {
 						'file'=>$_filepath_info['basename'],
 						'width'=>intval($crop_width),
 						'height'=>intval($crop_height));
-					if(!empty($dbImageSizes[$_imageSize->name]['crop'])) {
-						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
+					if(!empty($dbImageSizes[$activeImageSize->name]['crop'])) {
+						$_new_meta['crop'] = $dbImageSizes[$activeImageSize->name]['crop'];
 					}
-					$postMetadata['sizes'][$_imageSize->name] = $_new_meta;
+					$imageMetadata['sizes'][$activeImageSize->name] = $_new_meta;
 					
 					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
-					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $_imageSize->name, $_new_meta );
+					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $activeImageSize->name, $_new_meta );
 					
 					//return the new file location
-					if(!empty($_changed_image_format[ $_imageSize->name ])) {
-						$orig_img = wp_get_attachment_image_src($input->sourceImageId, $_imageSize->name);
-						$_changed_image_format[ $_imageSize->name ] = $orig_img[0];
+					if(!empty($_changed_image_format[ $activeImageSize->name ])) {
+						$orig_img = wp_get_attachment_image_src($input->sourceImageId, $activeImageSize->name);
+						$_changed_image_format[ $activeImageSize->name ] = $orig_img[0];
 					}
 				} else {
 					self::addDebug('error on '.$_filepath_info['basename']);
@@ -135,8 +135,8 @@ class CptSaveThumbnail {
 			
 			//we have to update the posts metadate
 			//otherwise new sizes will not be updated
-			$postMetadata = apply_filters('crop_thumbnails_before_update_metadata', $postMetadata, $input->sourceImageId);
-			wp_update_attachment_metadata( $input->sourceImageId, $postMetadata);
+			$imageMetadata = apply_filters('crop_thumbnails_before_update_metadata', $imageMetadata, $input->sourceImageId);
+			wp_update_attachment_metadata( $input->sourceImageId, $imageMetadata);
 			
 			//generate result;
 			$jsonResult['debug'] = self::getDebug();
