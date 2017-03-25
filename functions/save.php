@@ -139,7 +139,7 @@ class CptSaveThumbnail {
 			wp_update_attachment_metadata( $input->sourceImageId, $postMetadata);
 			
 			//generate result;
-			$jsonResult['debug'] = self::getDebugOutput();
+			$jsonResult['debug'] = self::getDebug();
 			if(!empty($_processing_error)) {
 				//one or more errors happend when generating thumbnails
 				$jsonResult['processingErrors'] = implode("\n",$_processing_error); 
@@ -151,7 +151,7 @@ class CptSaveThumbnail {
 			$jsonResult['success'] = time();//time for cache-breaker
 			echo json_encode($jsonResult);
 		} catch (Exception $e) {
-			$jsonResult['debug'] = self::getDebugOutput();
+			$jsonResult['debug'] = self::getDebug();
 			$jsonResult['error'] = $e->getMessage();
 			echo json_encode($jsonResult);
 		}
@@ -172,7 +172,7 @@ class CptSaveThumbnail {
 		self::$debug[] = $text;
 	}
 	
-	private static function getDebugOutput() {
+	private static function getDebug() {
 		if(!empty(self::$debug)) {
 			return self::$debug;
 		}
