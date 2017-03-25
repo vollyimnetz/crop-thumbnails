@@ -15,16 +15,6 @@ class SaveTest extends TestCase {
 			'return' => true,
 			'times' => 1
 		]);
-		\WP_Mock::wpFunction( 'get_attached_file',[
-			'return' => true
-		]);
-		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
-			'return' => true
-		]);
-		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
-			'return' => true
-		]);
-		
 		
 		
 		\WP_Mock::wpFunction( '__',['return' => function($param) { return $param; } ]);
@@ -83,7 +73,18 @@ class SaveTest extends TestCase {
 		$_REQUEST['crop_thumbnails'] = $data;
 		$data = json_decode($data);
 		
-		\WP_Mock::wpFunction('get_post', [ 'return' => new stdClass()]);
+		\WP_Mock::wpFunction('get_post', [ 
+			'return' => new stdClass()
+		]);
+		\WP_Mock::wpFunction( 'get_attached_file',[
+			'return' => true
+		]);
+		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
+			'return' => true
+		]);
+		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
+			'return' => true
+		]);
 		
 		/** TEST **/
 		ob_start();
@@ -95,6 +96,8 @@ class SaveTest extends TestCase {
 		$this->assertTrue(empty($result->error));
 		$this->assertTrue(!empty($result->success));
 	}
+	
+	
 	
 	private static function getSimpleTestData() {
 		return '
