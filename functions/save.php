@@ -38,7 +38,6 @@ class CptSaveThumbnail {
 			//from DB
 			$dbImageSizes = $cptSettings->getImageSizes();
 			
-			
 			/**
 			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
 			 * and Wordpress doesn't know about the image file
@@ -47,7 +46,7 @@ class CptSaveThumbnail {
 			$_processing_error = array();
 			foreach($input->activeImageSizes as $activeImageSize) {
 				self::addDebug('submitted image-data');
-				self::addDebug(print_r($activeImageSize,true));
+				self::addDebug($activeImageSize);
 				$_delete_old_file = '';
 				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
 					self::addDebug("Image size not valid.");
@@ -78,32 +77,32 @@ class CptSaveThumbnail {
 					$crop_height = $input->selection->y2 - $input->selection->y;
 				}
 				
-				$result = wp_crop_image(		// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-					$input->sourceImageId,	// * @param string|int $src The source file or Attachment ID.
-					$input->selection->x,				// * @param int $src_x The start x position to crop from.
-					$input->selection->y,				// * @param int $src_y The start y position to crop from.
+				$result = wp_crop_image(							// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
+					$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
+					$input->selection->x,							// * @param int $src_x The start x position to crop from.
+					$input->selection->y,							// * @param int $src_y The start y position to crop from.
 					$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
 					$input->selection->y2 - $input->selection->y,	// * @param int $src_h The height to crop.
-					$crop_width,				// * @param int $dst_w The destination width.
-					$crop_height,				// * @param int $dst_h The destination height.
-					false,						// * @param int $src_abs Optional. If the source crop points are absolute.
-					$_tmp_filepath				// * @param string $dst_file Optional. The destination file to write to.
+					$crop_width,									// * @param int $dst_w The destination width.
+					$crop_height,									// * @param int $dst_h The destination height.
+					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
+					$_tmp_filepath									// * @param string $dst_file Optional. The destination file to write to.
 				);
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$activeImageSize->name);
+					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$activeImageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($_delete_old_file)) {
 						@unlink($_filepath_info['dirname'].DIRECTORY_SEPARATOR.$_delete_old_file);
 					}
 					if(!@copy($result,$_filepath)) {
-						$_processing_error[] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
+						$_processing_error[$activeImageSize->name][] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
 						$_error = true;
 					}
 					if(!@unlink($result)) {
-						$_processing_error[] = sprintf(__("Can't delete temporary file.",CROP_THUMBS_LANG));
+						$_processing_error[$activeImageSize->name][] = sprintf(__("Can't delete temporary file.",CROP_THUMBS_LANG));
 						$_error = true;
 					}
 				}
@@ -129,7 +128,7 @@ class CptSaveThumbnail {
 					}
 				} else {
 					self::addDebug('error on '.$_filepath_info['basename']);
-					self::addDebug(implode(' | ',$_processing_error));
+					self::addDebug($_processing_error);
 				}
 			}//END foreach
 			
@@ -142,7 +141,7 @@ class CptSaveThumbnail {
 			$jsonResult['debug'] = self::getDebug();
 			if(!empty($_processing_error)) {
 				//one or more errors happend when generating thumbnails
-				$jsonResult['processingErrors'] = implode("\n",$_processing_error); 
+				$jsonResult['processingErrors'] = $_processing_error;
 			}
 			if(!empty($_changed_image_format)) {
 				//there was a change in the image-formats 

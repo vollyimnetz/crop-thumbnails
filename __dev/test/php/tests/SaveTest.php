@@ -67,7 +67,6 @@ class SaveTest extends TestCase {
 	/** @test **/
 	public function success_only_validation() {
 		/** SETUP **/
-		
 		$data = self::getSimpleTestData();
 		$_REQUEST['crop_thumbnails'] = $data;
 		$data = json_decode($data);
@@ -85,6 +84,8 @@ class SaveTest extends TestCase {
 			'return' => true
 		]);
 		
+		self::$settingsMock->shouldReceive('getImageSizes')->andReturn([]);
+		
 		/** TEST **/
 		ob_start();
 		self::$cpt->saveThumbnail();
@@ -98,24 +99,24 @@ class SaveTest extends TestCase {
 	
 	
 	/** @test **/
-	public function success() {
+	public function success_simple() {
 		/** SETUP **/
 		$that = $this;
-		
 		
 		$testData = self::getSimpleTestData();
 		$_REQUEST['crop_thumbnails'] = $testData;
 		$testData = json_decode($testData);
 		
+		self::$settingsMock->shouldReceive('getImageSizes')->andReturn(self::test_getImageSizes());
+		
 		\WP_Mock::wpFunction('get_post', [ 
 			'return' => new stdClass()
 		]);
 		
-		
 		\WP_Mock::wpFunction( 'get_attached_file',[
 			'return' => function($id) use ($that,$testData) {
 				$that->assertEquals($id,$testData->sourceImageId);
-				return TEST_PLUGIN_BASE.'/images/test_image.jpg';
+				return __DIR__.'/data/test.jpg';
 			},
 			'times' => 1
 		]);
@@ -126,7 +127,8 @@ class SaveTest extends TestCase {
 				$that->assertEquals($id,$testData->sourceImageId);
 				$that->assertTrue($bool);
 				return $this->test_get_attachement_metadata();
-			}
+			},
+			'times' => 1
 		]);
 		
 		
@@ -134,10 +136,31 @@ class SaveTest extends TestCase {
 			'return' => true
 		]);
 		
+		\WP_Mock::wpFunction( 'wp_basename',[
+			'return' => function($file) { return basename($file); }
+		]);
+		\WP_Mock::wpFunction( 'trailingslashit',[
+			'return' => function($string) { return rtrim( $string, '/\\' ) . '/'; }
+		]);
+		
+		\WP_Mock::wpFunction( 'wp_crop_image',[
+			'return' => function($src,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($that) {
+				return __DIR__.'/data/dummy.jpg';
+			},
+			'times' => 3
+		]);
+		
+		
+		self::$settingsMock->shouldReceive('getUploadDir')->andReturn(__DIR__.'/data');
+		
+		
 		/** TEST **/
 		ob_start();
 		self::$cpt->saveThumbnail();
-		$result = json_decode(ob_get_clean());
+		$result = ob_get_clean();
+		
+		$result = json_decode($result);
+		print_r($result);
 		
 		/** CHECK **/
 		$this->assertTrue(isset($result->debug));
@@ -145,48 +168,74 @@ class SaveTest extends TestCase {
 		$this->assertTrue(!empty($result->success));
 	}
 	
-	public static function test_get_attachement_metadata() {
+	
+	public static function test_getImageSizes() {
 		return [
-			'width' => 2400,
-			'height' => 1559,
-			'file' => '2011/12/press_image.jpg',
-			'sizes' => [
-					'thumbnail' => [
-							'file' => 'press_image-150x150.jpg',
-							'width' => 150,
-							'height' => 150,
-							'mime-type' => 'image/jpeg'
-					],
-					'medium' => [
-							'file' => 'press_image-4-300x194.jpg',
-							'width' => 300,
-							'height' => 194,
-							'mime-type' => 'image/jpeg'
-					],
-					'large' => [
-							'file' => 'press_image-1024x665.jpg',
-							'width' => 1024,
-							'height' => 665,
-							'mime-type' => 'image/jpeg'
-					],
-					'post-thumbnail' => [
-							'file' => 'press_image-624x405.jpg',
-							'width' => 624,
-							'height' => 405,
-							'mime-type' => 'image/jpeg'
-					],
+			'thumbnail' => [
+				'width' => 150,
+				'height' => 150,
+				'crop' => 1,
+				'name' => 'thumbnail'
 			],
-			'image_meta' => [
-					'aperture' => 5,
-					'credit' => '',
-					'camera' => 'Canon EOS-1Ds Mark III',
-					'caption' => '',
-					'created_timestamp' => 1323190643,
-					'copyright' => '',
-					'focal_length' => 35,
-					'iso' => 800,
-					'shutter_speed' => 0.016666666666667,
-					'title' => ''
+			'medium' => [
+				'width' => 300,
+				'height' => 300,
+				'crop' => 0,
+				'name' => 'medium'
+			],
+			'large' => [
+				'width' => 1024,
+				'height' => 1024,
+				'crop' => 0,
+				'name' => 'large'
+			],
+			'post-thumbnail' => [
+				'width' => 300,
+				'height' => 200,
+				'crop' => 1,
+				'name' => 'post-thumbnail'
+			],
+			'dynamic-1' => [
+				'width' => 500,
+				'height' => 9999,
+				'crop' => 1,
+				'name' => 'dynamic-1'
+			],
+			'dynamic-2' => [
+				'width' => 9999,
+				'height' => 500,
+				'crop' => 1,
+				'name' => 'dynamic-2'
+			],
+			'dynamic-prevent-bug' => [
+				'width' => 0,
+				'height' => 500,
+				'crop' => 1,
+				'name' => 'dynamic-prevent-bug'
+			],
+			'strange-image-ratio' => [
+				'width' => 500,
+				'height' => 499,
+				'crop' => 1,
+				'name' => 'strange-image-ratio'
+			],
+			'normal1x1' => [
+				'width' => 500,
+				'height' => 500,
+				'crop' => 1,
+				'name' => 'normal1x1'
+			],
+			'bug-hunt-1' => [
+				'width' => 1200,
+				'height' => 500,
+				'crop' => 1,
+				'name' => 'bug-hunt-1'
+			],
+			'static-1' => [
+				'width' => 240,
+				'height' => 120,
+				'crop' => 1,
+				'name' => 'Mein neuer Name'
 			],
 		];
 	}
@@ -227,5 +276,95 @@ class SaveTest extends TestCase {
 				}
 			]
 		}';
+	}
+	
+	public static function test_get_attachement_metadata() {
+		return [
+			'width' => 3000,
+			'height' => 2000,
+			'file' => "2016/05/test.jpg",
+			'sizes' => [
+				'thumbnail' => [
+					'file' => 'test-150x150.jpg',
+					'width' => 150,
+					'height' => 150,
+					'mime-type' => 'image/jpeg',
+				],
+				'medium' => [
+					'file' => 'test-300x200.jpg',
+					'width' => 300,
+					'height' => 200,
+					'mime-type' => 'image/jpeg',
+				],
+				'medium_large' => [
+					'file' => 'test-768x512.jpg',
+					'width' => 768,
+					'height' => 512,
+					'mime-type' => 'image/jpeg',
+				],
+				'large' => [
+					'file' => 'test-1024x683.jpg',
+					'width' => 1024,
+					'height' => 683,
+					'mime-type' => 'image/jpeg',
+				],
+				'post-thumbnail' => [
+					'file' => 'test-300x200.jpg',
+					'width' => 300,
+					'height' => 200,
+					'mime-type' => 'image/jpeg',
+				],
+				'dynamic-1' => [
+					'file' => 'test-500x2000.jpg',
+					'width' => 500,
+					'height' => 2000,
+					'mime-type' => 'image/jpeg',
+				],
+				'dynamic-2' => [
+					'file' => 'test-3000x500.jpg',
+					'width' => 3000,
+					'height' => 500,
+					'mime-type' => 'image/jpeg',
+				],
+				'dynamic-prevent-bug' => [
+					'file' => 'test-750x500.jpg',
+					'width' => 750,
+					'height' => 500,
+					'mime-type' => 'image/jpeg',
+				],
+				'this-will-be-deleted-later' => [
+					'file' => 'test-240x120.jpg',
+					'width' => 240,
+					'height' => 120,
+					'mime-type' => 'image/jpeg',
+				],
+				'strange-image-ratio' => [
+					'file' => 'test-500x499.jpg',
+					'width' => 500,
+					'height' => 499,
+					'mime-type' => 'image/jpeg',
+				],
+				'normal1x1' => [
+					'file' => 'test-500x500.jpg',
+					'width' => 500,
+					'height' => 500,
+					'mime-type' => 'image/jpeg',
+				],
+			],
+			'image_meta' => [
+				'aperture' => 0,
+				'credit' => null,
+				'camera' => null,
+				'caption' => null,
+				'created_timestamp' => 0,
+				'copyright' => null,
+				'focal_length' => 0,
+				'iso' => 0,
+				'shutter_speed' => 0,
+				'title' => null,
+				'orientation' => 0,
+				'keywords' => []
+			]
+		];
 	}
 }
