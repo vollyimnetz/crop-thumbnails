@@ -42,7 +42,7 @@ class CptSaveThumbnail {
 			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
 			 * and Wordpress doesn't know about the image file
 			 */
-			$_changed_image_format = array();
+			$changedImageName = array();
 			$_processing_error = array();
 			foreach($input->activeImageSizes as $activeImageSize) {
 				self::addDebug('submitted image-data');
@@ -53,12 +53,12 @@ class CptSaveThumbnail {
 					continue;
 				}
 				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
-					$_changed_image_format[ $activeImageSize->name ] = true;
+					$changedImageName[ $activeImageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
 					if($imageMetadata['sizes'][$activeImageSize->name]['width'] != intval($activeImageSize->width) || $imageMetadata['sizes'][$activeImageSize->name]['height'] != intval($activeImageSize->height) ) {
 						$_delete_old_file = $imageMetadata['sizes'][$activeImageSize->name]['file'];
-						$_changed_image_format[ $activeImageSize->name ] = true;
+						$changedImageName[ $activeImageSize->name ] = true;
 					}
 				}
 				
@@ -122,9 +122,9 @@ class CptSaveThumbnail {
 					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $activeImageSize->name, $_new_meta );
 					
 					//return the new file location
-					if(!empty($_changed_image_format[ $activeImageSize->name ])) {
+					if(!empty($changedImageName[ $activeImageSize->name ])) {
 						$orig_img = wp_get_attachment_image_src($input->sourceImageId, $activeImageSize->name);
-						$_changed_image_format[ $activeImageSize->name ] = $orig_img[0];
+						$changedImageName[ $activeImageSize->name ] = $orig_img[0];
 					}
 				} else {
 					self::addDebug('error on '.$_filepath_info['basename']);
@@ -143,9 +143,9 @@ class CptSaveThumbnail {
 				//one or more errors happend when generating thumbnails
 				$jsonResult['processingErrors'] = $_processing_error;
 			}
-			if(!empty($_changed_image_format)) {
+			if(!empty($changedImageName)) {
 				//there was a change in the image-formats 
-				$jsonResult['changed_image_format'] = $_changed_image_format;
+				$jsonResult['changedImageName'] = $changedImageName;
 			}
 			$jsonResult['success'] = time();//time for cache-breaker
 			echo json_encode($jsonResult);

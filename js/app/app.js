@@ -354,11 +354,11 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 							return;
 						}
 						if(response.data.success!==undefined) {
-							if(response.data.changed_image_format!==undefined) {
+							if(response.data.changedImageName!==undefined) {
 								//update activeImageSizes with the new URLs
 								that.activeImageSizes.forEach(function(value,key) {
-									if(response.data.changed_image_format[value.name]!==undefined) {
-										value.url = response.data.changed_image_format[value.name];
+									if(response.data.changedImageName[value.name]!==undefined) {
+										value.url = response.data.changedImageName[value.name];
 									}
 								});
 							}

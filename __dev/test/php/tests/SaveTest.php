@@ -128,7 +128,7 @@ class SaveTest extends TestCase {
 		$this->assertTrue(isset($result->debug));
 		$this->assertTrue(empty($result->error));
 		$this->assertTrue(empty($result->processingErrors));
-		$this->assertTrue(empty($result->changed_image_format));
+		$this->assertTrue(empty($result->changedImageName));
 		$this->assertTrue(!empty($result->success));
 		
 		/** CLEANUP **/
