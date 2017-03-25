@@ -1,9 +1,9 @@
 <?php
 class CropThumbnailsSettings {
-	private $uniqeSettingsId = 'cpt-settings';
-	private $optionsKey = 'crop-post-thumbs';
-	private $cssPrefix = 'cpt_settings_';
-	private $defaultSizes = array('thumbnail','medium','medium_large','large');
+	private static $uniqeSettingsId = 'cpt-settings';
+	private static $optionsKey = 'crop-post-thumbs';
+	private static $cssPrefix = 'cpt_settings_';
+	private static $defaultSizes = array('thumbnail','medium','medium_large','large');
 
 	public function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
@@ -17,7 +17,7 @@ class CropThumbnailsSettings {
 	}
 
 	public function optionsPageStyle() {
-		if(!empty($_REQUEST['page']) && $_REQUEST['page']=='page-cpt') {
+		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
 			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
 		}
 	}
@@ -40,15 +40,15 @@ class CropThumbnailsSettings {
 		<div id="icon-options-general" class="icon32"><br /></div>
 		<h2>Crop-Thumbnails <?php esc_attr_e('Settings',CROP_THUMBS_LANG); ?></h2>
 			<form action="options.php" method="post">
-				<?php settings_fields($this->uniqeSettingsId); ?>
+				<?php settings_fields( self::$uniqeSettingsId ); ?>
 				<?php do_settings_sections('page1'); ?>
 
-				<div class="<?php echo $this->cssPrefix ?>submit">
+				<div class="<?php echo self::$cssPrefix ?>submit">
 					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes',CROP_THUMBS_LANG); ?>" class="button-primary" />
 				</div>
 			</form>
 
-			<div class="<?php echo $this->cssPrefix; ?>paypal">
+			<div class="<?php echo self::$cssPrefix; ?>paypal">
 				<h3><?php _e('Support the plugin author',CROP_THUMBS_LANG) ?></h3>
 				<p><?php _e('You can support the plugin author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!',CROP_THUMBS_LANG); ?></p>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -69,7 +69,7 @@ class CropThumbnailsSettings {
 	}
 
 	public function settingsInitialisation(){
-		register_setting( $this->uniqeSettingsId, $this->optionsKey, array($this,'validateSettings') );
+		register_setting( self::$uniqeSettingsId, self::$optionsKey, array($this,'validateSettings') );
 
 		$_sectionID = 'choose_sizes_section';
 		add_settings_section($_sectionID, __('Sizes and Post Types',CROP_THUMBS_LANG), array($this,'sectionDescriptionChooseSizes'), 'page1');
@@ -81,9 +81,9 @@ class CropThumbnailsSettings {
 		$_sectionID = 'developer';
 		add_settings_section($_sectionID, __('Developer Settings',CROP_THUMBS_LANG), array($this,'emptySectionDescription'), 'page1');
 		$_tmpID = 'debug_js';
-		add_settings_field($_tmpID, __('Enable JS-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, __('Enable JS-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 		$_tmpID = 'debug_data';
-		add_settings_field($_tmpID, __('Enable Data-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, __('Enable Data-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
 	public function sectionDescriptionChooseSizes() {?>
@@ -99,7 +99,7 @@ class CropThumbnailsSettings {
 
 	public function callback_choose_size() {
 		//get all the data
-		$options = get_option($this->optionsKey);
+		$options = get_option(self::$optionsKey);
 		#echo '<pre>'.print_r($options,true).'</pre>';
 		$post_types = $this->getPostTypes();
 		$image_sizes = $this->getImageSizes();
@@ -109,8 +109,8 @@ class CropThumbnailsSettings {
 		<ul>
 			<?php foreach($post_types as $post_type=>$value) : ?>
 			<li>
-				<label for="<?php echo $this->cssPrefix.$post_type; ?>">
-					<input id="<?php echo $this->cssPrefix.$post_type;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
+				<label for="<?php echo self::$cssPrefix.$post_type; ?>">
+					<input id="<?php echo self::$cssPrefix.$post_type;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
 					<strong><?php echo $value->labels->name; ?></strong>
 				</label>
 				<ul style="margin:1em;">
@@ -122,8 +122,8 @@ class CropThumbnailsSettings {
 					}
 					if($data['crop']=='1') : ?>
 						<li>
-							<label for="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
-								<input id="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
+							<label for="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
+								<input id="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
 								<?php echo $thumb_name;?> - <?php echo $data['width'];?>x<?php echo $data['height'];?> <?php /* echo ($data['crop'] == '1' ? '(cropped)' : '') */?>
 							</label>
 						</li>
@@ -139,17 +139,17 @@ class CropThumbnailsSettings {
 	}
 
 	public function callback_debug_js() {
-		$options = get_option($this->optionsKey);
+		$options = get_option(self::$optionsKey);
 		$_id = 'debug_js';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
-		echo '<input name="'.$this->optionsKey.'['.$_id.']" id="'.$this->cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
+		echo '<input name="'.self::$optionsKey.'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
 	}
 
 	public function callback_debug_data() {
-		$options = get_option($this->optionsKey);
+		$options = get_option(self::$optionsKey);
 		$_id = 'debug_data';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
-		echo '<input name="'.$this->optionsKey.'['.$_id.']" id="'.$this->cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
+		echo '<input name="'.self::$optionsKey.'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
 	}
 
 	public function validateSettings($input) {
@@ -402,7 +402,7 @@ class CropThumbnailsSettings {
 		$sizes = array();
 		foreach( $image_size_names as $_size=>$theName ) {
 
-			if ( in_array( $_size, $this->defaultSizes ) ) {
+			if ( in_array( $_size, self::$defaultSizes ) ) {
 				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
 				$sizes[ $_size ]['height'] = intval(get_option( $_size . '_size_h' ));
 				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );
@@ -420,7 +420,7 @@ class CropThumbnailsSettings {
 	}
 
 	public function getOptions() {
-		return get_option($this->optionsKey);
+		return get_option(self::$optionsKey);
 	}
 
 	public function getNonceBase() {

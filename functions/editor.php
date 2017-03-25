@@ -221,11 +221,9 @@ class CropPostThumbnailsEditor {
 	private function gcd($a, $b) {
 		if(function_exists('gmp_gcd')) {
 			$gcd = gmp_strval(gmp_gcd($a,$b));
-			$this->addDebug("gcd-version", "gmp_gcd:".$gcd);
 			return ($gcd);
 		} else {
 			$gcd = self::my_gcd($a,$b);
-			$this->addDebug("gcd-version", "my_gcd:".$gcd);
 			return $gcd;
 		}
 	}
@@ -233,19 +231,6 @@ class CropPostThumbnailsEditor {
 	private static function my_gcd($a, $b) {
 		$b = ( $a == 0 )? 0 : $b;
 		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
-	}
-
-
-	function addDebug($title, $output) {
-		$this->debugOutput.= '---'.$title.'---<br />'.$output.'<br />';
-	}
-
-
-	function getDebugOutput($options) {
-		if(!empty($options['debug_data'])) {
-			return '<div class="cpt-debug closed"><a class="cpt-debug-handle" href="#">show debug</a><div class="content">'.nl2br(str_replace("    ","&nbsp;&nbsp;",$this->debugOutput)).'</div></div>';
-		}
-		return '';
 	}
 }
 
