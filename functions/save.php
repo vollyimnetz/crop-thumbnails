@@ -174,9 +174,9 @@ class CptSaveThumbnail {
 	
 	private static function getDebugOutput() {
 		if(!empty(self::$debug)) {
-			return join("\n",self::$debug);
+			return self::$debug;
 		}
-		return '';
+		return [];
 	}
 
 	/**
