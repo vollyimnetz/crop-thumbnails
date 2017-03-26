@@ -20,4 +20,21 @@ abstract class TestCase extends PHPUnit_Framework_TestCase {
 		
 		return new CptSaveThumbnail();
 	}
+	
+	public function assertArrayEquals($array1, $array2, $rootPath = array()) {
+		foreach ($array1 as $key => $value) {
+			$this->assertArrayHasKey($key, $array2);
+
+			if (isset($array2[$key])) {
+				$keyPath = $rootPath;
+				$keyPath[] = $key;
+
+				if (is_array($value)) {
+					$this->assertArrayEquals($value, $array2[$key], $keyPath);
+				} else {
+					$this->assertEquals($value, $array2[$key], "Failed asserting that `".$array2[$key]."` matches expected `$value` for path `".implode(" > ", $keyPath)."`.");
+				}
+			}
+		}
+	}
 }

@@ -70,18 +70,23 @@ class SaveTest extends TestCase {
 		]);
 		
 		
+		$attachementMetadata = $this->test_get_attachement_metadata();
 		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
-			'return' => function($id,$bool) use ($that,$testData) {
+			'return' => function($id,$bool) use ($that,$testData,$attachementMetadata) {
 				$that->assertEquals($id,$testData->sourceImageId);
 				$that->assertTrue($bool);
-				return $this->test_get_attachement_metadata();
+				return $attachementMetadata;
 			},
 			'times' => 1
 		]);
 		
-		
+		$savedMetadata = [];//this will be filled once the mock has run
 		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
-			'return' => true,
+			'return' => function($imageId,$metadata) use ($that,$testData,&$savedMetadata) {
+				$that->assertEquals($imageId,$testData->sourceImageId);
+				$savedMetadata = $metadata;
+				return true;
+			},
 			'times' => 1
 		]);
 	
@@ -124,12 +129,16 @@ class SaveTest extends TestCase {
 		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file2),'The wrong file was coppied (500x499).');
 		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file3),'The wrong file was coppied (500x500).');
 		
+		
 		//did the function return correct values
-		$this->assertTrue(isset($result->debug));
-		$this->assertTrue(empty($result->error));
-		$this->assertTrue(empty($result->processingErrors));
-		$this->assertTrue(empty($result->changedImageName));
-		$this->assertTrue(!empty($result->success));
+		$this->assertTrue(isset($result->debug),'The result should return debug values.');
+		$this->assertTrue(empty($result->error),'The result should not return any errors.');
+		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
+		$this->assertTrue(empty($result->changedImageName),'The result should not return any changedImageNames.');
+		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		
+		//the metadata should be unchanged
+		$this->assertArrayEquals($attachementMetadata,$savedMetadata);
 		
 		/** CLEANUP **/
 		@unlink($file1);
