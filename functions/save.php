@@ -62,11 +62,11 @@ class CptSaveThumbnail {
 					}
 				}
 				
-				$_filepath = self::generateFilename($sourceImgPath, $activeImageSize->width, $activeImageSize->height);
-				$_filepath_info = pathinfo($_filepath);
+				$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $activeImageSize->height);
+				$currentFilePathInfo = pathinfo($currentFilePath);
 				
-				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$_filepath_info['basename'];
-				self::addDebug("filename:".$_filepath);
+				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
+				self::addDebug("filename:".$currentFilePath);
 				
 				
 				$crop_width = $activeImageSize->width;
@@ -95,9 +95,9 @@ class CptSaveThumbnail {
 					$_error = true;
 				} else {
 					if(!empty($_delete_old_file)) {
-						@unlink($_filepath_info['dirname'].DIRECTORY_SEPARATOR.$_delete_old_file);
+						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$_delete_old_file);
 					}
-					if(!@copy($result,$_filepath)) {
+					if(!@copy($result,$currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
 						$_error = true;
 					}
@@ -109,17 +109,7 @@ class CptSaveThumbnail {
 				
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
-					$_new_meta = array(
-						'file'=>$_filepath_info['basename'],
-						'width'=>intval($crop_width),
-						'height'=>intval($crop_height));
-					if(!empty($dbImageSizes[$activeImageSize->name]['crop'])) {
-						$_new_meta['crop'] = $dbImageSizes[$activeImageSize->name]['crop'];
-					}
-					$imageMetadata['sizes'][$activeImageSize->name] = $_new_meta;
-					
-					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
-					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $activeImageSize->name, $_new_meta );
+					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $crop_width, $crop_height);
 					
 					//return the new file location
 					if(!empty($changedImageName[ $activeImageSize->name ])) {
@@ -127,7 +117,7 @@ class CptSaveThumbnail {
 						$changedImageName[ $activeImageSize->name ] = $orig_img[0];
 					}
 				} else {
-					self::addDebug('error on '.$_filepath_info['basename']);
+					self::addDebug('error on '.$currentFilePathInfo['basename']);
 					self::addDebug($_processing_error);
 				}
 			}//END foreach
@@ -176,6 +166,25 @@ class CptSaveThumbnail {
 			return self::$debug;
 		}
 		return [];
+	}
+	
+	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $crop_width, $crop_height) {
+		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
+		
+		$newValues = array();
+		$newValues['file'] = $currentFilePathInfo['basename'];
+		$newValues['width'] = intval($crop_width);
+		$newValues['height'] = intval($crop_height);
+		$newValues['mime-type'] = mime_content_type($fullFilePath);
+		
+		$oldValues = [];
+		if(!empty($imageMetadata[$imageSizeName])) {
+			$oldValues = $imageMetadata[$imageSizeName];
+		}
+		$imageMetadata[$imageSizeName] = array_merge($oldValues,$newValues);
+		
+		do_action('crop_thumbnails_after_save_new_thumb', $fullFilePath, $imageSizeName, $imageMetadata[$imageSizeName] );
+		return $imageMetadata;
 	}
 
 	/**

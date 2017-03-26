@@ -43,9 +43,10 @@ class SaveTest extends TestCase {
 	
 	/**
 	 * @test 
-	 * This test will check if a request with 3 image sizes will use the correct functions.
-	 * 
-	 * @return {[type] [description]
+	 * This test will check if a request with 4 image sizes will use the correct functions.
+	 * - 2 image sizes are quite ordanary
+	 * - 1 image size ('strange-image-ratio') is a little off ratio
+	 * - 1 image size ('new-image-size') has been added after the attachement was uploaded (no metadata exists)
 	 */
 	public function success_simple() {
 		/** SETUP **/
@@ -89,6 +90,15 @@ class SaveTest extends TestCase {
 			},
 			'times' => 1
 		]);
+		
+		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
+			'return' => function($imageId,$imageSizeName) use ($that,$testData) {
+				$that->assertEquals($imageId,$testData->sourceImageId);
+				$that->assertEquals($imageSizeName,'new-image-size');
+				return array('new/path/new-image-size-600x600.jpg',600,600);
+			},
+			'times' => 1
+		]);
 	
 		
 		$dummyBaseFile = __DIR__.'/data/dummy.jpg';
@@ -99,7 +109,7 @@ class SaveTest extends TestCase {
 				copy($dummyBaseFile, $tmpFile);
 				return $tmpFile;
 			},
-			'times' => 3
+			'times' => 4
 		]);
 		
 		
@@ -118,32 +128,48 @@ class SaveTest extends TestCase {
 		$file1 = __DIR__.'/data/test-150x150.jpg';
 		$file2 = __DIR__.'/data/test-500x499.jpg';
 		$file3 = __DIR__.'/data/test-500x500.jpg';
+		$file4 = __DIR__.'/data/test-600x600.jpg';
 		
 		//did the function copy the image file correctly?
 		$this->assertTrue(file_exists($file1),'New Image (150x150) was not created.');
 		$this->assertTrue(file_exists($file2),'New Image (500x499) was not created.');
 		$this->assertTrue(file_exists($file3),'New Image (500x500) was not created.');
+		$this->assertTrue(file_exists($file4),'New Image (600x600) was not created.');
 		
 		//did the function uses the correct file (the file that was returned by the wp_crop-function)
 		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (150x150).');
 		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file2),'The wrong file was coppied (500x499).');
 		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file3),'The wrong file was coppied (500x500).');
-		
-		
-		//did the function return correct values
-		$this->assertTrue(isset($result->debug),'The result should return debug values.');
-		$this->assertTrue(empty($result->error),'The result should not return any errors.');
-		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
-		$this->assertTrue(empty($result->changedImageName),'The result should not return any changedImageNames.');
-		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
-		
-		//the metadata should be unchanged
-		$this->assertArrayEquals($attachementMetadata,$savedMetadata);
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file4),'The wrong file was coppied (600x600).');
 		
 		/** CLEANUP **/
 		@unlink($file1);
 		@unlink($file2);
 		@unlink($file3);
+		@unlink($file4);
+		
+		//did the function return correct values
+		$this->assertTrue(isset($result->debug),'The result should return debug values.');
+		$this->assertTrue(empty($result->error),'The result should not return any errors.');
+		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
+		
+		$sizeName = 'new-image-size';
+		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-600x600.jpg');
+		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		
+		//the metadata should be unchanged
+		$this->assertArrayEquals($savedMetadata,$attachementMetadata);
+		
+	}
+	
+	/** test **/
+	public function success_with_dynamic_width() {
+		//TODO
+	}
+	
+	/** test **/
+	public function success_with_dynamic_height() {
+		//TODO
 	}
 	
 	
@@ -173,25 +199,25 @@ class SaveTest extends TestCase {
 				'crop' => 1,
 				'name' => 'post-thumbnail'
 			],
-			'dynamic-1' => [
+			'dynamic-1' => [//dynamic image size with a width of 500 - height is the height of the attachement-image
 				'width' => 500,
 				'height' => 9999,
 				'crop' => 1,
 				'name' => 'dynamic-1'
 			],
-			'dynamic-2' => [
+			'dynamic-2' => [//dynamic image size with a height of 500 - width is the width of the attachement-image
 				'width' => 9999,
 				'height' => 500,
 				'crop' => 1,
 				'name' => 'dynamic-2'
 			],
-			'dynamic-prevent-bug' => [
+			'dynamic-prevent-bug' => [//a dynamic image size wich should be not enabled for crop (cause width=0 indicates no crop)
 				'width' => 0,
 				'height' => 500,
 				'crop' => 1,
 				'name' => 'dynamic-prevent-bug'
 			],
-			'strange-image-ratio' => [
+			'strange-image-ratio' => [//a image-size with a nearly image-ratio of 1 (could be set to 1 via add_action)
 				'width' => 500,
 				'height' => 499,
 				'crop' => 1,
@@ -203,11 +229,11 @@ class SaveTest extends TestCase {
 				'crop' => 1,
 				'name' => 'normal1x1'
 			],
-			'bug-hunt-1' => [
-				'width' => 1200,
-				'height' => 500,
+			'new-image-size' => [//this image size was added by an developer after the image was uploaded (this size will not be in the attachements metadata)
+				'width' => 600,
+				'height' => 600,
 				'crop' => 1,
-				'name' => 'bug-hunt-1'
+				'name' => 'new-image-size'
 			],
 			'static-1' => [
 				'width' => 240,
@@ -249,6 +275,13 @@ class SaveTest extends TestCase {
 					"name":"normal1x1",
 					"width":500,
 					"height":500,
+					"ratio":1,
+					"crop":true
+				},
+				{
+					"name":"new-image-size",
+					"width":600,
+					"height":600,
 					"ratio":1,
 					"crop":true
 				}
@@ -308,12 +341,6 @@ class SaveTest extends TestCase {
 					'file' => 'test-750x500.jpg',
 					'width' => 750,
 					'height' => 500,
-					'mime-type' => 'image/jpeg',
-				],
-				'this-will-be-deleted-later' => [
-					'file' => 'test-240x120.jpg',
-					'width' => 240,
-					'height' => 120,
 					'mime-type' => 'image/jpeg',
 				],
 				'strange-image-ratio' => [
