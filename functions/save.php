@@ -171,19 +171,25 @@ class CptSaveThumbnail {
 	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $crop_width, $crop_height) {
 		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
 		
+		self::addDebug($imageSizeName);
+		self::addDebug($imageMetadata);
+		
 		$newValues = array();
 		$newValues['file'] = $currentFilePathInfo['basename'];
 		$newValues['width'] = intval($crop_width);
 		$newValues['height'] = intval($crop_height);
 		$newValues['mime-type'] = mime_content_type($fullFilePath);
 		
-		$oldValues = [];
-		if(!empty($imageMetadata[$imageSizeName])) {
-			$oldValues = $imageMetadata[$imageSizeName];
+		$oldValues = array();
+		if(empty($imageMetadata['sizes'])) {
+			$imageMetadata['sizes'] = array();
 		}
-		$imageMetadata[$imageSizeName] = array_merge($oldValues,$newValues);
+		if(!empty($imageMetadata['sizes'][$imageSizeName])) {
+			$oldValues = $imageMetadata['sizes'][$imageSizeName];
+		}
+		$imageMetadata['sizes'][$imageSizeName] = array_merge($oldValues,$newValues);
 		
-		do_action('crop_thumbnails_after_save_new_thumb', $fullFilePath, $imageSizeName, $imageMetadata[$imageSizeName] );
+		do_action('crop_thumbnails_after_save_new_thumb', $fullFilePath, $imageSizeName, $imageMetadata['sizes'][$imageSizeName] );
 		return $imageMetadata;
 	}
 

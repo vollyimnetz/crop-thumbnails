@@ -123,6 +123,7 @@ class SaveTest extends TestCase {
 		
 		/** CHECK **/
 		$this->assertTrue(!empty($result),'Invalid JSON returned');
+		print_r($result);
 		$this->assertTrue(!file_exists($tmpFile),'Temporary file where not deleted');
 		
 		$file1 = __DIR__.'/data/test-150x150.jpg';
@@ -152,14 +153,21 @@ class SaveTest extends TestCase {
 		$this->assertTrue(isset($result->debug),'The result should return debug values.');
 		$this->assertTrue(empty($result->error),'The result should not return any errors.');
 		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
-		
-		$sizeName = 'new-image-size';
-		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-600x600.jpg');
 		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
 		
-		//the metadata should be unchanged
-		$this->assertArrayEquals($savedMetadata,$attachementMetadata);
+		//changedImageName should have an value with "new-image-size"
+		$sizeName = 'new-image-size';
+		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-600x600.jpg');
 		
+		//the metadata should have an additional entry "new-image-size"
+		$newAttachementMetadata = $attachementMetadata;
+		$newAttachementMetadata['sizes']['new-image-size'] = [
+			'file' => 'test-600x600.jpg',
+			'width' => 600,
+			'height' => 600,
+			'mime-type' => 'image/jpeg'
+		];
+		$this->assertArrayEquals($savedMetadata,$newAttachementMetadata);
 	}
 	
 	/** test **/
