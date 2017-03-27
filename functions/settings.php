@@ -36,7 +36,7 @@ class CropThumbnailsSettings {
 	}
 
 	public function optionsPage() { ?>
-		<div class="wrap">
+		<div class="wrap cropThumbnailSettings">
 		<div id="icon-options-general" class="icon32"><br /></div>
 		<h2>Crop-Thumbnails <?php esc_attr_e('Settings',CROP_THUMBS_LANG); ?></h2>
 			<form action="options.php" method="post">

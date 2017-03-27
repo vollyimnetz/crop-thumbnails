@@ -1,17 +1,14 @@
-.cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
-.cpt_settings_submit { margin-top:2em; }
+.cropThumbnailSettings .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
+.cropThumbnailSettings .cpt_settings_submit { margin-top:2em; }
 
-#cpt_quicktest { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding:1em; }
-#cpt_quicktest strong {display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; }
-#cpt_quicktest strong.success { background:#00cc00; }
-#cpt_quicktest strong.fails { background:#cc0000; }
+.cropThumbnailSettings #cpt_quicktest { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding:1em; }
+.cropThumbnailSettings #cpt_quicktest strong {display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; }
+.cropThumbnailSettings #cpt_quicktest strong.success { background:#00cc00; }
+.cropThumbnailSettings #cpt_quicktest strong.fails { background:#cc0000; }
 
 
 /**** button icon ****/
 a.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; speak: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-/* buttons above editor */
-#wp-content-media-buttons a.cropThumbnailsLink .wp-media-buttons-icon::before { font: normal 18px/1 dashicons;  }
-
 
 /**** featured image box ****/
 #postimagediv.closed .cropFeaturedImageWrap { display: none; }
@@ -22,31 +19,26 @@ a.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: no
 .media-modal .compat-field-cropthumbnails td { width: auto; }
 
 
+
+
+
 /**** MODAL ****/
 /* @see https://www.w3schools.com/howto/howto_css_modals.asp */
 body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; padding:0; box-sizing: border-box; background-color: rgba(0,0,0,0.4); }
 #cpt_Modal .cpt_ModalDialog { background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 100%; max-width: 100%; height: 100%; margin-top:0; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
 #cpt_Modal .cpt_ModalHeader { height: 40px; position: relative; }
-#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:20px; font-weight: bold; line-height: 1; padding: 10px 50px 10px 20px; background: #eee; }
+#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:20px; font-weight: 300; line-height: 1; padding: 10px 50px 10px 20px; background: #eee; color:#000; }
 #cpt_Modal .cpt_ModalContent { width:100%; height: 100%; padding-top:30px; margin-top:-30px; box-sizing: border-box; }
 
-
-#cpt_Modal .cpt_IframeScrollFrame { width:100%; height: 100%; overflow: auto; overflow-x: hidden; -webkit-overflow-scrolling:touch; }
-#cpt_Modal iframe { border:0; width:100%; height: 100%; display: block; }
-
 /* The Close Button */
-#cpt_Modal .cpt_ModalClose { color: #aaaaaa; position: absolute; right:0; top:0; font-size: 38px; font-weight: bold; padding:0px 8px 10px 8px; line-height: 30px; }
+#cpt_Modal .cpt_ModalClose { color: #000; position: absolute; right:0; top:0; font-size: 38px; font-weight: 300; padding:0px 8px 10px 8px; line-height: 30px; }
 #cpt_Modal .cpt_ModalClose:hover,
-#cpt_Modal .cpt_ModalClose:focus { color: #000; text-decoration: none; cursor: pointer; }
+#cpt_Modal .cpt_ModalClose:focus { opacity: .6; text-decoration: none; cursor: pointer; }
 
 @media(min-width:900px) {
 	#cpt_Modal { padding:40px; }
-	#cpt_Modal .cpt_ModalHeader { height: 30px; }
-	#cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:16px; padding: 7px 50px 7px 20px; }
-	#cpt_Modal .cpt_ModalClose { font-size: 28px; padding:0px 8px 2px 8px; line-height: 1; }
 }
-
 
 /* crop-editor-layout */
 #cpt_crop_editor .mainWindow { width: 100%; height: 100%; }
@@ -56,7 +48,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .cptCropPane { padding:0 20px 20px; }
 
 @media(min-width:760px) {
-	#cpt_crop_editor .cptCropPane { position: absolute; right: 0; top:0; width:350px; height: 100%; overflow-y: auto; overflow-x: hidden; border:0; border-left:3px solid #ddd; margin-top:0; padding:10px;}
+	#cpt_crop_editor .cptCropPane { position: absolute; right: 0; top:0; width:350px; height: 100%; overflow-y: auto; overflow-x: hidden; border:0; border-left:3px solid #eee; margin-top:0; padding:10px;}
 	#cpt_crop_editor .cptSelectionPane { position: relative; width:100%; height: 100%; overflow:hidden; padding-right: 350px; }
 	#cpt_crop_editor .cptSelectionPaneInner { width: 100%; overflow-y: auto; height: 100%; }
 }
@@ -70,8 +62,8 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 #cpt_crop_editor .header {background-color:#efefef; padding:5px; position: relative; z-index: 1000;}
 
-#cpt_crop_editor .cpteditorInner { position: relative; overflow-y: auto; height: 100%; }
-#cpt_crop_editor .cpteditorInner.loading { overflow-y: hidden; }
+#cpt_crop_editor .cptEditorInner { position: relative; overflow-y: auto; height: 100%; }
+#cpt_crop_editor .cptEditorInner.loading { overflow-y: hidden; }
 
 #cpt_crop_editor .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
 #cpt_crop_editor .image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
@@ -115,14 +107,13 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 #cpt_crop_editor .lbl-cpt-same-ratio {font-size:0.9em;}
 
-
 #cpt_crop_editor .cptSelectionPane>div>p { padding-left:1em; padding-right: 1em; margin:.3em; }
 
 #cpt_crop_editor .cptCropPane h3 { margin:0;}
-#cpt_crop_editor button.cptGenerate { width: 100%; height:2em; font-size:1.4em; padding:0.5em 0; display:block; line-height: 0;}
+#cpt_crop_editor .cptCropPane button.cptGenerate { width: 100%; height:2em; font-size:1.4em; padding:0.5em 0; display:block; line-height: 0;}
 
 #cpt_crop_editor .cropContainer { margin:.3em 0 .5em; opacity: .5; }
-#cpt_crop_editor .cpteditorInner.cropEditorActive .cropContainer { opacity: 1; }
+#cpt_crop_editor .cptEditorInner.cropEditorActive .cropContainer { opacity: 1; }
 #cpt_crop_editor .cropContainer img { max-width: 100%; height:auto; }
 
 #cpt_crop_editor h4 { margin-bottom:0em;}
