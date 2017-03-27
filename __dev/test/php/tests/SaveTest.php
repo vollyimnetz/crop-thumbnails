@@ -471,10 +471,10 @@ class SaveTest extends TestCase {
 		$INPUT_wp_get_attachment_image_src = [];//this will be filled once the mock has run
 		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
 			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
-				$INPUT_wp_get_attachment_image_src = [$imageId,$imageSizeName];
+				$INPUT_wp_get_attachment_image_src[] = [$imageId,$imageSizeName];
 				return array('new/path/new-image-size.jpg',123,123);
 			},
-			'times' => 1
+			'times' => 2
 		]);
 	
 		
@@ -485,10 +485,10 @@ class SaveTest extends TestCase {
 			'return' => function($imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($dummyBaseFile,$tmpFile,&$INPUT_wp_cron_image) {
 				//prepare a file, so the function can copy it to the new location
 				copy($dummyBaseFile, $tmpFile);
-				$INPUT_wp_cron_image = [$imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file];
+				$INPUT_wp_cron_image[] = [$imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file];
 				return $tmpFile;
 			},
-			'times' => 1
+			'times' => 2
 		]);
 		
 		self::$settingsMock->shouldReceive('getUploadDir')->andReturn(__DIR__.DIRECTORY_SEPARATOR.'data');
@@ -505,28 +505,45 @@ class SaveTest extends TestCase {
 		
 		
 		$file1 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-750x500.jpg';
+		$file2 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-400x266.jpg';
 		
 		//did the function copy the image file correctly?
-		$this->assertTrue(file_exists($file1),'New Image was not created.');
+		$this->assertTrue(file_exists($file1),'New Image was not created (750x500).');
+		$this->assertTrue(file_exists($file2),'New Image was not created (400x266).');
 		
 		//did the function uses the correct file (the file that was returned by the wp_crop-function)
-		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied.');
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (750x500).');
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file2),'The wrong file was coppied (400x266).');
 		
-		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
-		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-prevent-bug');
 		
-		$this->assertEquals($INPUT_wp_cron_image[0], $testData->sourceImageId);
-		$this->assertEquals($INPUT_wp_cron_image[1], 1583);
-		$this->assertEquals($INPUT_wp_cron_image[2], 345);
-		$this->assertEquals($INPUT_wp_cron_image[3], 236);
-		$this->assertEquals($INPUT_wp_cron_image[4], 944);
-		$this->assertEquals($INPUT_wp_cron_image[5], 500);//this has to be equals to the size in add_image_size
-		$this->assertEquals($INPUT_wp_cron_image[6], 2000);//this has to be equals to the size in add_image_size
-		$this->assertEquals($INPUT_wp_cron_image[7], false);
-		$this->assertEquals($INPUT_wp_cron_image[8], $file1);
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[0][0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[0][1], 'dynamic-zero-width');
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[1][0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[1][1], 'dynamic-zero-height');
+		
+		$this->assertEquals($INPUT_wp_cron_image[0][0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_cron_image[0][1], 1654);
+		$this->assertEquals($INPUT_wp_cron_image[0][2], 874);
+		$this->assertEquals($INPUT_wp_cron_image[0][3], 924);
+		$this->assertEquals($INPUT_wp_cron_image[0][4], 616);
+		$this->assertEquals($INPUT_wp_cron_image[0][5], 750);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[0][6], 500);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[0][7], false);
+		$this->assertEquals($INPUT_wp_cron_image[0][8], $file1);
+		
+		$this->assertEquals($INPUT_wp_cron_image[1][0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_cron_image[1][1], 1654);
+		$this->assertEquals($INPUT_wp_cron_image[1][2], 874);
+		$this->assertEquals($INPUT_wp_cron_image[1][3], 924);
+		$this->assertEquals($INPUT_wp_cron_image[1][4], 616);
+		$this->assertEquals($INPUT_wp_cron_image[1][5], 400);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[1][6], 266);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[1][7], false);
+		$this->assertEquals($INPUT_wp_cron_image[1][8], $file2);
 		
 		/** CLEANUP **/
 		@unlink($file1);
+		@unlink($file2);
 		
 		//did the function return correct values
 		$this->assertTrue(isset($result->debug),'The result should return debug values.');
@@ -535,7 +552,9 @@ class SaveTest extends TestCase {
 		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
 		
 		//changedImageName should have an value with "new-image-size"
-		$sizeName = 'dynamic-prevent-bug';
+		$sizeName = 'dynamic-zero-width';
+		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size.jpg');
+		$sizeName = 'dynamic-zero-height';
 		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size.jpg');
 		
 		//check $INPUT_wp_get_attachment_metadata
@@ -612,9 +631,16 @@ class SaveTest extends TestCase {
 			"sourceImageId":169,
 			"activeImageSizes":[
 				{
-					"name":"dynamic-prevent-bug",
+					"name":"dynamic-zero-width",
 					"width":0,
 					"height":500,
+					"ratio":1.5,
+					"crop":true
+				},
+				{
+					"name":"dynamic-zero-height",
+					"width":400,
+					"height":0,
 					"ratio":1.5,
 					"crop":true
 				}
@@ -707,11 +733,17 @@ class SaveTest extends TestCase {
 				'crop' => 1,
 				'name' => 'dynamic-2'
 			],
-			'dynamic-prevent-bug' => [//a dynamic image size wich should be not enabled for crop (cause width=0 indicates no crop)
+			'dynamic-zero-width' => [//a dynamic image size wich should be not enabled for crop (cause width=0 indicates no crop)
 				'width' => 0,
 				'height' => 500,
 				'crop' => 1,
-				'name' => 'dynamic-prevent-bug'
+				'name' => 'dynamic-zero-width'
+			],
+			'dynamic-zero-height' => [//a dynamic image size wich should be not enabled for crop (cause width=0 indicates no crop)
+				'width' => 400,
+				'height' => 0,
+				'crop' => 1,
+				'name' => 'dynamic-zero-height'
 			],
 			'strange-image-ratio' => [//a image-size with a nearly image-ratio of 1 (could be set to 1 via add_action)
 				'width' => 500,
@@ -784,10 +816,16 @@ class SaveTest extends TestCase {
 					'height' => 500,
 					'mime-type' => 'image/jpeg',
 				],
-				'dynamic-prevent-bug' => [
+				'dynamic-zero-width' => [
 					'file' => 'test-750x500.jpg',
 					'width' => 750,
 					'height' => 500,
+					'mime-type' => 'image/jpeg',
+				],
+				'dynamic-zero-height' => [
+					'file' => 'test-400x266.jpg',
+					'width' => 400,
+					'height' => 266,
 					'mime-type' => 'image/jpeg',
 				],
 				'strange-image-ratio' => [

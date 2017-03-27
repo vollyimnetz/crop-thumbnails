@@ -101,13 +101,6 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 		prepareData : function(data) {
 			this.makeAllInactive(data.imageSizes);
 			this.addCacheBreak(data.imageSizes);
-			data.imageSizes.forEach(function(i) {
-				i.dynamic = false;
-				if(i.width===0 || i.height===0) {
-					i.printRatio+= ' dynamic';
-					i.dynamic = true;
-				}
-			});
 		},
 		activateCropArea : function() {
 			var that = this;

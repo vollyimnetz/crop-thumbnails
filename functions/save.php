@@ -47,44 +47,27 @@ class CptSaveThumbnail {
 			foreach($input->activeImageSizes as $activeImageSize) {
 				self::addDebug('submitted image-data');
 				self::addDebug($activeImageSize);
-				$_delete_old_file = '';
 				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
 					self::addDebug("Image size not valid.");
 					continue;
 				}
+				
+				$oldFile_toDelete = '';
 				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
 					$changedImageName[ $activeImageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
 					if($imageMetadata['sizes'][$activeImageSize->name]['width'] != intval($activeImageSize->width) || $imageMetadata['sizes'][$activeImageSize->name]['height'] != intval($activeImageSize->height) ) {
-						$_delete_old_file = $imageMetadata['sizes'][$activeImageSize->name]['file'];
+						$oldFile_toDelete = $imageMetadata['sizes'][$activeImageSize->name]['file'];
 						$changedImageName[ $activeImageSize->name ] = true;
 					}
 				}
 				
-				//set target size of the cropped image
-				$crop_width = $activeImageSize->width;
-				$crop_height = $activeImageSize->height;
 				
-				//handle images with soft-crop width/height value and crop set to "true"
-				if(!$activeImageSize->crop || $activeImageSize->width==0 || $activeImageSize->height==0) {
-					$crop_width = $input->selection->x2 - $input->selection->x;
-					$crop_height = $input->selection->y2 - $input->selection->y;
-				}
+				$croppedSize = self::getCroppedSize($activeImageSize,$imageMetadata,$input);
 				
-				
-				
-				$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $activeImageSize->height);
-				if($activeImageSize->width===9999) {
-					$currentFilePath = self::generateFilename($sourceImgPath, $imageMetadata['width'], $activeImageSize->height);
-					$crop_width = $imageMetadata['width'];
-				} elseif($activeImageSize->height==9999) {
-					$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $imageMetadata['height']);
-					$crop_height = $imageMetadata['height'];
-				}
+				$currentFilePath = self::generateFilename($sourceImgPath, $croppedSize['width'], $croppedSize['height']);
 				self::addDebug("filename:".$currentFilePath);
-				
-				
 				$currentFilePathInfo = pathinfo($currentFilePath);
 				$temporaryCopyFile = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
@@ -94,8 +77,8 @@ class CptSaveThumbnail {
 					$input->selection->y,							// * @param int $src_y The start y position to crop from.
 					$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
 					$input->selection->y2 - $input->selection->y,	// * @param int $src_h The height to crop.
-					$crop_width,									// * @param int $dst_w The destination width.
-					$crop_height,									// * @param int $dst_h The destination height.
+					$croppedSize['width'],							// * @param int $dst_w The destination width.
+					$croppedSize['height'],							// * @param int $dst_h The destination height.
 					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
 					$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
 				);
@@ -105,8 +88,9 @@ class CptSaveThumbnail {
 					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$activeImageSize->name);
 					$_error = true;
 				} else {
-					if(!empty($_delete_old_file)) {
-						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$_delete_old_file);
+					if(!empty($oldFile_toDelete)) {
+						self::addDebug("delete old image:".$oldFile_toDelete);
+						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
 					if(!@copy($result,$currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
@@ -120,7 +104,7 @@ class CptSaveThumbnail {
 				
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
-					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $crop_width, $crop_height);
+					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $croppedSize['width'], $croppedSize['height']);
 				} else {
 					self::addDebug('error on '.$currentFilePathInfo['basename']);
 					self::addDebug($_processing_error);
@@ -133,20 +117,18 @@ class CptSaveThumbnail {
 			wp_update_attachment_metadata( $input->sourceImageId, $imageMetadata);
 			
 			//generate result;
-			$jsonResult['debug'] = self::getDebug();
-			if(!empty($_processing_error)) {
-				//one or more errors happend when generating thumbnails
-				$jsonResult['processingErrors'] = $_processing_error;
-			}
-			
 			if(!empty($changedImageName)) {
 				//there was a change in the image-formats 
 				foreach($changedImageName as $key=>$value) {
 					$newImageLocation = wp_get_attachment_image_src($input->sourceImageId, $key);
-					$changedImageName[ $activeImageSize->name ] = $newImageLocation[0];
+					$changedImageName[ $key ] = $newImageLocation[0];
 				}
 				$jsonResult['changedImageName'] = $changedImageName;
 			}
+			if(!empty($_processing_error)) {//one or more errors happend when generating thumbnails
+				$jsonResult['processingErrors'] = $_processing_error;
+			}
+			$jsonResult['debug'] = self::getDebug();
 			$jsonResult['success'] = time();//time for cache-breaker
 			echo json_encode($jsonResult);
 		} catch (Exception $e) {
@@ -154,6 +136,47 @@ class CptSaveThumbnail {
 			$jsonResult['error'] = $e->getMessage();
 			echo json_encode($jsonResult);
 		}
+	}
+	
+	/**
+	 * Get the end-size of the cropped image in pixels.
+	 * Attention: these sizes are used to name the file.
+	 * @param  object  $activeImageSize The image size that should be used
+	 * @param  [type]  $imageMetadata   [description]
+	 * @param  [type]  $input           [description]
+	 * @return {[type]                  [description]
+	 */
+	public static function getCroppedSize($activeImageSize,$imageMetadata,$input) {
+		//set target size of the cropped image
+		$croppedWidth = $activeImageSize->width;
+		$croppedHeight = $activeImageSize->height;
+		try {
+			if($activeImageSize->width===9999) {
+				$croppedWidth = intval($imageMetadata['width']);
+			} elseif($activeImageSize->height===9999) {
+				$croppedHeight = intval($imageMetadata['height']);
+			} elseif(intval($activeImageSize->width)===0 && intval($activeImageSize->height)===0) {
+				$croppedWidth = $input->selection->x2 - $input->selection->x;
+				$croppedHeight = $input->selection->y2 - $input->selection->y;
+			} elseif(intval($activeImageSize->width)===0) {
+				$croppedWidth = intval(( intval($imageMetadata['width']) / intval($imageMetadata['height']) ) * $activeImageSize->height);
+				$croppedHeight = $activeImageSize->height;
+			} elseif(intval($activeImageSize->height)===0) {
+				$croppedWidth = $activeImageSize->width;
+				$croppedHeight = intval(( intval($imageMetadata['height']) / intval($imageMetadata['width']) ) * $activeImageSize->width);
+			}
+			
+			/* --- no need to use that ---
+			if(!$activeImageSize->crop) {
+				$croppedWidth = $input->selection->x2 - $input->selection->x;
+				$croppedHeight = $input->selection->y2 - $input->selection->y;
+			}*/
+		} catch(Exception $e) {
+			$croppedWidth = 10;
+			$croppedHeight = 10;
+		}
+		
+		return array('width' => $croppedWidth, 'height'=> $croppedHeight);
 	}
 	
 	/**
@@ -178,16 +201,13 @@ class CptSaveThumbnail {
 		return [];
 	}
 	
-	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $crop_width, $crop_height) {
+	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
 		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
-		
-		self::addDebug($imageSizeName);
-		self::addDebug($imageMetadata);
 		
 		$newValues = array();
 		$newValues['file'] = $currentFilePathInfo['basename'];
-		$newValues['width'] = intval($crop_width);
-		$newValues['height'] = intval($crop_height);
+		$newValues['width'] = intval($croppedWidth);
+		$newValues['height'] = intval($croppedHeight);
 		$newValues['mime-type'] = mime_content_type($fullFilePath);
 		
 		$oldValues = array();
@@ -287,7 +307,6 @@ class CptSaveThumbnail {
 		$name = wp_basename($file, '.'.$ext);
 		$suffix = $w.'x'.$h;
 		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
-		
 		return $destfilename;
 	}
 }
