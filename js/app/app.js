@@ -104,7 +104,7 @@ if (!Array.prototype.find) {
 }
 
 CROP_THUMBNAILS_VUE.components.loadingcontainer = {
-	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><div class=\"loading\"><div class=\"cptLoadingSpinner\"></div></div></div>",
+	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><transition name=\"fade\"><div class=\"loadingMsg\" v-if=\"status===\'loading\'\"><div class=\"cptLoadingSpinner\"></div></div></transition></div>",
 	props:{
 		image : {
 			required: true,
@@ -115,6 +115,13 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 		return {
 			status:null
 		};
+	},
+	computed:function() {
+		return {
+			loading : function() {
+				return that.status === 'loading';
+			}
+		}
 	},
 	watch:{
 		image:function() {
@@ -146,7 +153,7 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 			this.status = 'completed';
 		},
 		setStart : function() {
-			this.status = 'started';
+			this.status = 'loading';
 		},
 		setFailed : function() {
 			this.status = 'failed';

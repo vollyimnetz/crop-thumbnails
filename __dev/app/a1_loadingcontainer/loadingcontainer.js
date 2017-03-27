@@ -11,6 +11,13 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 			status:null
 		};
 	},
+	computed:function() {
+		return {
+			loading : function() {
+				return that.status === 'loading';
+			}
+		}
+	},
 	watch:{
 		image:function() {
 			this.setup();
@@ -41,7 +48,7 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 			this.status = 'completed';
 		},
 		setStart : function() {
-			this.status = 'started';
+			this.status = 'loading';
 		},
 		setFailed : function() {
 			this.status = 'failed';

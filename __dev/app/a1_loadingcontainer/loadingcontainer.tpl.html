@@ -2,7 +2,9 @@
 	<img :src="image" style="display:none;" />
 	<slot></slot>
 	
-	<div class="loading">
-		<div class="cptLoadingSpinner"></div>
-	</div>
+	<transition name="fade">
+		<div class="loadingMsg" v-if="status==='loading'">
+			<div class="cptLoadingSpinner"></div>
+		</div>
+	</transition>
 </div>
