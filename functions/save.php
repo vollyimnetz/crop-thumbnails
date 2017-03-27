@@ -66,9 +66,15 @@ class CptSaveThumbnail {
 				$crop_width = $activeImageSize->width;
 				$crop_height = $activeImageSize->height;
 				
+				//handle images with soft-crop width/height value and crop set to "true"
+				if(!$activeImageSize->crop || $activeImageSize->width==0 || $activeImageSize->height==0) {
+					$crop_width = $input->selection->x2 - $input->selection->x;
+					$crop_height = $input->selection->y2 - $input->selection->y;
+				}
+				
+				
 				
 				$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $activeImageSize->height);
-				
 				if($activeImageSize->width===9999) {
 					$currentFilePath = self::generateFilename($sourceImgPath, $imageMetadata['width'], $activeImageSize->height);
 					$crop_width = $imageMetadata['width'];
@@ -76,18 +82,11 @@ class CptSaveThumbnail {
 					$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $imageMetadata['height']);
 					$crop_height = $imageMetadata['height'];
 				}
-				
-				$currentFilePathInfo = pathinfo($currentFilePath);
-				
-				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				self::addDebug("filename:".$currentFilePath);
 				
 				
-				if(!$activeImageSize->crop || $activeImageSize->width==0 || $activeImageSize->height==0) {
-					//handle images with soft-crop width/height value and crop set to "true"
-					$crop_width = $input->selection->x2 - $input->selection->x;
-					$crop_height = $input->selection->y2 - $input->selection->y;
-				}
+				$currentFilePathInfo = pathinfo($currentFilePath);
+				$temporaryCopyFile = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
 				$result = wp_crop_image(							// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 					$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
@@ -98,7 +97,7 @@ class CptSaveThumbnail {
 					$crop_width,									// * @param int $dst_w The destination width.
 					$crop_height,									// * @param int $dst_h The destination height.
 					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
-					$_tmp_filepath									// * @param string $dst_file Optional. The destination file to write to.
+					$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
 				);
 				
 				$_error = false;
@@ -122,12 +121,6 @@ class CptSaveThumbnail {
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
 					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $crop_width, $crop_height);
-					
-					//return the new file location
-					if(!empty($changedImageName[ $activeImageSize->name ])) {
-						$orig_img = wp_get_attachment_image_src($input->sourceImageId, $activeImageSize->name);
-						$changedImageName[ $activeImageSize->name ] = $orig_img[0];
-					}
 				} else {
 					self::addDebug('error on '.$currentFilePathInfo['basename']);
 					self::addDebug($_processing_error);
@@ -145,8 +138,13 @@ class CptSaveThumbnail {
 				//one or more errors happend when generating thumbnails
 				$jsonResult['processingErrors'] = $_processing_error;
 			}
+			
 			if(!empty($changedImageName)) {
 				//there was a change in the image-formats 
+				foreach($changedImageName as $key=>$value) {
+					$newImageLocation = wp_get_attachment_image_src($input->sourceImageId, $key);
+					$changedImageName[ $activeImageSize->name ] = $newImageLocation[0];
+				}
 				$jsonResult['changedImageName'] = $changedImageName;
 			}
 			$jsonResult['success'] = time();//time for cache-breaker

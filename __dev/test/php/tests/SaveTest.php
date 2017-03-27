@@ -264,7 +264,7 @@ class SaveTest extends TestCase {
 		$this->assertTrue(file_exists($file1),'New Image (3000x500) was not created.');
 		
 		//did the function uses the correct file (the file that was returned by the wp_crop-function)
-		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (150x150).');
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied.');
 		
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-2');
@@ -386,7 +386,7 @@ class SaveTest extends TestCase {
 		$this->assertTrue(file_exists($file1),'New Image (500x2000) was not created.');
 		
 		//did the function uses the correct file (the file that was returned by the wp_crop-function)
-		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (150x150).');
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied.');
 		
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-1');
@@ -413,6 +413,130 @@ class SaveTest extends TestCase {
 		//changedImageName should have an value with "new-image-size"
 		$sizeName = 'dynamic-1';
 		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-500x2000.jpg');
+		
+		//check $INPUT_wp_get_attachment_metadata
+		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
+		$that->assertTrue($INPUT_wp_get_attachment_metadata[1], true);
+		
+		//check $INPUT_wp_update_attachement_metadata
+		//the metadata should have an additional entry "new-image-size"
+		$newAttachementMetadata = $attachementMetadata;
+		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
+		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
+		
+		//check $INPUT_get_attached_file
+		$that->assertEquals($INPUT_get_attached_file[0],$testData->sourceImageId);
+	}
+	
+	
+	/** @test **/
+	public function success_with_dynamic_zero() {
+		/** SETUP **/
+		$that = $this;
+		
+		$testData = self::getDynamicZero();
+		$_REQUEST['crop_thumbnails'] = $testData;
+		$testData = json_decode($testData);
+		
+		self::$settingsMock->shouldReceive('getImageSizes')->andReturn(self::test_getImageSizes());
+		
+		$INPUT_get_attached_file = [];
+		\WP_Mock::wpFunction( 'get_attached_file',[
+			'return' => function($id) use (&$INPUT_get_attached_file) {
+				$INPUT_get_attached_file = [$id];
+				return __DIR__.'/data/test.jpg';
+			},
+			'times' => 1
+		]);
+		
+		$attachementMetadata = $this->test_get_attachement_metadata();
+		$INPUT_wp_get_attachment_metadata = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
+			'return' => function($id,$bool) use ($that,$testData,$attachementMetadata,&$INPUT_wp_get_attachment_metadata) {
+				$INPUT_wp_get_attachment_metadata = [$id,$bool];
+				return $attachementMetadata;
+			},
+			'times' => 1
+		]);
+		
+		$INPUT_wp_update_attachement_metadata = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
+			'return' => function($imageId,$metadata) use (&$INPUT_wp_update_attachement_metadata) {
+				$INPUT_wp_update_attachement_metadata = [$imageId,$metadata];
+				return true;
+			},
+			'times' => 1
+		]);
+		
+		$INPUT_wp_get_attachment_image_src = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
+			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
+				$INPUT_wp_get_attachment_image_src = [$imageId,$imageSizeName];
+				return array('new/path/new-image-size.jpg',123,123);
+			},
+			'times' => 1
+		]);
+	
+		
+		$dummyBaseFile = __DIR__.'/data/dummy.jpg';
+		$tmpFile = __DIR__.'/data/test-check.jpg';
+		$INPUT_wp_cron_image = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_crop_image',[
+			'return' => function($imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($dummyBaseFile,$tmpFile,&$INPUT_wp_cron_image) {
+				//prepare a file, so the function can copy it to the new location
+				copy($dummyBaseFile, $tmpFile);
+				$INPUT_wp_cron_image = [$imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file];
+				return $tmpFile;
+			},
+			'times' => 1
+		]);
+		
+		self::$settingsMock->shouldReceive('getUploadDir')->andReturn(__DIR__.DIRECTORY_SEPARATOR.'data');
+		
+		/** TEST **/
+		ob_start();
+		self::$cpt->saveThumbnail();
+		$result = json_decode(ob_get_clean());
+		
+		/** CHECK **/
+		$this->assertTrue(!empty($result),'Invalid JSON returned');
+		#print_r($result);
+		$this->assertTrue(!file_exists($tmpFile),'Temporary file where not deleted');
+		
+		
+		$file1 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-750x500.jpg';
+		
+		//did the function copy the image file correctly?
+		$this->assertTrue(file_exists($file1),'New Image was not created.');
+		
+		//did the function uses the correct file (the file that was returned by the wp_crop-function)
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied.');
+		
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-prevent-bug');
+		
+		$this->assertEquals($INPUT_wp_cron_image[0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_cron_image[1], 1583);
+		$this->assertEquals($INPUT_wp_cron_image[2], 345);
+		$this->assertEquals($INPUT_wp_cron_image[3], 236);
+		$this->assertEquals($INPUT_wp_cron_image[4], 944);
+		$this->assertEquals($INPUT_wp_cron_image[5], 500);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[6], 2000);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[7], false);
+		$this->assertEquals($INPUT_wp_cron_image[8], $file1);
+		
+		/** CLEANUP **/
+		@unlink($file1);
+		
+		//did the function return correct values
+		$this->assertTrue(isset($result->debug),'The result should return debug values.');
+		$this->assertTrue(empty($result->error),'The result should not return any errors.');
+		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		
+		//changedImageName should have an value with "new-image-size"
+		$sizeName = 'dynamic-prevent-bug';
+		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size.jpg');
 		
 		//check $INPUT_wp_get_attachment_metadata
 		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
@@ -469,6 +593,29 @@ class SaveTest extends TestCase {
 					"width":9999,
 					"height":500,
 					"ratio":6,
+					"crop":true
+				}
+			]
+		}';
+	}
+	
+	private static function getDynamicZero() {
+		return '{
+			"selection":{
+				"x":1654.0880503144654,
+				"y":874.2138364779875,
+				"x2":2578.6163522012575,
+				"y2":1490.566037735849,
+				"w":924.5283018867924,
+				"h":616.3522012578617
+			},
+			"sourceImageId":169,
+			"activeImageSizes":[
+				{
+					"name":"dynamic-prevent-bug",
+					"width":0,
+					"height":500,
+					"ratio":1.5,
 					"crop":true
 				}
 			]

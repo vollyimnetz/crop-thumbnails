@@ -49,8 +49,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				posttype : this.posttype
 			};
 			jQuery.get(ajaxurl,getParameter,function(responseData) {
-				that.makeAllInactive(responseData.imageSizes);
-				that.addCacheBreak(responseData.imageSizes);
+				that.prepareData(responseData);
 				that.cropData = responseData;
 				that.lang = that.cropData.lang;
 			});
@@ -64,7 +63,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			
 			if(this.selectSameRatio) {
 				this.cropData.imageSizes.forEach(function(i) {
-					if(i.printRatio == image.printRatio) {
+					if(i.printRatio === image.printRatio) {
 						i.active = newValue;
 					}
 				});
@@ -95,8 +94,24 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				i.cacheBreak = Date.now();
 			});
 		},
+		/**
+		 * will be called after getting the data
+		 * @param  {object} data the response data of the initial request
+		 */
+		prepareData : function(data) {
+			this.makeAllInactive(data.imageSizes);
+			this.addCacheBreak(data.imageSizes);
+			data.imageSizes.forEach(function(i) {
+				i.dynamic = false;
+				if(i.width===0 || i.height===0) {
+					i.printRatio+= ' dynamic';
+					i.dynamic = true;
+				}
+			});
+		},
 		activateCropArea : function() {
-			this.deactivateCropArea();
+			var that = this;
+			that.deactivateCropArea();
 			
 			var largestWidth = 0;
 			var largestHeight = 0;
@@ -113,7 +128,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			};
 
 			//get the options
-			this.activeImageSizes.forEach(function(i) {
+			that.activeImageSizes.forEach(function(i) {
 				if(options.aspectRatio === 0) {
 					options.aspectRatio = i.ratio;//initial
 				}
@@ -123,12 +138,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			});
 
 			//debug
-			if(this.cropData.debug_js) {
+			if(that.cropData.debug_js) {
 				console.info('Cropping options',options);
 			}
 			
-			var cropElement = jQuery(this.$el).find('.cropContainer img');
-			this.croppingApi = new Cropper(cropElement[0], options);
+			var cropElement = jQuery(that.$el).find('.cropContainer img');
+			that.croppingApi = new Cropper(cropElement[0], options);
 		},
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {

@@ -44,6 +44,57 @@ jQuery(document).ready(function($) {
 	});
 });
 
+CROP_THUMBNAILS_VUE.components.loadingcontainer = {
+	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><div class=\"loading\"><div class=\"cptLoadingSpinner\"></div></div></div>",
+	props:{
+		image : {
+			required: true,
+			type:String
+		}
+	},
+	data:function() {
+		return {
+			status:null
+		};
+	},
+	watch:{
+		image:function() {
+			this.setup();
+		}
+	},
+	mounted:function() {
+		this.setup();
+	},
+	methods:{
+		setup : function() {
+			var that = this;
+			that.setStart();
+			setTimeout(function() {
+				var imgLoad = imagesLoaded( that.$el );
+				imgLoad
+					.once('done',function() {
+						if(that.status!=='failed') {
+							that.setComplete();
+						}
+					})
+					.once('fail',function() {
+						that.setFailed();
+					})
+					;
+			},300);
+		},
+		setComplete : function() {
+			this.status = 'completed';
+		},
+		setStart : function() {
+			this.status = 'started';
+		},
+		setFailed : function() {
+			this.status = 'failed';
+		}
+	}
+};
+
 if (!Array.prototype.filter) {
 	Array.prototype.filter = function(fun/*, thisArg*/) {
 		'use strict';
@@ -103,55 +154,82 @@ if (!Array.prototype.find) {
 	};
 }
 
-CROP_THUMBNAILS_VUE.components.loadingcontainer = {
-	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><div class=\"loading\"><div class=\"cptLoadingSpinner\"></div></div></div>",
-	props:{
-		image : {
-			required: true,
-			type:String
-		}
-	},
-	data:function() {
-		return {
-			status:null
-		};
-	},
-	watch:{
-		image:function() {
-			this.setup();
-		}
-	},
-	mounted:function() {
-		this.setup();
-	},
-	methods:{
-		setup : function() {
-			var that = this;
-			that.setStart();
-			setTimeout(function() {
-				var imgLoad = imagesLoaded( that.$el );
-				imgLoad
-					.once('done',function() {
-						if(that.status!=='failed') {
-							that.setComplete();
-						}
-					})
-					.once('fail',function() {
-						that.setFailed();
-					})
-					;
-			},300);
-		},
-		setComplete : function() {
-			this.status = 'completed';
-		},
-		setStart : function() {
-			this.status = 'started';
-		},
-		setFailed : function() {
-			this.status = 'failed';
-		}
+CROP_THUMBNAILS_VUE.modal = function() {
+	var $ = jQuery;
+	var that = this;
+	
+	function removeModal() {
+		$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
+		$('#cpt_Modal').remove();
+		$('body').removeClass('cpt_ModalIsOpen');
 	}
+	
+	/**
+	 * Should be called when the close-button is clicked.
+	 * Will trigger the "cropThumbnailModalClosed"-event to the body on close,
+	 * so everyone that is up to, could build a cache-breaker on their images.
+	 * HOW-TO cache-break:
+	 * $('body').on('cropThumbnailModalClosed',function() {
+	 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
+	 * });
+	 * @var Event
+	 */
+	that.close = function(event) {
+		CROP_THUMBNAILS_VUE.app.$destroy();
+		CROP_THUMBNAILS_VUE.app = null;
+		removeModal();
+		$('body').trigger('cropThumbnailModalClosed');
+	};
+	
+	/**
+	 * Should be called when the background is clicked
+	 * @var Event
+	 */
+	that.closeByBackground = function(event) {
+		if(event.target==document.getElementById('cpt_Modal')) {
+			that.close(event);
+		}
+	};
+	
+	that.open = function(imageId,posttype,title) {	
+		
+		
+		var id = imageId;
+		var modalHtml = '';
+		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
+		modalHtml+= '<div class="cpt_ModalDialog">';
+		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
+		
+		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
+		modalHtml+= '<cropeditor image-id="'+id+'"';
+		if(typeof posttype === 'string') {
+			modalHtml+= ' posttype="'+posttype+'"';
+		}
+		modalHtml+= '></cropeditor>'
+		modalHtml+= '</div>';//end cpt_ModalContent
+		modalHtml+= '</div>';//end cpt_ModalDialog
+		modalHtml+= '</div>';//end cpt_Modal;
+		
+		
+		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
+		$('#cpt_Modal .cpt_ModalClose').click(that.close);
+		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
+		
+		CROP_THUMBNAILS_VUE.app = new Vue({
+			el:'#cpt_crop_editor',
+			mounted:function() {
+				console.log('cpt_crop_editor mounted');
+			},
+			components: CROP_THUMBNAILS_VUE.components,
+			data: {
+				test: [
+					{ text: 'test 1' },
+					{ text: 'test 2' },
+					{ text: 'test 3' }
+				]
+			}
+		});
+	};
 };
 
 CROP_THUMBNAILS_VUE.components.cropeditor = {
@@ -205,8 +283,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				posttype : this.posttype
 			};
 			jQuery.get(ajaxurl,getParameter,function(responseData) {
-				that.makeAllInactive(responseData.imageSizes);
-				that.addCacheBreak(responseData.imageSizes);
+				that.prepareData(responseData);
 				that.cropData = responseData;
 				that.lang = that.cropData.lang;
 			});
@@ -220,7 +297,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			
 			if(this.selectSameRatio) {
 				this.cropData.imageSizes.forEach(function(i) {
-					if(i.printRatio == image.printRatio) {
+					if(i.printRatio === image.printRatio) {
 						i.active = newValue;
 					}
 				});
@@ -251,8 +328,24 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				i.cacheBreak = Date.now();
 			});
 		},
+		/**
+		 * will be called after getting the data
+		 * @param  {object} data the response data of the initial request
+		 */
+		prepareData : function(data) {
+			this.makeAllInactive(data.imageSizes);
+			this.addCacheBreak(data.imageSizes);
+			data.imageSizes.forEach(function(i) {
+				i.dynamic = false;
+				if(i.width===0 || i.height===0) {
+					i.printRatio+= ' dynamic';
+					i.dynamic = true;
+				}
+			});
+		},
 		activateCropArea : function() {
-			this.deactivateCropArea();
+			var that = this;
+			that.deactivateCropArea();
 			
 			var largestWidth = 0;
 			var largestHeight = 0;
@@ -269,7 +362,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			};
 
 			//get the options
-			this.activeImageSizes.forEach(function(i) {
+			that.activeImageSizes.forEach(function(i) {
 				if(options.aspectRatio === 0) {
 					options.aspectRatio = i.ratio;//initial
 				}
@@ -279,12 +372,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			});
 
 			//debug
-			if(this.cropData.debug_js) {
+			if(that.cropData.debug_js) {
 				console.info('Cropping options',options);
 			}
 			
-			var cropElement = jQuery(this.$el).find('.cropContainer img');
-			this.croppingApi = new Cropper(cropElement[0], options);
+			var cropElement = jQuery(that.$el).find('.cropContainer img');
+			that.croppingApi = new Cropper(cropElement[0], options);
 		},
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {
@@ -369,82 +462,4 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			}
 		}
 	}
-};
-
-CROP_THUMBNAILS_VUE.modal = function() {
-	var $ = jQuery;
-	var that = this;
-	
-	function removeModal() {
-		$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
-		$('#cpt_Modal').remove();
-		$('body').removeClass('cpt_ModalIsOpen');
-	}
-	
-	/**
-	 * Should be called when the close-button is clicked.
-	 * Will trigger the "cropThumbnailModalClosed"-event to the body on close,
-	 * so everyone that is up to, could build a cache-breaker on their images.
-	 * HOW-TO cache-break:
-	 * $('body').on('cropThumbnailModalClosed',function() {
-	 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
-	 * });
-	 * @var Event
-	 */
-	that.close = function(event) {
-		CROP_THUMBNAILS_VUE.app.$destroy();
-		CROP_THUMBNAILS_VUE.app = null;
-		removeModal();
-		$('body').trigger('cropThumbnailModalClosed');
-	};
-	
-	/**
-	 * Should be called when the background is clicked
-	 * @var Event
-	 */
-	that.closeByBackground = function(event) {
-		if(event.target==document.getElementById('cpt_Modal')) {
-			that.close(event);
-		}
-	};
-	
-	that.open = function(imageId,posttype,title) {	
-		
-		
-		var id = imageId;
-		var modalHtml = '';
-		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
-		modalHtml+= '<div class="cpt_ModalDialog">';
-		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
-		
-		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
-		modalHtml+= '<cropeditor image-id="'+id+'"';
-		if(typeof posttype === 'string') {
-			modalHtml+= ' posttype="'+posttype+'"';
-		}
-		modalHtml+= '></cropeditor>'
-		modalHtml+= '</div>';//end cpt_ModalContent
-		modalHtml+= '</div>';//end cpt_ModalDialog
-		modalHtml+= '</div>';//end cpt_Modal;
-		
-		
-		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
-		$('#cpt_Modal .cpt_ModalClose').click(that.close);
-		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
-		
-		CROP_THUMBNAILS_VUE.app = new Vue({
-			el:'#cpt_crop_editor',
-			mounted:function() {
-				console.log('cpt_crop_editor mounted');
-			},
-			components: CROP_THUMBNAILS_VUE.components,
-			data: {
-				test: [
-					{ text: 'test 1' },
-					{ text: 'test 2' },
-					{ text: 'test 3' }
-				]
-			}
-		});
-	};
 };

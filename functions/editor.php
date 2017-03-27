@@ -90,16 +90,21 @@ class CropPostThumbnailsEditor {
 			
 			foreach($result['imageSizes'] as $key => $imageSize) {
 				
-				if(empty($imageSize['crop']) || $imageSize['width']<=0 || $imageSize['height']<=0) {
+				if(empty($imageSize['crop']) || $imageSize['width']<0 || $imageSize['height']<0) {
 					//we do not need uncropped image sizes
 					unset($result['imageSizes'][$key]);
 					continue;//to the next entry
 				}
 				
-				
 				//DEFINE RATIO AND GCD
-				//DEFAULT RATIO - defined by the defined image-size
-				$ratioData = $this->calculateRatioData($imageSize['width'],$imageSize['height']);
+				if($imageSize['width'] ===0 || $imageSize['height']===0) {
+					$ratioData = $this->calculateRatioData($result['fullSizeImage']['width'],$result['fullSizeImage']['height']);
+				} else {
+					//DEFAULT RATIO - defined by the defined image-size
+					$ratioData = $this->calculateRatioData($imageSize['width'],$imageSize['height']);
+				}
+				
+				
 				
 				
 				//DYNAMIC RATIO
