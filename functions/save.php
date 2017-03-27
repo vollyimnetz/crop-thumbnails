@@ -19,6 +19,7 @@ class CptSaveThumbnail {
 	public function saveThumbnail() {
 		global $cptSettings;
 		$jsonResult = array();
+		$settings = $cptSettings->getOptions();
 		
 		try {
 			$input = $this->getValidatedInput();
@@ -128,11 +129,15 @@ class CptSaveThumbnail {
 			if(!empty($_processing_error)) {//one or more errors happend when generating thumbnails
 				$jsonResult['processingErrors'] = $_processing_error;
 			}
-			$jsonResult['debug'] = self::getDebug();
+			if(!empty($settings['debug_data'])) {
+				$jsonResult['debug'] = self::getDebug();
+			}
 			$jsonResult['success'] = time();//time for cache-breaker
 			echo json_encode($jsonResult);
 		} catch (Exception $e) {
-			$jsonResult['debug'] = self::getDebug();
+			if(!empty($settings['debug_data'])) {
+				$jsonResult['debug'] = self::getDebug();
+			}
 			$jsonResult['error'] = $e->getMessage();
 			echo json_encode($jsonResult);
 		}

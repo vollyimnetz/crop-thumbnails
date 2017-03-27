@@ -16,6 +16,8 @@ abstract class TestCase extends PHPUnit_Framework_TestCase {
 		
 		self::$settingsMock = Mockery::mock('CropThumbnailsSettings');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
+		self::$settingsMock->shouldReceive('getOptions')->andReturn(array('debug_data' => true));
+		
 		$GLOBALS['cptSettings'] = self::$settingsMock;
 		
 		return new CptSaveThumbnail();

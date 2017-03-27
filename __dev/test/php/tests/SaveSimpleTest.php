@@ -42,11 +42,11 @@ class SaveSimpleTest extends TestCase {
 		self::doDefaultMocks();
 		$cpt = $this->getTestObject();
 		
-		
 		/** TEST **/
 		ob_start();
 		$cpt->saveThumbnail();
-		$result = json_decode(ob_get_clean());
+		$result = ob_get_clean();
+		$result = json_decode($result);
 		
 		/** CHECK **/
 		$this->assertTrue(isset($result->debug));
