@@ -175,10 +175,10 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					_ajax_nonce : that.cropData.nonce,
 					cookie : encodeURIComponent(document.cookie),
 					crop_thumbnails : JSON.stringify({
-							'selection' : selectionData,
-							'sourceImageId' : that.cropData.imageObj.ID,
-							'activeImageSizes' : getDataOfActiveImageSizes()
-						})
+						'selection' : selectionData,
+						'sourceImageId' : that.cropData.imageObj.ID,
+						'activeImageSizes' : getDataOfActiveImageSizes()
+					})
 				};
 				
 				var request = jQuery.post(ajaxurl,params,null,'json');
