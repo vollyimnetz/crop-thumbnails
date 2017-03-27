@@ -25,6 +25,7 @@
 							<!--<div class="lowResWarning">{{lang.lowResWarning}}</div>-->
 							<div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
 							<div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
+							
 							<loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
 								<div class="cptImageBgContainer" :style="{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}"></div>
 							</loadingcontainer>
@@ -36,13 +37,22 @@
 		<div class="cptCropPane">
 			<div class="info">
 				<h3>{{ lang.rawImage }}</h3>
-				<div class="dimensions">{{ lang.dimensions }} {{cropData.fullSizeImage.width}} x {{cropData.fullSizeImage.height}} {{ lang.pixel }}</div>
-				<div class="ratio">{{ lang.ratio }} {{cropData.fullSizeImage.print_ratio}}</div>
-			</div>
-			<div class="cropContainer">
-				<img class="cptCroppingImage" :src="cropData.fullSizeImage.url" />
+				<div class="dimensions">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div>
+				<div class="ratio">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>
 			</div>
 			<button type="button" class="button cptGenerate" :class="{'button-primary':croppingApi}" @click="cropThumbnails()" :disabled="!croppingApi">{{ lang.label_crop }}</button>
+			
+			<div class="cropContainer">
+				<img class="cptCroppingImage" :src="cropImage.url" />
+			</div>
+			
+			<div>
+				<button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
+				<button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
+				<pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
+				<pre v-if="showDebugType==='js'"><br />{{cropImage}}<br />{{ cropData }}</pre>
+			</div>
+	
 			<h4>{{ lang.instructions_header }}</h4>
 			<ul class="step-info">
 				<li>{{ lang.instructions_step_1 }}</li>

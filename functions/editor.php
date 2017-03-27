@@ -38,13 +38,19 @@ class CropPostThumbnailsEditor {
 		}
 		
 		global $cptSettings;
+		global $content_width;//include nasty content_width
+		$content_width = 9999;//override the idioty
+		
 		$options = $cptSettings->getOptions();
 		$result = array(
 			'options' => $options,
-			'imageObj' => null,
+			'sourceImageId' => null,
+			'sourceImage' => array(
+				'full' => null,
+				'large' => null
+			),
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($cptSettings->getImageSizes()),
-			'fullSizeImage' => null, //???
 			'lang' => array(
 				'bug' => __('Bug--this should not have occurred.',CROP_THUMBS_LANG),
 				'warningOriginalToSmall' => __('Warning: the original image is too small to be cropped in good quality with this thumbnail size.',CROP_THUMBS_LANG),
@@ -73,17 +79,18 @@ class CropPostThumbnailsEditor {
 			throw new InvalidArgumentException('Missing Parameter "imageId".');
 		}
 		
-		$result['imageObj'] = get_post(intval($_REQUEST['imageId']));
-		if(empty($result['imageObj']) || $result['imageObj']->post_type!=='attachment') {
+		$imagePostObj = get_post(intval($_REQUEST['imageId']));
+		if(empty($imagePostObj) || $imagePostObj->post_type!=='attachment') {
 			throw new InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
 		}
+		$result['sourceImageId'] = $imagePostObj->ID;
 
 		if(!empty($_REQUEST['posttype']) && post_type_exists($_REQUEST['posttype'])) {
 			$result['postTypeFilter'] = $_REQUEST['posttype'];
 		}
 		
-		$result['fullSizeImage'] = $this->getUncroppedImageData($result['imageObj']->ID, 'full');
-		$result['largeSizeImage'] = $this->getUncroppedImageData($result['imageObj']->ID, 'large');
+		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');
+		$result['sourceImage']['large'] = $this->getUncroppedImageData($imagePostObj->ID, 'large');
 		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
 		
 		if(!$result['hiddenOnPostType']) {
@@ -98,7 +105,7 @@ class CropPostThumbnailsEditor {
 				
 				//DEFINE RATIO AND GCD
 				if($imageSize['width'] ===0 || $imageSize['height']===0) {
-					$ratioData = $this->calculateRatioData($result['fullSizeImage']['width'],$result['fullSizeImage']['height']);
+					$ratioData = $this->calculateRatioData($result['sourceImage']['full']['width'],$result['sourceImage']['full']['height']);
 				} else {
 					//DEFAULT RATIO - defined by the defined image-size
 					$ratioData = $this->calculateRatioData($imageSize['width'],$imageSize['height']);
@@ -112,14 +119,14 @@ class CropPostThumbnailsEditor {
 				//@eee https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
 				if($imageSize['width'] === 9999) {
 					//if you define width with 9999 - it crops for the exact defined height but the full width
-					$ratioData = $this->calculateRatioData($result['fullSizeImage']['width'], $imageSize['height']);
+					$ratioData = $this->calculateRatioData($result['sourceImage']['full']['width'], $imageSize['height']);
 				} elseif($imageSize['height'] === 9999) {
 					//if you define height with 9999 - it crops for the exect defined width but the full height
-					$ratioData = $this->calculateRatioData($imageSize['width'], $result['fullSizeImage']['height']);
+					$ratioData = $this->calculateRatioData($imageSize['width'], $result['sourceImage']['full']['height']);
 				}
 				
 				
-				$img_data = wp_get_attachment_image_src($result['imageObj']->ID, $imageSize['name']);
+				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['name']);
 				$jsonDataValues = array(
 					'name' => $imageSize['name'],
 					'nameLabel' => $imageSize['name'],//if you want to change the label of this image-size
@@ -151,7 +158,7 @@ class CropPostThumbnailsEditor {
 			'height' => $orig_img[2],
 			'gcd' => $orig_ima_gcd,
 			'ratio' => ($orig_img[1]/$orig_ima_gcd) / ($orig_img[2]/$orig_ima_gcd),
-			'print_ratio' => ($orig_img[1]/$orig_ima_gcd).':'.($orig_img[2]/$orig_ima_gcd),
+			'printRatio' => ($orig_img[1]/$orig_ima_gcd).':'.($orig_img[2]/$orig_ima_gcd),
 			'image_size' => $imageSize
 		);
 		return $result;

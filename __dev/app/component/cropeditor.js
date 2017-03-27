@@ -20,13 +20,25 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			loading : false,
 			selectSameRatio : true,
 			croppingApi : null,
-			lang : null
+			lang : null,
+			nonce:null,
+			showDebugType: null,
+			dataDebug:null
 		};
 	},
 	mounted:function() {
 		this.loadCropData();
 	},
 	computed:{
+		cropImage : function() {
+			if(this.cropData!==undefined && this.cropData.sourceImage.large!==null && this.cropData.sourceImage.large.width>745) {
+				this.cropData.sourceImage.large.scale = this.cropData.sourceImage.full.width / this.cropData.sourceImage.large.width;
+				return this.cropData.sourceImage.large;
+			} else {
+				this.cropData.sourceImage.full.scale = 1;
+				return this.cropData.sourceImage.full;
+			}
+		},
 		filteredImageSizes : function() {
 			return this.cropData.imageSizes
 				.filter(function(elem) {
@@ -49,9 +61,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				posttype : this.posttype
 			};
 			jQuery.get(ajaxurl,getParameter,function(responseData) {
-				that.prepareData(responseData);
+				that.makeAllInactive(responseData.imageSizes);
+				that.addCacheBreak(responseData.imageSizes);
 				that.cropData = responseData;
 				that.lang = that.cropData.lang;
+				that.nonce = that.cropData.nonce;
+				delete that.cropData.nonce;
 			});
 		},
 		toggleActive : function(image) {
@@ -93,14 +108,6 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			imageSizes.forEach(function(i) {
 				i.cacheBreak = Date.now();
 			});
-		},
-		/**
-		 * will be called after getting the data
-		 * @param  {object} data the response data of the initial request
-		 */
-		prepareData : function(data) {
-			this.makeAllInactive(data.imageSizes);
-			this.addCacheBreak(data.imageSizes);
 		},
 		activateCropArea : function() {
 			var that = this;
@@ -144,6 +151,13 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				this.croppingApi = null;
 			}
 		},
+		showDebugClick : function(type) {
+			if(this.showDebugType === type) {
+				this.showDebugType = null;
+			} else {
+				this.showDebugType = type;
+			}
+		},
 		cropThumbnails : function() {
 			var that = this;
 			
@@ -170,21 +184,21 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				
 				var selection = that.croppingApi.getData();
 				var selectionData = {//needed cause while changing from jcrop to cropperjs i do not want to change the api
-					x:selection.x,
-					y:selection.y,
-					x2:selection.x + selection.width,
-					y2:selection.y + selection.height,
-					w:selection.width,
-					h:selection.height
+					x:selection.x * that.cropImage.scale,
+					y:selection.y * that.cropImage.scale,
+					x2:(selection.x + selection.width) * that.cropImage.scale,
+					y2:(selection.y + selection.height) * that.cropImage.scale,
+					w:selection.width * that.cropImage.scale,
+					h:selection.height * that.cropImage.scale
 				};
 				
 				var params = {
 					action : 'cptSaveThumbnail',
-					_ajax_nonce : that.cropData.nonce,
+					_ajax_nonce : that.nonce,
 					cookie : encodeURIComponent(document.cookie),
 					crop_thumbnails : JSON.stringify({
 						'selection' : selectionData,
-						'sourceImageId' : that.cropData.imageObj.ID,
+						'sourceImageId' : that.cropData.sourceImageId,
 						'activeImageSizes' : getDataOfActiveImageSizes()
 					})
 				};
@@ -192,8 +206,9 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				var request = jQuery.post(ajaxurl,params,null,'json');
 				request
 					.done(function(responseData) {
-						if(that.cropData.debug_js) {
-							console.log('Save Function Debug',result.debug);
+						if(that.cropData.options.debug_data) {
+							that.dataDebug = responseData.debug;
+							console.log('Save Function Debug',responseData.debug);
 						}
 						if(responseData.error!==undefined) {
 							alert(responseData.error);
