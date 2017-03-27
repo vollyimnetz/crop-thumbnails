@@ -34,7 +34,11 @@
 			</div>
 		</div>
 		<div class="cptCropPane">
-			<h3>{{ lang.rawImage }}: {{cropData.fullSizeImage.width}} x {{cropData.fullSizeImage.height}} {{ lang.pixel }} ({{cropData.fullSizeImage.print_ratio}})</h3>
+			<div class="info">
+				<h3>{{ lang.rawImage }}</h3>
+				<div class="dimensions">{{ lang.dimensions }} {{cropData.fullSizeImage.width}} x {{cropData.fullSizeImage.height}} {{ lang.pixel }}</div>
+				<div class="ratio">{{ lang.ratio }} {{cropData.fullSizeImage.print_ratio}}</div>
+			</div>
 			<div class="cropContainer">
 				<img class="cptCroppingImage" :src="cropData.fullSizeImage.url" />
 			</div>
