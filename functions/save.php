@@ -62,16 +62,28 @@ class CptSaveThumbnail {
 					}
 				}
 				
+				//set target size of the cropped image
+				$crop_width = $activeImageSize->width;
+				$crop_height = $activeImageSize->height;
+				
+				
 				$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $activeImageSize->height);
+				
+				if($activeImageSize->width===9999) {
+					$currentFilePath = self::generateFilename($sourceImgPath, $imageMetadata['width'], $activeImageSize->height);
+					$crop_width = $imageMetadata['width'];
+				} elseif($activeImageSize->height==9999) {
+					$currentFilePath = self::generateFilename($sourceImgPath, $activeImageSize->width, $imageMetadata['height']);
+					$crop_height = $imageMetadata['height'];
+				}
+				
 				$currentFilePathInfo = pathinfo($currentFilePath);
 				
 				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				self::addDebug("filename:".$currentFilePath);
 				
 				
-				$crop_width = $activeImageSize->width;
-				$crop_height = $activeImageSize->height;
-				if(!$activeImageSize->crop || $activeImageSize->width==0 || $activeImageSize->height==0 || $activeImageSize->width==9999 || $activeImageSize->height==9999) {
+				if(!$activeImageSize->crop || $activeImageSize->width==0 || $activeImageSize->height==0) {
 					//handle images with soft-crop width/height value and crop set to "true"
 					$crop_width = $input->selection->x2 - $input->selection->x;
 					$crop_height = $input->selection->y2 - $input->selection->y;

@@ -16,12 +16,14 @@ class SaveTest extends TestCase {
 		\WP_Mock::wpFunction( 'check_ajax_referer',[
 			'return' => true
 		]);
+		
 		\WP_Mock::wpFunction( 'wp_basename',[
 			'return' => function($path,$suffix) { 
 				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
 				return urldecode( basename( str_replace( array( '%2F', '%5C' ), '/', urlencode( $path ) ), $suffix ) ); 
 			}
 		]);
+		
 		\WP_Mock::wpFunction( 'trailingslashit',[
 			'return' => function($string) { 
 				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
@@ -29,8 +31,13 @@ class SaveTest extends TestCase {
 			}
 		]);
 		
-		\WP_Mock::wpFunction( '__',['return' => function($param) { return $param; } ]);
+		\WP_Mock::wpFunction( '__',[
+			'return' => function($param) { return $param; } 
+		]);
 		
+		\WP_Mock::wpFunction('get_post', [ 
+			'return' => new stdClass()
+		]);
 		
 		self::$cpt = $this->getTestObject();
 	}
@@ -46,7 +53,7 @@ class SaveTest extends TestCase {
 	 * This test will check if a request with 4 image sizes will use the correct functions.
 	 * - 2 image sizes are quite ordanary
 	 * - 1 image size ('strange-image-ratio') is a little off ratio
-	 * - 1 image size ('new-image-size') has been added after the attachement was uploaded (no metadata exists)
+	 * - 1 image size ('new-image-size') has been added after the attachement was uploaded (so the metadata has to be updated)
 	 */
 	public function success_simple() {
 		/** SETUP **/
@@ -58,13 +65,10 @@ class SaveTest extends TestCase {
 		
 		self::$settingsMock->shouldReceive('getImageSizes')->andReturn(self::test_getImageSizes());
 		
-		\WP_Mock::wpFunction('get_post', [ 
-			'return' => new stdClass()
-		]);
-		
+		$INPUT_get_attached_file = [];
 		\WP_Mock::wpFunction( 'get_attached_file',[
-			'return' => function($id) use ($that,$testData) {
-				$that->assertEquals($id,$testData->sourceImageId);
+			'return' => function($id) use (&$INPUT_get_attached_file) {
+				$INPUT_get_attached_file = [$id];
 				return __DIR__.'/data/test.jpg';
 			},
 			'times' => 1
@@ -72,20 +76,19 @@ class SaveTest extends TestCase {
 		
 		
 		$attachementMetadata = $this->test_get_attachement_metadata();
+		$INPUT_wp_get_attachment_metadata = [];//this will be filled once the mock has run
 		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
-			'return' => function($id,$bool) use ($that,$testData,$attachementMetadata) {
-				$that->assertEquals($id,$testData->sourceImageId);
-				$that->assertTrue($bool);
+			'return' => function($id,$bool) use ($that,$testData,$attachementMetadata,&$INPUT_wp_get_attachment_metadata) {
+				$INPUT_wp_get_attachment_metadata = [$id,$bool];
 				return $attachementMetadata;
 			},
 			'times' => 1
 		]);
 		
-		$savedMetadata = [];//this will be filled once the mock has run
+		$INPUT_wp_update_attachement_metadata = [];//this will be filled once the mock has run
 		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
-			'return' => function($imageId,$metadata) use ($that,$testData,&$savedMetadata) {
-				$that->assertEquals($imageId,$testData->sourceImageId);
-				$savedMetadata = $metadata;
+			'return' => function($imageId,$metadata) use (&$INPUT_wp_update_attachement_metadata) {
+				$INPUT_wp_update_attachement_metadata = [$imageId,$metadata];
 				return true;
 			},
 			'times' => 1
@@ -107,14 +110,15 @@ class SaveTest extends TestCase {
 			'return' => function($src,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($that,$dummyBaseFile,$tmpFile) {
 				//prepare a file, so the function can copy it to the new location
 				copy($dummyBaseFile, $tmpFile);
+				
+				//TODO add more asserts
+				
 				return $tmpFile;
 			},
 			'times' => 4
 		]);
 		
-		
 		self::$settingsMock->shouldReceive('getUploadDir')->andReturn(__DIR__.'/data');
-		
 		
 		/** TEST **/
 		ob_start();
@@ -123,7 +127,7 @@ class SaveTest extends TestCase {
 		
 		/** CHECK **/
 		$this->assertTrue(!empty($result),'Invalid JSON returned');
-		print_r($result);
+		#print_r($result);
 		$this->assertTrue(!file_exists($tmpFile),'Temporary file where not deleted');
 		
 		$file1 = __DIR__.'/data/test-150x150.jpg';
@@ -159,6 +163,7 @@ class SaveTest extends TestCase {
 		$sizeName = 'new-image-size';
 		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-600x600.jpg');
 		
+		//check $INPUT_wp_update_attachement_metadata
 		//the metadata should have an additional entry "new-image-size"
 		$newAttachementMetadata = $attachementMetadata;
 		$newAttachementMetadata['sizes']['new-image-size'] = [
@@ -167,17 +172,353 @@ class SaveTest extends TestCase {
 			'height' => 600,
 			'mime-type' => 'image/jpeg'
 		];
-		$this->assertArrayEquals($savedMetadata,$newAttachementMetadata);
+		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
+		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
+		
+		
+		//check $INPUT_wp_get_attachment_metadata
+		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
+		$that->assertTrue($INPUT_wp_get_attachment_metadata[1], true);
+		
+		//check $INPUT_get_attached_file
+		$that->assertEquals($INPUT_get_attached_file[0],$testData->sourceImageId);
 	}
 	
-	/** test **/
+	/** @test **/
 	public function success_with_dynamic_width() {
-		//TODO
+		/** SETUP **/
+		$that = $this;
+		
+		$testData = self::getDynamic2TestData();
+		$_REQUEST['crop_thumbnails'] = $testData;
+		$testData = json_decode($testData);
+		
+		self::$settingsMock->shouldReceive('getImageSizes')->andReturn(self::test_getImageSizes());
+		
+		$INPUT_get_attached_file = [];
+		\WP_Mock::wpFunction( 'get_attached_file',[
+			'return' => function($id) use (&$INPUT_get_attached_file) {
+				$INPUT_get_attached_file = [$id];
+				return __DIR__.'/data/test.jpg';
+			},
+			'times' => 1
+		]);
+		
+		$attachementMetadata = $this->test_get_attachement_metadata();
+		$INPUT_wp_get_attachment_metadata = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
+			'return' => function($id,$bool) use ($that,$testData,$attachementMetadata,&$INPUT_wp_get_attachment_metadata) {
+				$INPUT_wp_get_attachment_metadata = [$id,$bool];
+				return $attachementMetadata;
+			},
+			'times' => 1
+		]);
+		
+		$INPUT_wp_update_attachement_metadata = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
+			'return' => function($imageId,$metadata) use (&$INPUT_wp_update_attachement_metadata) {
+				$INPUT_wp_update_attachement_metadata = [$imageId,$metadata];
+				return true;
+			},
+			'times' => 1
+		]);
+		
+		$INPUT_wp_get_attachment_image_src = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
+			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
+				$INPUT_wp_get_attachment_image_src = [$imageId,$imageSizeName];
+				return array('new/path/new-image-size-3000x500.jpg',3000,500);
+			},
+			'times' => 1
+		]);
+	
+		
+		$dummyBaseFile = __DIR__.'/data/dummy.jpg';
+		$tmpFile = __DIR__.'/data/test-check.jpg';
+		$INPUT_wp_cron_image = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_crop_image',[
+			'return' => function($imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($dummyBaseFile,$tmpFile,&$INPUT_wp_cron_image) {
+				//prepare a file, so the function can copy it to the new location
+				copy($dummyBaseFile, $tmpFile);
+				$INPUT_wp_cron_image = [$imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file];
+				return $tmpFile;
+			},
+			'times' => 1
+		]);
+		
+		self::$settingsMock->shouldReceive('getUploadDir')->andReturn(__DIR__.DIRECTORY_SEPARATOR.'data');
+		
+		/** TEST **/
+		ob_start();
+		self::$cpt->saveThumbnail();
+		$result = json_decode(ob_get_clean());
+		
+		/** CHECK **/
+		$this->assertTrue(!empty($result),'Invalid JSON returned');
+		#print_r($result);
+		$this->assertTrue(!file_exists($tmpFile),'Temporary file where not deleted');
+		
+		$file1 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-3000x500.jpg';
+		
+		//did the function copy the image file correctly?
+		$this->assertTrue(file_exists($file1),'New Image (3000x500) was not created.');
+		
+		//did the function uses the correct file (the file that was returned by the wp_crop-function)
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (150x150).');
+		
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-2');
+		
+		$this->assertEquals($INPUT_wp_cron_image[0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_cron_image[1], 1009);
+		$this->assertEquals($INPUT_wp_cron_image[2], 364);
+		$this->assertEquals($INPUT_wp_cron_image[3], 1312);
+		$this->assertEquals($INPUT_wp_cron_image[4], 219);
+		$this->assertEquals($INPUT_wp_cron_image[5], 3000);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[6], 500);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[7], false);
+		$this->assertEquals($INPUT_wp_cron_image[8], $file1);
+		
+		/** CLEANUP **/
+		@unlink($file1);
+		
+		//did the function return correct values
+		$this->assertTrue(isset($result->debug),'The result should return debug values.');
+		$this->assertTrue(empty($result->error),'The result should not return any errors.');
+		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		
+		//changedImageName should have an value with "new-image-size"
+		$sizeName = 'dynamic-2';
+		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-3000x500.jpg');
+		
+		//check $INPUT_wp_get_attachment_metadata
+		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
+		$that->assertTrue($INPUT_wp_get_attachment_metadata[1], true);
+		
+		//check $INPUT_wp_update_attachement_metadata
+		//the metadata should have an additional entry "new-image-size"
+		$newAttachementMetadata = $attachementMetadata;
+		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
+		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
+		
+		//check $INPUT_get_attached_file
+		$that->assertEquals($INPUT_get_attached_file[0],$testData->sourceImageId);
 	}
 	
-	/** test **/
+	/** @test **/
 	public function success_with_dynamic_height() {
-		//TODO
+		/** SETUP **/
+		$that = $this;
+		
+		$testData = self::getDynamic1TestData();
+		$_REQUEST['crop_thumbnails'] = $testData;
+		$testData = json_decode($testData);
+		
+		self::$settingsMock->shouldReceive('getImageSizes')->andReturn(self::test_getImageSizes());
+		
+		$INPUT_get_attached_file = [];
+		\WP_Mock::wpFunction( 'get_attached_file',[
+			'return' => function($id) use (&$INPUT_get_attached_file) {
+				$INPUT_get_attached_file = [$id];
+				return __DIR__.'/data/test.jpg';
+			},
+			'times' => 1
+		]);
+		
+		$attachementMetadata = $this->test_get_attachement_metadata();
+		$INPUT_wp_get_attachment_metadata = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
+			'return' => function($id,$bool) use ($that,$testData,$attachementMetadata,&$INPUT_wp_get_attachment_metadata) {
+				$INPUT_wp_get_attachment_metadata = [$id,$bool];
+				return $attachementMetadata;
+			},
+			'times' => 1
+		]);
+		
+		$INPUT_wp_update_attachement_metadata = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
+			'return' => function($imageId,$metadata) use (&$INPUT_wp_update_attachement_metadata) {
+				$INPUT_wp_update_attachement_metadata = [$imageId,$metadata];
+				return true;
+			},
+			'times' => 1
+		]);
+		
+		$INPUT_wp_get_attachment_image_src = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
+			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
+				$INPUT_wp_get_attachment_image_src = [$imageId,$imageSizeName];
+				return array('new/path/new-image-size-500x2000.jpg',500,2000);
+			},
+			'times' => 1
+		]);
+	
+		
+		$dummyBaseFile = __DIR__.'/data/dummy.jpg';
+		$tmpFile = __DIR__.'/data/test-check.jpg';
+		$INPUT_wp_cron_image = [];//this will be filled once the mock has run
+		\WP_Mock::wpFunction( 'wp_crop_image',[
+			'return' => function($imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file) use ($dummyBaseFile,$tmpFile,&$INPUT_wp_cron_image) {
+				//prepare a file, so the function can copy it to the new location
+				copy($dummyBaseFile, $tmpFile);
+				$INPUT_wp_cron_image = [$imageId,$src_x,$src_y,$src_w,$src_h,$dst_w,$dst_h,$src_abs,$dst_file];
+				return $tmpFile;
+			},
+			'times' => 1
+		]);
+		
+		self::$settingsMock->shouldReceive('getUploadDir')->andReturn(__DIR__.DIRECTORY_SEPARATOR.'data');
+		
+		/** TEST **/
+		ob_start();
+		self::$cpt->saveThumbnail();
+		$result = json_decode(ob_get_clean());
+		
+		/** CHECK **/
+		$this->assertTrue(!empty($result),'Invalid JSON returned');
+		#print_r($result);
+		$this->assertTrue(!file_exists($tmpFile),'Temporary file where not deleted');
+		
+		$file1 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-500x2000.jpg';
+		
+		//did the function copy the image file correctly?
+		$this->assertTrue(file_exists($file1),'New Image (500x2000) was not created.');
+		
+		//did the function uses the correct file (the file that was returned by the wp_crop-function)
+		$this->assertEquals(md5_file($dummyBaseFile),md5_file($file1),'The wrong file was coppied (150x150).');
+		
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-1');
+		
+		$this->assertEquals($INPUT_wp_cron_image[0], $testData->sourceImageId);
+		$this->assertEquals($INPUT_wp_cron_image[1], 1583);
+		$this->assertEquals($INPUT_wp_cron_image[2], 345);
+		$this->assertEquals($INPUT_wp_cron_image[3], 236);
+		$this->assertEquals($INPUT_wp_cron_image[4], 944);
+		$this->assertEquals($INPUT_wp_cron_image[5], 500);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[6], 2000);//this has to be equals to the size in add_image_size
+		$this->assertEquals($INPUT_wp_cron_image[7], false);
+		$this->assertEquals($INPUT_wp_cron_image[8], $file1);
+		
+		/** CLEANUP **/
+		@unlink($file1);
+		
+		//did the function return correct values
+		$this->assertTrue(isset($result->debug),'The result should return debug values.');
+		$this->assertTrue(empty($result->error),'The result should not return any errors.');
+		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		
+		//changedImageName should have an value with "new-image-size"
+		$sizeName = 'dynamic-1';
+		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-500x2000.jpg');
+		
+		//check $INPUT_wp_get_attachment_metadata
+		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
+		$that->assertTrue($INPUT_wp_get_attachment_metadata[1], true);
+		
+		//check $INPUT_wp_update_attachement_metadata
+		//the metadata should have an additional entry "new-image-size"
+		$newAttachementMetadata = $attachementMetadata;
+		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
+		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
+		
+		//check $INPUT_get_attached_file
+		$that->assertEquals($INPUT_get_attached_file[0],$testData->sourceImageId);
+	}
+	
+	
+	private static function getDynamic1TestData() {
+		return '{
+			"selection":{
+				"x":1583.3333333333333,
+				"y":345.9119496855346,
+				"x2":1819.1823899371068,
+				"y2":1289.308176100629,
+				"w":235.8490566037736,
+				"h":943.3962264150944
+			},
+			"sourceImageId":169,
+			"activeImageSizes":[
+				{
+					"name":"dynamic-1",
+					"width":500,
+					"height":9999,
+					"ratio":0.25,
+					"crop":true
+				}
+			]
+		}';
+	}
+	
+	private static function getDynamic2TestData() {
+		return '{
+			"selection":{
+				"x":1009.1743119266055,
+				"y":364.6788990825688,
+				"x2":2321.1009174311926,
+				"y2":583.3333333333334,
+				"w":1311.926605504587,
+				"h":218.65443425076452
+			},
+			"sourceImageId":169,
+			"activeImageSizes":[
+				{
+					"name":"dynamic-2",
+					"width":9999,
+					"height":500,
+					"ratio":6,
+					"crop":true
+				}
+			]
+		}';
+	}
+	
+	
+	private static function getSimpleTestData() {
+		return '
+		{
+			"selection":{
+				"x":0,
+				"y":535.3459119496855,
+				"x2":664.6540880503145,
+				"y2":1200,
+				"w":664.6540880503145,
+				"h":664.6540880503145
+			},
+			"sourceImageId":169,
+			"activeImageSizes":[
+				{
+					"name":"thumbnail",
+					"width":150,
+					"height":150,
+					"ratio":1,
+					"crop":true
+				},
+				{
+					"name":"strange-image-ratio",
+					"width":500,
+					"height":499,
+					"ratio":1.002004008016,
+					"crop":true
+				},
+				{
+					"name":"normal1x1",
+					"width":500,
+					"height":500,
+					"ratio":1,
+					"crop":true
+				},
+				{
+					"name":"new-image-size",
+					"width":600,
+					"height":600,
+					"ratio":1,
+					"crop":true
+				}
+			]
+		}';
 	}
 	
 	
@@ -251,51 +592,7 @@ class SaveTest extends TestCase {
 			],
 		];
 	}
-	
-	private static function getSimpleTestData() {
-		return '
-		{
-			"selection":{
-				"x":0,
-				"y":535.3459119496855,
-				"x2":664.6540880503145,
-				"y2":1200,
-				"w":664.6540880503145,
-				"h":664.6540880503145
-			},
-			"sourceImageId":169,
-			"activeImageSizes":[
-				{
-					"name":"thumbnail",
-					"width":150,
-					"height":150,
-					"ratio":1,
-					"crop":true
-				},
-				{
-					"name":"strange-image-ratio",
-					"width":500,
-					"height":499,
-					"ratio":1.002004008016,
-					"crop":true
-				},
-				{
-					"name":"normal1x1",
-					"width":500,
-					"height":500,
-					"ratio":1,
-					"crop":true
-				},
-				{
-					"name":"new-image-size",
-					"width":600,
-					"height":600,
-					"ratio":1,
-					"crop":true
-				}
-			]
-		}';
-	}
+
 	
 	public static function test_get_attachement_metadata() {
 		return [
@@ -308,6 +605,7 @@ class SaveTest extends TestCase {
 					'width' => 150,
 					'height' => 150,
 					'mime-type' => 'image/jpeg',
+					'test' => 'some additional data, that should be unchanged'
 				],
 				'medium' => [
 					'file' => 'test-300x200.jpg',
