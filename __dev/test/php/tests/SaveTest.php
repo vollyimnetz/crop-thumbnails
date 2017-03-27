@@ -583,13 +583,7 @@ class SaveTest extends TestCase {
 				'height' => 600,
 				'crop' => 1,
 				'name' => 'new-image-size'
-			],
-			'static-1' => [
-				'width' => 240,
-				'height' => 120,
-				'crop' => 1,
-				'name' => 'Mein neuer Name'
-			],
+			]
 		];
 	}
 
