@@ -16,13 +16,11 @@ console.log(gulpUtil.colors.black.bgGreen(' Run "gulp doc" to see the gulpfile-d
 var settings = {
 	srcFolder : '.',
 	buildFolder : './../js/app',
-	
 	minifyVendor:true,
 	minifyApp:false,
 	vendor: {
 		js: [
 			'node_modules/vue/dist/vue.min.js',
-			'node_modules/axios/dist/axios.min.js',
 			'node_modules/cropperjs/dist/cropper.min.js',
 		],
 		css: [

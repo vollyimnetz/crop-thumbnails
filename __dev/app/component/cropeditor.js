@@ -48,13 +48,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				imageId : this.imageId,
 				posttype : this.posttype
 			};
-			axios.get(ajaxurl,{ params : getParameter })
-				.then(function(response) {
-					that.makeAllInactive(response.data.imageSizes);
-					that.addCacheBreak(response.data.imageSizes);
-					that.cropData = response.data;
-					that.lang = that.cropData.lang;
-				});
+			jQuery.get(ajaxurl,getParameter,function(responseData) {
+				that.makeAllInactive(responseData.imageSizes);
+				that.addCacheBreak(responseData.imageSizes);
+				that.cropData = responseData;
+				that.lang = that.cropData.lang;
+			});
 		},
 		toggleActive : function(image) {
 			var newValue = !image.active;
@@ -171,46 +170,45 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					h:selection.height
 				};
 				
-				var params = new URLSearchParams();
-				params.append('action', 'cptSaveThumbnail');
-				params.append('_ajax_nonce', that.cropData.nonce);
-				params.append('cookie', encodeURIComponent(document.cookie));
-				params.append('crop_thumbnails', JSON.stringify({
-						'selection' : selectionData,
-						'sourceImageId' : that.cropData.imageObj.ID,
-						'activeImageSizes' : getDataOfActiveImageSizes()
-					})
-				);
+				var params = {
+					action : 'cptSaveThumbnail',
+					_ajax_nonce : that.cropData.nonce,
+					cookie : encodeURIComponent(document.cookie),
+					crop_thumbnails : JSON.stringify({
+							'selection' : selectionData,
+							'sourceImageId' : that.cropData.imageObj.ID,
+							'activeImageSizes' : getDataOfActiveImageSizes()
+						})
+				};
 				
-				axios.post(ajaxurl,params)
-					.then(function(response) {
-						console.log(response);
+				var request = jQuery.post(ajaxurl,params,null,'json');
+				request
+					.done(function(responseData) {
 						if(that.cropData.debug_js) {
 							console.log('Save Function Debug',result.debug);
 						}
-						if(response.data.error!==undefined) {
-							alert(response.data.error);
-							that.loading = false;
+						if(responseData.error!==undefined) {
+							alert(responseData.error);
 							return;
 						}
-						if(response.data.success!==undefined) {
-							if(response.data.changedImageName!==undefined) {
+						if(responseData.success!==undefined) {
+							if(responseData.changedImageName!==undefined) {
 								//update activeImageSizes with the new URLs
 								that.activeImageSizes.forEach(function(value,key) {
-									if(response.data.changedImageName[value.name]!==undefined) {
-										value.url = response.data.changedImageName[value.name];
+									if(responseData.changedImageName[value.name]!==undefined) {
+										value.url = responseData.changedImageName[value.name];
 									}
 								});
 							}
 							that.addCacheBreak(that.activeImageSizes);
-							that.loading = false;
 							return;
 						}
-						that.loading = false;
 					})
-					.catch(function (error) {
-						that.loading = false;
+					.fail(function(response) {
 						console.error(error);
+					})
+					.always(function() {
+						that.loading = false;
 					});
 			}
 		}
