@@ -113,30 +113,22 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			var that = this;
 			that.deactivateCropArea();
 			
-			function getPreselect(width,height,ratio) {
-				var selectionArea = [];
+			function getPreselect(width,height,targetRatio) {
 				var x0 = 0;
 				var y0 = 0;
 				var x1 = width;
 				var y1 = height;
-				if(width>height) {
-					if(ratio>1) {
-						y0 = (height / 2) - ((width / ratio) / 2);
-						y1 = (y0 + (width / ratio));
-					} else {
-						x0 = (width / 2) + ((height * ratio) / 2);
-						x1 = (x0 - (height * ratio));
-					}
+				var sourceRatio = width/height;
+				
+				if(sourceRatio <= targetRatio) {
+					y0 = (height / 2) - ((width / targetRatio) / 2);
+					y1 = height-y0;
 				} else {
-					if(ratio>1) {
-						y0 = (height / 2) - ((width / ratio) / 2);
-						y1 = (y0 + (width / ratio));
-					} else {
-						x0 = (width / 2) + ((height * ratio) / 2);
-						x1 = (x0 - (height * ratio));
-					}
+					x0 = (width / 2) - ((height * targetRatio) / 2);
+					x1 = width-x0;
 				}
-				return [x0,y0,x1,y1];
+				var result = [x0,y0,x1,y1];
+				return result;
 			}
 			
 			var options = {
@@ -202,23 +194,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			if(!that.loading && that.croppingApi!==null) {
 				that.loading = true;
 				
-				
-				var selection = that.croppingApi.tellSelect();
-				var selectionData = {
-					x:selection.x,
-					y:selection.y,
-					x2:selection.x2,
-					y2:selection.y2,
-					w:selection.width,
-					h:selection.height
-				};
-				
 				var params = {
 					action : 'cptSaveThumbnail',
 					_ajax_nonce : that.nonce,
 					cookie : encodeURIComponent(document.cookie),
 					crop_thumbnails : JSON.stringify({
-						'selection' : selectionData,
+						'selection' : that.croppingApi.tellSelect(),
 						'sourceImageId' : that.cropData.sourceImageId,
 						'activeImageSizes' : getDataOfActiveImageSizes()
 					})

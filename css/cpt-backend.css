@@ -125,7 +125,15 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor h4 { margin-bottom:0em;}
 #cpt_crop_editor .step-info { font-size:0.9em; }
 
-#cpt_crop_editor .jcrop-handle.ord-se { width: 16px; height: 16px; margin-bottom: -8px; margin-right: -8px;}
+#cpt_crop_editor .jcrop-handle.ord-ne { margin-top: -8px; margin-right: -8px;}
+#cpt_crop_editor .jcrop-handle.ord-nw { margin-top: -8px; margin-left: -8px;}
+#cpt_crop_editor .jcrop-handle.ord-se { margin-bottom: -8px; margin-right: -8px;}
+#cpt_crop_editor .jcrop-handle.ord-sw { margin-bottom: -8px; margin-left: -8px;}
+
+#cpt_crop_editor .jcrop-handle.ord-ne,
+#cpt_crop_editor .jcrop-handle.ord-nw,
+#cpt_crop_editor .jcrop-handle.ord-se,
+#cpt_crop_editor .jcrop-handle.ord-sw { width: 16px; height: 16px; }
 
 
 #cpt_crop_editor .cpt-debug {clear: left; padding-left:5px;}
