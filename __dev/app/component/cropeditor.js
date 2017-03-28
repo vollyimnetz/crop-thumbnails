@@ -113,18 +113,36 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			var that = this;
 			that.deactivateCropArea();
 			
-			var largestWidth = 0;
-			var largestHeight = 0;
-
+			function getPreselect(width,height,ratio) {
+				var selectionArea = [];
+				var x0 = 0;
+				var y0 = 0;
+				var x1 = width;
+				var y1 = height;
+				if(width>height) {
+					if(ratio>1) {
+						y0 = (height / 2) - ((width / ratio) / 2);
+						y1 = (y0 + (width / ratio));
+					} else {
+						x0 = (width / 2) + ((height * ratio) / 2);
+						x1 = (x0 - (height * ratio));
+					}
+				} else {
+					if(ratio>1) {
+						y0 = (height / 2) - ((width / ratio) / 2);
+						y1 = (y0 + (width / ratio));
+					} else {
+						x0 = (width / 2) + ((height * ratio) / 2);
+						x1 = (x0 - (height * ratio));
+					}
+				}
+				return [x0,y0,x1,y1];
+			}
+			
 			var options = {
+				trueSize: [ that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height ],
 				aspectRatio: 0,
-				viewMode:1,//for prevent negetive values
-				checkOrientation:false,
-				background:false, //do not show the grid background
-				autoCropArea:1,
-				zoomable:false,
-				zoomOnTouch:false,
-				zoomOnWheel:false
+				setSelect: []
 			};
 
 			//get the options
@@ -136,14 +154,17 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+i.name+'".');
 				}
 			});
+			
+			options.setSelect = getPreselect(that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height, options.aspectRatio);
 
 			//debug
-			if(that.cropData.debug_js) {
+			if(that.cropData.options.debug_js) {
 				console.info('Cropping options',options);
 			}
 			
-			var cropElement = jQuery(that.$el).find('.cropContainer img');
-			that.croppingApi = new Cropper(cropElement[0], options);
+			jQuery(that.$el).find('img.cptCroppingImage').Jcrop(options,function(){
+				that.croppingApi = this;
+			});
 		},
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {
@@ -182,14 +203,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				that.loading = true;
 				
 				
-				var selection = that.croppingApi.getData();
-				var selectionData = {//needed cause while changing from jcrop to cropperjs i do not want to change the api
-					x:selection.x * that.cropImage.scale,
-					y:selection.y * that.cropImage.scale,
-					x2:(selection.x + selection.width) * that.cropImage.scale,
-					y2:(selection.y + selection.height) * that.cropImage.scale,
-					w:selection.width * that.cropImage.scale,
-					h:selection.height * that.cropImage.scale
+				var selection = that.croppingApi.tellSelect();
+				var selectionData = {
+					x:selection.x,
+					y:selection.y,
+					x2:selection.x2,
+					y2:selection.y2,
+					w:selection.width,
+					h:selection.height
 				};
 				
 				var params = {

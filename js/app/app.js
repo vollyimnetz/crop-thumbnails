@@ -44,57 +44,6 @@ jQuery(document).ready(function($) {
 	});
 });
 
-CROP_THUMBNAILS_VUE.components.loadingcontainer = {
-	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><transition name=\"fade\"><div class=\"loadingMsg\" v-if=\"status===\'loading\'\"><div class=\"cptLoadingSpinner\"></div></div></transition></div>",
-	props:{
-		image : {
-			required: true,
-			type:String
-		}
-	},
-	data:function() {
-		return {
-			status:null
-		};
-	},
-	watch:{
-		image:function() {
-			this.setup();
-		}
-	},
-	mounted:function() {
-		this.setup();
-	},
-	methods:{
-		setup : function() {
-			var that = this;
-			that.setStart();
-			setTimeout(function() {
-				var imgLoad = imagesLoaded( that.$el );
-				imgLoad
-					.once('done',function() {
-						if(that.status!=='failed') {
-							that.setComplete();
-						}
-					})
-					.once('fail',function() {
-						that.setFailed();
-					})
-					;
-			},300);
-		},
-		setComplete : function() {
-			this.status = 'completed';
-		},
-		setStart : function() {
-			this.status = 'loading';
-		},
-		setFailed : function() {
-			this.status = 'failed';
-		}
-	}
-};
-
 if (!Array.prototype.filter) {
 	Array.prototype.filter = function(fun/*, thisArg*/) {
 		'use strict';
@@ -153,6 +102,83 @@ if (!Array.prototype.find) {
 		return undefined;
 	};
 }
+
+/**
+ * Waiting x milliseconds for a final event than call the callback.
+ * @see http://stackoverflow.com/a/4541963
+ */
+var CPT_waitForFinalEvent = (function () {
+	var timers = {};
+	return function (callback, ms, uniqueId) {
+		if (!uniqueId) {
+			uniqueId = "Don't call this twice without a uniqueId";
+		}
+		if (timers[uniqueId]) {
+			clearTimeout (timers[uniqueId]);
+		}
+		timers[uniqueId] = setTimeout(callback, ms);
+	};
+})();
+
+
+/** USAGE ******************
+$(window).resize(function () {
+	CPT_waitForFinalEvent(function(){
+		alert('Resize...');
+	}, 500, "some unique string");
+});
+***************************/
+
+CROP_THUMBNAILS_VUE.components.loadingcontainer = {
+	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><transition name=\"fade\"><div class=\"loadingMsg\" v-if=\"status===\'loading\'\"><div class=\"cptLoadingSpinner\"></div></div></transition></div>",
+	props:{
+		image : {
+			required: true,
+			type:String
+		}
+	},
+	data:function() {
+		return {
+			status:null
+		};
+	},
+	watch:{
+		image:function() {
+			this.setup();
+		}
+	},
+	mounted:function() {
+		this.setup();
+	},
+	methods:{
+		setup : function() {
+			var that = this;
+			that.setStart();
+			setTimeout(function() {
+				var imgLoad = imagesLoaded( that.$el );
+				imgLoad
+					.once('done',function() {
+						if(that.status!=='failed') {
+							that.setComplete();
+						}
+					})
+					.once('fail',function() {
+						that.setFailed();
+					})
+					;
+			},300);
+		},
+		setComplete : function() {
+			this.status = 'completed';
+		},
+		setStart : function() {
+			this.status = 'loading';
+		},
+		setFailed : function() {
+			this.status = 'failed';
+		}
+	}
+};
 
 CROP_THUMBNAILS_VUE.components.cropeditor = {
 	template: "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\"><div class=\"cptWaitingWindow\" v-if=\"loading\"><div class=\"msg\"> {{ lang.waiting }}<div><div class=\"cptLoadingSpinner\"></div></div></div></div><div class=\"mainWindow\"><div class=\"cptSelectionPane\"><div class=\"cptSelectionPaneInner\"><p> <input type=\"checkbox\" :id=\"\'cptSameRatio_\'+_uid\" v-model=\"selectSameRatio\"/> <label :for=\"\'cptSameRatio_\'+_uid\" class=\"cptSameRatioLabel\">{{lang.label_same_ratio}}</label> <button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button></p><ul class=\"cptImageSizelist\"><li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\"><section class=\"cptImageSizeInner\"><header>{{i.nameLabel}}</header><div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div><loadingcontainer :image=\"i.url+\'?cacheBreak=\'+i.cacheBreak\"><div class=\"cptImageBgContainer\" :style=\"{\'background-image\': \'url(\'+i.url+\'?cacheBreak=\'+i.cacheBreak+\')\'}\"></div></loadingcontainer></section></li></ul></div></div><div class=\"cptCropPane\"><div class=\"info\"><h3>{{ lang.rawImage }}</h3><div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div></div> <button type=\"button\" class=\"button cptGenerate\" :class=\"{\'button-primary\':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button><div class=\"cropContainer\"> <img class=\"cptCroppingImage\" :src=\"cropImage.url\"/></div><div> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick(\'js\')\">show JS-Debug</button> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick(\'data\')\">show Data-Debug</button><pre v-if=\"showDebugType===\'data\'\">{{ dataDebug }}</pre><pre v-if=\"showDebugType===\'js\'\"><br/>{{cropImage}}<br/>{{ cropData }}</pre></div><h4>{{ lang.instructions_header }}</h4><ul class=\"step-info\"><li>{{ lang.instructions_step_1 }}</li><li>{{ lang.instructions_step_2 }}</li><li>{{ lang.instructions_step_3 }}</li></ul></div></div></div>",
@@ -269,18 +295,36 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			var that = this;
 			that.deactivateCropArea();
 			
-			var largestWidth = 0;
-			var largestHeight = 0;
-
+			function getPreselect(width,height,ratio) {
+				var selectionArea = [];
+				var x0 = 0;
+				var y0 = 0;
+				var x1 = width;
+				var y1 = height;
+				if(width>height) {
+					if(ratio>1) {
+						y0 = (height / 2) - ((width / ratio) / 2);
+						y1 = (y0 + (width / ratio));
+					} else {
+						x0 = (width / 2) + ((height * ratio) / 2);
+						x1 = (x0 - (height * ratio));
+					}
+				} else {
+					if(ratio>1) {
+						y0 = (height / 2) - ((width / ratio) / 2);
+						y1 = (y0 + (width / ratio));
+					} else {
+						x0 = (width / 2) + ((height * ratio) / 2);
+						x1 = (x0 - (height * ratio));
+					}
+				}
+				return [x0,y0,x1,y1];
+			}
+			
 			var options = {
+				trueSize: [ that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height ],
 				aspectRatio: 0,
-				viewMode:1,//for prevent negetive values
-				checkOrientation:false,
-				background:false, //do not show the grid background
-				autoCropArea:1,
-				zoomable:false,
-				zoomOnTouch:false,
-				zoomOnWheel:false
+				setSelect: []
 			};
 
 			//get the options
@@ -292,14 +336,17 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+i.name+'".');
 				}
 			});
+			
+			options.setSelect = getPreselect(that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height, options.aspectRatio);
 
 			//debug
-			if(that.cropData.debug_js) {
+			if(that.cropData.options.debug_js) {
 				console.info('Cropping options',options);
 			}
 			
-			var cropElement = jQuery(that.$el).find('.cropContainer img');
-			that.croppingApi = new Cropper(cropElement[0], options);
+			jQuery(that.$el).find('img.cptCroppingImage').Jcrop(options,function(){
+				that.croppingApi = this;
+			});
 		},
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {
@@ -338,14 +385,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				that.loading = true;
 				
 				
-				var selection = that.croppingApi.getData();
-				var selectionData = {//needed cause while changing from jcrop to cropperjs i do not want to change the api
-					x:selection.x * that.cropImage.scale,
-					y:selection.y * that.cropImage.scale,
-					x2:(selection.x + selection.width) * that.cropImage.scale,
-					y2:(selection.y + selection.height) * that.cropImage.scale,
-					w:selection.width * that.cropImage.scale,
-					h:selection.height * that.cropImage.scale
+				var selection = that.croppingApi.tellSelect();
+				var selectionData = {
+					x:selection.x,
+					y:selection.y,
+					x2:selection.x2,
+					y2:selection.y2,
+					w:selection.width,
+					h:selection.height
 				};
 				
 				var params = {
@@ -460,14 +507,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 			mounted:function() {
 				console.log('cpt_crop_editor mounted');
 			},
-			components: CROP_THUMBNAILS_VUE.components,
-			data: {
-				test: [
-					{ text: 'test 1' },
-					{ text: 'test 2' },
-					{ text: 'test 3' }
-				]
-			}
+			components: CROP_THUMBNAILS_VUE.components
 		});
 	};
 };

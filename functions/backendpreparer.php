@@ -26,8 +26,9 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'page.php'
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
-			wp_enqueue_style('cropperjs',plugins_url('js/app/vendor/cropper.min.css',dirname(__FILE__)),array(), CROP_THUMBS_VERSION);
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)),array('cropperjs'),CROP_THUMBS_VERSION);
+			
+			wp_enqueue_style('jcrop');
+			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)),array('jcrop'),CROP_THUMBS_VERSION);
 			
 		}
 	}
@@ -43,9 +44,9 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'page-new.php'
 			|| $pagenow == 'upload.php') {
 
-			wp_enqueue_script( 'cropperjs', plugins_url('js/app/vendor/cropper.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'jcrop' );
 			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js',dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','cropperjs'), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js',dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}

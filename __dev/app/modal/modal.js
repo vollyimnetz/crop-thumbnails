@@ -64,14 +64,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 			mounted:function() {
 				console.log('cpt_crop_editor mounted');
 			},
-			components: CROP_THUMBNAILS_VUE.components,
-			data: {
-				test: [
-					{ text: 'test 1' },
-					{ text: 'test 2' },
-					{ text: 'test 3' }
-				]
-			}
+			components: CROP_THUMBNAILS_VUE.components
 		});
 	};
 };

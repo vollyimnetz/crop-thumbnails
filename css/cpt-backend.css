@@ -120,11 +120,12 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 #cpt_crop_editor .cropContainer { margin:.3em 0 .5em; opacity: .5; }
 #cpt_crop_editor .cptEditorInner.cropEditorActive .cropContainer { opacity: 1; }
-#cpt_crop_editor .cropContainer img { max-width: 100%; height:auto; }
+#cpt_crop_editor .cropContainer img.cptCroppingImage { max-width: 100%; height:auto; }
 
 #cpt_crop_editor h4 { margin-bottom:0em;}
 #cpt_crop_editor .step-info { font-size:0.9em; }
 
+#cpt_crop_editor .jcrop-handle.ord-se { width: 16px; height: 16px; margin-bottom: -8px; margin-right: -8px;}
 
 
 #cpt_crop_editor .cpt-debug {clear: left; padding-left:5px;}
