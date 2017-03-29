@@ -16,14 +16,15 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 	},
 	data:function() {
 		return {
-			cropData : null,
-			loading : false,
-			selectSameRatio : true,
-			croppingApi : null,
-			lang : null,
-			nonce:null,
-			showDebugType: null,
-			dataDebug:null
+			cropData : null,//
+			loading : false,//will be true as long as the crop-request is running
+			selectSameRatio : true,//boolean value if same ratio image-sizes should be selected at once
+			croppingApi : null,//the object of the crop-library
+			currentCropSize : null,//the size of the cropp region (needed for lowResWarning)
+			lang : null,//language-variable (filled after initial request)
+			nonce : null,//the nonce for the crop-request
+			showDebugType : null,//the type of the debug to show: null-> no debug open, 'js' -> show jsDebug, 'data' -> show dataDebug
+			dataDebug : null//will be filled after the crop request finished
 		};
 	},
 	mounted:function() {
@@ -72,6 +73,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				imageId : this.imageId,
 				posttype : this.posttype
 			};
+			that.loading = true;
 			jQuery.get(ajaxurl,getParameter,function(responseData) {
 				that.makeAllInactive(responseData.imageSizes);
 				that.addCacheBreak(responseData.imageSizes);
@@ -79,7 +81,36 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				that.lang = that.cropData.lang;
 				that.nonce = that.cropData.nonce;
 				delete that.cropData.nonce;
+			}).always(function() {
+				that.loading = false;
 			});
+		},
+		isLowRes : function(image) {
+			if(!image.active || this.currentCropSize===null) {
+				return false;
+			}
+			if(image.width===0 && this.currentCropSize.height < image.height) {
+				return true;
+			}
+			if(image.height===0 && this.currentCropSize.width < image.width) {
+				return true;
+			}
+			if(image.height===9999) {
+				if(this.currentCropSize.width < image.width) {
+					return true;
+				}
+				return false;
+			}
+			if(image.width===9999) {
+				if(this.currentCropSize.height < image.height) {
+					return true;
+				}
+				return false;
+			}
+			if(this.currentCropSize.width < image.width || this.currentCropSize.height < image.height) {
+				return true;
+			}
+			return false;
 		},
 		toggleActive : function(image) {
 			var newValue = !image.active;
@@ -110,6 +141,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			}
 			imageSizes.forEach(function(i) {
 				i.active = false;
+				i.lowResWarning = false;
 			});
 			this.deactivateCropArea();
 		},
@@ -120,6 +152,17 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			imageSizes.forEach(function(i) {
 				i.cacheBreak = Date.now();
 			});
+		},
+		updateCurrentCrop : function() {
+			var result = null;
+			if(this.croppingApi!==null) {
+				var size = this.croppingApi.tellSelect();
+				result = {
+					width : Math.round(size.w),
+					height : Math.round(size.h)
+				};
+			}
+			this.currentCropSize = result;
 		},
 		activateCropArea : function() {
 			var that = this;
@@ -146,7 +189,8 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			var options = {
 				trueSize: [ that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height ],
 				aspectRatio: 0,
-				setSelect: []
+				setSelect: [],
+				onSelect:that.updateCurrentCrop
 			};
 
 			//get the options
@@ -168,12 +212,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			
 			jQuery(that.$el).find('img.cptCroppingImage').Jcrop(options,function(){
 				that.croppingApi = this;
+				that.updateCurrentCrop();
 			});
 		},
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {
 				this.croppingApi.destroy();
 				this.croppingApi = null;
+				this.currentCropSize = null;
 			}
 		},
 		showDebugClick : function(type) {

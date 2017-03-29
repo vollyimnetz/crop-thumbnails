@@ -96,7 +96,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .cptImageSizeInner header { font-size:1em; font-weight: bold; }
 #cpt_crop_editor .cptImageSizeInner .dimensions { font-size:0.8em; }
 #cpt_crop_editor .cptImageSizeInner .ratio { font-size:0.8em; }
-#cpt_crop_editor .cptImageSizeInner .lowResWarning { font-style: italic; color:#990000; font-size:0.8em; }
+#cpt_crop_editor .cptImageSizeInner .lowResWarning { color: #fff; position: absolute; bottom: 12px; left: 12px; background: #ea6c00; width: 30px; height: 30px; line-height: 28px; font-size: 23px; font-weight: 600; z-index: 1; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
 #cpt_crop_editor .cptImageSizeInner .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; box-shadow: 0 0 1px rgba(0,0,0,0.5); box-sizing: border-box; }
 
 
