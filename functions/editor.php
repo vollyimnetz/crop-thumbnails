@@ -47,7 +47,8 @@ class CropPostThumbnailsEditor {
 			'sourceImageId' => null,
 			'sourceImage' => array(
 				'full' => null,
-				'large' => null
+				'large' => null,
+				'medium_large' => null,
 			),
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($cptSettings->getImageSizes()),
@@ -90,11 +91,9 @@ class CropPostThumbnailsEditor {
 		}
 		
 		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');
-		$largeSourceImage = $this->getUncroppedImageData($imagePostObj->ID, 'large');
-		if(!empty($largeSourceImage['ratio']) && $result['sourceImage']['full']['ratio']===$largeSourceImage['ratio']) {
-			//only add the large image, if its ratio equals the full-image-ratio
-			$result['sourceImage']['large'] = $largeSourceImage;
-		}
+		$result['sourceImage']['large'] = $this->getUncroppedImageData($imagePostObj->ID, 'large');
+		$result['sourceImage']['medium_large'] = $this->getUncroppedImageData($imagePostObj->ID, 'medium_large');
+		
 		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
 		
 		if(!$result['hiddenOnPostType']) {

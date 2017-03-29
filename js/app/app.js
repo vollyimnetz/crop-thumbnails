@@ -252,7 +252,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 };
 
 CROP_THUMBNAILS_VUE.components.cropeditor = {
-	template: "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\"><div class=\"cptWaitingWindow\" v-if=\"loading\"><div class=\"msg\"> {{ lang.waiting }}<div><div class=\"cptLoadingSpinner\"></div></div></div></div><div class=\"mainWindow\"><div class=\"cptSelectionPane\"><div class=\"cptSelectionPaneInner\"><p> <input type=\"checkbox\" :id=\"\'cptSameRatio_\'+_uid\" v-model=\"selectSameRatio\"/> <label :for=\"\'cptSameRatio_\'+_uid\" class=\"cptSameRatioLabel\">{{lang.label_same_ratio}}</label> <button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button></p><ul class=\"cptImageSizelist\"><li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\"><section class=\"cptImageSizeInner\"><header>{{i.nameLabel}}</header><div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div><loadingcontainer :image=\"i.url+\'?cacheBreak=\'+i.cacheBreak\"><div class=\"cptImageBgContainer\" :style=\"{\'background-image\': \'url(\'+i.url+\'?cacheBreak=\'+i.cacheBreak+\')\'}\"></div></loadingcontainer></section></li></ul></div></div><div class=\"cptCropPane\"><div class=\"info\"><h3>{{ lang.rawImage }}</h3><div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div></div> <button type=\"button\" class=\"button cptGenerate\" :class=\"{\'button-primary\':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button><div class=\"cropContainer\"> <img class=\"cptCroppingImage\" :src=\"cropImage.url\"/></div><div> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick(\'js\')\">show JS-Debug</button> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick(\'data\')\">show Data-Debug</button><pre v-if=\"showDebugType===\'data\'\">{{ dataDebug }}</pre><pre v-if=\"showDebugType===\'js\'\"><br/>{{cropImage}}<br/>{{ cropData }}</pre></div><h4>{{ lang.instructions_header }}</h4><ul class=\"step-info\"><li>{{ lang.instructions_step_1 }}</li><li>{{ lang.instructions_step_2 }}</li><li>{{ lang.instructions_step_3 }}</li></ul></div></div></div>",
+	template: "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\"><div class=\"cptWaitingWindow\" v-if=\"loading\"><div class=\"msg\"> {{ lang.waiting }}<div><div class=\"cptLoadingSpinner\"></div></div></div></div><div class=\"mainWindow\"><div class=\"cptSelectionPane\"><div class=\"cptSelectionPaneInner\"><p> <input type=\"checkbox\" :id=\"\'cptSameRatio_\'+_uid\" v-model=\"selectSameRatio\"/> <label :for=\"\'cptSameRatio_\'+_uid\" class=\"cptSameRatioLabel\">{{lang.label_same_ratio}}</label> <button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button></p><ul class=\"cptImageSizelist\"><li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\"><section class=\"cptImageSizeInner\"><header>{{i.nameLabel}}</header><div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div><loadingcontainer :image=\"i.url+\'?cacheBreak=\'+i.cacheBreak\"><div class=\"cptImageBgContainer\" :style=\"{\'background-image\': \'url(\'+i.url+\'?cacheBreak=\'+i.cacheBreak+\')\'}\"></div></loadingcontainer></section></li></ul></div></div><div class=\"cptCropPane\"><div class=\"info\"><h3>{{ lang.rawImage }}</h3><div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div></div> <button type=\"button\" class=\"button cptGenerate\" :class=\"{\'button-primary\':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button><div class=\"cropContainer\"> <img class=\"cptCroppingImage\" :src=\"cropImage.url\"/></div><div> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick(\'js\')\">show JS-Debug</button> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick(\'data\')\">show Data-Debug</button><pre v-if=\"showDebugType===\'data\'\">{{ dataDebug }}</pre><pre v-if=\"showDebugType===\'js\'\"><br/>cropImage:{{cropImage}}<br/>cropData:{{ cropData }}</pre></div><h4>{{ lang.instructions_header }}</h4><ul class=\"step-info\"><li>{{ lang.instructions_step_1 }}</li><li>{{ lang.instructions_step_2 }}</li><li>{{ lang.instructions_step_3 }}</li></ul></div></div></div>",
 	props:{
 		imageId : {
 			required: true,
@@ -284,12 +284,24 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 	},
 	computed:{
 		cropImage : function() {
-			if(this.cropData!==undefined && this.cropData.sourceImage.large!==null && this.cropData.sourceImage.large.width>745) {
-				this.cropData.sourceImage.large.scale = this.cropData.sourceImage.full.width / this.cropData.sourceImage.large.width;
-				return this.cropData.sourceImage.large;
-			} else {
-				this.cropData.sourceImage.full.scale = 1;
-				return this.cropData.sourceImage.full;
+			if(this.cropData!==undefined) {
+				var result = this.cropData.sourceImage.full;
+				var targetRatio = Math.round(result.ratio * 10);
+				if(this.cropData.sourceImage.large!==null 
+					&& this.cropData.sourceImage.large.width>745 
+					&& targetRatio === Math.round(this.cropData.sourceImage.large.ratio * 10)
+					&& this.cropData.sourceImage.full.url !== this.cropData.sourceImage.large.url
+					) {
+					result = this.cropData.sourceImage.large;
+				}
+				if(this.cropData.sourceImage.medium_large!==null
+					&& this.cropData.sourceImage.medium_large.width>745 
+					&& targetRatio === Math.round(this.cropData.sourceImage.medium_large.ratio * 10)
+					&& this.cropData.sourceImage.full.url !== this.cropData.sourceImage.medium_large.url
+					) {
+					result = this.cropData.sourceImage.medium_large;
+				}
+				return result;
 			}
 		},
 		filteredImageSizes : function() {

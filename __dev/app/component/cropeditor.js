@@ -31,12 +31,24 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 	},
 	computed:{
 		cropImage : function() {
-			if(this.cropData!==undefined && this.cropData.sourceImage.large!==null && this.cropData.sourceImage.large.width>745) {
-				this.cropData.sourceImage.large.scale = this.cropData.sourceImage.full.width / this.cropData.sourceImage.large.width;
-				return this.cropData.sourceImage.large;
-			} else {
-				this.cropData.sourceImage.full.scale = 1;
-				return this.cropData.sourceImage.full;
+			if(this.cropData!==undefined) {
+				var result = this.cropData.sourceImage.full;
+				var targetRatio = Math.round(result.ratio * 10);
+				if(this.cropData.sourceImage.large!==null 
+					&& this.cropData.sourceImage.large.width>745 
+					&& targetRatio === Math.round(this.cropData.sourceImage.large.ratio * 10)
+					&& this.cropData.sourceImage.full.url !== this.cropData.sourceImage.large.url
+					) {
+					result = this.cropData.sourceImage.large;
+				}
+				if(this.cropData.sourceImage.medium_large!==null
+					&& this.cropData.sourceImage.medium_large.width>745 
+					&& targetRatio === Math.round(this.cropData.sourceImage.medium_large.ratio * 10)
+					&& this.cropData.sourceImage.full.url !== this.cropData.sourceImage.medium_large.url
+					) {
+					result = this.cropData.sourceImage.medium_large;
+				}
+				return result;
 			}
 		},
 		filteredImageSizes : function() {
