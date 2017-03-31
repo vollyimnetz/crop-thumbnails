@@ -505,6 +505,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		CROP_THUMBNAILS_VUE.app = null;
 		removeModal();
 		$('body').trigger('cropThumbnailModalClosed');
+		document.removeEventListener('keydown', that.closeByEscKey, true);
 	};
 	
 	/**
@@ -516,6 +517,13 @@ CROP_THUMBNAILS_VUE.modal = function() {
 			that.close(event);
 		}
 	};
+	
+	that.closeByEscKey = function(event) {
+		if ( !event.keyCode || event.keyCode === 27 ) {
+			event.stopPropagation();
+			that.close(event);
+		}
+	}
 	
 	that.open = function(imageId,posttype,title) {	
 		
@@ -541,6 +549,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
 		$('#cpt_Modal .cpt_ModalClose').click(that.close);
 		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
+		document.addEventListener('keydown', that.closeByEscKey, true);
 		
 		CROP_THUMBNAILS_VUE.app = new Vue({
 			el:'#cpt_crop_editor',
