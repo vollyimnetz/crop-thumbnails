@@ -49,7 +49,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		var id = imageId;
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
-		modalHtml+= '<div class="cpt_ModalDialog">';
+		modalHtml+= '<div class="cpt_ModalDialog" role="dialog" aria-label="'+$('<div>').text(title).html()+'">';
 		modalHtml+= '<button type="button" class="cpt_ModalClose" aria-label="close">&times;</button>';
 		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div></div>';
 		
