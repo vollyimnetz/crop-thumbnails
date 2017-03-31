@@ -42,7 +42,8 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
 		modalHtml+= '<div class="cpt_ModalDialog">';
-		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
+		modalHtml+= '<button type="button" class="cpt_ModalClose" aria-label="close">&times;</button>';
+		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div></div>';
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
 		modalHtml+= '<cropeditor image-id="'+id+'"';

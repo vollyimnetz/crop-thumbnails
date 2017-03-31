@@ -26,13 +26,13 @@ a.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: no
 /* @see https://www.w3schools.com/howto/howto_css_modals.asp */
 body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; padding:0; box-sizing: border-box; background-color: rgba(0,0,0,0.4); }
-#cpt_Modal .cpt_ModalDialog { background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 100%; max-width: 100%; height: 100%; margin-top:0; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-#cpt_Modal .cpt_ModalHeader { height: 40px; position: relative; }
+#cpt_Modal .cpt_ModalDialog { position: relative; background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 100%; max-width: 100%; height: 100%; margin-top:0; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+#cpt_Modal .cpt_ModalHeader { height: 40px; }
 #cpt_Modal .cpt_ModalHeader .cpt_ModalTitle { font-size:20px; font-weight: 300; line-height: 1; padding: 10px 50px 10px 20px; background: #eee; color:#000; }
 #cpt_Modal .cpt_ModalContent { width:100%; height: 100%; padding-top:30px; margin-top:-30px; box-sizing: border-box; }
 
 /* The Close Button */
-#cpt_Modal .cpt_ModalClose { color: #000; position: absolute; right:0; top:0; font-size: 38px; font-weight: 300; padding:0px 8px 10px 8px; line-height: 30px; }
+#cpt_Modal .cpt_ModalClose { color: #000; border:none; background: transparent; position: absolute; right:0; top:0; font-size: 38px; font-weight: 300; padding:0px 8px 10px 8px; line-height: 30px; }
 #cpt_Modal .cpt_ModalClose:hover,
 #cpt_Modal .cpt_ModalClose:focus { opacity: .6; text-decoration: none; cursor: pointer; }
 
