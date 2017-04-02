@@ -50,12 +50,11 @@ class CropPostThumbnailsEditor {
 				'large' => null,
 				'medium_large' => null,
 			),
+			'sourceImageMeta' => null,
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($cptSettings->getImageSizes()),
 			'lang' => array(
-				'bug' => __('Bug--this should not have occurred.',CROP_THUMBS_LANG),
 				'warningOriginalToSmall' => __('Warning: the original image is too small to be cropped in good quality with this thumbnail size.',CROP_THUMBS_LANG),
-				'selectOne' => __('First, select an image. Then, click once again.',CROP_THUMBS_LANG),
 				'cropDisabled' => __('Cropping is disabled for this post-type.',CROP_THUMBS_LANG),
 				'waiting' => __('Please wait until the images are cropped.',CROP_THUMBS_LANG),
 				'rawImage' => __('Raw',CROP_THUMBS_LANG),
@@ -93,6 +92,12 @@ class CropPostThumbnailsEditor {
 		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');
 		$result['sourceImage']['large'] = $this->getUncroppedImageData($imagePostObj->ID, 'large');
 		$result['sourceImage']['medium_large'] = $this->getUncroppedImageData($imagePostObj->ID, 'medium_large');
+		
+		//image meta data
+		$meta_raw = wp_get_attachment_metadata($imagePostObj->ID);
+		if(!empty($meta_raw['image_meta'])) {
+			$result['sourceImageMeta'] = $meta_raw['image_meta'];
+		}
 		
 		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
 		
