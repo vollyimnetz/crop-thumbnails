@@ -22,7 +22,7 @@
 					<li v-for="i in filteredImageSizes" :class="{active : i.active}" @click="toggleActive(i)">
 						<section class="cptImageSizeInner">
 							<header>{{i.nameLabel}}</header>
-							<!--<div class="lowResWarning">{{lang.lowResWarning}}</div>-->
+							<div class="lowResWarning" v-if="isLowRes(i)"><span :title="lang.lowResWarning">!</span></div>
 							<div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
 							<div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
 							
@@ -50,7 +50,7 @@
 				<button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
 				<button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
 				<pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
-				<pre v-if="showDebugType==='js'"><br />{{cropImage}}<br />{{ cropData }}</pre>
+				<pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
 			</div>
 	
 			<h4>{{ lang.instructions_header }}</h4>

@@ -23,6 +23,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		CROP_THUMBNAILS_VUE.app = null;
 		removeModal();
 		$('body').trigger('cropThumbnailModalClosed');
+		document.removeEventListener('keydown', that.closeByEscKey, true);
 	};
 	
 	/**
@@ -35,14 +36,22 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		}
 	};
 	
+	that.closeByEscKey = function(event) {
+		if ( !event.keyCode || event.keyCode === 27 ) {
+			event.stopPropagation();
+			that.close(event);
+		}
+	}
+	
 	that.open = function(imageId,posttype,title) {	
 		
 		
 		var id = imageId;
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
-		modalHtml+= '<div class="cpt_ModalDialog">';
-		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div><span class="cpt_ModalClose">&times;</span></div>';
+		modalHtml+= '<div class="cpt_ModalDialog" role="dialog" aria-label="'+$('<div>').text(title).html()+'">';
+		modalHtml+= '<button type="button" class="cpt_ModalClose" aria-label="close">&times;</button>';
+		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div></div>';
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
 		modalHtml+= '<cropeditor image-id="'+id+'"';
@@ -58,20 +67,14 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
 		$('#cpt_Modal .cpt_ModalClose').click(that.close);
 		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
+		document.addEventListener('keydown', that.closeByEscKey, true);
 		
 		CROP_THUMBNAILS_VUE.app = new Vue({
 			el:'#cpt_crop_editor',
 			mounted:function() {
 				console.log('cpt_crop_editor mounted');
 			},
-			components: CROP_THUMBNAILS_VUE.components,
-			data: {
-				test: [
-					{ text: 'test 1' },
-					{ text: 'test 2' },
-					{ text: 'test 3' }
-				]
-			}
+			components: CROP_THUMBNAILS_VUE.components
 		});
 	};
 };

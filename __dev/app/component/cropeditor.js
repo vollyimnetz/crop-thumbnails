@@ -16,14 +16,15 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 	},
 	data:function() {
 		return {
-			cropData : null,
-			loading : false,
-			selectSameRatio : true,
-			croppingApi : null,
-			lang : null,
-			nonce:null,
-			showDebugType: null,
-			dataDebug:null
+			cropData : null,//
+			loading : false,//will be true as long as the crop-request is running
+			selectSameRatio : true,//boolean value if same ratio image-sizes should be selected at once
+			croppingApi : null,//the object of the crop-library
+			currentCropSize : null,//the size of the cropp region (needed for lowResWarning)
+			lang : null,//language-variable (filled after initial request)
+			nonce : null,//the nonce for the crop-request
+			showDebugType : null,//the type of the debug to show: null-> no debug open, 'js' -> show jsDebug, 'data' -> show dataDebug
+			dataDebug : null//will be filled after the crop request finished
 		};
 	},
 	mounted:function() {
@@ -31,12 +32,24 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 	},
 	computed:{
 		cropImage : function() {
-			if(this.cropData!==undefined && this.cropData.sourceImage.large!==null && this.cropData.sourceImage.large.width>745) {
-				this.cropData.sourceImage.large.scale = this.cropData.sourceImage.full.width / this.cropData.sourceImage.large.width;
-				return this.cropData.sourceImage.large;
-			} else {
-				this.cropData.sourceImage.full.scale = 1;
-				return this.cropData.sourceImage.full;
+			if(this.cropData!==undefined) {
+				var result = this.cropData.sourceImage.full;
+				var targetRatio = Math.round(result.ratio * 10);
+				if(this.cropData.sourceImage.large!==null 
+					&& this.cropData.sourceImage.large.width>745 
+					&& targetRatio === Math.round(this.cropData.sourceImage.large.ratio * 10)
+					&& this.cropData.sourceImage.full.url !== this.cropData.sourceImage.large.url
+					) {
+					result = this.cropData.sourceImage.large;
+				}
+				if(this.cropData.sourceImage.medium_large!==null
+					&& this.cropData.sourceImage.medium_large.width>745 
+					&& targetRatio === Math.round(this.cropData.sourceImage.medium_large.ratio * 10)
+					&& this.cropData.sourceImage.full.url !== this.cropData.sourceImage.medium_large.url
+					) {
+					result = this.cropData.sourceImage.medium_large;
+				}
+				return result;
 			}
 		},
 		filteredImageSizes : function() {
@@ -60,6 +73,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				imageId : this.imageId,
 				posttype : this.posttype
 			};
+			that.loading = true;
 			jQuery.get(ajaxurl,getParameter,function(responseData) {
 				that.makeAllInactive(responseData.imageSizes);
 				that.addCacheBreak(responseData.imageSizes);
@@ -67,7 +81,36 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				that.lang = that.cropData.lang;
 				that.nonce = that.cropData.nonce;
 				delete that.cropData.nonce;
+			}).always(function() {
+				that.loading = false;
 			});
+		},
+		isLowRes : function(image) {
+			if(!image.active || this.currentCropSize===null) {
+				return false;
+			}
+			if(image.width===0 && this.currentCropSize.height < image.height) {
+				return true;
+			}
+			if(image.height===0 && this.currentCropSize.width < image.width) {
+				return true;
+			}
+			if(image.height===9999) {
+				if(this.currentCropSize.width < image.width) {
+					return true;
+				}
+				return false;
+			}
+			if(image.width===9999) {
+				if(this.currentCropSize.height < image.height) {
+					return true;
+				}
+				return false;
+			}
+			if(this.currentCropSize.width < image.width || this.currentCropSize.height < image.height) {
+				return true;
+			}
+			return false;
 		},
 		toggleActive : function(image) {
 			var newValue = !image.active;
@@ -98,6 +141,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			}
 			imageSizes.forEach(function(i) {
 				i.active = false;
+				i.lowResWarning = false;
 			});
 			this.deactivateCropArea();
 		},
@@ -109,22 +153,44 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				i.cacheBreak = Date.now();
 			});
 		},
+		updateCurrentCrop : function() {
+			var result = null;
+			if(this.croppingApi!==null) {
+				var size = this.croppingApi.tellSelect();
+				result = {
+					width : Math.round(size.w),
+					height : Math.round(size.h)
+				};
+			}
+			this.currentCropSize = result;
+		},
 		activateCropArea : function() {
 			var that = this;
 			that.deactivateCropArea();
 			
-			var largestWidth = 0;
-			var largestHeight = 0;
-
+			function getPreselect(width,height,targetRatio) {
+				var x0 = 0;
+				var y0 = 0;
+				var x1 = width;
+				var y1 = height;
+				var sourceRatio = width/height;
+				
+				if(sourceRatio <= targetRatio) {
+					y0 = (height / 2) - ((width / targetRatio) / 2);
+					y1 = height-y0;
+				} else {
+					x0 = (width / 2) - ((height * targetRatio) / 2);
+					x1 = width-x0;
+				}
+				var result = [x0,y0,x1,y1];
+				return result;
+			}
+			
 			var options = {
+				trueSize: [ that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height ],
 				aspectRatio: 0,
-				viewMode:1,//for prevent negetive values
-				checkOrientation:false,
-				background:false, //do not show the grid background
-				autoCropArea:1,
-				zoomable:false,
-				zoomOnTouch:false,
-				zoomOnWheel:false
+				setSelect: [],
+				onSelect:that.updateCurrentCrop
 			};
 
 			//get the options
@@ -136,19 +202,24 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+i.name+'".');
 				}
 			});
+			
+			options.setSelect = getPreselect(that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height, options.aspectRatio);
 
 			//debug
-			if(that.cropData.debug_js) {
+			if(that.cropData.options.debug_js) {
 				console.info('Cropping options',options);
 			}
 			
-			var cropElement = jQuery(that.$el).find('.cropContainer img');
-			that.croppingApi = new Cropper(cropElement[0], options);
+			jQuery(that.$el).find('img.cptCroppingImage').Jcrop(options,function(){
+				that.croppingApi = this;
+				that.updateCurrentCrop();
+			});
 		},
 		deactivateCropArea : function() {
 			if(this.croppingApi!==null) {
 				this.croppingApi.destroy();
 				this.croppingApi = null;
+				this.currentCropSize = null;
 			}
 		},
 		showDebugClick : function(type) {
@@ -181,23 +252,12 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			if(!that.loading && that.croppingApi!==null) {
 				that.loading = true;
 				
-				
-				var selection = that.croppingApi.getData();
-				var selectionData = {//needed cause while changing from jcrop to cropperjs i do not want to change the api
-					x:selection.x * that.cropImage.scale,
-					y:selection.y * that.cropImage.scale,
-					x2:(selection.x + selection.width) * that.cropImage.scale,
-					y2:(selection.y + selection.height) * that.cropImage.scale,
-					w:selection.width * that.cropImage.scale,
-					h:selection.height * that.cropImage.scale
-				};
-				
 				var params = {
 					action : 'cptSaveThumbnail',
 					_ajax_nonce : that.nonce,
 					cookie : encodeURIComponent(document.cookie),
 					crop_thumbnails : JSON.stringify({
-						'selection' : selectionData,
+						'selection' : that.croppingApi.tellSelect(),
 						'sourceImageId' : that.cropData.sourceImageId,
 						'activeImageSizes' : getDataOfActiveImageSizes()
 					})
