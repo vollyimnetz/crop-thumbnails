@@ -180,8 +180,104 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 	}
 };
 
+CROP_THUMBNAILS_VUE.components.message = {
+	template: "<div class=\"notice notice-warning is-dismissible cptMessage\" aria-role=\"alert\" v-if=\"!closed\"><p><slot></slot></p> <button type=\"button\" class=\"notice-dismiss\" @click=\"close()\" aria-label=\"close\"></button></div>",
+	props:{},
+	data:function() {
+		return {
+			closed:false
+		};
+	},
+	methods:{
+		close : function() {
+			this.closed = true;
+		}
+	}
+};
+
+CROP_THUMBNAILS_VUE.modal = function() {
+	var $ = jQuery;
+	var that = this;
+	
+	function removeModal() {
+		$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
+		$('#cpt_Modal').remove();
+		$('body').removeClass('cpt_ModalIsOpen');
+	}
+	
+	/**
+	 * Should be called when the close-button is clicked.
+	 * Will trigger the "cropThumbnailModalClosed"-event to the body on close,
+	 * so everyone that is up to, could build a cache-breaker on their images.
+	 * HOW-TO cache-break:
+	 * $('body').on('cropThumbnailModalClosed',function() {
+	 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
+	 * });
+	 * @var Event
+	 */
+	that.close = function(event) {
+		CROP_THUMBNAILS_VUE.app.$destroy();
+		CROP_THUMBNAILS_VUE.app = null;
+		removeModal();
+		$('body').trigger('cropThumbnailModalClosed');
+		document.removeEventListener('keydown', that.closeByEscKey, true);
+	};
+	
+	/**
+	 * Should be called when the background is clicked
+	 * @var Event
+	 */
+	that.closeByBackground = function(event) {
+		if(event.target==document.getElementById('cpt_Modal')) {
+			that.close(event);
+		}
+	};
+	
+	that.closeByEscKey = function(event) {
+		if ( !event.keyCode || event.keyCode === 27 ) {
+			event.stopPropagation();
+			that.close(event);
+		}
+	}
+	
+	that.open = function(imageId,posttype,title) {	
+		
+		
+		var id = imageId;
+		var modalHtml = '';
+		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
+		modalHtml+= '<div class="cpt_ModalDialog" role="dialog" aria-label="'+$('<div>').text(title).html()+'">';
+		modalHtml+= '<button type="button" class="cpt_ModalClose" aria-label="close">&times;</button>';
+		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div></div>';
+		
+		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
+		modalHtml+= '<cropeditor image-id="'+id+'"';
+		if(typeof posttype === 'string') {
+			modalHtml+= ' posttype="'+posttype+'"';
+		}
+		modalHtml+= '></cropeditor>'
+		modalHtml+= '</div>';//end cpt_ModalContent
+		modalHtml+= '</div>';//end cpt_ModalDialog
+		modalHtml+= '</div>';//end cpt_Modal;
+		
+		
+		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
+		$('#cpt_Modal .cpt_ModalClose').click(that.close);
+		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
+		document.addEventListener('keydown', that.closeByEscKey, true);
+		
+		CROP_THUMBNAILS_VUE.app = new Vue({
+			el:'#cpt_crop_editor',
+			mounted:function() {
+				console.log('cpt_crop_editor mounted');
+			},
+			components: CROP_THUMBNAILS_VUE.components
+		});
+	};
+};
+
 CROP_THUMBNAILS_VUE.components.cropeditor = {
-	template: "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\"><div class=\"cptWaitingWindow\" v-if=\"loading\"><div class=\"msg\"> {{ lang.waiting }}<div><div class=\"cptLoadingSpinner\"></div></div></div></div><div class=\"mainWindow\"><div class=\"cptSelectionPane\"><div class=\"cptSelectionPaneInner\"><p> <input type=\"checkbox\" :id=\"\'cptSameRatio_\'+_uid\" v-model=\"selectSameRatio\"/> <label :for=\"\'cptSameRatio_\'+_uid\" class=\"cptSameRatioLabel\">{{lang.label_same_ratio}}</label> <button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button></p><ul class=\"cptImageSizelist\"><li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\"><section class=\"cptImageSizeInner\"><header>{{i.nameLabel}}</header><div class=\"lowResWarning\" v-if=\"isLowRes(i)\"><span :title=\"lang.lowResWarning\">!</span></div><div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div><loadingcontainer :image=\"i.url+\'?cacheBreak=\'+i.cacheBreak\"><div class=\"cptImageBgContainer\" :style=\"{\'background-image\': \'url(\'+i.url+\'?cacheBreak=\'+i.cacheBreak+\')\'}\"></div></loadingcontainer></section></li></ul></div></div><div class=\"cptCropPane\"><div class=\"info\"><h3>{{ lang.rawImage }}</h3><div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div></div> <button type=\"button\" class=\"button cptGenerate\" :class=\"{\'button-primary\':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button><div class=\"cropContainer\"> <img class=\"cptCroppingImage\" :src=\"cropImage.url\"/></div><div> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick(\'js\')\">show JS-Debug</button> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick(\'data\')\">show Data-Debug</button><pre v-if=\"showDebugType===\'data\'\">{{ dataDebug }}</pre><pre v-if=\"showDebugType===\'js\'\"><br/>cropImage:{{cropImage}}<br/>cropData:{{ cropData }}</pre></div><h4>{{ lang.instructions_header }}</h4><ul class=\"step-info\"><li>{{ lang.instructions_step_1 }}</li><li>{{ lang.instructions_step_2 }}</li><li>{{ lang.instructions_step_3 }}</li></ul></div></div></div>",
+	template: "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\"><div class=\"cptWaitingWindow\" v-if=\"loading\"><div class=\"msg\"> {{ lang.waiting }}<div><div class=\"cptLoadingSpinner\"></div></div></div></div><div class=\"mainWindow\"><div class=\"cptSelectionPane\"><div class=\"cptSelectionPaneInner\"><message v-if=\"sourceImageHasOrientation\">{{lang.message_image_orientation}}</message><p> <label class=\"cptSameRatioLabel\"><input type=\"checkbox\" v-model=\"selectSameRatio\"/> {{lang.label_same_ratio}}</label> <button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button></p><ul class=\"cptImageSizelist\"><li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\"><section class=\"cptImageSizeInner\"><header>{{i.nameLabel}}</header><div class=\"lowResWarning\" v-if=\"isLowRes(i)\"><span :title=\"lang.lowResWarning\">!</span></div><div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div><loadingcontainer :image=\"i.url+\'?cacheBreak=\'+i.cacheBreak\"><div class=\"cptImageBgContainer\" :style=\"{\'background-image\': \'url(\'+i.url+\'?cacheBreak=\'+i.cacheBreak+\')\'}\"></div></loadingcontainer></section></li></ul></div></div><div class=\"cptCropPane\"><div class=\"info\"><h3>{{ lang.rawImage }}</h3><div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div><div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div></div> <button type=\"button\" class=\"button cptGenerate\" :class=\"{\'button-primary\':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button><div class=\"cropContainer\"> <img class=\"cptCroppingImage\" :src=\"cropImage.url\"/></div><div> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick(\'js\')\">show JS-Debug</button> <button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick(\'data\')\">show Data-Debug</button><pre v-if=\"showDebugType===\'data\'\">{{ dataDebug }}</pre><pre v-if=\"showDebugType===\'js\'\"><br/>cropImage:{{cropImage}}<br/>cropData:{{ cropData }}</pre></div><h4>{{ lang.instructions_header }}</h4><ul class=\"step-info\"><li>{{ lang.instructions_step_1 }}</li><li>{{ lang.instructions_step_2 }}</li><li>{{ lang.instructions_step_3 }}</li></ul></div></div></div>",
 	props:{
 		imageId : {
 			required: true,
@@ -194,7 +290,8 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 		}
 	},
 	components: {
-		loadingcontainer : CROP_THUMBNAILS_VUE.components.loadingcontainer
+		loadingcontainer : CROP_THUMBNAILS_VUE.components.loadingcontainer,
+		message : CROP_THUMBNAILS_VUE.components.message
 	},
 	data:function() {
 		return {
@@ -245,6 +342,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				.filter(function(elem) {
 					return elem.active;
 				});
+		},
+		sourceImageHasOrientation : function() {
+			try {
+				if(typeof this.cropData.sourceImageMeta.orientation === 'string' && this.cropData.sourceImageMeta.orientation !== '1' && this.cropData.sourceImageMeta.orientation !== '0') {
+					return true;
+				}
+			} catch(e) {}
+			return false;
 		}
 	},
 	methods:{
@@ -478,85 +583,4 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			}
 		}
 	}
-};
-
-CROP_THUMBNAILS_VUE.modal = function() {
-	var $ = jQuery;
-	var that = this;
-	
-	function removeModal() {
-		$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
-		$('#cpt_Modal').remove();
-		$('body').removeClass('cpt_ModalIsOpen');
-	}
-	
-	/**
-	 * Should be called when the close-button is clicked.
-	 * Will trigger the "cropThumbnailModalClosed"-event to the body on close,
-	 * so everyone that is up to, could build a cache-breaker on their images.
-	 * HOW-TO cache-break:
-	 * $('body').on('cropThumbnailModalClosed',function() {
-	 *     CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
-	 * });
-	 * @var Event
-	 */
-	that.close = function(event) {
-		CROP_THUMBNAILS_VUE.app.$destroy();
-		CROP_THUMBNAILS_VUE.app = null;
-		removeModal();
-		$('body').trigger('cropThumbnailModalClosed');
-		document.removeEventListener('keydown', that.closeByEscKey, true);
-	};
-	
-	/**
-	 * Should be called when the background is clicked
-	 * @var Event
-	 */
-	that.closeByBackground = function(event) {
-		if(event.target==document.getElementById('cpt_Modal')) {
-			that.close(event);
-		}
-	};
-	
-	that.closeByEscKey = function(event) {
-		if ( !event.keyCode || event.keyCode === 27 ) {
-			event.stopPropagation();
-			that.close(event);
-		}
-	}
-	
-	that.open = function(imageId,posttype,title) {	
-		
-		
-		var id = imageId;
-		var modalHtml = '';
-		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
-		modalHtml+= '<div class="cpt_ModalDialog" role="dialog" aria-label="'+$('<div>').text(title).html()+'">';
-		modalHtml+= '<button type="button" class="cpt_ModalClose" aria-label="close">&times;</button>';
-		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div></div>';
-		
-		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
-		modalHtml+= '<cropeditor image-id="'+id+'"';
-		if(typeof posttype === 'string') {
-			modalHtml+= ' posttype="'+posttype+'"';
-		}
-		modalHtml+= '></cropeditor>'
-		modalHtml+= '</div>';//end cpt_ModalContent
-		modalHtml+= '</div>';//end cpt_ModalDialog
-		modalHtml+= '</div>';//end cpt_Modal;
-		
-		
-		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
-		$('#cpt_Modal .cpt_ModalClose').click(that.close);
-		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
-		document.addEventListener('keydown', that.closeByEscKey, true);
-		
-		CROP_THUMBNAILS_VUE.app = new Vue({
-			el:'#cpt_crop_editor',
-			mounted:function() {
-				console.log('cpt_crop_editor mounted');
-			},
-			components: CROP_THUMBNAILS_VUE.components
-		});
-	};
 };

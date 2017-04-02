@@ -12,7 +12,8 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 		}
 	},
 	components: {
-		loadingcontainer : CROP_THUMBNAILS_VUE.components.loadingcontainer
+		loadingcontainer : CROP_THUMBNAILS_VUE.components.loadingcontainer,
+		message : CROP_THUMBNAILS_VUE.components.message
 	},
 	data:function() {
 		return {
@@ -63,6 +64,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				.filter(function(elem) {
 					return elem.active;
 				});
+		},
+		sourceImageHasOrientation : function() {
+			try {
+				if(typeof this.cropData.sourceImageMeta.orientation === 'string' && this.cropData.sourceImageMeta.orientation !== '1' && this.cropData.sourceImageMeta.orientation !== '0') {
+					return true;
+				}
+			} catch(e) {}
+			return false;
 		}
 	},
 	methods:{

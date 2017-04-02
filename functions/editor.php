@@ -70,6 +70,7 @@ class CropPostThumbnailsEditor {
 				'ratio' => __('Ratio:',CROP_THUMBS_LANG),
 				'cropped' => __('cropped',CROP_THUMBS_LANG),
 				'lowResWarning' => __('Original image size too small for good crop quality!',CROP_THUMBS_LANG),
+				'message_image_orientation' => __('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.',CROP_THUMBS_LANG)
 			),
 			'nonce' => wp_create_nonce($cptSettings->getNonceBase())
 		);

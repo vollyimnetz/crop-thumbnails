@@ -110,7 +110,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 #cpt_crop_editor .loadingcontainer .fade-enter, 
 #cpt_crop_editor .loadingcontainer .fade-leave-to { opacity: 0; }
 
-#cpt_crop_editor .lbl-cpt-same-ratio {font-size:0.9em;}
+#cpt_crop_editor .cptSameRatioLabel { display: inline-block; margin:.3em 1em 0.3em 0; }
 
 #cpt_crop_editor .cptSelectionPane>div>p { padding-left:1em; padding-right: 1em; margin:.3em; }
 

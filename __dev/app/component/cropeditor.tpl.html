@@ -13,9 +13,12 @@
 	<div class="mainWindow">
 		<div class="cptSelectionPane">
 			<div class="cptSelectionPaneInner">
+				<message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</message>
 				<p>
-					<input type="checkbox" :id="'cptSameRatio_'+_uid"  v-model="selectSameRatio"  />
-					<label :for="'cptSameRatio_'+_uid" class="cptSameRatioLabel">{{lang.label_same_ratio}}</label>
+					<label class="cptSameRatioLabel">
+						<input type="checkbox" v-model="selectSameRatio" />
+						{{lang.label_same_ratio}}
+					</label>
 					<button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
 				</p>
 				<ul class="cptImageSizelist">
