@@ -25,7 +25,7 @@
 					<li v-for="i in filteredImageSizes" :class="{active : i.active}" @click="toggleActive(i)">
 						<section class="cptImageSizeInner">
 							<header>{{i.nameLabel}}</header>
-							<div class="lowResWarning" v-if="isLowRes(i)"><span :title="lang.lowResWarning">!</span></div>
+							<div class="lowResWarning" v-if="isLowRes(i)" :title="lang.lowResWarning"><span>!</span></div>
 							<div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
 							<div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
 							
