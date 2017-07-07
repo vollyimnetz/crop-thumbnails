@@ -47,7 +47,7 @@ class CropPostThumbnailsBackendPreparer {
 	 * adds the links into post-types and the media-library
 	 */
 	function addLinksToAdmin() {
-
+		
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
@@ -67,6 +67,11 @@ jQuery(document).ready(function($) {
 			img.attr('src',imageUrlArray[0]+'?&cacheBreak='+(new Date()).getTime());
 		}
 	};
+	
+	/**
+	 * Global accessable id of the current post (will be null if no post-element is present)
+	 */
+	CROP_THUMBNAILS_CURRENT_POST_ID = null;
 	
 	/**
 	 * Adds a button to the featured image metabox.
@@ -124,6 +129,7 @@ jQuery(document).ready(function($) {
 		if (post_id_hidden) {
 
 			post_id_hidden = parseInt(post_id_hidden.val());
+			CROP_THUMBNAILS_CURRENT_POST_ID = post_id_hidden;
 
 			/**
 			 * add link on top of editor *
@@ -209,6 +215,9 @@ jQuery(document).ready(function($) {
 		var url = ajaxurl+'?action=croppostthumb_ajax';
 		for(var v in data) {
 			url+='&amp;'+v+'='+data[v];
+		}
+		if(CROP_THUMBNAILS_CURRENT_POST_ID!==null) {
+			url+='&amp;parent_post_id='+CROP_THUMBNAILS_CURRENT_POST_ID;
 		}
 
 		var content = $('<div><iframe src="'+url+'"></iframe></div>');
