@@ -121,6 +121,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 0.10.14 =
+* bugfix: add mime-type to image-metadata (the mime-type was deleted by crop-thumbnails before unintentional)
+
 = 0.10.13 =
 * bugfix: filter-settings will work again in media-dialog
 
