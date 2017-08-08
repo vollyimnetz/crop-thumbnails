@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Tested up to: 4.7
-Stable tag: trunk
+Stable tag: 0.10.14
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
