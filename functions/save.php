@@ -118,11 +118,12 @@ class CptSaveThumbnail {
 				
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
+					$filetype = wp_check_filetype( $_filepath );
 					$_new_meta = array(
 						'file'=>$_filepath_info['basename'],
 						'width'=>intval($crop_width),
 						'height'=>intval($crop_height),
-						'mime-type' => mime_content_type($_filepath)
+						'mime-type' => $filetype['type']
 					);
 					if(!empty($dbImageSizes[$_imageSize->name]['crop'])) {
 						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
