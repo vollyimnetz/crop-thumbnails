@@ -48,13 +48,6 @@
 			<div class="cropContainer">
 				<img class="cptCroppingImage" :src="cropImage.url" />
 			</div>
-			
-			<div>
-				<button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
-				<button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
-				<pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
-				<pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
-			</div>
 	
 			<h4>{{ lang.instructions_header }}</h4>
 			<ul class="step-info">
@@ -62,6 +55,13 @@
 				<li>{{ lang.instructions_step_2 }}</li>
 				<li>{{ lang.instructions_step_3 }}</li>
 			</ul>
+
+			<div>
+				<button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
+				<button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
+				<pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
+				<pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
+			</div>
 		</div>
 	</div>
 </div>

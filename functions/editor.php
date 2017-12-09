@@ -61,7 +61,7 @@ class CropPostThumbnailsEditor {
 				'pixel' => esc_html__('pixel','cpt_lang'),
 				'instructions_header' => esc_html__('Quick Instructions','cpt_lang'),
 				'instructions_step_1' => esc_html__('Step 1: Choose an image-size from the list.','cpt_lang'),
-				'instructions_step_2' => esc_html__('Step 2: Use your mouse to change the size of the rectangle on the image above.','cpt_lang'),
+				'instructions_step_2' => esc_html__('Step 2: Change the selection are of the image above.','cpt_lang'),
 				'instructions_step_3' => str_replace('&quot;','"', esc_html__('Step 3: Click on "Save Crop".','cpt_lang')),
 				'label_crop' => esc_html__('Save Crop','cpt_lang'),
 				'label_same_ratio' => esc_html__('Crop all images with same ratio at once','cpt_lang'),
