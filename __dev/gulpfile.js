@@ -100,11 +100,7 @@ gulp.task('app',['app.scripts'],function() {});
 gulp.task('build', ['vendor','app'], function() {});
 gulp.task('deploy', ['build'],function() {});
 
-<<<<<<< HEAD
-gulp.task('svn_export',['build'], function() {
-=======
 gulp.task('svn_export',[], function() {
->>>>>>> jsapp
 	
 	if(typeof settings.svnExportFolder !== 'string') {
 		console.log(gulpUtil.colors.black.bgYellow(' You have to define an export folder in your developmentSettings.js! '));
