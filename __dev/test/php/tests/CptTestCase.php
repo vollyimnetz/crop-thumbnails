@@ -3,7 +3,6 @@ define('TEST_PLUGIN_BASE',__DIR__.'/../../../..');
 
 \WP_Mock::bootstrap();
 
-define('CROP_THUMBS_LANG','cpt_lang');
 
 /** END global wordpress functions **/
 abstract class TestCase extends PHPUnit_Framework_TestCase {

@@ -124,6 +124,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * reviewed dynamic sizes: filenames will no longer be changed
 * fix image-metadata polution
 * refactoring and cleanup a lot of the code
+* change from a language constant to 'cpt_lang' (as recommended by developer guide)
 
 = 0.10.15 =
 * bugfix: use wordpress-function to determine mime-type, as some servers do not define "mime_content_type" (Thank you Eskil Keskikangas for the submission)
@@ -211,7 +212,6 @@ If you fork and planning to publish the forked plugin, please contact me.
 * fix warning: when settings are saved
 
 = 0.8.0 =
-* change Constant from CPT_LANG to CROP_THUMBS_LANG
 * change Constant from CPT_VERSION to CROP_THUMBS_VERSION
 * bug fix: wrong calculated scale in the cpt-crop.js (selection will again always fill the maximum space)
 * change behavior: on landscape-ratio-images the selection will be initial in the middle of the image (portrait-ratio-images stay the same - i asume that portrait-ratio images are mostly portraits)
