@@ -1,10 +1,10 @@
 <?php
 $cptSave = new CptSaveThumbnail();
-add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnail') );
+add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnailAjaxWrap') );
 
 class CptSaveThumbnail {
 	
-	private $debug = array();
+	private static $debug = array();
 	
 	/**
 	 * Handle-function called via ajax request.
@@ -12,166 +12,220 @@ class CptSaveThumbnail {
 	 * Input parameters:
 	 *    * $_REQUEST['selection'] - json-object - data of the selection/crop
 	 *    * $_REQUEST['raw_values'] - json-object - data of the original image
-	 *    * $_REQUEST['active_values'] - json-array - array with data of the images to crop
-	 *    * $_REQUEST['same_ratio_active'] - boolean - was the same_ratio_checkbox checked or not
+	 *    * $_REQUEST['activeImageSizes'] - json-array - array with data of the images to crop
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
 	 * Called die() at the end.
 	 */
-	function saveThumbnail() {
+	public function saveThumbnail() {
 		global $cptSettings;
-		$json_return = array();
+		$jsonResult = array();
+		$settings = $cptSettings->getOptions();
 		
 		try {
-			/** get data **/
-			$options = $cptSettings->getOptions();
-			//from $_REQUEST
-			$selection = json_decode(stripcslashes($_REQUEST['selection']));
-			$sourceImgData = json_decode(stripcslashes($_REQUEST['raw_values']));
-			$targetImgData = json_decode(stripcslashes($_REQUEST['active_values']));
+			$input = $this->getValidatedInput();
+			
+			
+			$sourceImgPath = get_attached_file( $input->sourceImageId );
+			if(empty($sourceImgPath)) {
+				throw new Exception(esc_html__("ERROR: Can't find original image file!",'cpt_lang'), 1);
+			}
+			
+			
+			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
+			if(empty($imageMetadata)) {
+				throw new Exception(esc_html__("ERROR: Can't find original image metadata!",'cpt_lang'), 1);
+			}
 			
 			//from DB
 			$dbImageSizes = $cptSettings->getImageSizes();
 			
-			$obj = get_post($sourceImgData->id);
-			$sourceImgPath = get_attached_file( $obj->ID );
-			$post_metadata = wp_get_attachment_metadata($obj->ID, true);//get the attachement metadata of the post
-			
-			$this->validation($selection,$obj,$sourceImgPath,$post_metadata);
-			
-			
-			#$debug.= "\nselection\n".print_r($selection,true);
-			#$debug.= "\ntargetImgData\n".print_r($sourceImgData,true);
-			#$debug.= "\ntargetImgData\n".print_r($targetImgData,true);
-			#$debug.= "\nimageObject\n".print_r($obj,true);
-			#$debug.= "\nsource:".$sourceImgPath."\n";
-			
 			/**
-			 * will be true if the image format isn't in the attachements metadata, 
+			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
 			 * and Wordpress doesn't know about the image file
 			 */
-			$_changed_image_format = false;
+			$changedImageName = array();
 			$_processing_error = array();
-			foreach($targetImgData as $_imageSize) {
-				$this->addDebug('submitted image-data');
-				$this->addDebug(print_r($_imageSize,true));
-				$_delete_old_file = '';
-				if(!$this->isImageSizeValid($_imageSize,$dbImageSizes)) {
-					$this->addDebug("Image size not valid.");
+			foreach($input->activeImageSizes as $activeImageSize) {
+				self::addDebug('submitted image-data');
+				self::addDebug($activeImageSize);
+				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
+					self::addDebug("Image size not valid.");
 					continue;
 				}
-				if(empty($post_metadata['sizes'][$_imageSize->name])) {
-					$_changed_image_format = true;
+				
+				$oldFile_toDelete = '';
+				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
+					$changedImageName[ $activeImageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
-					if($post_metadata['sizes'][$_imageSize->name]['width'] != intval($_imageSize->width)
-							|| $post_metadata['sizes'][$_imageSize->name]['height'] != intval($_imageSize->height) ) {
-							
-						$_delete_old_file = $post_metadata['sizes'][$_imageSize->name]['file'];
-						$_changed_image_format = true;		
+					if($imageMetadata['sizes'][$activeImageSize->name]['width'] != intval($activeImageSize->width) || $imageMetadata['sizes'][$activeImageSize->name]['height'] != intval($activeImageSize->height) ) {
+						$oldFile_toDelete = $imageMetadata['sizes'][$activeImageSize->name]['file'];
+						$changedImageName[ $activeImageSize->name ] = true;
 					}
 				}
 				
-				$_filepath = $this->generateFilename($sourceImgPath, $_imageSize->width, $_imageSize->height);
-				$_filepath_info = pathinfo($_filepath);
 				
-				$_tmp_filepath = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$_filepath_info['basename'];
-				$this->addDebug("filename:".$_filepath);
+				$croppedSize = self::getCroppedSize($activeImageSize,$imageMetadata,$input);
 				
+				$currentFilePath = self::generateFilename($sourceImgPath, $croppedSize['width'], $croppedSize['height']);
+				self::addDebug("filename:".$currentFilePath);
+				$currentFilePathInfo = pathinfo($currentFilePath);
+				$temporaryCopyFile = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
-				$crop_width = $_imageSize->width;
-				$crop_height = $_imageSize->height;
-				if(!$_imageSize->crop || $_imageSize->width==0 || $_imageSize->height==0 || $_imageSize->width==9999 || $_imageSize->height==9999) {
-					//handle images with soft-crop width/height value and crop set to "true"
-					$crop_width = $selection->x2 - $selection->x;
-					$crop_height = $selection->y2 - $selection->y;
-				}
-				
-				$result = wp_crop_image(		// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-					intval($sourceImgData->id),	// * @param string|int $src The source file or Attachment ID.
-					$selection->x,				// * @param int $src_x The start x position to crop from.
-					$selection->y,				// * @param int $src_y The start y position to crop from.
-					$selection->x2 - $selection->x,	// * @param int $src_w The width to crop.
-					$selection->y2 - $selection->y,	// * @param int $src_h The height to crop.
-					$crop_width,				// * @param int $dst_w The destination width.
-					$crop_height,				// * @param int $dst_h The destination height.
-					false,						// * @param int $src_abs Optional. If the source crop points are absolute.
-					$_tmp_filepath				// * @param string $dst_file Optional. The destination file to write to.
+				$result = wp_crop_image(							// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
+					$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
+					$input->selection->x,							// * @param int $src_x The start x position to crop from.
+					$input->selection->y,							// * @param int $src_y The start y position to crop from.
+					$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
+					$input->selection->y2 - $input->selection->y,	// * @param int $src_h The height to crop.
+					$croppedSize['width'],							// * @param int $dst_w The destination width.
+					$croppedSize['height'],							// * @param int $dst_h The destination height.
+					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
+					$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
 				);
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[] = sprintf(__("Can't generate filesize '%s'.",CROP_THUMBS_LANG),$_imageSize->name);
+					$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't generate filesize '%s'.",'cpt_lang'),$activeImageSize->name);
 					$_error = true;
 				} else {
-					if(!empty($_delete_old_file)) {
-						@unlink($_filepath_info['dirname'].DIRECTORY_SEPARATOR.$_delete_old_file);
+					if(!empty($oldFile_toDelete)) {
+						self::addDebug("delete old image:".$oldFile_toDelete);
+						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
-					if(!@copy($result,$_filepath)) {
-						$_processing_error[] = sprintf(__("Can't copy temporary file to media library.",CROP_THUMBS_LANG));
+					if(!@copy($result,$currentFilePath)) {
+						$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't copy temporary file to media library.",'cpt_lang'));
 						$_error = true;
 					}
 					if(!@unlink($result)) {
-						$_processing_error[] = sprintf(__("Can't delete temporary file.",CROP_THUMBS_LANG));
+						$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't delete temporary file.",'cpt_lang'));
 						$_error = true;
 					}
 				}
 				
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
-					$filetype = wp_check_filetype( $_filepath );
-					$_new_meta = array(
-						'file'=>$_filepath_info['basename'],
-						'width'=>intval($crop_width),
-						'height'=>intval($crop_height),
-						'mime-type' => $filetype['type']
-					);
-					if(!empty($dbImageSizes[$_imageSize->name]['crop'])) {
-						$_new_meta['crop'] = $dbImageSizes[$_imageSize->name]['crop'];
-					}
-					$post_metadata['sizes'][$_imageSize->name] = $_new_meta;
-					
-					$_full_filepath = trailingslashit($_filepath_info['dirname']) . $_filepath_info['basename'];
-					do_action('crop_thumbnails_after_save_new_thumb', $_full_filepath, $_imageSize->name, $_new_meta );
+					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $croppedSize['width'], $croppedSize['height']);
 				} else {
-					$this->addDebug('error on '.$_filepath_info['basename']);
-					$this->addDebug(implode(' | ',$_processing_error));
+					self::addDebug('error on '.$currentFilePathInfo['basename']);
+					self::addDebug($_processing_error);
 				}
 			}//END foreach
 			
 			//we have to update the posts metadate
 			//otherwise new sizes will not be updated
-			$post_metadata = apply_filters('crop_thumbnails_before_update_metadata', $post_metadata, $obj->ID);
-			wp_update_attachment_metadata( $obj->ID, $post_metadata);
+			$imageMetadata = apply_filters('crop_thumbnails_before_update_metadata', $imageMetadata, $input->sourceImageId);
+			wp_update_attachment_metadata( $input->sourceImageId, $imageMetadata);
 			
 			//generate result;
-			$json_return['debug'] = $this->getDebugOutput($options);
-			if(!empty($_processing_error)) {
-				//one or more errors happend when generating thumbnails
-				$json_return['processingErrors'] = implode("\n",$_processing_error); 
-			}
-			if($_changed_image_format) {
+			if(!empty($changedImageName)) {
 				//there was a change in the image-formats 
-				$json_return['changed_image_format'] = true;
+				foreach($changedImageName as $key=>$value) {
+					$newImageLocation = wp_get_attachment_image_src($input->sourceImageId, $key);
+					$changedImageName[ $key ] = $newImageLocation[0];
+				}
+				$jsonResult['changedImageName'] = $changedImageName;
 			}
-			$json_return['success'] = time();//time for cache-breaker
-			echo json_encode($json_return);
+			if(!empty($_processing_error)) {//one or more errors happend when generating thumbnails
+				$jsonResult['processingErrors'] = $_processing_error;
+			}
+			if(!empty($settings['debug_data'])) {
+				$jsonResult['debug'] = self::getDebug();
+			}
+			$jsonResult['success'] = time();//time for cache-breaker
+			echo json_encode($jsonResult);
 		} catch (Exception $e) {
-			$json_return['debug'] = $this->getDebugOutput($options);
-			$json_return['error'] = $e->getMessage();
-			echo json_encode($json_return);
+			if(!empty($settings['debug_data'])) {
+				$jsonResult['debug'] = self::getDebug();
+			}
+			$jsonResult['error'] = $e->getMessage();
+			echo json_encode($jsonResult);
 		}
+	}
+	
+	/**
+	 * Get the end-size of the cropped image in pixels.
+	 * Attention: these sizes are used to name the file.
+	 * @param  object  $activeImageSize The image size that should be used
+	 * @param  [type]  $imageMetadata   [description]
+	 * @param  [type]  $input           [description]
+	 * @return {[type]                  [description]
+	 */
+	public static function getCroppedSize($activeImageSize,$imageMetadata,$input) {
+		//set target size of the cropped image
+		$croppedWidth = $activeImageSize->width;
+		$croppedHeight = $activeImageSize->height;
+		try {
+			if($activeImageSize->width===9999) {
+				$croppedWidth = intval($imageMetadata['width']);
+			} elseif($activeImageSize->height===9999) {
+				$croppedHeight = intval($imageMetadata['height']);
+			} elseif(intval($activeImageSize->width)===0 && intval($activeImageSize->height)===0) {
+				$croppedWidth = $input->selection->x2 - $input->selection->x;
+				$croppedHeight = $input->selection->y2 - $input->selection->y;
+			} elseif(intval($activeImageSize->width)===0) {
+				$croppedWidth = intval(( intval($imageMetadata['width']) / intval($imageMetadata['height']) ) * $activeImageSize->height);
+				$croppedHeight = $activeImageSize->height;
+			} elseif(intval($activeImageSize->height)===0) {
+				$croppedWidth = $activeImageSize->width;
+				$croppedHeight = intval(( intval($imageMetadata['height']) / intval($imageMetadata['width']) ) * $activeImageSize->width);
+			}
+			
+			/* --- no need to use that ---
+			if(!$activeImageSize->crop) {
+				$croppedWidth = $input->selection->x2 - $input->selection->x;
+				$croppedHeight = $input->selection->y2 - $input->selection->y;
+			}*/
+		} catch(Exception $e) {
+			$croppedWidth = 10;
+			$croppedHeight = 10;
+		}
+		
+		return array('width' => $croppedWidth, 'height'=> $croppedHeight);
+	}
+	
+	/**
+	 * This function is called by the wordpress-ajax-callback. Its only purpose is to call the
+	 * saveThumbnail function and die().
+	 * All wordpress ajax-functions should call the "die()" function in the end. But this makes
+	 * phpunit tests impossible - so we have to wrap it.
+	 */
+	public function saveThumbnailAjaxWrap() {
+		$this->saveThumbnail();
 		die();
 	}
 
-	private function addDebug($text) {
-		$this->debug[] = $text;
+	private static function addDebug($text) {
+		self::$debug[] = $text;
 	}
 	
-	private function getDebugOutput($options) {
-		if(!empty($this->debug)) {
-			return join("\n",$this->debug);
+	private static function getDebug() {
+		if(!empty(self::$debug)) {
+			return self::$debug;
 		}
-		return '';
+		return [];
+	}
+	
+	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
+		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
+		
+		$newValues = array();
+		$newValues['file'] = $currentFilePathInfo['basename'];
+		$newValues['width'] = intval($croppedWidth);
+		$newValues['height'] = intval($croppedHeight);
+		$newValues['mime-type'] = mime_content_type($fullFilePath);
+		
+		$oldValues = array();
+		if(empty($imageMetadata['sizes'])) {
+			$imageMetadata['sizes'] = array();
+		}
+		if(!empty($imageMetadata['sizes'][$imageSizeName])) {
+			$oldValues = $imageMetadata['sizes'][$imageSizeName];
+		}
+		$imageMetadata['sizes'][$imageSizeName] = array_merge($oldValues,$newValues);
+		
+		do_action('crop_thumbnails_after_save_new_thumb', $fullFilePath, $imageSizeName, $imageMetadata['sizes'][$imageSizeName] );
+		return $imageMetadata;
 	}
 
 	/**
@@ -179,7 +233,7 @@ class CptSaveThumbnail {
 	 * @param array all available ImageSizes
 	 * @return boolean true if the newImageSize is in the list of ImageSizes and dimensions are correct
 	 */
-	function isImageSizeValid(&$submitted,$dbData) {
+	private static function isImageSizeValid(&$submitted,$dbData) {
 		if(empty($submitted->name)) {
 			return false;
 		}
@@ -194,43 +248,54 @@ class CptSaveThumbnail {
 		//eventually we want to test some more later
 		return true;	
 	}
-
+	
 	/**
-	 * some basic validations and value transformations
-	 * @param array the user submitted selection
-	 * @param object the loaded image-object loaded by $sourceImgData->id
-	 * @param string the server-path to the source-image
-	 * @param object metadata of the image-attachement
+	 * Some basic validations and value transformations
+	 * @return object JSON-Object with submitted data
 	 * @throw Exception if the security validation fails
 	 */
-	function validation($selection,$obj,$sourceImgPath,$post_metadata)  {
+	private function getValidatedInput() {
 		global $cptSettings;
+		
 		if(!check_ajax_referer($cptSettings->getNonceBase(),'_ajax_nonce',false)) {
-			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",CROP_THUMBS_LANG), 1);
+			throw new Exception(esc_html__("ERROR: Security Check failed (maybe a timeout - please try again).",'cpt_lang'), 1);
 		}
 		
-		if(!isset($selection->x) || !isset($selection->y) || !isset($selection->x2) || !isset($selection->y2)) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.',CROP_THUMBS_LANG), 1);
-		}
-		$selection->x = intval($selection->x);
-		$selection->y = intval($selection->y);
-		$selection->x2 = intval($selection->x2);
-		$selection->y2 = intval($selection->y2);
 		
-		if($selection->x < 0 || $selection->y < 0) {
-			throw new Exception(__('Cropping to these dimensions on this image is not possible.',CROP_THUMBS_LANG), 1);
+		if(empty($_REQUEST['crop_thumbnails'])) {
+			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
+		}
+		$input = json_decode(stripcslashes($_REQUEST['crop_thumbnails']));
+		
+		
+		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
+			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
 		}
 		
-		if(empty($obj)) {
-			throw new Exception(__("ERROR: Can't find original image in database!",CROP_THUMBS_LANG), 1);
+		
+		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
+			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
 		}
-		if(empty($sourceImgPath)) {
-			throw new Exception(__("ERROR: Can't find original image file!",CROP_THUMBS_LANG), 1);
+		
+		
+		$input->selection->x = intval($input->selection->x);
+		$input->selection->y = intval($input->selection->y);
+		$input->selection->x2 = intval($input->selection->x2);
+		$input->selection->y2 = intval($input->selection->y2);
+		
+		if($input->selection->x < 0 || $input->selection->y < 0) {
+			throw new Exception(esc_html__('Cropping to these dimensions on this image is not possible.','cpt_lang'), 1);
 		}
-		if(empty($post_metadata)) {
-			throw new Exception(__("ERROR: Can't find original image metadata!",CROP_THUMBS_LANG), 1);
+		
+		
+		$input->sourceImageId = intval($input->sourceImageId);
+		if(empty(get_post($input->sourceImageId))) {
+			throw new Exception(esc_html__("ERROR: Can't find original image in database!",'cpt_lang'), 1);
 		}
+		
+		return $input;
 	}
+
 
 	/**
 	 * Generate the Filename (and path) of the thumbnail based on width and height the same way as wordpress do.
@@ -240,15 +305,13 @@ class CptSaveThumbnail {
 	 * @param int height of the new image
 	 * @return string path to the new image
 	 */
-	function generateFilename( $file, $w, $h ){
+	private static function generateFilename( $file, $w, $h ){
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];
 		$name = wp_basename($file, '.'.$ext);
 		$suffix = $w.'x'.$h;
 		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
-		
 		return $destfilename;
 	}
 }
-?>

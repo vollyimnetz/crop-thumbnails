@@ -1,11 +1,11 @@
 <?php
 class CropThumbnailsSettings {
-	private $uniqeSettingsId = 'cpt-settings';
-	private $optionsKey = 'crop-post-thumbs';
-	private $cssPrefix = 'cpt_settings_';
-	private $defaultSizes = array('thumbnail','medium','medium_large','large');
+	private static $uniqeSettingsId = 'cpt-settings';
+	private static $optionsKey = 'crop-post-thumbs';
+	private static $cssPrefix = 'cpt_settings_';
+	private static $defaultSizes = array('thumbnail','medium','medium_large','large');
 
-	function __construct() {
+	public function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
 		if(is_admin()) {
 			add_filter('plugin_action_links', array($this,'addSettingsLinkToPluginPage'), 10, 2);
@@ -16,41 +16,41 @@ class CropThumbnailsSettings {
 		}
 	}
 
-	function optionsPageStyle() {
-		if(!empty($_REQUEST['page']) && $_REQUEST['page']=='page-cpt') {
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/options.css',dirname(__FILE__)));
+	public function optionsPageStyle() {
+		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
+			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
 		}
 	}
 
-	function addSettingsLinkToPluginPage($links, $file) {
+	public function addSettingsLinkToPluginPage($links, $file) {
 		if ($file === 'crop-thumbnails/crop-thumbnails.php'){
-			$settings_link = '<a href="options-general.php?page=page-cpt" title="">'.__('Settings',CROP_THUMBS_LANG).'</a>';
+			$settings_link = '<a href="options-general.php?page=page-cpt" title="">'.esc_html__('Settings','cpt_lang').'</a>';
 			array_unshift( $links, $settings_link );
 		}
 		return $links;
 	}
 
-	function addOptionsPage() {
-		add_options_page(__('Crop Post Thumbnail Page',CROP_THUMBS_LANG), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
+	public function addOptionsPage() {
+		add_options_page(esc_html__('Crop Post Thumbnail Page','cpt_lang'), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
 		add_action('admin_init', array($this,'settingsInitialisation'));
 	}
 
-	function optionsPage() { ?>
-		<div class="wrap">
+	public function optionsPage() { ?>
+		<div class="wrap cropThumbnailSettings">
 		<div id="icon-options-general" class="icon32"><br /></div>
-		<h2>Crop-Thumbnails <?php esc_attr_e('Settings',CROP_THUMBS_LANG); ?></h2>
+		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','cpt_lang'); ?></h2>
 			<form action="options.php" method="post">
-				<?php settings_fields($this->uniqeSettingsId); ?>
+				<?php settings_fields( self::$uniqeSettingsId ); ?>
 				<?php do_settings_sections('page1'); ?>
 
-				<div class="<?php echo $this->cssPrefix ?>submit">
-					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes',CROP_THUMBS_LANG); ?>" class="button-primary" />
+				<div class="<?php echo self::$cssPrefix ?>submit">
+					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','cpt_lang'); ?>" class="button-primary" />
 				</div>
 			</form>
 
-			<div class="<?php echo $this->cssPrefix; ?>paypal">
-				<h3><?php _e('Support the plugin author',CROP_THUMBS_LANG) ?></h3>
-				<p><?php _e('You can support the plugin author <br />(and let him know you love this plugin) <br />by donating via Paypal. Thanks a lot!',CROP_THUMBS_LANG); ?></p>
+			<div class="<?php echo self::$cssPrefix; ?>paypal">
+				<h3><?php esc_html_e('Support the plugin author','cpt_lang') ?></h3>
+				<p><?php esc_html_e('You can support the plugin author (and let him know you love this plugin) by donating via Paypal. Thanks a lot!','cpt_lang'); ?></p>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 					<input type="hidden" name="cmd" value="_donations">
 					<input type="hidden" name="business" value="volkmar.kantor@gmx.de">
@@ -68,38 +68,38 @@ class CropThumbnailsSettings {
 		<?php
 	}
 
-	function settingsInitialisation(){
-		register_setting( $this->uniqeSettingsId, $this->optionsKey, array($this,'validateSettings') );
+	public function settingsInitialisation(){
+		register_setting( self::$uniqeSettingsId, self::$optionsKey, array($this,'validateSettings') );
 
 		$_sectionID = 'choose_sizes_section';
-		add_settings_section($_sectionID, __('Sizes and Post Types',CROP_THUMBS_LANG), array($this,'sectionDescriptionChooseSizes'), 'page1');
-		add_settings_field('sizes', __('Choose the image size options you want to hide for each post type.',CROP_THUMBS_LANG), array($this,'callback_choose_size'), 'page1', $_sectionID);
+		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','cpt_lang'), array($this,'sectionDescriptionChooseSizes'), 'page1');
+		add_settings_field('sizes', esc_html__('Choose the image size options you want to hide for each post type.','cpt_lang'), array($this,'callback_choose_size'), 'page1', $_sectionID);
 		
 		$_sectionID = 'quick_test';
-		add_settings_section($_sectionID, __('Plugin Test',CROP_THUMBS_LANG), array($this,'sectionDescriptionTest'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Plugin Test','cpt_lang'), array($this,'sectionDescriptionTest'), 'page1');
 		
 		$_sectionID = 'developer';
-		add_settings_section($_sectionID, __('Developer Settings',CROP_THUMBS_LANG), array($this,'emptySectionDescription'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Developer Settings','cpt_lang'), array($this,'emptySectionDescription'), 'page1');
 		$_tmpID = 'debug_js';
-		add_settings_field($_tmpID, __('Enable JS-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('Enable JS-Debug.','cpt_lang'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 		$_tmpID = 'debug_data';
-		add_settings_field($_tmpID, __('Enable Data-Debug.',CROP_THUMBS_LANG), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => $this->cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','cpt_lang'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
-	function sectionDescriptionChooseSizes() {?>
+	public function sectionDescriptionChooseSizes() {?>
 		<p>
-			<?php _e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..',CROP_THUMBS_LANG) ?>
-			<br /><strong><?php _e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.',CROP_THUMBS_LANG); ?></strong>
+			<?php esc_html_e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..','cpt_lang') ?>
+			<br /><strong><?php esc_html_e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','cpt_lang'); ?></strong>
 		</p>
 		<?php
 	}
 
-	function emptySectionDescription() {/*empty*/ }
+	public function emptySectionDescription() {/*empty*/ }
 	
 
-	function callback_choose_size() {
+	public function callback_choose_size() {
 		//get all the data
-		$options = get_option($this->optionsKey);
+		$options = get_option(self::$optionsKey);
 		#echo '<pre>'.print_r($options,true).'</pre>';
 		$post_types = $this->getPostTypes();
 		$image_sizes = $this->getImageSizes();
@@ -109,8 +109,8 @@ class CropThumbnailsSettings {
 		<ul>
 			<?php foreach($post_types as $post_type=>$value) : ?>
 			<li>
-				<label for="<?php echo $this->cssPrefix.$post_type; ?>">
-					<input id="<?php echo $this->cssPrefix.$post_type;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
+				<label for="<?php echo self::$cssPrefix.$post_type; ?>">
+					<input id="<?php echo self::$cssPrefix.$post_type;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
 					<strong><?php echo $value->labels->name; ?></strong>
 				</label>
 				<ul style="margin:1em;">
@@ -122,8 +122,8 @@ class CropThumbnailsSettings {
 					}
 					if($data['crop']=='1') : ?>
 						<li>
-							<label for="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
-								<input id="<?php echo $this->cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo $this->optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
+							<label for="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
+								<input id="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
 								<?php echo $thumb_name;?> - <?php echo $data['width'];?>x<?php echo $data['height'];?> <?php /* echo ($data['crop'] == '1' ? '(cropped)' : '') */?>
 							</label>
 						</li>
@@ -138,21 +138,21 @@ class CropThumbnailsSettings {
 		<?php
 	}
 
-	function callback_debug_js() {
-		$options = get_option($this->optionsKey);
+	public function callback_debug_js() {
+		$options = get_option(self::$optionsKey);
 		$_id = 'debug_js';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
-		echo '<input name="'.$this->optionsKey.'['.$_id.']" id="'.$this->cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
+		echo '<input name="'.self::$optionsKey.'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
 	}
 
-	function callback_debug_data() {
-		$options = get_option($this->optionsKey);
+	public function callback_debug_data() {
+		$options = get_option(self::$optionsKey);
 		$_id = 'debug_data';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
-		echo '<input name="'.$this->optionsKey.'['.$_id.']" id="'.$this->cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
+		echo '<input name="'.self::$optionsKey.'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
 	}
 
-	function validateSettings($input) {
+	public function validateSettings($input) {
 		$sizes = $this->getImageSizes();
 
 		$post_types = $this->getPostTypes();
@@ -195,7 +195,7 @@ class CropThumbnailsSettings {
 		return $storeInDb;
 	}
 	
-	function sectionDescriptionTest() {?>
+	public function sectionDescriptionTest() {?>
 		<button type="button" class="button-secondary cpt_quicktest">Do plugin quick-test.</button>
 		
 		<script>
@@ -238,7 +238,7 @@ class CropThumbnailsSettings {
 
 /* helper functions **********************************************************************************************/
 
-	function ajax_callback_admin_quicktest() {
+	public function ajax_callback_admin_quicktest() {
 		//security
 		if(!current_user_can('manage_options')) die('forbidden');
 		check_ajax_referer('cpt_quicktest-ajax-nonce','security');//only for quicktest
@@ -298,7 +298,7 @@ class CropThumbnailsSettings {
 				120,                        // * @param int $src_h The height to crop.
 				200,                        // * @param int $dst_w The destination width.
 				25,                         // * @param int $dst_h The destination height.
-				false,						// * @param int $src_abs Optional. If the source crop points are absolute.
+				false,                      // * @param int $src_abs Optional. If the source crop points are absolute.
 				$tempFile                   // * @param string $dst_file Optional. The destination file to write to.
 			);
 			if ( is_wp_error( $cropResult ) ) {
@@ -361,7 +361,7 @@ class CropThumbnailsSettings {
 		exit();
 	}
 
-	function getUploadDir() {
+	public function getUploadDir() {
 		$upload_dir = wp_upload_dir();
 		return $upload_dir['basedir'].DIRECTORY_SEPARATOR.'tmp';
 	}
@@ -370,7 +370,7 @@ class CropThumbnailsSettings {
 	/**
 	 * get the post types and delete some prebuild post types that we dont need
 	 */
-	function getPostTypes() {
+	public function getPostTypes() {
 		$post_types = get_post_types(array(),'objects');
 		unset($post_types['nav_menu_item']);
 		unset($post_types['revision']);
@@ -389,7 +389,7 @@ class CropThumbnailsSettings {
 	 *                       array[<sizename>]['name'] = string --> readable name if provided in "image_size_names_choose", else sizename
 	 * </pre>
 	 */
-	function getImageSizes() {
+	public function getImageSizes() {
 		global $_wp_additional_image_sizes;//array with the available image sizes
 		$image_size_names = array_flip(get_intermediate_image_sizes());
 		foreach($image_size_names as $key=>$value) {
@@ -402,7 +402,7 @@ class CropThumbnailsSettings {
 		$sizes = array();
 		foreach( $image_size_names as $_size=>$theName ) {
 
-			if ( in_array( $_size, $this->defaultSizes ) ) {
+			if ( in_array( $_size, self::$defaultSizes ) ) {
 				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
 				$sizes[ $_size ]['height'] = intval(get_option( $_size . '_size_h' ));
 				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );
@@ -419,11 +419,11 @@ class CropThumbnailsSettings {
 		return $sizes;
 	}
 
-	function getOptions() {
-		return get_option($this->optionsKey);
+	public function getOptions() {
+		return get_option(self::$optionsKey);
 	}
 
-	function getNonceBase() {
+	public function getNonceBase() {
 		return 'crop-post-thumbnails-nonce-base';
 	}
 }

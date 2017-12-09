@@ -12,13 +12,36 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-The plugin enhance functionality to crop your automatic cropped images individuell and simple. It add buttons to the edit-pages and media-dialog to access a crop-editor.
+The plugin provides the functionality to adjust the crop region of cropped images. It add buttons to the edit-pages and media-dialog to access a crop-editor.
 In the crop-editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
-= Further Features =
+= How to define cropped image sizes?
 
-* It is possible to filter the list of available image-sizes (in dependency to post-types) in the settings (Settings > Crop-Thumbnails).
-* You could provide your users a custom style for the Editor-Window (see F.A.Q.).
+The plugin do not add additional image sizes, it only provides functionality to edit the crop area. 
+
+You can use "add_image_size" inside your functions.php to add additional cropped image sizes (see: https://developer.wordpress.org/reference/functions/add_image_size/).
+`add_action( 'after_setup_theme', 'my_adjust_image_sizes' );
+function my_adjust_image_sizes() {
+    //add an cropped image-size with 800 x 250 Pixels
+    add_image_size( 'my-custom-image-size', 800, 250, true );
+    
+    
+    /** 
+     * The following image sizes use a dynamic value.
+     * USE WITH CARE
+     * Also the plugin supports these image-sizes, i do not recommend them!
+     **/
+    //a dynamic cropped image size with 500 pixel height and the width of the original image
+    add_image_size( 'my-dynamic-width-1', 9999, 500, true );
+    
+    //a dynamic cropped image with the same ratio as the original image and 500 pixel width
+    add_image_size( 'my-dynamic-zero-height-1', 500, 0, true );
+}`
+
+After you add the image-size any futher image uploads will produce a cropped image "my-custom-image-size" which you can use in post-loop:
+`if ( has_post_thumbnail() ) { 
+    the_post_thumbnail( 'my-custom-image-size' ); 
+}`
 
 == Installation ==
 
@@ -31,44 +54,22 @@ You can use the built in installer and upgrader, or you can install the plugin m
 
 == Frequently Asked Questions ==
 
-= How do i add custom image sizes? =
-The plugin do not add additional image sizes, it only make it possible to edit the crop area. You can add image sizes with normal wordpress functions (see: https://developer.wordpress.org/reference/functions/add_image_size/).
-
-Simply add the code to the functions.php of your theme, i.e.:
-`add_action( 'after_setup_theme', 'my_adjust_image_sizes' );
-function my_adjust_image_sizes() {
-    //add an cropped image-size with 800 x 250 Pixels
-    add_image_size( 'my-custom-image-size', 800, 250, true );
-}`
-
-After you add the image-size any futher image uploads will produce a cropped image "my-custom-image-size" which you can use in post-loop:
-`if ( has_post_thumbnail() ) { 
-    the_post_thumbnail( 'my-custom-image-size' ); 
-}`
-
-= What internal rules use the plugin for cropping? =
+= What internal rules the plugin use for cropping? =
 * The plugin will only crop image-sizes where crop is set to "true" (hard crop mode - see: http://codex.wordpress.org/Function_Reference/add_image_size).
-* If you had set one of image dimension in add_image_size to "0" or "9999" (an set crop to true) the plugin will crop it in the ratio of the original image.
+* If you had set one image dimension in add_image_size() to "0", the plugin will crop it in the ratio of the original image.
+* If you had set one image dimension in add_image_size() to "9999", the plugin will change the 9999 to the actual size of the current original image.
 * You are able to crop all images with the same ratio at once (default) or and any imagesize (and ratio) seperate.
 
-= I have cropped the image but the old one is used on the page. =
-If you had viewed your image on the site before, your browser has cached the image. Go tell them to reload the fresh image from the server by hitting "F5".
+= I've cropped the image, but the new version do not appear in the frontend. =
+If you had viewed your image on the site before, your browser has cached the image. You can hard refresh the page by hitting:
+* "CTRL + F5" (on Windows)
+* "Apple + R" or "command + R" (on Mac/Apple)
 
 = Is it possible to crop an non-cropped image-size? =
 No. The purpose of this plugin is to provide control for the wordpress automatic crop. If you want to crop let's say the full-size image you should
 
 * a) upload it in a better format in the first place
 * OR b) use the Standard Wordpress-Image editor to crop the image.
-
-= Is it possible to adjust the css-style of the crop-thumbnail window? =
-Yes, for a simple test, copy the css/cpt-window.css file into your template_directory and make some change.
-Then add this code into the functions.php of your template.
-
-`add_filter('crop_post_thumbnail_window_css','myCustomStyle');
-function myCustomStyle($content) {
-	$content = get_bloginfo('template_directory').'/cpt-window.css';
-	return $content;
-}`
 
 = I have two image-sizes that have nearly the same ratio. I want to make use of the feature "Crop all images with same ratio at once", but cause the ratios are slightly different they wont be selected together. =
 You can add the following filter in the functions.php of your theme to adjust the ratio of one or more specified image-sizes.
@@ -81,17 +82,7 @@ function my_crop_thumbnails_editor_printratio( $printRatio, $imageSizeName) {
 	return $printRatio;
 }`
 
-= Can i make the modal-dialog fullscreen? =
-Yes, i added a filter with some settings for the modal-dialog, so you can adjust the size:
-`add_filter('crop_thumbnails_modal_window_settings','crop_thumbnails_modal_window_settings_override');
-function crop_thumbnails_modal_window_settings_override($param) {
-	$param['limitToWidth'] = false; //You may set a number, then thats the maximum width the modal can be. On small screens it will be smaller (see offsets). Set to FALSE if you want no limit.
-	$param['maxWidthOffset'] = 0; //window-width minus "width_offset" equals modal-width
-	$param['maxHeightOffset'] = 0; //window-width minus "height_offset" equals modal-height
-	return $param;
-}`
-
-= I have show the cropped image in the backend in an custom meta-box. It does not update after the modal-dialog closed. Is there a way to fix this =
+= I display the cropped image in the backend in an custom meta-box. It does not update after the modal-dialog closed. Is there a way to fix this =
 Yeah, there is a way. After the crop-thumbnails-modal closed it triggeres a javascript event on the body element. You could use jQuery to cache-break your cropped thumbnail (in backend-view).
 The event called "cropThumbnailModalClosed". The plugin also provides a global function that could be called (only in post-edit-view and mediathek) to do the cache-break.
 Example-Code:
@@ -121,6 +112,21 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+
+= 1.0.0 =
+* modal dialog rewritten
+* crop functionality refactored
+* changed the crop-library for improved touch support
+* the action "crop_thumbnails_modal_window_settings" is gone, you can adjust style by override admin-css
+* the filter "crop_post_thumbnail_window_css" is gone, you can adjust style by override admin-css
+* adjusting dialog style - make it more responsive
+* reviewed dynamic sizes: sizes with 9999 will no longer have ratio of the original image
+* reviewed dynamic sizes: filenames will no longer be changed
+* fix image-metadata polution
+* refactoring and cleanup a lot of the code
+* change from a language constant to 'cpt_lang' (as recommended by developer guide)
+* secure translations
+
 = 0.10.15 =
 * bugfix: use wordpress-function to determine mime-type, as some servers do not define "mime_content_type" (Thank you Eskil Keskikangas for the submission)
 
@@ -207,7 +213,6 @@ If you fork and planning to publish the forked plugin, please contact me.
 * fix warning: when settings are saved
 
 = 0.8.0 =
-* change Constant from CPT_LANG to CROP_THUMBS_LANG
 * change Constant from CPT_VERSION to CROP_THUMBS_VERSION
 * bug fix: wrong calculated scale in the cpt-crop.js (selection will again always fill the maximum space)
 * change behavior: on landscape-ratio-images the selection will be initial in the middle of the image (portrait-ratio-images stay the same - i asume that portrait-ratio images are mostly portraits)

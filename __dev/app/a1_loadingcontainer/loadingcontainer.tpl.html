@@ -1,0 +1,10 @@
+<div class="loadingcontainer" :class="status">
+	<img :src="image" style="display:none;" />
+	<slot></slot>
+	
+	<transition name="fade">
+		<div class="loadingMsg" v-if="status==='loading'">
+			<div class="cptLoadingSpinner"></div>
+		</div>
+	</transition>
+</div>
