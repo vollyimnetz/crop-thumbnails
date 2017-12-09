@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Tested up to: 4.7
-Stable tag: trunk
+Stable tag: 0.10.15
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -112,17 +112,27 @@ If you fork and planning to publish the forked plugin, please contact me.
 6. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+
 = 1.0.0 =
 * modal dialog rewritten
-* crop functionality rewritten
+* crop functionality refactored
 * changed the crop-library for improved touch support
 * the action "crop_thumbnails_modal_window_settings" is gone, you can adjust style by override admin-css
-* the filter "crop_post_thumbnail_window_css" will have no effect, you can adjust style by override admin-css
+* the filter "crop_post_thumbnail_window_css" is gone, you can adjust style by override admin-css
 * adjusting dialog style - make it more responsive
 * reviewed dynamic sizes: sizes with 9999 will no longer have ratio of the original image
 * reviewed dynamic sizes: filenames will no longer be changed
 * fix image-metadata polution
 * refactoring and cleanup a lot of the code
+
+= 0.10.15 =
+* bugfix: use wordpress-function to determine mime-type, as some servers do not define "mime_content_type" (Thank you Eskil Keskikangas for the submission)
+
+= 0.10.14 =
+* bugfix: add mime-type to image-metadata (the mime-type was deleted by crop-thumbnails before unintentional)
+
+= 0.10.13 =
+* bugfix: filter-settings will work again in media-dialog
 
 = 0.10.12 =
 * add italian translation (thanks to akteon18)

@@ -81,10 +81,15 @@ class CropPostThumbnailsBackendPreparer {
 	 * adds the links into post-types and the media-library
 	 */
 	function addLinksToAdmin() {
-
+		
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+	
+	/**
+	 * Global accessable id of the current post (will be null if no post-element is present)
+	 */
+	CROP_THUMBNAILS_CURRENT_POST_ID = null;
 	
 	/**
 	 * Adds a button to the featured image metabox.
@@ -138,6 +143,7 @@ jQuery(document).ready(function($) {
 		if (post_id_hidden) {
 
 			post_id_hidden = parseInt(post_id_hidden.val());
+			CROP_THUMBNAILS_CURRENT_POST_ID = post_id_hidden;
 
 			handleFeaturedImageBox();
 			
