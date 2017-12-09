@@ -125,6 +125,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * fix image-metadata polution
 * refactoring and cleanup a lot of the code
 * change from a language constant to 'cpt_lang' (as recommended by developer guide)
+* secure translations
 
 = 0.10.15 =
 * bugfix: use wordpress-function to determine mime-type, as some servers do not define "mime_content_type" (Thank you Eskil Keskikangas for the submission)

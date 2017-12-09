@@ -4,10 +4,10 @@
  * Plugin URI: http://wordpress.org/extend/plugins/crop-thumbnails/
  * Author: Volkmar Kantor
  * Author URI: http://www.totalmedial.de
- * Version: 1.0.0
-
- * Description: Crop your thumbnails, the easy way to crop your custom image sizes.
  * Text Domain: cpt_lang
+ * Version: 1.0.0
+ * Description: The easy way to adjust your cropped image sizes.
+ * 
  *
  * License: GPL v3
  * Copyright 2012  Volkmar Kantor  (email : info@totalmedial.de)
@@ -29,11 +29,10 @@
 
 define('CROP_THUMBS_VERSION','1.0.0');
 
+
 //cpt - stands for crop-post-thumbnail
 function cpt_plugin_init() {
 	load_plugin_textdomain( 'cpt_lang', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
-
-	__('Crop your thumbnails, the easy way.');//have to be the same as the plugins-description - for automatic integration into poedit
 }
 add_action('plugins_loaded', 'cpt_plugin_init');
 

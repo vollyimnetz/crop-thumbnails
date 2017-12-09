@@ -27,13 +27,13 @@ class CptSaveThumbnail {
 			
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
 			if(empty($sourceImgPath)) {
-				throw new Exception(__("ERROR: Can't find original image file!",'cpt_lang'), 1);
+				throw new Exception(esc_html__("ERROR: Can't find original image file!",'cpt_lang'), 1);
 			}
 			
 			
 			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
 			if(empty($imageMetadata)) {
-				throw new Exception(__("ERROR: Can't find original image metadata!",'cpt_lang'), 1);
+				throw new Exception(esc_html__("ERROR: Can't find original image metadata!",'cpt_lang'), 1);
 			}
 			
 			//from DB
@@ -86,7 +86,7 @@ class CptSaveThumbnail {
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",'cpt_lang'),$activeImageSize->name);
+					$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't generate filesize '%s'.",'cpt_lang'),$activeImageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($oldFile_toDelete)) {
@@ -94,11 +94,11 @@ class CptSaveThumbnail {
 						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
 					if(!@copy($result,$currentFilePath)) {
-						$_processing_error[$activeImageSize->name][] = sprintf(__("Can't copy temporary file to media library.",'cpt_lang'));
+						$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't copy temporary file to media library.",'cpt_lang'));
 						$_error = true;
 					}
 					if(!@unlink($result)) {
-						$_processing_error[$activeImageSize->name][] = sprintf(__("Can't delete temporary file.",'cpt_lang'));
+						$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't delete temporary file.",'cpt_lang'));
 						$_error = true;
 					}
 				}
@@ -258,23 +258,23 @@ class CptSaveThumbnail {
 		global $cptSettings;
 		
 		if(!check_ajax_referer($cptSettings->getNonceBase(),'_ajax_nonce',false)) {
-			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'cpt_lang'), 1);
+			throw new Exception(esc_html__("ERROR: Security Check failed (maybe a timeout - please try again).",'cpt_lang'), 1);
 		}
 		
 		
 		if(empty($_REQUEST['crop_thumbnails'])) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
+			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
 		}
 		$input = json_decode(stripcslashes($_REQUEST['crop_thumbnails']));
 		
 		
 		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
+			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
 		}
 		
 		
 		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
+			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','cpt_lang'), 1);
 		}
 		
 		
@@ -284,13 +284,13 @@ class CptSaveThumbnail {
 		$input->selection->y2 = intval($input->selection->y2);
 		
 		if($input->selection->x < 0 || $input->selection->y < 0) {
-			throw new Exception(__('Cropping to these dimensions on this image is not possible.','cpt_lang'), 1);
+			throw new Exception(esc_html__('Cropping to these dimensions on this image is not possible.','cpt_lang'), 1);
 		}
 		
 		
 		$input->sourceImageId = intval($input->sourceImageId);
 		if(empty(get_post($input->sourceImageId))) {
-			throw new Exception(__("ERROR: Can't find original image in database!",'cpt_lang'), 1);
+			throw new Exception(esc_html__("ERROR: Can't find original image in database!",'cpt_lang'), 1);
 		}
 		
 		return $input;
@@ -315,4 +315,3 @@ class CptSaveThumbnail {
 		return $destfilename;
 	}
 }
-?>
