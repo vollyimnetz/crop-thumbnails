@@ -203,7 +203,7 @@ class CptSaveThumbnail {
 		if(!empty(self::$debug)) {
 			return self::$debug;
 		}
-		return [];
+		return array();
 	}
 	
 	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
