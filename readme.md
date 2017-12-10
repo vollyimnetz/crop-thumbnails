@@ -18,6 +18,52 @@ add_action('after_setup_theme', function() {
 });
 ```
 
+## How to add a crop thumbnail-button on a custom location
+You may want to open a crop-thumbnail-modal-dialog on a custom location. To do so you can use the javascript modal-function of the plugin.
+
+```javascript
+var modal = new CROP_THUMBNAILS_VUE.modal();
+modal.open(attachementId, postType, title);
+```
+
+A full example that demonstrate adding a custom crop button right beside the default media button.
+
+```php
+//perform an action on the admin footer to execute a php function
+add_action('admin_footer', 'myCustomPhpFooterCode');
+function myCustomPhpFooterCode() {
+	//lets print some javascript code
+	//in reality you may want to check on what admin-side you are, i.e. by the use of 'get_current_screen()'
+
+	?>
+	<script>
+	jQuery(document).ready(function($) {
+		//add a button right beside the add media button - adjust if you want the button somewhere else
+		$('#wp-content-media-buttons').append('<button type="button" id="myCustomButton" class="button">my custom crop button</button>');
+		
+		$('#myCustomButton').click(function() {
+			/** 
+			 * the ID of the image you want to open
+			 * you may want to read the value by javascript from somewhere
+			 **/
+			var attachementId = 123;
+
+			/** the posttype decides what imagesizes should be visible - see settings **/
+			var postType = 'post';
+
+			/** the title of the modal dialog */
+			var title = 'test';
+
+			/** lets open the crop-thumbnails-modal **/
+			var modal = new CROP_THUMBNAILS_VUE.modal();
+			modal.open(attachementId, postType, title);
+		});
+	});
+	</script>
+	<?php
+}
+```
+
 ## Filters and action-hooks
 The plugin provides some filters/actions if you want to adjust or extend the behaviour.
 
