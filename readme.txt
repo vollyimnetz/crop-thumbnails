@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Tested up to: 4.7
-Stable tag: 1.0.1
+Stable tag: 1.0.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -115,7 +115,6 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 = 1.0.1 =
 * fix code that mess with old php versions
-* remove de_DE from plugin (cause it is translated now via translate.wordpress.org)
 
 = 1.0.0 =
 * modal dialog rewritten
