@@ -289,7 +289,8 @@ class CptSaveThumbnail {
 		
 		
 		$input->sourceImageId = intval($input->sourceImageId);
-		if(empty(get_post($input->sourceImageId))) {
+		$_tmp = get_post($input->sourceImageId);//need to be its own var - cause of old php versions
+		if(empty($_tmp)) {
 			throw new Exception(esc_html__("ERROR: Can't find original image in database!",'cpt_lang'), 1);
 		}
 		
