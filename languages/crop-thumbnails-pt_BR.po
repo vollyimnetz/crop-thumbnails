@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Crop Thumbnails v0.7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-11-18 22:26+0100\n"
-"PO-Revision-Date: 2015-11-18 22:26+0100\n"
+"PO-Revision-Date: 2017-12-12 11:04+0100\n"
 "Last-Translator: Volkmar Kantor <volkmar.kantor@gmx.de>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -26,7 +26,7 @@ msgstr "Cortando suas miniaturas de uma maneira mais simples"
 # @ cpt_lang
 #: functions/backendpreparer.php:84 functions/backendpreparer.php:87
 msgid "Crop Thumbnails"
-msgstr "Cortar Miniaturas"
+msgstr "Crop Thumbnails"
 
 #: functions/backendpreparer.php:98 functions/backendpreparer.php:101
 msgid "Crop Featured Image"

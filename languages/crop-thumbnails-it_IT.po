@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-11-18 21:58+0100\n"
-"PO-Revision-Date: 2017-12-12 10:42+0100\n"
+"PO-Revision-Date: 2017-12-12 11:02+0100\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,7 +22,7 @@ msgstr "Ritagliare le miniature, il modo più semplice."
 
 #: ../functions/backendpreparer.php:84 ../functions/backendpreparer.php:87
 msgid "Crop Thumbnails"
-msgstr "Miniature crop"
+msgstr "Crop Thumbnails"
 
 #: ../functions/backendpreparer.php:98 ../functions/backendpreparer.php:101
 msgid "Crop Featured Image"

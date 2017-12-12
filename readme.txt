@@ -118,6 +118,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * change language text domain from 'cpt_lang' to 'crop-thumbnails'
 * rename language files to match text domain exactly
 * change 'CROP_THUMBS_VERSION' to 'CROP_THUMBNAILS_VERSION'
+* correct translations of the plugins name
 
 = 1.0.1 =
 * fix code that mess with old php versions

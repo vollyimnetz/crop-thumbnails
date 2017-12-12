@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Crop-Post-Thumbnails\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-11-18 22:26+0100\n"
-"PO-Revision-Date: 2015-11-18 22:26+0100\n"
+"PO-Revision-Date: 2017-12-12 11:03+0100\n"
 "Last-Translator: Max Gruson <mgruson@live.nl>\n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -21,7 +21,7 @@ msgstr "Snijd de thumbnails bij op een makkelijke manier."
 
 #: ../functions/backendpreparer.php:84 ../functions/backendpreparer.php:87
 msgid "Crop Thumbnails"
-msgstr "Snijd thumbnails bij"
+msgstr "Crop Thumbnails"
 
 #: ../functions/backendpreparer.php:98 ../functions/backendpreparer.php:101
 msgid "Crop Featured Image"
