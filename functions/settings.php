@@ -24,33 +24,33 @@ class CropThumbnailsSettings {
 
 	public function addSettingsLinkToPluginPage($links, $file) {
 		if ($file === 'crop-thumbnails/crop-thumbnails.php'){
-			$settings_link = '<a href="options-general.php?page=page-cpt" title="">'.esc_html__('Settings','cpt_lang').'</a>';
+			$settings_link = '<a href="options-general.php?page=page-cpt" title="">'.esc_html__('Settings','crop-thumbnails').'</a>';
 			array_unshift( $links, $settings_link );
 		}
 		return $links;
 	}
 
 	public function addOptionsPage() {
-		add_options_page(esc_html__('Crop Post Thumbnail Page','cpt_lang'), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
+		add_options_page(esc_html__('Crop Post Thumbnail Page','crop-thumbnails'), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
 		add_action('admin_init', array($this,'settingsInitialisation'));
 	}
 
 	public function optionsPage() { ?>
 		<div class="wrap cropThumbnailSettings">
 		<div id="icon-options-general" class="icon32"><br /></div>
-		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','cpt_lang'); ?></h2>
+		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
 			<form action="options.php" method="post">
 				<?php settings_fields( self::$uniqeSettingsId ); ?>
 				<?php do_settings_sections('page1'); ?>
 
 				<div class="<?php echo self::$cssPrefix ?>submit">
-					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','cpt_lang'); ?>" class="button-primary" />
+					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
 				</div>
 			</form>
 
 			<div class="<?php echo self::$cssPrefix; ?>paypal">
-				<h3><?php esc_html_e('Support the plugin author','cpt_lang') ?></h3>
-				<p><?php esc_html_e('You can support the plugin author (and let him know you love this plugin) by donating via Paypal. Thanks a lot!','cpt_lang'); ?></p>
+				<h3><?php esc_html_e('Support the plugin author','crop-thumbnails') ?></h3>
+				<p><?php esc_html_e('You can support the plugin author (and let him know you love this plugin) by donating via Paypal. Thanks a lot!','crop-thumbnails'); ?></p>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 					<input type="hidden" name="cmd" value="_donations">
 					<input type="hidden" name="business" value="volkmar.kantor@gmx.de">
@@ -72,24 +72,24 @@ class CropThumbnailsSettings {
 		register_setting( self::$uniqeSettingsId, self::$optionsKey, array($this,'validateSettings') );
 
 		$_sectionID = 'choose_sizes_section';
-		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','cpt_lang'), array($this,'sectionDescriptionChooseSizes'), 'page1');
-		add_settings_field('sizes', esc_html__('Choose the image size options you want to hide for each post type.','cpt_lang'), array($this,'callback_choose_size'), 'page1', $_sectionID);
+		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
+		add_settings_field('sizes', esc_html__('Choose the image size options you want to hide for each post type.','crop-thumbnails'), array($this,'callback_choose_size'), 'page1', $_sectionID);
 		
 		$_sectionID = 'quick_test';
-		add_settings_section($_sectionID, esc_html__('Plugin Test','cpt_lang'), array($this,'sectionDescriptionTest'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
 		
 		$_sectionID = 'developer';
-		add_settings_section($_sectionID, esc_html__('Developer Settings','cpt_lang'), array($this,'emptySectionDescription'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Developer Settings','crop-thumbnails'), array($this,'emptySectionDescription'), 'page1');
 		$_tmpID = 'debug_js';
-		add_settings_field($_tmpID, esc_html__('Enable JS-Debug.','cpt_lang'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('Enable JS-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 		$_tmpID = 'debug_data';
-		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','cpt_lang'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
 	public function sectionDescriptionChooseSizes() {?>
 		<p>
-			<?php esc_html_e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..','cpt_lang') ?>
-			<br /><strong><?php esc_html_e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','cpt_lang'); ?></strong>
+			<?php esc_html_e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..','crop-thumbnails') ?>
+			<br /><strong><?php esc_html_e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','crop-thumbnails'); ?></strong>
 		</p>
 		<?php
 	}

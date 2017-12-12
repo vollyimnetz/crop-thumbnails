@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Tested up to: 4.7
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -113,6 +113,12 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 
+= 1.0.2 =
+* improve i18n
+* change language text domain from 'cpt_lang' to 'crop-thumbnails'
+* rename language files to match text domain exactly
+* change 'CROP_THUMBS_VERSION' to 'CROP_THUMBNAILS_VERSION'
+
 = 1.0.1 =
 * fix code that mess with old php versions
 
@@ -127,7 +133,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * reviewed dynamic sizes: filenames will no longer be changed
 * fix image-metadata polution
 * refactoring and cleanup a lot of the code
-* change from a language constant to 'cpt_lang' (as recommended by developer guide)
+* change from a language constant to 'cpt_lang'
 * secure translations
 
 = 0.10.15 =

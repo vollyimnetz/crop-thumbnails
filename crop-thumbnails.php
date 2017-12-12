@@ -4,11 +4,10 @@
  * Plugin URI: https://wordpress.org/extend/plugins/crop-thumbnails/
  * Author: Volkmar Kantor
  * Author URI: https://www.totalmedial.de
- * Text Domain: cpt_lang
- * Version: 1.0.1
+ * Version: 1.0.2
  * Description: The easy way to adjust your cropped image sizes.
  * 
- *
+ * 
  * License: GPL v3
  * Copyright 2012  Volkmar Kantor  (email : info@totalmedial.de)
 
@@ -27,14 +26,14 @@
  */
 
 
-define('CROP_THUMBS_VERSION','1.0.1');
+define('CROP_THUMBNAILS_VERSION','1.0.2');
 
 
-//cpt - stands for crop-post-thumbnail
-function cpt_plugin_init() {
-	load_plugin_textdomain( 'cpt_lang', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+function cptLoadLanguage() {
+	load_plugin_textdomain( 'crop-thumbnails', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
-add_action('plugins_loaded', 'cpt_plugin_init');
+add_action( 'init', 'cptLoadLanguage' );
+
 
 /**
  * returns the WpVersion in as a float

@@ -28,7 +28,7 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'upload.php') {
 			
 			wp_enqueue_style('jcrop');
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)),array('jcrop'),CROP_THUMBS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('css/cpt-backend.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
 			
 		}
 	}
@@ -45,8 +45,8 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'upload.php') {
 
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js',dirname(__FILE__)), array(), CROP_THUMBS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js',dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBS_VERSION);
+			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
@@ -63,8 +63,8 @@ class CropPostThumbnailsBackendPreparer {
 
 		if(in_array($post->post_mime_type,$this->allowedMime)) {
 			$html = '';
-			$html.= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' title="'.esc_attr__('Crop Featured Image','cpt_lang').'">';
-			$html.= '<span class="wp-media-buttons-icon"></span> '.esc_html__('Crop Featured Image','cpt_lang');
+			$html.= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'.$post->ID.',"viewmode":"single"}\' title="'.esc_attr__('Crop Featured Image','crop-thumbnails').'">';
+			$html.= '<span class="wp-media-buttons-icon"></span> '.esc_html__('Crop Featured Image','crop-thumbnails');
 			$html.= '</a>';
 
 			$form_fields['cropthumbnails'] = array(
@@ -106,8 +106,8 @@ jQuery(document).ready(function($) {
 		
 		var featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
-		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image','cpt_lang') ?>">';
-		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','cpt_lang'); ?>';
+		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>">';
+		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?>';
 		featuredImageLinkButton+= '</a>';
 		baseElem.find('.inside').after( $(featuredImageLinkButton) );
 		
@@ -163,8 +163,8 @@ jQuery(document).ready(function($) {
 				last_span.append(' | ');
 
 				var buttonContent = '';
-				buttonContent+= '<a class="cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image','cpt_lang') ?>">';
-				buttonContent+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','cpt_lang'); ?>';
+				buttonContent+= '<a class="cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>">';
+				buttonContent+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?>';
 				buttonContent+= '</a>';
 
 
