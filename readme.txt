@@ -19,8 +19,9 @@ In the crop-editor you can choose one or more (if they have the same ratio) imag
 
 The plugin do not add additional image sizes, it only provides functionality to edit the crop area. 
 
-You can use "add_image_size" inside your functions.php to add additional cropped image sizes (see: https://developer.wordpress.org/reference/functions/add_image_size/).
-`add_action( 'after_setup_theme', 'my_adjust_image_sizes' );
+You can use "`add_image_size`" inside your functions.php to add additional cropped image sizes. [See "add_image_size" documentation](https://developer.wordpress.org/reference/functions/add_image_size/).
+`
+add_action( 'after_setup_theme', 'my_adjust_image_sizes' );
 function my_adjust_image_sizes() {
     //add an cropped image-size with 800 x 250 Pixels
     add_image_size( 'my-custom-image-size', 800, 250, true );
@@ -36,12 +37,15 @@ function my_adjust_image_sizes() {
     
     //a dynamic cropped image with the same ratio as the original image and 500 pixel width
     add_image_size( 'my-dynamic-zero-height-1', 500, 0, true );
-}`
+}
+`
 
 After you add the image-size any futher image uploads will produce a cropped image "my-custom-image-size" which you can use in post-loop:
-`if ( has_post_thumbnail() ) { 
+`
+if ( has_post_thumbnail() ) { 
     the_post_thumbnail( 'my-custom-image-size' ); 
-}`
+}
+`
 
 == Installation ==
 
@@ -55,15 +59,15 @@ You can use the built in installer and upgrader, or you can install the plugin m
 == Frequently Asked Questions ==
 
 = What internal rules the plugin use for cropping? =
-* The plugin will only crop image-sizes where crop is set to "true" (hard crop mode - see: http://codex.wordpress.org/Function_Reference/add_image_size).
-* If you had set one image dimension in add_image_size() to "0", the plugin will crop it in the ratio of the original image.
-* If you had set one image dimension in add_image_size() to "9999", the plugin will change the 9999 to the actual size of the current original image.
+* The plugin will only crop image-sizes where crop is set to "`true`" (hard crop mode - see: http://codex.wordpress.org/Function_Reference/add_image_size).
+* If you had set one image dimension in add_image_size() to "`0`", the plugin will crop it in the ratio of the original image.
+* If you had set one image dimension in add_image_size() to "`9999`", the plugin will change the 9999 to the actual size of the current original image.
 * You are able to crop all images with the same ratio at once (default) or and any imagesize (and ratio) seperate.
 
 = I've cropped the image, but the new version do not appear in the frontend. =
 If you had viewed your image on the site before, your browser has cached the image. You can hard refresh the page by hitting:
-* "CTRL + F5" (on Windows)
-* "Apple + R" or "command + R" (on Mac/Apple)
+* "`CTRL + F5`" (on Windows)
+* "`Apple + R`" or "`command + R`" (on Mac/Apple)
 
 = Is it possible to crop an non-cropped image-size? =
 No. The purpose of this plugin is to provide control for the wordpress automatic crop. If you want to crop let's say the full-size image you should
@@ -72,26 +76,30 @@ No. The purpose of this plugin is to provide control for the wordpress automatic
 * OR b) use the Standard Wordpress-Image editor to crop the image.
 
 = Where can I get developer information? =
-A documentation with a list of all actions and filters can be found on the Github page of the project. https://github.com/vollyimnetz/crop-thumbnails
+A documentation with a list of all actions and filters can be found on the [Github page of the project](https://github.com/vollyimnetz/crop-thumbnails).
 
 = I have two image-sizes that have nearly the same ratio. I want to make use of the feature "Crop all images with same ratio at once", but cause the ratios are slightly different they wont be selected together. =
 You can add the following filter in the functions.php of your theme to adjust the ratio of one or more specified image-sizes.
 CAUTION: use only when the ratios are really close.
-`add_filter( 'crop_thumbnails_editor_printratio', 'my_crop_thumbnails_editor_printratio', 10, 2);
+`
+add_filter( 'crop_thumbnails_editor_printratio', 'my_crop_thumbnails_editor_printratio', 10, 2);
 function my_crop_thumbnails_editor_printratio( $printRatio, $imageSizeName) {
 	if($imageSizeName === 'strange-image-ratio') {
 		$printRatio = '4:3';//do override ratio
 	}
 	return $printRatio;
-}`
+}
+`
 
 = I display the cropped image in the backend in an custom meta-box. It does not update after the modal-dialog closed. Is there a way to fix this =
 Yeah, there is a way. After the crop-thumbnails-modal closed it triggeres a javascript event on the body element. You could use jQuery to cache-break your cropped thumbnail (in backend-view).
 The event called "cropThumbnailModalClosed". The plugin also provides a global function that could be called (only in post-edit-view and mediathek) to do the cache-break.
 Example-Code:
-`$('body').on('cropThumbnailModalClosed',function() {
+`
+$('body').on('cropThumbnailModalClosed',function() {
 	CROP_THUMBNAILS_DO_CACHE_BREAK( $('.your-image-selector') );
-});`
+});
+`
 
 = What languages are supported? =
 * English
@@ -101,7 +109,7 @@ Example-Code:
 * Italian (it) - thanks to akteon18
 
 = I want to contribute code. =
-Fantastic, i published the code on github: https://github.com/vollyimnetz/crop-thumbnails. But be warned, i am carefully evaluate new features.
+Fantastic, i published the code on [github](https://github.com/vollyimnetz/crop-thumbnails). But be warned, i am carefully evaluate new features.
 
 If you fork and planning to publish the forked plugin, please contact me.
 
