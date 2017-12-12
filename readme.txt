@@ -16,7 +16,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 The plugin provides the functionality to adjust the crop region of cropped images. It add buttons to the edit-pages and media-dialog to access a crop-editor.
 In the crop-editor you can choose one or more (if they have the same ratio) imagesizes and cut-off the part of the image you want.
 
-= How to define cropped image sizes?
+= How to define cropped image sizes? =
 
 The plugin do not add additional image sizes, it only provides functionality to edit the crop area. 
 
