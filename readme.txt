@@ -71,6 +71,9 @@ No. The purpose of this plugin is to provide control for the wordpress automatic
 * a) upload it in a better format in the first place
 * OR b) use the Standard Wordpress-Image editor to crop the image.
 
+= Where can I get developer information? =
+A documentation with a list of all actions and filters can be found on the Github page of the project. https://github.com/vollyimnetz/crop-thumbnails
+
 = I have two image-sizes that have nearly the same ratio. I want to make use of the feature "Crop all images with same ratio at once", but cause the ratios are slightly different they wont be selected together. =
 You can add the following filter in the functions.php of your theme to adjust the ratio of one or more specified image-sizes.
 CAUTION: use only when the ratios are really close.
@@ -104,12 +107,11 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Screenshots ==
 
-1. You have access to the crop-editor on post / page / custom-post-types.
-2. All images attached to this post, will shown in a overlay. You have to choose the one you want to crop.
-3. Choose one or more images (with the same ratio).
-4. The crop-editor is also integrated in the media library.
-5. Choose what image-sizes should be hidden (for what post-types), for better usability.
-6. Quicktest on settings-page, to check if your system is correct setup.
+1. You have access to the crop-editor on the media-panel by clicking "Crop Featured Image".
+2. Choose one or more images (with the same ratio).
+3. The crop-editor is also integrated in the list-view of the media library.
+4. Choose what image-sizes should be hidden (for what post-types), for better usability.
+5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
 
