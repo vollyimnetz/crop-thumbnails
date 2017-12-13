@@ -494,7 +494,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 						}
 					})
 					.fail(function(response) {
-						console.error(error);
+						console.error(response);
 					})
 					.always(function() {
 						that.loading = false;

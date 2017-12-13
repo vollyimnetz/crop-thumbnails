@@ -124,6 +124,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 
+= 1.0.3 =
+* fix js error handling
+
 = 1.0.2 =
 * improve i18n
 * change language text domain from 'cpt_lang' to 'crop-thumbnails'
