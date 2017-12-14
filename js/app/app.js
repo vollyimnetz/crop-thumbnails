@@ -129,6 +129,21 @@ $(window).resize(function () {
 });
 ***************************/
 
+CROP_THUMBNAILS_VUE.components.message = {
+	template: "<div class=\"notice notice-warning is-dismissible cptMessage\" aria-role=\"alert\" v-if=\"!closed\"><p><slot></slot></p> <button type=\"button\" class=\"notice-dismiss\" @click=\"close()\" aria-label=\"close\"></button></div>",
+	props:{},
+	data:function() {
+		return {
+			closed:false
+		};
+	},
+	methods:{
+		close : function() {
+			this.closed = true;
+		}
+	}
+};
+
 CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 	template: "<div class=\"loadingcontainer\" :class=\"status\"> <img :src=\"image\" style=\"display:none;\"/><slot></slot><transition name=\"fade\"><div class=\"loadingMsg\" v-if=\"status===\'loading\'\"><div class=\"cptLoadingSpinner\"></div></div></transition></div>",
 	props:{
@@ -176,21 +191,6 @@ CROP_THUMBNAILS_VUE.components.loadingcontainer = {
 		},
 		setFailed : function() {
 			this.status = 'failed';
-		}
-	}
-};
-
-CROP_THUMBNAILS_VUE.components.message = {
-	template: "<div class=\"notice notice-warning is-dismissible cptMessage\" aria-role=\"alert\" v-if=\"!closed\"><p><slot></slot></p> <button type=\"button\" class=\"notice-dismiss\" @click=\"close()\" aria-label=\"close\"></button></div>",
-	props:{},
-	data:function() {
-		return {
-			closed:false
-		};
-	},
-	methods:{
-		close : function() {
-			this.closed = true;
 		}
 	}
 };
@@ -458,7 +458,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			if(!that.loading && that.croppingApi!==null) {
 				that.loading = true;
 				
-				var params = {
+				var cptRequestParams = {
 					action : 'cptSaveThumbnail',
 					_ajax_nonce : that.nonce,
 					cookie : encodeURIComponent(document.cookie),
@@ -469,7 +469,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					})
 				};
 				
-				var request = jQuery.post(ajaxurl,params,null,'json');
+				var request = jQuery.post(ajaxurl,cptRequestParams,null,'json');
 				request
 					.done(function(responseData) {
 						if(that.cropData.options.debug_data) {
@@ -494,7 +494,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 						}
 					})
 					.fail(function(response) {
-						console.error(response);
+						alert(that.lang.script_connection_error);
+						var debug = {
+							status: response.status,
+							statusText: response.statusText,
+							requestUrl: ajaxurl,
+							requestParams: cptRequestParams
+						};
+						console.error('crop-thumbnails connection error', debug);
 					})
 					.always(function() {
 						that.loading = false;

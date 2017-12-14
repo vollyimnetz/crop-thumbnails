@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
 Tested up to: 4.9
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -126,7 +126,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 = 1.0.3 =
 * fix js error handling
-* add alert if an connection error occurs
+* add warning to the backend if the script cant connect the server
 * fix where escape of language-strings make no sense (exceptions in save.php)
 
 = 1.0.2 =

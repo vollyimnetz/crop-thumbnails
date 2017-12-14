@@ -261,7 +261,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			if(!that.loading && that.croppingApi!==null) {
 				that.loading = true;
 				
-				var params = {
+				var cptRequestParams = {
 					action : 'cptSaveThumbnail',
 					_ajax_nonce : that.nonce,
 					cookie : encodeURIComponent(document.cookie),
@@ -272,7 +272,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 					})
 				};
 				
-				var request = jQuery.post(ajaxurl,params,null,'json');
+				var request = jQuery.post(ajaxurl,cptRequestParams,null,'json');
 				request
 					.done(function(responseData) {
 						if(that.cropData.options.debug_data) {
@@ -297,7 +297,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 						}
 					})
 					.fail(function(response) {
-						console.error(response);
+						alert(that.lang.script_connection_error);
+						var debug = {
+							status: response.status,
+							statusText: response.statusText,
+							requestUrl: ajaxurl,
+							requestParams: cptRequestParams
+						};
+						console.error('crop-thumbnails connection error', debug);
 					})
 					.always(function() {
 						that.loading = false;

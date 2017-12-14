@@ -31,6 +31,10 @@ class CropPostThumbnailsEditor {
 		}
 		die();//to prevent to send back a "0"
 	}
+
+	private function fixJsLangStrings($msg) {
+		return str_replace('&quot;','"',esc_js($msg));
+	}
 	
 	public function getCropData() {
 		if(!self::isUserPermitted()) {
@@ -54,23 +58,24 @@ class CropPostThumbnailsEditor {
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($cptSettings->getImageSizes()),
 			'lang' => array(
-				'warningOriginalToSmall' => esc_html__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails'),
-				'cropDisabled' => esc_html__('Cropping is disabled for this post-type.','crop-thumbnails'),
-				'waiting' => esc_html__('Please wait until the images are cropped.','crop-thumbnails'),
-				'rawImage' => esc_html__('Raw','crop-thumbnails'),
-				'pixel' => esc_html__('pixel','crop-thumbnails'),
-				'instructions_header' => esc_html__('Quick Instructions','crop-thumbnails'),
-				'instructions_step_1' => esc_html__('Step 1: Choose an image-size from the list.','crop-thumbnails'),
-				'instructions_step_2' => esc_html__('Step 2: Change the selection of the image above.','crop-thumbnails'),
-				'instructions_step_3' => str_replace('&quot;','"', esc_html__('Step 3: Click on "Save Crop".','crop-thumbnails')),
-				'label_crop' => esc_html__('Save Crop','crop-thumbnails'),
-				'label_same_ratio' => esc_html__('Crop all images with same ratio at once','crop-thumbnails'),
-				'label_deselect_all' => esc_html__('deselect all','crop-thumbnails'),
-				'dimensions' => esc_html__('Dimensions:','crop-thumbnails'),
-				'ratio' => esc_html__('Ratio:','crop-thumbnails'),
-				'cropped' => esc_html__('cropped','crop-thumbnails'),
-				'lowResWarning' => esc_html__('Original image size too small for good crop quality!','crop-thumbnails'),
-				'message_image_orientation' => esc_html__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')
+				'warningOriginalToSmall' => self::fixJsLangStrings(__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails')),
+				'cropDisabled' => self::fixJsLangStrings(__('Cropping is disabled for this post-type.','crop-thumbnails')),
+				'waiting' => self::fixJsLangStrings(__('Please wait until the images are cropped.','crop-thumbnails')),
+				'rawImage' => self::fixJsLangStrings(__('Raw','crop-thumbnails')),
+				'pixel' => self::fixJsLangStrings(__('pixel','crop-thumbnails')),
+				'instructions_header' => self::fixJsLangStrings(__('Quick Instructions','crop-thumbnails')),
+				'instructions_step_1' => self::fixJsLangStrings(__('Step 1: Choose an image-size from the list.','crop-thumbnails')),
+				'instructions_step_2' => self::fixJsLangStrings(__('Step 2: Change the selection of the image above.','crop-thumbnails')),
+				'instructions_step_3' => self::fixJsLangStrings(__('Step 3: Click on "Save Crop".','crop-thumbnails')),
+				'label_crop' => self::fixJsLangStrings(__('Save Crop','crop-thumbnails')),
+				'label_same_ratio' => self::fixJsLangStrings(__('Crop all images with same ratio at once','crop-thumbnails')),
+				'label_deselect_all' => self::fixJsLangStrings(__('deselect all','crop-thumbnails')),
+				'dimensions' => self::fixJsLangStrings(__('Dimensions:','crop-thumbnails')),
+				'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
+				'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
+				'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
+				'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
+				'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails'))
 			),
 			'nonce' => wp_create_nonce($cptSettings->getNonceBase())
 		);
