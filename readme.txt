@@ -126,6 +126,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 = 1.0.3 =
 * fix js error handling
+* add alert if an connection error occurs
+* fix where escape of language-strings make no sense (exceptions in save.php)
 
 = 1.0.2 =
 * improve i18n

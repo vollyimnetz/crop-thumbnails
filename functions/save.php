@@ -24,16 +24,16 @@ class CptSaveThumbnail {
 		try {
 			$input = $this->getValidatedInput();
 			
-			
+
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
 			if(empty($sourceImgPath)) {
-				throw new Exception(esc_html__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
+				throw new Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
 			}
 			
 			
 			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
 			if(empty($imageMetadata)) {
-				throw new Exception(esc_html__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
+				throw new Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
 			}
 			
 			//from DB
@@ -86,7 +86,7 @@ class CptSaveThumbnail {
 				
 				$_error = false;
 				if(empty($result)) {
-					$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't generate filesize '%s'.",'crop-thumbnails'),$activeImageSize->name);
+					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",'crop-thumbnails'), $activeImageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($oldFile_toDelete)) {
@@ -94,11 +94,11 @@ class CptSaveThumbnail {
 						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
 					if(!@copy($result,$currentFilePath)) {
-						$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't copy temporary file to media library.",'crop-thumbnails'));
+						$_processing_error[$activeImageSize->name][] = __("Can't copy temporary file to media library.", 'crop-thumbnails');
 						$_error = true;
 					}
 					if(!@unlink($result)) {
-						$_processing_error[$activeImageSize->name][] = sprintf(esc_html__("Can't delete temporary file.",'crop-thumbnails'));
+						$_processing_error[$activeImageSize->name][] = __("Can't delete temporary file.", 'crop-thumbnails');
 						$_error = true;
 					}
 				}
@@ -258,23 +258,23 @@ class CptSaveThumbnail {
 		global $cptSettings;
 		
 		if(!check_ajax_referer($cptSettings->getNonceBase(),'_ajax_nonce',false)) {
-			throw new Exception(esc_html__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
+			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
 		}
 		
 		
 		if(empty($_REQUEST['crop_thumbnails'])) {
-			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		$input = json_decode(stripcslashes($_REQUEST['crop_thumbnails']));
 		
 		
 		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
-			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		
 		
 		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
-			throw new Exception(esc_html__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		
 		
@@ -284,14 +284,14 @@ class CptSaveThumbnail {
 		$input->selection->y2 = intval($input->selection->y2);
 		
 		if($input->selection->x < 0 || $input->selection->y < 0) {
-			throw new Exception(esc_html__('Cropping to these dimensions on this image is not possible.','crop-thumbnails'), 1);
+			throw new Exception(__('Cropping to these dimensions on this image is not possible.','crop-thumbnails'), 1);
 		}
 		
 		
 		$input->sourceImageId = intval($input->sourceImageId);
 		$_tmp = get_post($input->sourceImageId);//need to be its own var - cause of old php versions
 		if(empty($_tmp)) {
-			throw new Exception(esc_html__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
+			throw new Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
 		}
 		
 		return $input;
