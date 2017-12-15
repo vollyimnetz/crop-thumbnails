@@ -105,8 +105,7 @@ class CropPostThumbnailsEditor {
 			$result['sourceImageMeta'] = $meta_raw['image_meta'];
 		}
 		
-		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
-		
+		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options, $result['postTypeFilter']);
 		if(!$result['hiddenOnPostType']) {
 			
 			foreach($result['imageSizes'] as $key => $imageSize) {

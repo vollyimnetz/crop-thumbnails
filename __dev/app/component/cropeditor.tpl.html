@@ -9,8 +9,13 @@
 		</div>
 	</div>
 	
+	<div class="cptWaitingWindow cptCropDisabledMsg" v-if="cropData.hiddenOnPostType">
+		<div class="msg">{{lang.cropDisabled}}</div>
+	</div>
 	
-	<div class="mainWindow">
+	
+	<div class="mainWindow" v-if="!cropData.hiddenOnPostType">
+		
 		<div class="cptSelectionPane">
 			<div class="cptSelectionPaneInner">
 				<message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</message>
