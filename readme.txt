@@ -124,6 +124,13 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 
+= 1.0.4 =
+* bugfix variable was used but not defined (php)
+* bugfix image-size with custom name where not updated in view after crop
+* bugfix all same image-sizes where selected, even if they are not visible
+* add more debug informations in the settings-panel
+* make selected image-sizes more clear
+
 = 1.0.3 =
 * fix js error handling
 * add warning to the backend if the script cant connect the server

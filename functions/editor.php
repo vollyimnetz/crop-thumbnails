@@ -139,16 +139,16 @@ class CropPostThumbnailsEditor {
 				}
 				
 				
-				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['name']);
+				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['id']);
 				$jsonDataValues = array(
-					'name' => $imageSize['name'],
+					'name' => $imageSize['id'],
 					'nameLabel' => $imageSize['name'],//if you want to change the label of this image-size
 					'url' => $img_data[0],
 					'width' => $imageSize['width'],
 					'height' => $imageSize['height'],
 					'gcd' => $ratioData['gcd'],
 					'ratio' => $ratioData['ratio'],
-					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $ratioData['printRatio'], $imageSize['name']),
+					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $ratioData['printRatio'], $imageSize['id']),
 					'hideByPostType' => self::shouldSizeBeHidden($options,$imageSize,$result['postTypeFilter']),
 					'crop' => true//legacy
 				);

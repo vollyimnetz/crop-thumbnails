@@ -130,7 +130,7 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			
 			if(this.selectSameRatio) {
 				this.cropData.imageSizes.forEach(function(i) {
-					if(i.printRatio === image.printRatio) {
+					if (i.printRatio === image.printRatio && i.hideByPostType===false) {
 						i.active = newValue;
 					}
 				});

@@ -16,7 +16,7 @@
 	
 	<div class="mainWindow" v-if="!cropData.hiddenOnPostType">
 		
-		<div class="cptSelectionPane">
+		<div class="cptSelectionPane" :class="{ cptImagesAreSelected : (activeImageSizes.length>0) }">
 			<div class="cptSelectionPaneInner">
 				<message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</message>
 				<p>

@@ -251,6 +251,11 @@ class CropThumbnailsSettings {
 		$sourceFile = dirname( __FILE__ ).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
 		$tempFile = $this->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
 		try {
+			$report[] = '<strong class="info">info</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
+			$report[] = '<strong class="info">info</strong> PHP '.phpversion();
+			$report[] = '<strong class="info">info</strong> PHP memory limit '.ini_get('memory_limit');
+			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(array('mime_type' => 'image/jpeg')).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+			
 			//check if tmp-folder can be generated
 			if(is_dir($this->getUploadDir())) {
 				$report[] = '<strong class="success">success</strong> Temporary directory exists';
@@ -357,6 +362,7 @@ class CropThumbnailsSettings {
 			}
 		}
 		
+		$report[] = '<strong class="info">info</strong> Tests complete';
 		echo join($report,"<br />");
 		exit();
 	}
@@ -387,6 +393,7 @@ class CropThumbnailsSettings {
 	 *                       array[<sizename>]['width'] = int
 	 *                       array[<sizename>]['crop'] = boolean
 	 *                       array[<sizename>]['name'] = string --> readable name if provided in "image_size_names_choose", else sizename
+	 *                       array[<sizename>]['id'] = string --> the sizename
 	 * </pre>
 	 */
 	public function getImageSizes() {
@@ -400,20 +407,21 @@ class CropThumbnailsSettings {
 		$image_size_names = array_merge($image_size_names,$tmp_sizes);
 		
 		$sizes = array();
-		foreach( $image_size_names as $_size=>$theName ) {
+		foreach( $image_size_names as $sizeId=>$theName ) {
 
-			if ( in_array( $_size, self::$defaultSizes ) ) {
-				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
-				$sizes[ $_size ]['height'] = intval(get_option( $_size . '_size_h' ));
-				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );
+			if ( in_array( $sizeId, self::$defaultSizes ) ) {
+				$sizes[ $sizeId ]['width']  = intval(get_option( $sizeId . '_size_w' ));
+				$sizes[ $sizeId ]['height'] = intval(get_option( $sizeId . '_size_h' ));
+				$sizes[ $sizeId ]['crop']   = (bool) get_option( $sizeId . '_crop' );
 			} else {
-				$sizes[ $_size ] = array(
-					'width'  => intval($_wp_additional_image_sizes[ $_size ]['width']),
-					'height' => intval($_wp_additional_image_sizes[ $_size ]['height']),
-					'crop'   => (bool) $_wp_additional_image_sizes[ $_size ]['crop']
+				$sizes[ $sizeId ] = array(
+					'width'  => intval($_wp_additional_image_sizes[ $sizeId ]['width']),
+					'height' => intval($_wp_additional_image_sizes[ $sizeId ]['height']),
+					'crop'   => (bool) $_wp_additional_image_sizes[ $sizeId ]['crop']
 				);
 			}
-			$sizes[ $_size ]['name'] = $theName;
+			$sizes[ $sizeId ]['name'] = $theName;
+			$sizes[ $sizeId ]['id'] = $sizeId;
 		}
 		$sizes = apply_filters('crop_thumbnails_image_sizes',$sizes);
 		return $sizes;

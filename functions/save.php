@@ -23,6 +23,8 @@ class CptSaveThumbnail {
 		
 		try {
 			$input = $this->getValidatedInput();
+			self::addDebug('validated input data');
+			self::addDebug($input);
 			
 
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
@@ -46,8 +48,6 @@ class CptSaveThumbnail {
 			$changedImageName = array();
 			$_processing_error = array();
 			foreach($input->activeImageSizes as $activeImageSize) {
-				self::addDebug('submitted image-data');
-				self::addDebug($activeImageSize);
 				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
 					self::addDebug("Image size not valid.");
 					continue;
@@ -55,6 +55,7 @@ class CptSaveThumbnail {
 				
 				$oldFile_toDelete = '';
 				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
+					self::addDebug('Image filename has changed ('.$activeImageSize->name . ')');
 					$changedImageName[ $activeImageSize->name ] = true;
 				} else {
 					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
@@ -68,7 +69,7 @@ class CptSaveThumbnail {
 				$croppedSize = self::getCroppedSize($activeImageSize,$imageMetadata,$input);
 				
 				$currentFilePath = self::generateFilename($sourceImgPath, $croppedSize['width'], $croppedSize['height']);
-				self::addDebug("filename:".$currentFilePath);
+				self::addDebug("filename: ".$currentFilePath);
 				$currentFilePathInfo = pathinfo($currentFilePath);
 				$temporaryCopyFile = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
