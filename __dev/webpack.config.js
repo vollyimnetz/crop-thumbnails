@@ -68,6 +68,9 @@ module.exports = function (env) {
                     {
                         from: __dirname + '/node_modules/vue/dist/vue.min.js',
                         to: __dirname + '/../app/vendor/vue.min.js'
+                    }, {
+                        from: __dirname + '/node_modules/vue/dist/vue.js',
+                        to: __dirname + '/../app/vendor/vue.js'
                     }, /*{
                         from: __dirname + '/node_modules/cropperjs/dist/cropper.min.js',
                         to: __dirname + '/../app/vendor/',

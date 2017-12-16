@@ -101,7 +101,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__loadingcontainer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__loadingcontainer__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__cropeditor__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__cropeditor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__cropeditor__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__settingsscreen__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__settingsscreen__ = __webpack_require__(17);
 
 
 
@@ -787,57 +787,58 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 module.exports = "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\">\n\t\n\t<div class=\"cptWaitingWindow\" v-if=\"loading\">\n\t\t<div class=\"msg\">\n\t\t\t{{ lang.waiting }}\n\t\t\t<div>\n\t\t\t\t<div class=\"cptLoadingSpinner\"></div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t\n\t<div class=\"cptWaitingWindow cptCropDisabledMsg\" v-if=\"cropData.hiddenOnPostType\">\n\t\t<div class=\"msg\">{{lang.cropDisabled}}</div>\n\t</div>\n\t\n\t\n\t<div class=\"mainWindow\" v-if=\"!cropData.hiddenOnPostType\">\n\t\t\n\t\t<div class=\"cptSelectionPane\" :class=\"{ cptImagesAreSelected : (activeImageSizes.length>0) }\">\n\t\t\t<div class=\"cptSelectionPaneInner\">\n\t\t\t\t<message v-if=\"sourceImageHasOrientation\">{{lang.message_image_orientation}}</message>\n\t\t\t\t<p>\n\t\t\t\t\t<label class=\"cptSameRatioLabel\">\n\t\t\t\t\t\t<input type=\"checkbox\" v-model=\"selectSameRatio\" />\n\t\t\t\t\t\t{{lang.label_same_ratio}}\n\t\t\t\t\t</label>\n\t\t\t\t\t<button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button>\n\t\t\t\t</p>\n\t\t\t\t<ul class=\"cptImageSizelist\">\n\t\t\t\t\t<li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\">\n\t\t\t\t\t\t<section class=\"cptImageSizeInner\">\n\t\t\t\t\t\t\t<header>{{i.nameLabel}}</header>\n\t\t\t\t\t\t\t<div class=\"lowResWarning\" v-if=\"isLowRes(i)\" :title=\"lang.lowResWarning\"><span>!</span></div>\n\t\t\t\t\t\t\t<div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>\n\t\t\t\t\t\t\t<div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t<loadingcontainer :image=\"i.url+'?cacheBreak='+i.cacheBreak\">\n\t\t\t\t\t\t\t\t<div class=\"cptImageBgContainer\" :style=\"{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}\"></div>\n\t\t\t\t\t\t\t</loadingcontainer>\n\t\t\t\t\t\t</section>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"cptCropPane\">\n\t\t\t<div class=\"info\">\n\t\t\t\t<h3>{{ lang.rawImage }}</h3>\n\t\t\t\t<div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div>\n\t\t\t\t<div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>\n\t\t\t</div>\n\t\t\t<button type=\"button\" class=\"button cptGenerate\" :class=\"{'button-primary':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button>\n\t\t\t\n\t\t\t<div class=\"cropContainer\">\n\t\t\t\t<img class=\"cptCroppingImage\" :src=\"cropImage.url\" />\n\t\t\t</div>\n\t\n\t\t\t<h4>{{ lang.instructions_header }}</h4>\n\t\t\t<ul class=\"step-info\">\n\t\t\t\t<li>{{ lang.instructions_step_1 }}</li>\n\t\t\t\t<li>{{ lang.instructions_step_2 }}</li>\n\t\t\t\t<li>{{ lang.instructions_step_3 }}</li>\n\t\t\t</ul>\n\n\t\t\t<div>\n\t\t\t\t<button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick('js')\">show JS-Debug</button>\n\t\t\t\t<button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick('data')\">show Data-Debug</button>\n\t\t\t\t<pre v-if=\"showDebugType==='data'\">{{ dataDebug }}</pre>\n\t\t\t\t<pre v-if=\"showDebugType==='js'\"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n"
 
 /***/ }),
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__init_on_settingspage__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__init_on_settingspage__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__init_on_settingspage___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__init_on_settingspage__);
 
 
 CROP_THUMBNAILS_VUE.components['cpt-settingsscreen'] = {
-    template: __webpack_require__(22),
-    props: {},
+    template: __webpack_require__(19),
+    props: {
+        settings: {
+            required: true
+        }
+    },
     components: {},
     data: function () {
         return {
-            test: 'hallo welt',
-            lang: null, //language-variable (filled after initial request)
-            nonce: null //the nonce for the crop-request
+            settingsData: JSON.parse(this.settings)
         };
     },
-    mounted: function () {
-        console.log('settingsscreen mounted');
-    },
+    mounted: function () {},
     computed: {},
-    methods: {}
+    methods: {
+        isButtonHiddenOnPostType: function (postType) {
+            return this.settingsData.options && this.settingsData.options.hide_post_type && this.settingsData.options.hide_post_type[postType] === "1";
+        },
+        isImageSizeHidden: function (postType, imageSize) {
+            return this.settingsData.options && this.settingsData.options.hide_size && this.settingsData.options.hide_size[postType] && this.settingsData.options.hide_size[postType][imageSize] === "1";
+        }
+    }
 };
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = "<div>\r\n    {{test}}\r\n</div>"
-
-/***/ }),
-/* 23 */
+/* 18 */
 /***/ (function(module, exports) {
 
 jQuery(document).ready(function ($) {
     if ($('body.settings_page_page-cpt').length > 0) {
         CROP_THUMBNAILS_VUE.app = new Vue({
-            el: '#cpt_settingsscreen',
-            mounted: function () {
-                console.log('cpt_settingsscreen mounted');
-            },
+            el: '#cpt_settings_settingsscreen',
+            mounted: function () {},
             components: CROP_THUMBNAILS_VUE.components
         });
     }
 });
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+module.exports = "<div>\r\n\r\n    <div class=\"cptSettingsPostListDescription\">{{settingsData.lang.choose_image_sizes}}</div>\r\n    <ul class=\"cptSettingsPostList\">\r\n\r\n        <li v-for=\"postType in settingsData.post_types\">\r\n            <section>\r\n                <header><h3>{{postType.label}}</h3></header>\r\n\r\n                \r\n                <ul class=\"cptImageSizes\">\r\n                    <li v-for=\"imageSize in settingsData.image_sizes\" v-if=\"imageSize.crop\">\r\n                        <label>\r\n                            <input type=\"checkbox\" :value=\"imageSize.id\" :name=\"'crop-post-thumbs[hide_size]['+postType.name+']['+imageSize.id+']'\" :checked=\"isImageSizeHidden(postType.name,imageSize.id)\"/>\r\n                            <span class=\"name\">{{imageSize.name}}</span>\r\n                            <span class=\"defaultName\" v-if=\"imageSize.name!==imageSize.id\">({{imageSize.id}})</span>\r\n                        </label>\r\n                    </li>\r\n                </ul>\r\n                \r\n                <label>\r\n                    <input id=\"cpt_settings_post\" type=\"checkbox\" :name=\"'crop-post-thumbs[hide_post_type]['+postType.name+']'\" value=\"1\" :checked=\"isButtonHiddenOnPostType(postType.name)\">\r\n                     {{settingsData.lang.hide_on_post_type}}\r\n                </label>\r\n            </section>\r\n        </li>\r\n    </ul>\r\n    \r\n</div>"
 
 /***/ })
 /******/ ]);

@@ -45,12 +45,10 @@ class CropThumbnailsSettings {
 				<?php settings_fields( self::$uniqeSettingsId ); ?>
 				
 				<?php do_settings_sections('page1'); ?>
-
+				
 				<div class="<?php echo self::$cssPrefix ?>submit">
 					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
 				</div>
-
-				
 			</form>
 
 			<div class="<?php echo self::$cssPrefix; ?>paypal">
@@ -78,10 +76,6 @@ class CropThumbnailsSettings {
 
 		$_sectionID = 'choose_sizes_section';
 		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
-		add_settings_field('sizes', esc_html__('Choose the image size options you want to hide for each post type.','crop-thumbnails'), array($this,'callback_choose_size'), 'page1', $_sectionID);
-		
-		$_sectionID = 'vue_settingsscreen';
-		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'vueSettingsScreen'), 'page1');
 
 		$_sectionID = 'quick_test';
 		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
@@ -94,10 +88,30 @@ class CropThumbnailsSettings {
 		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
-	public function vueSettingsScreen() {?>
-		<div id="cpt_settingsscreen">
-			<cpt-settingsscreen></cpt-settingsscreen>
+	private function vueSettingsScreen() {
+		$settings = array(
+			'options' => get_option(self::$optionsKey),
+			'post_types' => $this->getPostTypes(),
+			'image_sizes' => $this->getImageSizes(),
+			'lang' => array(
+				'choose_image_sizes' => __('Choose the image size options you want to hide for each post type.','crop-thumbnails'),
+				'hide_on_post_type' => __('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails')
+
+			)
+		);
+		
+		?>
+		<div class="<?php echo self::$cssPrefix ?>submit">
+			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
 		</div>
+
+		<div id="<?php echo self::$cssPrefix ?>settingsscreen">
+			<cpt-settingsscreen settings="<?php echo esc_attr(json_encode($settings)) ?>"></cpt-settingsscreen>
+		</div>
+
+		<div class="<?php echo self::$cssPrefix ?>submit">
+			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
+		</div>	
 		<?php
 	}
 
@@ -107,51 +121,10 @@ class CropThumbnailsSettings {
 			<br /><strong><?php esc_html_e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','crop-thumbnails'); ?></strong>
 		</p>
 		<?php
+		$this->vueSettingsScreen();
 	}
 
 	public function emptySectionDescription() {/*empty*/ }
-	
-
-	public function callback_choose_size() {
-		//get all the data
-		$options = get_option(self::$optionsKey);
-		#echo '<pre>'.print_r($options,true).'</pre>';
-		$post_types = $this->getPostTypes();
-		$image_sizes = $this->getImageSizes();
-
-		//output
-		?>
-		<ul>
-			<?php foreach($post_types as $post_type=>$value) : ?>
-			<li>
-				<label for="<?php echo self::$cssPrefix.$post_type; ?>">
-					<input id="<?php echo self::$cssPrefix.$post_type;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
-					<strong><?php echo $value->labels->name; ?></strong>
-				</label>
-				<ul style="margin:1em;">
-				
-				<?php foreach($image_sizes as $thumb_name => $data) :
-					$_checked = false;
-					if(!empty($options['hide_size']) && is_array($options['hide_size']) && !empty($options['hide_size'][$post_type][$thumb_name])) {
-						$_checked = true;
-					}
-					if($data['crop']=='1') : ?>
-						<li>
-							<label for="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
-								<input id="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
-								<?php echo $thumb_name;?> - <?php echo $data['width'];?>x<?php echo $data['height'];?> <?php /* echo ($data['crop'] == '1' ? '(cropped)' : '') */?>
-							</label>
-						</li>
-					<?php endif; ?>
-				<?php endforeach ?>
-				
-				</ul>
-				<hr />
-			</li>
-			<?php endforeach; ?>
-		</ul>
-		<?php
-	}
 
 	public function callback_debug_js() {
 		$options = get_option(self::$optionsKey);

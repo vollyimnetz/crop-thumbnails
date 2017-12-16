@@ -1,3 +1,29 @@
 <div>
-    {{test}}
+
+    <div class="cptSettingsPostListDescription">{{settingsData.lang.choose_image_sizes}}</div>
+    <ul class="cptSettingsPostList">
+
+        <li v-for="postType in settingsData.post_types">
+            <section>
+                <header><h3>{{postType.label}}</h3></header>
+
+                
+                <ul class="cptImageSizes">
+                    <li v-for="imageSize in settingsData.image_sizes" v-if="imageSize.crop">
+                        <label>
+                            <input type="checkbox" :value="imageSize.id" :name="'crop-post-thumbs[hide_size]['+postType.name+']['+imageSize.id+']'" :checked="isImageSizeHidden(postType.name,imageSize.id)"/>
+                            <span class="name">{{imageSize.name}}</span>
+                            <span class="defaultName" v-if="imageSize.name!==imageSize.id">({{imageSize.id}})</span>
+                        </label>
+                    </li>
+                </ul>
+                
+                <label>
+                    <input id="cpt_settings_post" type="checkbox" :name="'crop-post-thumbs[hide_post_type]['+postType.name+']'" value="1" :checked="isButtonHiddenOnPostType(postType.name)">
+                     {{settingsData.lang.hide_on_post_type}}
+                </label>
+            </section>
+        </li>
+    </ul>
+    
 </div>

@@ -1,3 +1,6 @@
+.cropThumbnailSettings h2 {
+  margin-top: 3em;
+}
 .cropThumbnailSettings .cpt_settings_paypal {
   border: 1px solid #298CBA;
   border-radius: 3px;
@@ -8,7 +11,7 @@
   text-align: center;
 }
 .cropThumbnailSettings .cpt_settings_submit {
-  margin-top: 2em;
+  margin: 1.5em auto;
 }
 .cropThumbnailSettings #cpt_quicktest {
   white-space: nowrap;
@@ -32,6 +35,51 @@
 }
 .cropThumbnailSettings #cpt_quicktest strong.info {
   background: #008acc;
+}
+.cropThumbnailSettings .cptSettingsPostList {
+  margin: 0;
+}
+.cropThumbnailSettings .cptSettingsPostList::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.cropThumbnailSettings .cptSettingsPostList > li {
+  padding: 0 4px 4px 0;
+  box-sizing: border-box;
+  margin: 0;
+}
+@media (min-width: 760px) {
+  .cropThumbnailSettings .cptSettingsPostList > li {
+    width: 33.333%;
+    float: left;
+  }
+}
+.cropThumbnailSettings .cptSettingsPostList section {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 1em;
+}
+.cropThumbnailSettings .cptSettingsPostList section h3 {
+  margin-top: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cropThumbnailSettings .cptSettingsPostList section ul {
+  margin: 1em 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.cropThumbnailSettings .cptSettingsPostListDescription {
+  text-align: center;
+  font-size: 1.2em;
+  padding: 1em;
+  margin: 0 0 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.cropThumbnailSettings .form-table th,
+.cropThumbnailSettings .form-table td {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 /**** button icon ****/
 a.cropThumbnailsLink .wp-media-buttons-icon::before {
