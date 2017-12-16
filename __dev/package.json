@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "gulp watch",
-    "build": "gulp build",
+    "dev": "webpack --watch",
+    "build": "webpack",
     "start": "webpack --watch",
-    "export": "webpack --config webpack.export.js"
+    "export": "webpack --env.export"
   },
   "author": "",
   "license": "UNLICENSED",
