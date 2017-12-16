@@ -28,7 +28,7 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'upload.php') {
 			
 			wp_enqueue_style('jcrop');
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('css/cpt-backend.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
 			
 		}
 	}
@@ -45,8 +45,8 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'upload.php') {
 
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}

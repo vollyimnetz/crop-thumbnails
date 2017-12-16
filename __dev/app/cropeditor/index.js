@@ -1,5 +1,5 @@
 CROP_THUMBNAILS_VUE.components.cropeditor = {
-	template: '@./cropeditor.tpl.html',
+	template: require('./cropeditor.tpl.html'),
 	props:{
 		imageId : {
 			required: true,

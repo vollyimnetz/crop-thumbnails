@@ -130,6 +130,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * bugfix all same image-sizes where selected, even if they are not visible
 * add more debug informations in the settings-panel
 * make selected image-sizes more clear
+* optimize development-build-process
 
 = 1.0.3 =
 * fix js error handling
