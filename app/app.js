@@ -101,6 +101,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__loadingcontainer___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__loadingcontainer__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__cropeditor__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__cropeditor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__cropeditor__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__settingsscreen__ = __webpack_require__(21);
+
 
 
 
@@ -783,6 +785,59 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 /***/ (function(module, exports) {
 
 module.exports = "<div class=\"cptEditorInner\" v-if=\"cropData && lang\" :class=\"{loading:loading,cropEditorActive:croppingApi}\">\n\t\n\t<div class=\"cptWaitingWindow\" v-if=\"loading\">\n\t\t<div class=\"msg\">\n\t\t\t{{ lang.waiting }}\n\t\t\t<div>\n\t\t\t\t<div class=\"cptLoadingSpinner\"></div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t\n\t<div class=\"cptWaitingWindow cptCropDisabledMsg\" v-if=\"cropData.hiddenOnPostType\">\n\t\t<div class=\"msg\">{{lang.cropDisabled}}</div>\n\t</div>\n\t\n\t\n\t<div class=\"mainWindow\" v-if=\"!cropData.hiddenOnPostType\">\n\t\t\n\t\t<div class=\"cptSelectionPane\" :class=\"{ cptImagesAreSelected : (activeImageSizes.length>0) }\">\n\t\t\t<div class=\"cptSelectionPaneInner\">\n\t\t\t\t<message v-if=\"sourceImageHasOrientation\">{{lang.message_image_orientation}}</message>\n\t\t\t\t<p>\n\t\t\t\t\t<label class=\"cptSameRatioLabel\">\n\t\t\t\t\t\t<input type=\"checkbox\" v-model=\"selectSameRatio\" />\n\t\t\t\t\t\t{{lang.label_same_ratio}}\n\t\t\t\t\t</label>\n\t\t\t\t\t<button type=\"button\" class=\"button\" @click=\"makeAllInactive()\">{{lang.label_deselect_all}}</button>\n\t\t\t\t</p>\n\t\t\t\t<ul class=\"cptImageSizelist\">\n\t\t\t\t\t<li v-for=\"i in filteredImageSizes\" :class=\"{active : i.active}\" @click=\"toggleActive(i)\">\n\t\t\t\t\t\t<section class=\"cptImageSizeInner\">\n\t\t\t\t\t\t\t<header>{{i.nameLabel}}</header>\n\t\t\t\t\t\t\t<div class=\"lowResWarning\" v-if=\"isLowRes(i)\" :title=\"lang.lowResWarning\"><span>!</span></div>\n\t\t\t\t\t\t\t<div class=\"dimensions\">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>\n\t\t\t\t\t\t\t<div class=\"ratio\">{{ lang.ratio }} {{i.printRatio}}</div>\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t<loadingcontainer :image=\"i.url+'?cacheBreak='+i.cacheBreak\">\n\t\t\t\t\t\t\t\t<div class=\"cptImageBgContainer\" :style=\"{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}\"></div>\n\t\t\t\t\t\t\t</loadingcontainer>\n\t\t\t\t\t\t</section>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t</div>\n\t\t</div>\n\t\t<div class=\"cptCropPane\">\n\t\t\t<div class=\"info\">\n\t\t\t\t<h3>{{ lang.rawImage }}</h3>\n\t\t\t\t<div class=\"dimensions\">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div>\n\t\t\t\t<div class=\"ratio\">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>\n\t\t\t</div>\n\t\t\t<button type=\"button\" class=\"button cptGenerate\" :class=\"{'button-primary':croppingApi}\" @click=\"cropThumbnails()\" :disabled=\"!croppingApi\">{{ lang.label_crop }}</button>\n\t\t\t\n\t\t\t<div class=\"cropContainer\">\n\t\t\t\t<img class=\"cptCroppingImage\" :src=\"cropImage.url\" />\n\t\t\t</div>\n\t\n\t\t\t<h4>{{ lang.instructions_header }}</h4>\n\t\t\t<ul class=\"step-info\">\n\t\t\t\t<li>{{ lang.instructions_step_1 }}</li>\n\t\t\t\t<li>{{ lang.instructions_step_2 }}</li>\n\t\t\t\t<li>{{ lang.instructions_step_3 }}</li>\n\t\t\t</ul>\n\n\t\t\t<div>\n\t\t\t\t<button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_js\" @click=\"showDebugClick('js')\">show JS-Debug</button>\n\t\t\t\t<button type=\"button\" class=\"button\" v-if=\"cropData.options.debug_data && dataDebug!==null\" @click=\"showDebugClick('data')\">show Data-Debug</button>\n\t\t\t\t<pre v-if=\"showDebugType==='data'\">{{ dataDebug }}</pre>\n\t\t\t\t<pre v-if=\"showDebugType==='js'\"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n"
+
+/***/ }),
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__init_on_settingspage__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__init_on_settingspage___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__init_on_settingspage__);
+
+
+CROP_THUMBNAILS_VUE.components['cpt-settingsscreen'] = {
+    template: __webpack_require__(22),
+    props: {},
+    components: {},
+    data: function () {
+        return {
+            test: 'hallo welt',
+            lang: null, //language-variable (filled after initial request)
+            nonce: null //the nonce for the crop-request
+        };
+    },
+    mounted: function () {
+        console.log('settingsscreen mounted');
+    },
+    computed: {},
+    methods: {}
+};
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = "<div>\r\n    {{test}}\r\n</div>"
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+jQuery(document).ready(function ($) {
+    if ($('body.settings_page_page-cpt').length > 0) {
+        CROP_THUMBNAILS_VUE.app = new Vue({
+            el: '#cpt_settingsscreen',
+            mounted: function () {
+                console.log('cpt_settingsscreen mounted');
+            },
+            components: CROP_THUMBNAILS_VUE.components
+        });
+    }
+});
 
 /***/ })
 /******/ ]);

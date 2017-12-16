@@ -18,7 +18,9 @@ class CropThumbnailsSettings {
 
 	public function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css',dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/app.js',dirname(__FILE__) ), array('vue'), CROP_THUMBNAILS_VERSION);
 		}
 	}
 
@@ -41,11 +43,14 @@ class CropThumbnailsSettings {
 		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
 			<form action="options.php" method="post">
 				<?php settings_fields( self::$uniqeSettingsId ); ?>
+				
 				<?php do_settings_sections('page1'); ?>
 
 				<div class="<?php echo self::$cssPrefix ?>submit">
 					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
 				</div>
+
+				
 			</form>
 
 			<div class="<?php echo self::$cssPrefix; ?>paypal">
@@ -75,6 +80,9 @@ class CropThumbnailsSettings {
 		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
 		add_settings_field('sizes', esc_html__('Choose the image size options you want to hide for each post type.','crop-thumbnails'), array($this,'callback_choose_size'), 'page1', $_sectionID);
 		
+		$_sectionID = 'vue_settingsscreen';
+		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'vueSettingsScreen'), 'page1');
+
 		$_sectionID = 'quick_test';
 		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
 		
@@ -84,6 +92,13 @@ class CropThumbnailsSettings {
 		add_settings_field($_tmpID, esc_html__('Enable JS-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 		$_tmpID = 'debug_data';
 		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+	}
+
+	public function vueSettingsScreen() {?>
+		<div id="cpt_settingsscreen">
+			<cpt-settingsscreen></cpt-settingsscreen>
+		</div>
+		<?php
 	}
 
 	public function sectionDescriptionChooseSizes() {?>
