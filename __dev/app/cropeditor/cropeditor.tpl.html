@@ -31,6 +31,7 @@
 						<section class="cptImageSizeInner">
 							<header>{{i.nameLabel}}</header>
 							<div class="lowResWarning" v-if="isLowRes(i)" :title="lang.lowResWarning"><span>!</span></div>
+							<div class="notYetCropped" v-if="!isLowRes(i) && i.url === cropData.sourceImage.full.url" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
 							<div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
 							<div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
 							

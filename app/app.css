@@ -85,7 +85,6 @@
 a.cropThumbnailsLink .wp-media-buttons-icon::before {
   content: "\F165";
   font: normal 12px/1 dashicons;
-  speak: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -123,6 +122,12 @@ body.cpt_ModalIsOpen {
   padding: 0;
   box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.4);
+  /* The Close Button */
+}
+@media (min-width: 900px) {
+  #cpt_Modal {
+    padding: 40px;
+  }
 }
 #cpt_Modal .cpt_ModalDialog {
   position: relative;
@@ -150,11 +155,10 @@ body.cpt_ModalIsOpen {
 #cpt_Modal .cpt_ModalContent {
   width: 100%;
   height: 100%;
-  padding-top: 30px;
-  margin-top: -30px;
+  padding-top: 40px;
+  margin-top: -40px;
   box-sizing: border-box;
 }
-/* The Close Button */
 #cpt_Modal .cpt_ModalClose {
   color: #000;
   border: none;
@@ -172,11 +176,6 @@ body.cpt_ModalIsOpen {
   opacity: .6;
   text-decoration: none;
   cursor: pointer;
-}
-@media (min-width: 900px) {
-  #cpt_Modal {
-    padding: 40px;
-  }
 }
 /* crop-editor-layout */
 #cpt_crop_editor .mainWindow {
@@ -213,7 +212,7 @@ body.cpt_ModalIsOpen {
   }
   #cpt_crop_editor .cptSelectionPaneInner {
     width: 100%;
-    overflow-y: auto;
+    overflow-y: scroll;
     height: 100%;
   }
 }
@@ -269,7 +268,7 @@ body.cpt_ModalIsOpen {
   margin: 5px;
 }
 #cpt_crop_editor .image-list .cursor,
-.image-list .cursor * {
+#cpt_crop_editor .image-list .cursor * {
   cursor: pointer;
 }
 #cpt_crop_editor .cptImageSizelist {
@@ -283,7 +282,6 @@ body.cpt_ModalIsOpen {
   display: block;
 }
 #cpt_crop_editor .cptImageSizelist li {
-  width: 50%;
   position: relative;
   float: left;
   padding: 8px;
@@ -302,6 +300,9 @@ body.cpt_ModalIsOpen {
 #cpt_crop_editor .cptImageSizelist li:hover,
 #cpt_crop_editor .cptImageSizelist li:focus {
   background: #eee;
+}
+#cpt_crop_editor .cptImageSizelist li {
+  width: 50%;
 }
 @media (min-width: 520px) {
   #cpt_crop_editor .cptImageSizelist li {
@@ -348,7 +349,8 @@ body.cpt_ModalIsOpen {
 #cpt_crop_editor .cptImageSizeInner .ratio {
   font-size: 0.8em;
 }
-#cpt_crop_editor .cptImageSizeInner .lowResWarning {
+#cpt_crop_editor .cptImageSizeInner .lowResWarning,
+#cpt_crop_editor .cptImageSizeInner .notYetCropped {
   color: #fff;
   position: absolute;
   bottom: 12px;
@@ -362,6 +364,18 @@ body.cpt_ModalIsOpen {
   z-index: 1;
   border: 2px solid #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+#cpt_crop_editor .cptImageSizeInner .lowResWarning span,
+#cpt_crop_editor .cptImageSizeInner .notYetCropped span {
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+#cpt_crop_editor .cptImageSizeInner .notYetCropped {
+  background: #ea2f00;
+  left: auto;
+  right: 12px;
+}
+#cpt_crop_editor .cptImageSizeInner .notYetCropped span {
+  line-height: 30px;
 }
 #cpt_crop_editor .cptImageSizeInner .cptImageBgContainer {
   width: 100%;
@@ -531,31 +545,31 @@ body.cpt_ModalIsOpen {
   border-radius: 50%;
   display: inline-block;
   -webkit-animation-duration: 0.75s;
-  animation-duration: 0.75s;
+          animation-duration: 0.75s;
   -webkit-animation-iteration-count: infinite;
-  animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
   -webkit-animation-name: cptRotateForever;
-  animation-name: cptRotateForever;
+          animation-name: cptRotateForever;
   -webkit-animation-timing-function: linear;
-  animation-timing-function: linear;
+          animation-timing-function: linear;
 }
 @-webkit-keyframes cptRotateForever {
   0% {
     -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
+            transform: rotate(0deg);
   }
   100% {
     -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+            transform: rotate(360deg);
   }
 }
 @keyframes cptRotateForever {
   0% {
     -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
+            transform: rotate(0deg);
   }
   100% {
     -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+            transform: rotate(360deg);
   }
 }
