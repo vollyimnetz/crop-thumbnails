@@ -5,19 +5,19 @@ define('TEST_PLUGIN_BASE',__DIR__.'/../../../..');
 
 
 /** END global wordpress functions **/
-abstract class TestCase extends PHPUnit_Framework_TestCase {
+abstract class CptTestCase extends PHPUnit_Framework_TestCase {
 	
 	public static $settingsMock;
 	
 	protected function getTestObject() {
 		include_once TEST_PLUGIN_BASE.'/functions/save.php';
-		include_once TEST_PLUGIN_BASE.'/functions/settings.php';
+		include_once TEST_PLUGIN_BASE.'/functions/helper.php';
 		
-		self::$settingsMock = Mockery::mock('CropThumbnailsSettings');
+		self::$settingsMock = Mockery::mock('CropThumbnailsHelperInstance');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
 		self::$settingsMock->shouldReceive('getOptions')->andReturn(array('debug_data' => true));
 		
-		$GLOBALS['cptSettings'] = self::$settingsMock;
+		$GLOBALS['CROP_THUMBNAILS_HELPER'] = self::$settingsMock;
 		
 		return new CptSaveThumbnail();
 	}

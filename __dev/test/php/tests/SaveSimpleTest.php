@@ -1,7 +1,7 @@
 <?php
-include_once 'CptTestCase.php';
+include_once __DIR__.'/CptTestCase.php';
 
-class SaveSimpleTest extends TestCase {
+class SaveSimpleTest extends CptTestCase {
 	
 	public function setUp() {
 		\WP_Mock::setUp();
@@ -32,7 +32,17 @@ class SaveSimpleTest extends TestCase {
 				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
 				return rtrim( $string, '/\\' ) . '/'; 
 			}
+		]);/*
+		\WP_Mock::wpFunction( 'get_option',[
+			'return' => function($string) { 
+				return [];
+			}
 		]);
+		\WP_Mock::wpFunction( 'get_intermediate_image_sizes',[
+			'return' => function($string) { 
+				return [];
+			}
+		]);*/
 	}
 	
 	

@@ -17,3 +17,4 @@ Go to `__dev/test/php` and install the the test-environment with `composer insta
 
 ### Run the tests
 Go to `__dev/test/php` and run the tests with `vendor/bin/phpunit`.
+Run `vendor/bin/phpunit --filter SaveTest` to run only the SaveTest tests.

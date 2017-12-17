@@ -1,7 +1,7 @@
 <?php
-include_once 'CptTestCase.php';
+include_once __DIR__.'/CptTestCase.php';
 
-class SaveTest extends TestCase {
+class SaveTest extends CptTestCase {
 	
 	static $cpt;
 	

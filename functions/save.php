@@ -17,9 +17,8 @@ class CptSaveThumbnail {
 	 * Called die() at the end.
 	 */
 	public function saveThumbnail() {
-		global $cptSettings;
 		$jsonResult = array();
-		$settings = $cptSettings->getOptions();
+		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		
 		try {
 			$input = $this->getValidatedInput();
@@ -39,7 +38,7 @@ class CptSaveThumbnail {
 			}
 			
 			//from DB
-			$dbImageSizes = $cptSettings->getImageSizes();
+			$dbImageSizes = $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes();
 			
 			/**
 			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
@@ -71,7 +70,7 @@ class CptSaveThumbnail {
 				$currentFilePath = self::generateFilename($sourceImgPath, $croppedSize['width'], $croppedSize['height']);
 				self::addDebug("filename: ".$currentFilePath);
 				$currentFilePathInfo = pathinfo($currentFilePath);
-				$temporaryCopyFile = $cptSettings->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
+				$temporaryCopyFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
 				$result = wp_crop_image(							// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 					$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
@@ -256,9 +255,7 @@ class CptSaveThumbnail {
 	 * @throw Exception if the security validation fails
 	 */
 	private function getValidatedInput() {
-		global $cptSettings;
-		
-		if(!check_ajax_referer($cptSettings->getNonceBase(),'_ajax_nonce',false)) {
+		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
 		}
 		
