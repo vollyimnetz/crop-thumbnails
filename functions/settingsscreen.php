@@ -92,7 +92,7 @@ class CropThumbnailsSettingsScreen {
 			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),
 			'image_sizes' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes(),
 			'lang' => array(
-				'choose_image_sizes' => esc_js(__('Choose the image sizes you do not want to show if the user uses the button below the featured image box.','crop-thumbnails')),
+				'choose_image_sizes' => esc_js(__('Choose the image sizes you do not want to show, if the user uses the button below the featured image box.','crop-thumbnails')),
 				'hide_on_post_type' => esc_js(__('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails'))
 			)
 		);

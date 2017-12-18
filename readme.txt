@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
 Tested up to: 4.9
-Stable tag: 1.0.3
+Stable tag: 1.1.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,13 +124,15 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 
-= 1.0.4 =
+= 1.1.0 =
 * bugfix variable was used but not defined (php)
 * bugfix image-size with custom name where not updated in view after crop
 * bugfix all same image-sizes where selected, even if they are not visible
-* add more debug informations in the settings-panel
+* in the settings-panel, add more quick-test informations
+* redesign settings-panel
 * make selected image-sizes more clear
 * optimize development-build-process
+* add warning sign for not yet cropped images-sizes
 
 = 1.0.3 =
 * fix js error handling
