@@ -1,9 +1,7 @@
 <?php
-class CropThumbnailsSettings {
+class CropThumbnailsSettingsScreen {
 	private static $uniqeSettingsId = 'cpt-settings';
-	private static $optionsKey = 'crop-post-thumbs';
 	private static $cssPrefix = 'cpt_settings_';
-	private static $defaultSizes = array('thumbnail','medium','medium_large','large');
 
 	public function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
@@ -18,7 +16,9 @@ class CropThumbnailsSettings {
 
 	public function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
-			wp_enqueue_style('crop-thumbnails-options-style',plugins_url('css/cpt-backend.css',dirname(__FILE__)));
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css',dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/app.js',dirname(__FILE__) ), array('vue'), CROP_THUMBNAILS_VERSION);
 		}
 	}
 
@@ -41,8 +41,9 @@ class CropThumbnailsSettings {
 		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
 			<form action="options.php" method="post">
 				<?php settings_fields( self::$uniqeSettingsId ); ?>
+				
 				<?php do_settings_sections('page1'); ?>
-
+				
 				<div class="<?php echo self::$cssPrefix ?>submit">
 					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
 				</div>
@@ -69,12 +70,11 @@ class CropThumbnailsSettings {
 	}
 
 	public function settingsInitialisation(){
-		register_setting( self::$uniqeSettingsId, self::$optionsKey, array($this,'validateSettings') );
+		register_setting( self::$uniqeSettingsId, $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey(), array($this,'validateSettings') );
 
 		$_sectionID = 'choose_sizes_section';
 		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
-		add_settings_field('sizes', esc_html__('Choose the image size options you want to hide for each post type.','crop-thumbnails'), array($this,'callback_choose_size'), 'page1', $_sectionID);
-		
+
 		$_sectionID = 'quick_test';
 		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
 		
@@ -86,76 +86,61 @@ class CropThumbnailsSettings {
 		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
+	private function vueSettingsScreen() {
+		$settings = array(
+			'options' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions(),
+			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),
+			'image_sizes' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes(),
+			'lang' => array(
+				'choose_image_sizes' => esc_js(__('Choose the image sizes you do not want to show, if the user uses the button below the featured image box.','crop-thumbnails')),
+				'hide_on_post_type' => esc_js(__('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails'))
+			)
+		);
+		
+		?>
+		<div class="<?php echo self::$cssPrefix ?>submit">
+			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
+		</div>
+
+		<div id="<?php echo self::$cssPrefix ?>settingsscreen">
+			<cpt-settingsscreen settings="<?php echo esc_attr(json_encode($settings)) ?>"></cpt-settingsscreen>
+		</div>
+
+		<div class="<?php echo self::$cssPrefix ?>submit">
+			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
+		</div>	
+		<?php
+	}
+
 	public function sectionDescriptionChooseSizes() {?>
 		<p>
 			<?php esc_html_e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..','crop-thumbnails') ?>
 			<br /><strong><?php esc_html_e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','crop-thumbnails'); ?></strong>
 		</p>
 		<?php
+		$this->vueSettingsScreen();
 	}
 
 	public function emptySectionDescription() {/*empty*/ }
-	
-
-	public function callback_choose_size() {
-		//get all the data
-		$options = get_option(self::$optionsKey);
-		#echo '<pre>'.print_r($options,true).'</pre>';
-		$post_types = $this->getPostTypes();
-		$image_sizes = $this->getImageSizes();
-
-		//output
-		?>
-		<ul>
-			<?php foreach($post_types as $post_type=>$value) : ?>
-			<li>
-				<label for="<?php echo self::$cssPrefix.$post_type; ?>">
-					<input id="<?php echo self::$cssPrefix.$post_type;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_post_type][<?php echo $post_type;?>]" value="1" <?php checked(isset($options['hide_post_type'][$post_type]),true); ?> />
-					<strong><?php echo $value->labels->name; ?></strong>
-				</label>
-				<ul style="margin:1em;">
-				
-				<?php foreach($image_sizes as $thumb_name => $data) :
-					$_checked = false;
-					if(!empty($options['hide_size']) && is_array($options['hide_size']) && !empty($options['hide_size'][$post_type][$thumb_name])) {
-						$_checked = true;
-					}
-					if($data['crop']=='1') : ?>
-						<li>
-							<label for="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>">
-								<input id="<?php echo self::$cssPrefix.$post_type;?>-<?php echo $thumb_name;?>" type="checkbox" name="<?php echo self::$optionsKey; ?>[hide_size][<?php echo $post_type; ?>][<?php echo $thumb_name; ?>]" value="1" <?php echo checked($_checked); ?> />
-								<?php echo $thumb_name;?> - <?php echo $data['width'];?>x<?php echo $data['height'];?> <?php /* echo ($data['crop'] == '1' ? '(cropped)' : '') */?>
-							</label>
-						</li>
-					<?php endif; ?>
-				<?php endforeach ?>
-				
-				</ul>
-				<hr />
-			</li>
-			<?php endforeach; ?>
-		</ul>
-		<?php
-	}
 
 	public function callback_debug_js() {
-		$options = get_option(self::$optionsKey);
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$_id = 'debug_js';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
-		echo '<input name="'.self::$optionsKey.'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
+		echo '<input name="'.$GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey().'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
 	}
 
 	public function callback_debug_data() {
-		$options = get_option(self::$optionsKey);
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$_id = 'debug_data';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
-		echo '<input name="'.self::$optionsKey.'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
+		echo '<input name="'.$GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey().'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
 	}
 
 	public function validateSettings($input) {
-		$sizes = $this->getImageSizes();
+		$sizes = $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes();
 
-		$post_types = $this->getPostTypes();
+		$post_types = $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes();
 
 		$storeInDb = array();
 		//check input[hide_post_type] --> are the post_types real there
@@ -236,7 +221,6 @@ class CropThumbnailsSettings {
 		<?php
 	}
 
-/* helper functions **********************************************************************************************/
 
 	public function ajax_callback_admin_quicktest() {
 		//security
@@ -249,14 +233,19 @@ class CropThumbnailsSettings {
 		$attachmentId = -1;
 		
 		$sourceFile = dirname( __FILE__ ).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
-		$tempFile = $this->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
+		$tempFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
 		try {
+			$report[] = '<strong class="info">info</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
+			$report[] = '<strong class="info">info</strong> PHP '.phpversion();
+			$report[] = '<strong class="info">info</strong> PHP memory limit '.ini_get('memory_limit');
+			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(array('mime_type' => 'image/jpeg')).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+			
 			//check if tmp-folder can be generated
-			if(is_dir($this->getUploadDir())) {
+			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
 				$report[] = '<strong class="success">success</strong> Temporary directory exists';
 			} else {
-				if (!mkdir($this->getUploadDir())) {
-					throw new \Exception('<strong class="fails">fail</strong> Creating the temporary directory ('.esc_attr($this->getUploadDir()).') | is the upload-directory writable with PHP?');
+				if (!mkdir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
+					throw new \Exception('<strong class="fails">fail</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
 				} else {
 					$report[] = '<strong class="success">success</strong> Temporary directory could be created';
 				}
@@ -357,74 +346,9 @@ class CropThumbnailsSettings {
 			}
 		}
 		
+		$report[] = '<strong class="info">info</strong> Tests complete';
 		echo join($report,"<br />");
 		exit();
 	}
-
-	public function getUploadDir() {
-		$upload_dir = wp_upload_dir();
-		return $upload_dir['basedir'].DIRECTORY_SEPARATOR.'tmp';
-	}
-
-
-	/**
-	 * get the post types and delete some prebuild post types that we dont need
-	 */
-	public function getPostTypes() {
-		$post_types = get_post_types(array(),'objects');
-		unset($post_types['nav_menu_item']);
-		unset($post_types['revision']);
-		unset($post_types['attachment']);
-		return $post_types;
-	}
-
-
-	/**
-	 * <pre>
-	 * Creates an array of all image sizes.
-	 * @return {array} array of all image sizes
-	 *                       array[<sizename>]['height'] = int
-	 *                       array[<sizename>]['width'] = int
-	 *                       array[<sizename>]['crop'] = boolean
-	 *                       array[<sizename>]['name'] = string --> readable name if provided in "image_size_names_choose", else sizename
-	 * </pre>
-	 */
-	public function getImageSizes() {
-		global $_wp_additional_image_sizes;//array with the available image sizes
-		$image_size_names = array_flip(get_intermediate_image_sizes());
-		foreach($image_size_names as $key=>$value) {
-			$image_size_names[$key] = $key;
-		}
-		
-		$tmp_sizes = apply_filters( 'image_size_names_choose', $image_size_names );
-		$image_size_names = array_merge($image_size_names,$tmp_sizes);
-		
-		$sizes = array();
-		foreach( $image_size_names as $_size=>$theName ) {
-
-			if ( in_array( $_size, self::$defaultSizes ) ) {
-				$sizes[ $_size ]['width']  = intval(get_option( $_size . '_size_w' ));
-				$sizes[ $_size ]['height'] = intval(get_option( $_size . '_size_h' ));
-				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );
-			} else {
-				$sizes[ $_size ] = array(
-					'width'  => intval($_wp_additional_image_sizes[ $_size ]['width']),
-					'height' => intval($_wp_additional_image_sizes[ $_size ]['height']),
-					'crop'   => (bool) $_wp_additional_image_sizes[ $_size ]['crop']
-				);
-			}
-			$sizes[ $_size ]['name'] = $theName;
-		}
-		$sizes = apply_filters('crop_thumbnails_image_sizes',$sizes);
-		return $sizes;
-	}
-
-	public function getOptions() {
-		return get_option(self::$optionsKey);
-	}
-
-	public function getNonceBase() {
-		return 'crop-post-thumbnails-nonce-base';
-	}
 }
-$cptSettings = new CropThumbnailsSettings();
+$cptSettingsScreen = new CropThumbnailsSettingsScreen();

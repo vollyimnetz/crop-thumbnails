@@ -1,5 +1,5 @@
 CROP_THUMBNAILS_VUE.components.loadingcontainer = {
-	template: '@./loadingcontainer.tpl.html',
+	template: require('./loadingcontainer.tpl.html'),
 	props:{
 		image : {
 			required: true,

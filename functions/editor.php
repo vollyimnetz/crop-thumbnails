@@ -41,11 +41,10 @@ class CropPostThumbnailsEditor {
 			throw new CPT_ForbiddenException();
 		}
 		
-		global $cptSettings;
 		global $content_width;//include nasty content_width
 		$content_width = 9999;//override the idioty
 		
-		$options = $cptSettings->getOptions();
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$result = array(
 			'options' => $options,
 			'sourceImageId' => null,
@@ -56,7 +55,7 @@ class CropPostThumbnailsEditor {
 			),
 			'sourceImageMeta' => null,
 			'postTypeFilter' => null,
-			'imageSizes' => array_values($cptSettings->getImageSizes()),
+			'imageSizes' => array_values($GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes()),
 			'lang' => array(
 				'warningOriginalToSmall' => self::fixJsLangStrings(__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails')),
 				'cropDisabled' => self::fixJsLangStrings(__('Cropping is disabled for this post-type.','crop-thumbnails')),
@@ -74,10 +73,11 @@ class CropPostThumbnailsEditor {
 				'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
 				'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
 				'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
+				'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by wordpress.','crop-thumbnails')),
 				'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
 				'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails'))
 			),
-			'nonce' => wp_create_nonce($cptSettings->getNonceBase())
+			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase())
 		);
 		
 		//simple validation
@@ -105,8 +105,7 @@ class CropPostThumbnailsEditor {
 			$result['sourceImageMeta'] = $meta_raw['image_meta'];
 		}
 		
-		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options,$current_parent_post_type);
-		
+		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options, $result['postTypeFilter']);
 		if(!$result['hiddenOnPostType']) {
 			
 			foreach($result['imageSizes'] as $key => $imageSize) {
@@ -140,16 +139,16 @@ class CropPostThumbnailsEditor {
 				}
 				
 				
-				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['name']);
+				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['id']);
 				$jsonDataValues = array(
-					'name' => $imageSize['name'],
+					'name' => $imageSize['id'],
 					'nameLabel' => $imageSize['name'],//if you want to change the label of this image-size
 					'url' => $img_data[0],
 					'width' => $imageSize['width'],
 					'height' => $imageSize['height'],
 					'gcd' => $ratioData['gcd'],
 					'ratio' => $ratioData['ratio'],
-					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $ratioData['printRatio'], $imageSize['name']),
+					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $ratioData['printRatio'], $imageSize['id']),
 					'hideByPostType' => self::shouldSizeBeHidden($options,$imageSize,$result['postTypeFilter']),
 					'crop' => true//legacy
 				);

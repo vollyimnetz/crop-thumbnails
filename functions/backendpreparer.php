@@ -7,7 +7,7 @@ class CropPostThumbnailsBackendPreparer {
 	
 	private $allowedMime = array('image/jpeg','image/png');
 	
-	function __construct() {
+	public function __construct() {
 		if ( is_admin() ) {
 			//add style and javascript
 			add_action( 'admin_print_styles', array(&$this, 'adminHeaderCSS') );
@@ -16,10 +16,11 @@ class CropPostThumbnailsBackendPreparer {
 			add_filter( 'attachment_fields_to_edit', array($this,'add_button_to_attachment_edit_view'), 10, 2 );
 		}
 	}
+	
 	/**
-	 * For adding the "thickbox"-style in the mediathek
+	 * For adding the styles in the backend
 	 */
-	function adminHeaderCSS() {
+	public function adminHeaderCSS() {
 		global $pagenow;
 		if (   $pagenow == 'post.php'
 			|| $pagenow == 'post-new.php'
@@ -28,7 +29,7 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'upload.php') {
 			
 			wp_enqueue_style('jcrop');
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('css/cpt-backend.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
 			
 		}
 	}
@@ -45,8 +46,8 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow == 'upload.php') {
 
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'vue', plugins_url('js/app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('js/app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}
@@ -75,17 +76,32 @@ class CropPostThumbnailsBackendPreparer {
 		}
 		return $form_fields;
 	}
+
+	/**
+	 * Check if on the current admin page (posttype) the crop-button should be visible in the featured image Box.
+	 */
+	private static function showCropButtonOnThisAdminPage() {
+		$screenData = get_current_screen();
+		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		$showFeaturedImageCropButton = false;
+		if(empty($settings['hide_post_type'][ $screenData->post_type ])) {
+			$showFeaturedImageCropButton = true;
+		}
+		return $showFeaturedImageCropButton;
+	}
 	
 	
 	/**
 	 * adds the links into post-types and the media-library
 	 */
 	function addLinksToAdmin() {
+
+
 		
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	
+
 	/**
 	 * Global accessable id of the current post (will be null if no post-element is present)
 	 */
@@ -109,6 +125,7 @@ jQuery(document).ready(function($) {
 		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>">';
 		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?>';
 		featuredImageLinkButton+= '</a>';
+		featuredImageLinkButton+= '</p>';
 		baseElem.find('.inside').after( $(featuredImageLinkButton) );
 		
 		
@@ -137,6 +154,7 @@ jQuery(document).ready(function($) {
 		updateCropFeaturedImageButton( parseInt(wp.media.featuredImage.get()) );
 	}
 	
+	<?php if(self::showCropButtonOnThisAdminPage()) : ?>
 	/** add link on posts and pages **/
 	if ($('body.post-php, body.page-php, body.page-new.php, body.post-new-php').length > 0) {
 		var post_id_hidden = $('form#post #post_ID');
@@ -153,6 +171,7 @@ jQuery(document).ready(function($) {
 			});
 		}
 	}
+	<?php endif; ?>
 
 	/** add link on mediathek **/
 	if ($('body.upload-php').length > 0) {

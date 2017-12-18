@@ -1,5 +1,5 @@
 var mySettings = {
-	svnExportFolder:'---path-to-an-svn-export-folder---'
+	exportFolder:'---path-to-an-export-folder---'
 };
 
 exports.settings = mySettings;

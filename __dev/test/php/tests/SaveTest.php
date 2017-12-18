@@ -1,7 +1,7 @@
 <?php
-include_once 'CptTestCase.php';
+include_once __DIR__.'/CptTestCase.php';
 
-class SaveTest extends TestCase {
+class SaveTest extends CptTestCase {
 	
 	static $cpt;
 	
@@ -701,67 +701,78 @@ class SaveTest extends TestCase {
 				'width' => 150,
 				'height' => 150,
 				'crop' => 1,
-				'name' => 'thumbnail'
+				'name' => 'thumbnail',
+				'id' => 'thumbnail'
 			],
 			'medium' => [
 				'width' => 300,
 				'height' => 300,
 				'crop' => 0,
-				'name' => 'medium'
+				'name' => 'medium',
+				'id' => 'medium'
 			],
 			'large' => [
 				'width' => 1024,
 				'height' => 1024,
 				'crop' => 0,
-				'name' => 'large'
+				'name' => 'large',
+				'id' => 'large'
 			],
 			'post-thumbnail' => [
 				'width' => 300,
 				'height' => 200,
 				'crop' => 1,
-				'name' => 'post-thumbnail'
+				'name' => 'post-thumbnail',
+				'id' => 'post-thumbnail'
 			],
 			'dynamic-1' => [//dynamic image size with a width of 500 - height is the height of the attachement-image
 				'width' => 500,
 				'height' => 9999,
 				'crop' => 1,
-				'name' => 'dynamic-1'
+				'name' => 'dynamic-1',
+				'id' => 'dynamic-1'
 			],
 			'dynamic-2' => [//dynamic image size with a height of 500 - width is the width of the attachement-image
 				'width' => 9999,
 				'height' => 500,
 				'crop' => 1,
-				'name' => 'dynamic-2'
+				'name' => 'dynamic-2',
+				'id' => 'dynamic-2'
 			],
 			'dynamic-zero-width' => [//a dynamic image size wich should be not enabled for crop (cause width=0 indicates no crop)
 				'width' => 0,
 				'height' => 500,
 				'crop' => 1,
-				'name' => 'dynamic-zero-width'
+				'name' => 'dynamic-zero-width',
+				'id' => 'dynamic-zero-width'
 			],
 			'dynamic-zero-height' => [//a dynamic image size wich should be not enabled for crop (cause width=0 indicates no crop)
 				'width' => 400,
 				'height' => 0,
 				'crop' => 1,
-				'name' => 'dynamic-zero-height'
+				'name' => 'dynamic-zero-height',
+				'id' => 'dynamic-zero-height'
 			],
 			'strange-image-ratio' => [//a image-size with a nearly image-ratio of 1 (could be set to 1 via add_action)
 				'width' => 500,
 				'height' => 499,
 				'crop' => 1,
-				'name' => 'strange-image-ratio'
+				'name' => 'strange-image-ratio',
+				'id' => 'strange-image-ratio'
 			],
-			'normal1x1' => [
+			'normal1x1' => [//a image-size with a custom name
 				'width' => 500,
 				'height' => 500,
 				'crop' => 1,
-				'name' => 'normal1x1'
+				'name' => 'my square image-size',
+				'id' => 'normal1x1'
 			],
 			'new-image-size' => [//this image size was added by an developer after the image was uploaded (this size will not be in the attachements metadata)
 				'width' => 600,
 				'height' => 600,
 				'crop' => 1,
-				'name' => 'new-image-size'
+				'name' => 'new-image-size',
+				'id' => 'new-image-size'
 			]
 		];
 	}
