@@ -5,11 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
 Tested up to: 4.9
-<<<<<<< HEAD
-Stable tag: 1.1.0
-=======
 Stable tag: 1.1.1
->>>>>>> dev
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
