@@ -38,6 +38,10 @@ class SaveTest extends CptTestCase {
 		\WP_Mock::wpFunction('get_post', [ 
 			'return' => new stdClass()
 		]);
+
+		\WP_Mock::wpFunction( 'wp_check_filetype',[ 
+			'return' => function($param) { return ['ext'=>'jpg', 'type'=>'image/jpeg']; } 
+		]);
 		
 		self::$cpt = $this->getTestObject();
 	}
