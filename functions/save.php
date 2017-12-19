@@ -209,11 +209,13 @@ class CptSaveThumbnail {
 	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
 		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
 		
+		$fileTypeInformations = wp_check_filetype($fullFilePath);
+
 		$newValues = array();
 		$newValues['file'] = $currentFilePathInfo['basename'];
 		$newValues['width'] = intval($croppedWidth);
 		$newValues['height'] = intval($croppedHeight);
-		$newValues['mime-type'] = mime_content_type($fullFilePath);
+		$newValues['mime-type'] = $fileTypeInformations['type'];
 		
 		$oldValues = array();
 		if(empty($imageMetadata['sizes'])) {
