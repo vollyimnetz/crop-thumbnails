@@ -27,7 +27,7 @@
 					<button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
 				</p>
 				<ul class="cptImageSizelist">
-					<li v-for="i in filteredImageSizes" :class="{active : i.active}" @click="toggleActive(i)">
+					<li v-for="i in filteredImageSizes" :class="imageSizeClass(i)" @click="toggleActive(i)">
 						<section class="cptImageSizeInner">
 							<header>{{i.nameLabel}}</header>
 							<div class="lowResWarning" v-if="isLowRes(i)" :title="lang.lowResWarning"><span>!</span></div>

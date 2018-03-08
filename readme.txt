@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
 Tested up to: 4.9
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -123,6 +123,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.1.2 =
+* add an css-class on the listing of image-sizes
 
 = 1.1.1 =
 * bugfix change use of mime_content_type() to wp_check_filetype() - it seems on some servers mime_content_type() is undefined

@@ -75,6 +75,11 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 		}
 	},
 	methods:{
+		imageSizeClass: function (imageSize) {
+			var baseClass = { active: imageSize.active };
+			baseClass['cptImageSize-' + imageSize.nameLabel] = true;//add image-size to the class
+			return baseClass;
+		},
 		loadCropData : function() {
 			var that = this;
 			var getParameter = {
