@@ -125,6 +125,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 == Changelog ==
 = 1.1.3 =
 * add a filter (crop_thumbnails_activat_on_adminpages), for adding the plugins js/css on futher admin-pages like the taxonomy edit-page.
+* update js and webpack dependencies
 
 = 1.1.2 =
 * add an css-class on the listing of image-sizes
