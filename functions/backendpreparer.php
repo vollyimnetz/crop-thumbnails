@@ -16,21 +16,38 @@ class CropPostThumbnailsBackendPreparer {
 			add_filter( 'attachment_fields_to_edit', array($this,'add_button_to_attachment_edit_view'), 10, 2 );
 		}
 	}
+
+	/**
+	 * Check if the crop-thumbnail-dialog should be available on the following pages. The default pages are
+	 * page and post editing pages, as well as the media-library.
+	 * 
+	 * How to enhance the result.
+	 * <code>
+	 * add_filter('crop_thumbnails_activat_on_adminpages', function($oldValue) {
+	 * 	global $pagenow;
+	 * 	return $oldValue || $pagenow==='term.php';//for adding taxonomy edit-page to the list of pages where crop-thumbnails work
+	 * });
+	 * </code>
+	 */
+	private function shouldCropThumbnailsBeActive() {
+		global $pagenow;
+		$result = ($pagenow == 'post.php'
+			|| $pagenow == 'post-new.php'
+			|| $pagenow == 'page.php'
+			|| $pagenow == 'page-new.php'
+			|| $pagenow == 'upload.php');
+		$result = apply_filters('crop_thumbnails_activat_on_adminpages',$result);
+		return $result;
+	}
 	
 	/**
 	 * For adding the styles in the backend
 	 */
 	public function adminHeaderCSS() {
 		global $pagenow;
-		if (   $pagenow == 'post.php'
-			|| $pagenow == 'post-new.php'
-			|| $pagenow == 'page.php'
-			|| $pagenow == 'page-new.php'
-			|| $pagenow == 'upload.php') {
-			
+		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_style('jcrop');
 			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
-			
 		}
 	}
 	
@@ -39,12 +56,7 @@ class CropPostThumbnailsBackendPreparer {
 	 */
 	function adminHeaderJS() {
 		global $pagenow;
-		if (   $pagenow == 'post.php'
-			|| $pagenow == 'post-new.php'
-			|| $pagenow == 'page.php'
-			|| $pagenow == 'page-new.php'
-			|| $pagenow == 'upload.php') {
-
+		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_script( 'jcrop' );
 			wp_enqueue_script( 'vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
 			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);

@@ -144,3 +144,16 @@ function my_custom_sizes( $sizes ) {
 	return $sizes;
 }
 ```
+
+### FILTER `crop_thumbnails_activat_on_adminpages`
+
+Filter for adding/removing the plugins js/css files from a certain admin-page. If, for example, you have a ACF-driven image-input field on a taxonomy page. The crop thumbnails plugin will not work unless you add the following lines in your functions.php (else the js/css will not be included on the taxonomy edit-page and the plugin therefore can not work).
+
+Example
+```php
+add_filter('crop_thumbnails_activat_on_adminpages', function($oldValue) {
+	global $pagenow;
+	return $oldValue || $pagenow==='term.php';
+	//for adding taxonomy edit-page to the list of pages where crop-thumbnails work
+});
+```
