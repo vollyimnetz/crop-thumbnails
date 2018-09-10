@@ -26,7 +26,7 @@
  */
 
 
-define('CROP_THUMBNAILS_VERSION','1.1.2');
+define('CROP_THUMBNAILS_VERSION','1.1.3');
 
 
 function cptLoadLanguage() {
