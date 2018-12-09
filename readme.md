@@ -157,3 +157,20 @@ add_filter('crop_thumbnails_activat_on_adminpages', function($oldValue) {
 	//for adding taxonomy edit-page to the list of pages where crop-thumbnails work
 });
 ```
+
+### FILTER `crop_thumbnails_user_permission_check`
+
+You can customize the user permissions, that are needed to crop the thumbnails by using this filter.
+
+Example
+```php
+add_filter('crop_thumbnails_user_permission_check', function($oldValue, $imageId) {
+	if($imageId===42) {
+		return false;//never let this image be cropped
+	}
+	if(wp_get_current_user()->user_login==='Dipper Pines') {
+		return true;
+	}
+	return $oldValue;
+}, 10, 2);
+```

@@ -123,6 +123,12 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.2.0 =
+* fix for hiding crop sizes is not working when the image_size_names_choose-filter is used for that post-type
+* change permission from 'upload_files' to 'edit_files' (Attention: authors will no longer able to crop the thumbnails)
+* add a filter function to override the permission to crop thumbnails (crop_thumbnails_user_permission_check)
+* add settings-section to set if users can crop thumbnails with capability "edit_files" or "upload_files"
+
 = 1.1.3 =
 * add a filter (crop_thumbnails_activat_on_adminpages), for adding the plugins js/css on futher admin-pages like the taxonomy edit-page.
 * update js and webpack dependencies

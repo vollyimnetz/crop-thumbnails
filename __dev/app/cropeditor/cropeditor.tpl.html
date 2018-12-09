@@ -13,8 +13,11 @@
 		<div class="msg">{{lang.cropDisabled}}</div>
 	</div>
 	
-	
-	<div class="mainWindow" v-if="!cropData.hiddenOnPostType">
+	<div class="cptWaitingWindow cptNoPermissionMsg" v-if="cropData.noPermission">
+		<div class="msg">{{lang.noPermission}}</div>
+	</div>
+
+	<div class="mainWindow" v-if="!cropData.hiddenOnPostType && !cropData.noPermission">
 		
 		<div class="cptSelectionPane" :class="{ cptImagesAreSelected : (activeImageSizes.length>0) }">
 			<div class="cptSelectionPaneInner">

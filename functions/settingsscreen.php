@@ -75,6 +75,11 @@ class CropThumbnailsSettingsScreen {
 		$_sectionID = 'choose_sizes_section';
 		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
 
+		$_sectionID = 'userPermission';
+		add_settings_section($_sectionID, esc_html__('User Permission','crop-thumbnails'), array($this,'emptySectionDescription'), 'page1');
+		$_tmpID = 'user_permission_only_on_edit_files';
+		add_settings_field($_tmpID, esc_html__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+
 		$_sectionID = 'quick_test';
 		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
 		
@@ -123,6 +128,20 @@ class CropThumbnailsSettingsScreen {
 
 	public function emptySectionDescription() {/*empty*/ }
 
+
+	
+	public function callback_user_permission_only_on_edit_files() {
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		$_id = 'user_permission_only_on_edit_files';
+		if(empty($options[$_id])) { $options[$_id] = ''; }
+		echo '<input name="'.$GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey().'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
+		?>
+		<div class="<?php echo self::$cssPrefix ?>submit">
+			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
+		</div>
+		<?php
+	}
+
 	public function callback_debug_js() {
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$_id = 'debug_js';
@@ -164,6 +183,11 @@ class CropThumbnailsSettingsScreen {
 					}
 				}
 			}
+		}
+
+		$_tmpID = 'user_permission_only_on_edit_files';
+		if(!empty($input[$_tmpID])) {
+			$storeInDb[$_tmpID] = 1;
 		}
 
 		/* Advanced Section */

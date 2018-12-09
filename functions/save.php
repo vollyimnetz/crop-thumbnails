@@ -257,6 +257,7 @@ class CptSaveThumbnail {
 	 * @throw Exception if the security validation fails
 	 */
 	private function getValidatedInput() {
+
 		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
 		}
@@ -272,6 +273,9 @@ class CptSaveThumbnail {
 			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		
+		if(!self::isUserPermitted($input->sourceImageId)) {
+			throw new Exception(__("You are not permitted to crop the thumbnails.",'crop-thumbnails'), 1);
+		}
 		
 		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
 			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
@@ -314,5 +318,25 @@ class CptSaveThumbnail {
 		$suffix = $w.'x'.$h;
 		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
 		return $destfilename;
+	}
+
+	/**
+	 * Check if the user is permitted to crop the thumbnails.
+	 * 
+	 * You may override the default result of this function by using the filter 'crop_thumbnails_user_permission_check'.
+	 * 
+	 * @param int $imageId The ID of the image that should be cropped (not used in default test)
+	 * @return boolean true if the user is permitted
+	 */
+	public static function isUserPermitted($imageId) {
+		$return = false;
+		$cropThumbnailSettings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		if(current_user_can('edit_files')) {
+			$return = true;
+		}
+		if(current_user_can('upload_files') && empty($cropThumbnailSettings['user_permission_only_on_edit_files'])) {
+			$return = true;
+		}
+		return apply_filters('crop_thumbnails_user_permission_check', $return, $imageId);
 	}
 }

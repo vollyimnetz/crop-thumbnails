@@ -95,6 +95,14 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 				that.lang = that.cropData.lang;
 				that.nonce = that.cropData.nonce;
 				delete that.cropData.nonce;
+			}).fail(function(data) {
+				that.cropData = data.responseJSON;
+				that.lang = that.cropData.lang;
+				that.nonce = that.cropData.nonce;
+				delete that.cropData.nonce;
+				if(data.status===403) {
+					that.cropData.noPermission = true;
+				}
 			}).always(function() {
 				that.loading = false;
 			});
