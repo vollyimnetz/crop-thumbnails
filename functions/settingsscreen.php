@@ -1,7 +1,7 @@
 <?php
 class CropThumbnailsSettingsScreen {
-	private static $uniqeSettingsId = 'cpt-settings';
-	private static $cssPrefix = 'cpt_settings_';
+	protected static $uniqeSettingsId = 'cpt-settings';
+	protected static $cssPrefix = 'cpt_settings_';
 
 	public function __construct() {
 		add_action('admin_menu', array($this,'addOptionsPage'));
@@ -91,7 +91,7 @@ class CropThumbnailsSettingsScreen {
 		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
 	}
 
-	private function vueSettingsScreen() {
+	protected function vueSettingsScreen() {
 		$settings = array(
 			'options' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions(),
 			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),

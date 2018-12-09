@@ -9,13 +9,11 @@ class SaveTest extends CptTestCase {
 		\WP_Mock::setUp();
 		
 		//needed by cptSettings
-		\WP_Mock::wpFunction( 'is_admin',[
-			'return' => true
-		]);
+		\WP_Mock::wpFunction( 'is_admin',[ 'return' => true ]);
+
+		\WP_Mock::wpFunction( 'current_user_can',[ 'return' => true ]);
 		
-		\WP_Mock::wpFunction( 'check_ajax_referer',[
-			'return' => true
-		]);
+		\WP_Mock::wpFunction( 'check_ajax_referer',[ 'return' => true ]);
 		
 		\WP_Mock::wpFunction( 'wp_basename',[
 			'return' => function($path,$suffix) { 
@@ -43,7 +41,7 @@ class SaveTest extends CptTestCase {
 			'return' => function($param) { return ['ext'=>'jpg', 'type'=>'image/jpeg']; } 
 		]);
 		
-		self::$cpt = $this->getTestObject();
+		self::$cpt = $this->get_CptSaveThumbnail();
 	}
 
 	public function tearDown() {

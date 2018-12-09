@@ -8,7 +8,7 @@ class CPT_ForbiddenException extends Exception {}
 
 class CropPostThumbnailsEditor {
 
-	private $debugOutput = '';
+	protected $debugOutput = '';
 
 	function __construct() {
 		add_action('wp_ajax_cpt_cropdata', array($this, 'provideCropData') );
@@ -34,7 +34,7 @@ class CropPostThumbnailsEditor {
 	 * @param int $statusCode the statuscode of the response
 	 * @param string $errorMsg the provided errormessage
 	 */
-	private static function doErrorResponse($statusCode, $errorMsg) {
+	protected static function doErrorResponse($statusCode, $errorMsg) {
 		http_response_code($statusCode);
 		echo json_encode(array(
 			'lang' => self::getLangArray(),
@@ -50,7 +50,7 @@ class CropPostThumbnailsEditor {
 	 * @param string $msg the language string to fix
 	 * @return string
 	 */
-	private function fixJsLangStrings($msg) {
+	protected function fixJsLangStrings($msg) {
 		return str_replace('&quot;','"',esc_js($msg));
 	}
 
@@ -58,7 +58,7 @@ class CropPostThumbnailsEditor {
 	 * Returns the lang-array needed for the js-app to work
 	 * @return Array
 	 */
-	private static function getLangArray() {
+	protected static function getLangArray() {
 		return array(
 			'warningOriginalToSmall' => self::fixJsLangStrings(__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails')),
 			'cropDisabled' => self::fixJsLangStrings(__('Cropping is disabled for this post-type.','crop-thumbnails')),
@@ -190,7 +190,7 @@ class CropPostThumbnailsEditor {
 		return $result;
 	}
 	
-	private function getUncroppedImageData($ID, $imageSize = 'full') {
+	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
 		$result = array(
@@ -205,7 +205,7 @@ class CropPostThumbnailsEditor {
 		return $result;
 	}
 	
-	private function calculateRatioData($width,$height) {
+	protected function calculateRatioData($width,$height) {
 		$gcd = $this->gcd($width,$height);
 		$result = array(
 			'gcd' => $gcd,
@@ -215,7 +215,7 @@ class CropPostThumbnailsEditor {
 		return $result;
 	}
 
-	private static function shouldBeHiddenOnPostType($options,$post_type) {
+	protected static function shouldBeHiddenOnPostType($options,$post_type) {
 		if(empty($post_type)) {
 			return false;
 		}
@@ -232,7 +232,7 @@ class CropPostThumbnailsEditor {
 	 * @param string name post-type (i.e. post, page, ...)
 	 * @return boolean true if Image-size should be hidden
 	 */
-	private static function shouldSizeBeHidden($options, $img_size, $post_type='') {
+	protected static function shouldSizeBeHidden($options, $img_size, $post_type='') {
 		$_return = false;
 		if(!empty($post_type)) {
 			//we are NOT in the mediathek
@@ -261,7 +261,7 @@ class CropPostThumbnailsEditor {
 	/**
 	 * Greatest cummon divisor
 	 */
-	private function gcd($a, $b) {
+	protected function gcd($a, $b) {
 		if(function_exists('gmp_gcd')) {
 			$gcd = gmp_strval(gmp_gcd($a,$b));
 			return ($gcd);
@@ -271,7 +271,7 @@ class CropPostThumbnailsEditor {
 		}
 	}
 
-	private static function my_gcd($a, $b) {
+	protected static function my_gcd($a, $b) {
 		$b = ( $a == 0 )? 0 : $b;
 		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
 	}

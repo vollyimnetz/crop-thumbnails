@@ -4,7 +4,7 @@ add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnailAjaxWrap')
 
 class CptSaveThumbnail {
 	
-	private static $debug = array();
+	protected static $debug = array();
 	
 	/**
 	 * Handle-function called via ajax request.
@@ -195,18 +195,18 @@ class CptSaveThumbnail {
 		die();
 	}
 
-	private static function addDebug($text) {
+	protected static function addDebug($text) {
 		self::$debug[] = $text;
 	}
 	
-	private static function getDebug() {
+	protected static function getDebug() {
 		if(!empty(self::$debug)) {
 			return self::$debug;
 		}
 		return array();
 	}
 	
-	private static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
+	protected static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
 		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
 		
 		$fileTypeInformations = wp_check_filetype($fullFilePath);
@@ -235,7 +235,7 @@ class CptSaveThumbnail {
 	 * @param array all available ImageSizes
 	 * @return boolean true if the newImageSize is in the list of ImageSizes and dimensions are correct
 	 */
-	private static function isImageSizeValid(&$submitted,$dbData) {
+	protected static function isImageSizeValid(&$submitted,$dbData) {
 		if(empty($submitted->name)) {
 			return false;
 		}
@@ -256,7 +256,7 @@ class CptSaveThumbnail {
 	 * @return object JSON-Object with submitted data
 	 * @throw Exception if the security validation fails
 	 */
-	private function getValidatedInput() {
+	protected function getValidatedInput() {
 
 		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
@@ -310,7 +310,7 @@ class CptSaveThumbnail {
 	 * @param int height of the new image
 	 * @return string path to the new image
 	 */
-	private static function generateFilename( $file, $w, $h ){
+	protected static function generateFilename( $file, $w, $h ){
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];

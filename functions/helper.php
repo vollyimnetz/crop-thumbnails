@@ -12,8 +12,8 @@
  * This class is for overriding settings in php-tests - therefore the functions cant be static :(
  */
 class CropThumbnailsHelper {
-	private static $defaultSizes = array('thumbnail','medium','medium_large','large');
-	private static $optionsKey = 'crop-post-thumbs';
+	protected static $defaultSizes = array('thumbnail','medium','medium_large','large');
+	protected static $optionsKey = 'crop-post-thumbs';
 
 	public function getUploadDir() {
 		$upload_dir = wp_upload_dir();

@@ -5,7 +5,7 @@
  */
 class CropPostThumbnailsBackendPreparer {
 	
-	private $allowedMime = array('image/jpeg','image/png');
+	protected $allowedMime = array('image/jpeg','image/png');
 	
 	public function __construct() {
 		if ( is_admin() ) {
@@ -29,7 +29,7 @@ class CropPostThumbnailsBackendPreparer {
 	 * });
 	 * </code>
 	 */
-	private function shouldCropThumbnailsBeActive() {
+	protected function shouldCropThumbnailsBeActive() {
 		global $pagenow;
 		$result = ($pagenow == 'post.php'
 			|| $pagenow == 'post-new.php'
@@ -92,7 +92,7 @@ class CropPostThumbnailsBackendPreparer {
 	/**
 	 * Check if on the current admin page (posttype) the crop-button should be visible in the featured image Box.
 	 */
-	private static function showCropButtonOnThisAdminPage() {
+	protected static function showCropButtonOnThisAdminPage() {
 		$screenData = get_current_screen();
 		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$showFeaturedImageCropButton = false;

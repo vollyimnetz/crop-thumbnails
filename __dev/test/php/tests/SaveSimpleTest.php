@@ -10,6 +10,8 @@ class SaveSimpleTest extends CptTestCase {
 		\WP_Mock::wpFunction( 'is_admin',[ 'return' => true ]);
 		
 		\WP_Mock::wpFunction( '__',['return' => function($param) { return $param; } ]);
+
+		\WP_Mock::wpFunction( 'current_user_can',[ 'return' => true ]);
 	}
 
 	public function tearDown() {
@@ -50,7 +52,7 @@ class SaveSimpleTest extends CptTestCase {
 	public function should_fail_if_called_without_any_request_data() {
 		/** SETUP **/
 		self::doDefaultMocks();
-		$cpt = $this->getTestObject();
+		$cpt = $this->get_CptSaveThumbnail();
 		
 		/** TEST **/
 		ob_start();
@@ -68,7 +70,7 @@ class SaveSimpleTest extends CptTestCase {
 	public function should_fail_if_image_could_not_be_found() {
 		/** SETUP **/
 		self::doDefaultMocks();
-		$cpt = $this->getTestObject();
+		$cpt = $this->get_CptSaveThumbnail();
 		$_REQUEST['crop_thumbnails'] = self::getSimpleTestData();
 		
 		\WP_Mock::wpFunction('get_post',null);//image can not be found
@@ -89,21 +91,15 @@ class SaveSimpleTest extends CptTestCase {
 	public function success_only_validation() {
 		/** SETUP **/
 		self::doDefaultMocks();
-		$cpt = $this->getTestObject();
+		$cpt = $this->get_CptSaveThumbnail();
 		$_REQUEST['crop_thumbnails'] = self::getSimpleTestData();
 		
 		\WP_Mock::wpFunction('get_post', [ 
 			'return' => new stdClass()
 		]);
-		\WP_Mock::wpFunction( 'get_attached_file',[
-			'return' => true
-		]);
-		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[
-			'return' => true
-		]);
-		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[
-			'return' => true
-		]);
+		\WP_Mock::wpFunction( 'get_attached_file',[ 'return' => true ]);
+		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[ 'return' => true ]);
+		\WP_Mock::wpFunction( 'wp_update_attachment_metadata',[ 'return' => true ]);
 		
 		self::$settingsMock->shouldReceive('getImageSizes')->andReturn([]);
 		
@@ -122,11 +118,9 @@ class SaveSimpleTest extends CptTestCase {
 	/** @test **/
 	public function ajax_referer_should_be_checked() {
 		/** SETUP **/
-		\WP_Mock::wpFunction( 'check_ajax_referer',[
-			'return' => false
-		]);
+		\WP_Mock::wpFunction( 'check_ajax_referer',[ 'return' => false ]);
 		
-		$cpt = $this->getTestObject();
+		$cpt = $this->get_CptSaveThumbnail();
 		
 		/** TEST **/
 		ob_start();
