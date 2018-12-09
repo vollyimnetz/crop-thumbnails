@@ -210,7 +210,7 @@ class CropPostThumbnailsEditor {
 			//we are NOT in the mediathek
 
 			//-if hide_size
-			if(!empty($options['hide_size'][$post_type][ $img_size['name'] ])) {
+			if(!empty($options['hide_size'][$post_type][ $img_size['id'] ])) {
 				$_return = true;
 			}
 
