@@ -124,6 +124,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 = 1.2.0 =
+* the used cropping data are now stored in the image after the crop, making it possible to code a plugin for restoring the cropped region on new image-sizes
 * fix for hiding crop sizes is not working when the image_size_names_choose-filter is used for that post-type
 * change permission from 'upload_files' to 'edit_files' (Attention: authors will no longer able to crop the thumbnails)
 * add a filter function to override the permission to crop thumbnails (crop_thumbnails_user_permission_check)

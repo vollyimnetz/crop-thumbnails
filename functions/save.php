@@ -105,7 +105,7 @@ class CptSaveThumbnail {
 				
 				if(!$_error) {
 					//update metadata --> otherwise new sizes will not be updated
-					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $croppedSize['width'], $croppedSize['height']);
+					$imageMetadata = self::updateMetadata($imageMetadata, $activeImageSize->name, $currentFilePathInfo, $croppedSize['width'], $croppedSize['height'], $input);
 				} else {
 					self::addDebug('error on '.$currentFilePathInfo['basename']);
 					self::addDebug($_processing_error);
@@ -206,7 +206,18 @@ class CptSaveThumbnail {
 		return array();
 	}
 	
-	protected static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight) {
+	/**
+	 * Update the metadata for one image-size.
+	 * 
+	 * @param array $imageMetadata the image-metadata base array to modify
+	 * @param string $imageSizeName the name of the image-size
+	 * @param array $currentFilePathInfo pathinfo of the new thumbnail/image-size
+	 * @param int $croppedWidth the new width of the image
+	 * @param int $croppedHeight the new height of the image
+	 * @param array $croppingInput the input data for the cropping (to store the crop-informations)
+	 * @return array the modified $imageMetadata
+	 */
+	protected static function updateMetadata($imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight, $croppingInput) {
 		$fullFilePath = trailingslashit($currentFilePathInfo['dirname']) . $currentFilePathInfo['basename'];
 		
 		$fileTypeInformations = wp_check_filetype($fullFilePath);
@@ -216,6 +227,14 @@ class CptSaveThumbnail {
 		$newValues['width'] = intval($croppedWidth);
 		$newValues['height'] = intval($croppedHeight);
 		$newValues['mime-type'] = $fileTypeInformations['type'];
+		$newValues['cpt_last_cropping_data'] = array(
+			'x' => $croppingInput->selection->x,
+			'y' => $croppingInput->selection->y,
+			'x2' => $croppingInput->selection->x2,
+			'y2' => $croppingInput->selection->y2,
+			'original_width' => $imageMetadata['width'],
+			'original_height' => $imageMetadata['height'],
+		);
 		
 		$oldValues = array();
 		if(empty($imageMetadata['sizes'])) {

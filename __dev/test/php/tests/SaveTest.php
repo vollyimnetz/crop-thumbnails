@@ -172,8 +172,43 @@ class SaveTest extends CptTestCase {
 			'file' => 'test-600x600.jpg',
 			'width' => 600,
 			'height' => 600,
-			'mime-type' => 'image/jpeg'
+			'mime-type' => 'image/jpeg',
 		];
+
+		//the metadata have an added cpt_last_cropping_data
+		$newAttachementMetadata['sizes']['thumbnail']['cpt_last_cropping_data'] = [
+			'x' => 0,
+			'y' => 535,
+			'x2' => 664,
+			'y2' => 1200,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
+		$newAttachementMetadata['sizes']['strange-image-ratio']['cpt_last_cropping_data'] = [
+			'x' => 0,
+			'y' => 535,
+			'x2' => 664,
+			'y2' => 1200,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
+		$newAttachementMetadata['sizes']['normal1x1']['cpt_last_cropping_data'] = [
+			'x' => 0,
+			'y' => 535,
+			'x2' => 664,
+			'y2' => 1200,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
+		$newAttachementMetadata['sizes']['new-image-size']['cpt_last_cropping_data'] = [
+			'x' => 0,
+			'y' => 535,
+			'x2' => 664,
+			'y2' => 1200,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
+
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
 		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
 		
@@ -299,8 +334,16 @@ class SaveTest extends CptTestCase {
 		$that->assertTrue($INPUT_wp_get_attachment_metadata[1], true);
 		
 		//check $INPUT_wp_update_attachement_metadata
-		//the metadata should have an additional entry "new-image-size"
+		//the metadata should have an changed value for dynamic-2
 		$newAttachementMetadata = $attachementMetadata;
+		$newAttachementMetadata['sizes']['dynamic-2']['cpt_last_cropping_data'] = [
+			'x' => 1009,
+			'y' => 364,
+			'x2' => 2321,
+			'y2' => 583,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
 		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
 		
@@ -423,6 +466,14 @@ class SaveTest extends CptTestCase {
 		//check $INPUT_wp_update_attachement_metadata
 		//the metadata should have an additional entry "new-image-size"
 		$newAttachementMetadata = $attachementMetadata;
+		$newAttachementMetadata['sizes']['dynamic-1']['cpt_last_cropping_data'] = [
+			'x' => 1583,
+			'y' => 345,
+			'x2' => 1819,
+			'y2' => 1289,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
 		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
 		
@@ -566,6 +617,16 @@ class SaveTest extends CptTestCase {
 		//check $INPUT_wp_update_attachement_metadata
 		//the metadata should have an additional entry "new-image-size"
 		$newAttachementMetadata = $attachementMetadata;
+		$newAttachementMetadata['sizes']['dynamic-zero-height']['cpt_last_cropping_data'] = [
+			'x' => 1654,
+			'y' => 874,
+			'x2' => 2578,
+			'y2' => 1490,
+			'original_width' => 3000,
+			'original_height' => 2000,
+		];
+		$newAttachementMetadata['sizes']['dynamic-zero-width']['cpt_last_cropping_data'] = $newAttachementMetadata['sizes']['dynamic-zero-height']['cpt_last_cropping_data'];
+		
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
 		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
 		
