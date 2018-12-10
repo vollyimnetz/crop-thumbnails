@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
-Tested up to: 4.9
-Stable tag: 1.1.3
+Tested up to: 5.0
+Stable tag: 1.2.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -129,6 +129,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * change permission from 'upload_files' to 'edit_files' (Attention: authors will no longer able to crop the thumbnails)
 * add a filter function to override the permission to crop thumbnails (crop_thumbnails_user_permission_check)
 * add settings-section to set if users can crop thumbnails with capability "edit_files" or "upload_files"
+* get featured image panel button working in wordpress v5
 
 = 1.1.3 =
 * add a filter (crop_thumbnails_activat_on_adminpages), for adding the plugins js/css on futher admin-pages like the taxonomy edit-page.

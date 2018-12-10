@@ -82,7 +82,7 @@
   padding-bottom: 0;
 }
 /**** button icon ****/
-a.cropThumbnailsLink .wp-media-buttons-icon::before {
+.cropThumbnailsLink .wp-media-buttons-icon::before {
   content: "\F165";
   font: normal 12px/1 dashicons;
   -webkit-font-smoothing: antialiased;
