@@ -201,13 +201,14 @@ jQuery(document).ready(function($) {
 					)
 				);
 			} 
-		} 
-			
-		wp.hooks.addFilter( 
-			'editor.PostFeaturedImage', 
-			'crop-thumbnails/wrap-post-featured-image', 
-			wrapPostFeaturedImage
-		);
+		}
+		if(typeof wp.hooks !== 'undefined' && typeof wp.hooks.addFilter !== 'undefined') {
+			wp.hooks.addFilter( 
+				'editor.PostFeaturedImage', 
+				'crop-thumbnails/wrap-post-featured-image', 
+				wrapPostFeaturedImage
+			);
+		}	
 	}
 	
 	<?php if(self::showCropButtonOnThisAdminPage()) : ?>
