@@ -50,7 +50,7 @@ class CropPostThumbnailsEditor {
 	 * @param string $msg the language string to fix
 	 * @return string
 	 */
-	protected function fixJsLangStrings($msg) {
+	protected static function fixJsLangStrings($msg) {
 		return str_replace('&quot;','"',esc_js($msg));
 	}
 
