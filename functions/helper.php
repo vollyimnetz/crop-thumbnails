@@ -62,11 +62,13 @@ class CropThumbnailsHelper {
 				$sizes[ $sizeId ]['height'] = intval(get_option( $sizeId . '_size_h' ));
 				$sizes[ $sizeId ]['crop']   = (bool) get_option( $sizeId . '_crop' );
 			} else {
-				$sizes[ $sizeId ] = array(
-					'width'  => intval($_wp_additional_image_sizes[ $sizeId ]['width']),
-					'height' => intval($_wp_additional_image_sizes[ $sizeId ]['height']),
-					'crop'   => (bool) $_wp_additional_image_sizes[ $sizeId ]['crop']
-				);
+				if(!empty($_wp_additional_image_sizes[ $sizeId ])) {
+					$sizes[ $sizeId ] = array(
+						'width'  => intval($_wp_additional_image_sizes[ $sizeId ]['width']),
+						'height' => intval($_wp_additional_image_sizes[ $sizeId ]['height']),
+						'crop'   => (bool) $_wp_additional_image_sizes[ $sizeId ]['crop']
+					);
+				}
 			}
 			$sizes[ $sizeId ]['name'] = $theName;
 			$sizes[ $sizeId ]['id'] = $sizeId;
