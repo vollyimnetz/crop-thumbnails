@@ -110,6 +110,19 @@ Parameters:
 
 
 
+### FILTER `crop_thumbnails_filename`
+
+The filter can be used to change the fullpath with filename of the newly created thumbnail.
+
+Parameters:
+* `$destfilename` - The full path of the file
+* `$file` - The original file
+* `$w` - The width of the thumbnail size
+* `$h` - The height of the thumbnail size
+* `$crop` - If true the thumbnail size is cropped
+
+
+
 ### FILTER `crop_thumbnails_before_update_metadata`
 
 The filter is called right before the attachement metadata are saved.
