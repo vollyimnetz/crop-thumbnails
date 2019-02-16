@@ -327,7 +327,7 @@ class CptSaveThumbnail {
 	 * @param string Path to the original (full-size) file.
 	 * @param int width of the new image
 	 * @param int height of the new image
-	 * @param boolean crop of the new image
+	 * @param boolean crop is this a cropped image-size
 	 * @return string path to the new image
 	 */
 	protected static function generateFilename( $file, $w, $h, $crop ){
