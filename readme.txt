@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
 Tested up to: 5.0
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -123,6 +123,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.2.4 =
+* change the enqueue-name of vue to "cpt_vue" to make it possible to prevent the include of the cpt_vue version
+* update js-dev dependencies
+
 = 1.2.3 =
 * fix a php-notice displayed on the settings-screen
 

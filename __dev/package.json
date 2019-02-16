@@ -10,24 +10,27 @@
     "start": "webpack --watch",
     "export": "webpack --env.export"
   },
-  "author": "",
-  "license": "UNLICENSED",
+  "author": "Volkmar kantor",
+  "license": "GPL-3.0-only",
   "dependencies": {
-    "cropperjs": "^1.4.1",
-    "vue": "^2.5.17"
+    "cropperjs": "^1.4.3",
+    "vue": "^2.6.6"
   },
   "devDependencies": {
-    "autoprefixer-loader": "^3.2.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
-    "copy-webpack-plugin": "^4.5.2",
-    "css-loader": "^0.28.11",
-    "extract-text-webpack-plugin": "^3.0.2",
-    "less": "^2.7.3",
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "autoprefixer": "^9.4.7",
+    "babel-loader": "^8.0.5",
+    "copy-webpack-plugin": "^4.6.0",
+    "css-loader": "^2.1.0",
+    "less": "^3.9.0",
     "less-loader": "^4.1.0",
-    "raw-loader": "^0.5.1",
-    "style-loader": "^0.19.1",
-    "webpack": "^3.12.0"
+    "mini-css-extract-plugin": "^0.5.0",
+    "postcss-discard-comments": "^4.0.2",
+    "postcss-loader": "^3.0.0",
+    "raw-loader": "^1.0.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.29.4",
+    "webpack-cli": "^3.2.3"
   }
 }

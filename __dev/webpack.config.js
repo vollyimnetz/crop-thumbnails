@@ -1,4 +1,4 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
@@ -11,10 +11,8 @@ const path = require('path');
 module.exports = function (env) {
     var config = {};
     try {
-        const extractLess = new ExtractTextPlugin({
-            filename: "app.css",
-            disable: false
-        });
+        //needed to extract less
+        const extractLess = new MiniCssExtractPlugin({ filename: "app.css", disable: false });
 
         config = {
             context: path.join(__dirname, 'app'),
@@ -47,23 +45,30 @@ module.exports = function (env) {
                     }, 
                     {//less-stack
                         test: /\.less$/,
-                        use: extractLess.extract({
-                            use: [{
-                                loader: "css-loader"
+                        use: [
+                            {
+                                loader: MiniCssExtractPlugin.loader,
                             }, {
-                                loader: "autoprefixer-loader"
+                                loader: "css-loader",
+                                options: { url: false }
+                            }, {
+                                loader: "postcss-loader",
+                                options: { 
+                                    sourceMap: false,
+                                    plugins: [
+                                        require('postcss-discard-comments'),
+                                        require('autoprefixer')
+                                    ]
+                                }
                             }, {
                                 loader: "less-loader"
-                            }],
-                            // use style-loader in development
-                            fallback: "style-loader"
-                        })
+                            }
+                        ]
                     }
                 ]
             },
             plugins: [
                 extractLess,
-                
                 new CopyWebpackPlugin([
                     {
                         from: __dirname + '/node_modules/vue/dist/vue.min.js',
@@ -83,6 +88,7 @@ module.exports = function (env) {
                 ])
             ]
         };
+        config.mode = 'production';
 
 
         if (env && env.export) {//only if "webpack --env.export" is used

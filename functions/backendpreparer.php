@@ -58,8 +58,8 @@ class CropPostThumbnailsBackendPreparer {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','cpt_vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer',array($this,'addLinksToAdmin'));
 		}
 	}

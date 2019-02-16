@@ -54,7 +54,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		modalHtml+= '<div class="cpt_ModalHeader"><div class="cpt_ModalTitle">'+title+'</div></div>';
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
-		modalHtml+= '<cropeditor image-id="'+id+'"';
+		modalHtml+= '<cropeditor :image-id="'+id+'"';
 		if(typeof posttype === 'string') {
 			modalHtml+= ' posttype="'+posttype+'"';
 		}
