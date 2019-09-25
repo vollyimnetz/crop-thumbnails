@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const path = require('path');
 
 /**
@@ -15,6 +16,7 @@ module.exports = function (env) {
         const extractLess = new MiniCssExtractPlugin({ filename: "app.css", disable: false });
 
         config = {
+            mode:'production',
             context: path.join(__dirname, 'app'),
             entry: __dirname + "/index.js",
             output: {
@@ -31,8 +33,10 @@ module.exports = function (env) {
             },
             //devtool: setDevTool(),
             module: {
-                rules: [
-                    {//babel es6
+                rules: [{
+                        test: /\.vue$/,
+                        loader: 'vue-loader'
+                    }, {//babel es6
                         test: /\.js$/,
                         use: 'babel-loader',
                         exclude: [
@@ -85,7 +89,8 @@ module.exports = function (env) {
                         to: __dirname + '/../app/vendor/',
                         toType: 'dir'
                     }//*/
-                ])
+                ]),
+                new VueLoaderPlugin(),
             ]
         };
         config.mode = 'production';

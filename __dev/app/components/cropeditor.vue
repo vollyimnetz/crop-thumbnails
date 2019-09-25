@@ -1,5 +1,87 @@
-CROP_THUMBNAILS_VUE.components.cropeditor = {
-	template: require('./cropeditor.tpl.html'),
+<template>
+    <div class="cptEditorInner" v-if="cropData && lang" :class="{loading:loading,cropEditorActive:croppingApi}">
+        
+        <div class="cptWaitingWindow" v-if="loading">
+            <div class="msg">
+                {{ lang.waiting }}
+                <div>
+                    <div class="cptLoadingSpinner"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cptWaitingWindow cptCropDisabledMsg" v-if="cropData.hiddenOnPostType">
+            <div class="msg">{{lang.cropDisabled}}</div>
+        </div>
+        
+        <div class="cptWaitingWindow cptNoPermissionMsg" v-if="cropData.noPermission">
+            <div class="msg">{{lang.noPermission}}</div>
+        </div>
+
+        <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !cropData.noPermission">
+            
+            <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (activeImageSizes.length>0) }">
+                <div class="cptSelectionPaneInner">
+                    <message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</message>
+                    <p>
+                        <label class="cptSameRatioLabel">
+                            <input type="checkbox" v-model="selectSameRatio" />
+                            {{lang.label_same_ratio}}
+                        </label>
+                        <button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
+                    </p>
+                    <ul class="cptImageSizelist">
+                        <li v-for="i in filteredImageSizes" :key="i.nameLabel" :class="imageSizeClass(i)" @click="toggleActive(i)">
+                            <section class="cptImageSizeInner">
+                                <header>{{i.nameLabel}}</header>
+                                <div class="lowResWarning" v-if="isLowRes(i)" :title="lang.lowResWarning"><span>!</span></div>
+                                <div class="notYetCropped" v-if="!isLowRes(i) && i.url === cropData.sourceImage.full.url" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
+                                <div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
+                                <div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
+                                
+                                <loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
+                                    <div class="cptImageBgContainer" :style="{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}"></div>
+                                </loadingcontainer>
+                            </section>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="cptCropPane">
+                <div class="info">
+                    <h3>{{ lang.rawImage }}</h3>
+                    <div class="dimensions">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div>
+                    <div class="ratio">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>
+                </div>
+                <button type="button" class="button cptGenerate" :class="{'button-primary':croppingApi}" @click="cropThumbnails()" :disabled="!croppingApi">{{ lang.label_crop }}</button>
+                
+                <div class="cropContainer">
+                    <img class="cptCroppingImage" :src="cropImage.url" />
+                </div>
+        
+                <h4>{{ lang.instructions_header }}</h4>
+                <ul class="step-info">
+                    <li>{{ lang.instructions_step_1 }}</li>
+                    <li>{{ lang.instructions_step_2 }}</li>
+                    <li>{{ lang.instructions_step_3 }}</li>
+                </ul>
+
+                <div>
+                    <button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
+                    <button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
+                    <pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
+                    <pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>
+
+<script>
+import loadingcontainer from './loadingcontainer.vue';
+import message from './message.vue';
+export default {
 	props:{
 		imageId : {
 			required: true,
@@ -12,8 +94,8 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 		}
 	},
 	components: {
-		loadingcontainer : CROP_THUMBNAILS_VUE.components.loadingcontainer,
-		message : CROP_THUMBNAILS_VUE.components.message
+		loadingcontainer,
+		message
 	},
 	data:function() {
 		return {
@@ -325,4 +407,5 @@ CROP_THUMBNAILS_VUE.components.cropeditor = {
 			}
 		}
 	}
-};
+}
+</script>

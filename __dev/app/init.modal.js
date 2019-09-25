@@ -1,3 +1,4 @@
+import cropeditor from './components/cropeditor.vue';
 CROP_THUMBNAILS_VUE.modal = function() {
 	var $ = jQuery;
 	var that = this;
@@ -74,7 +75,7 @@ CROP_THUMBNAILS_VUE.modal = function() {
 			mounted:function() {
 				console.log('cpt_crop_editor mounted');
 			},
-			components: CROP_THUMBNAILS_VUE.components
+			components: { cropeditor }
 		});
 	};
 };

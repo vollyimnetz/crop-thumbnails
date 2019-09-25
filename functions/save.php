@@ -70,6 +70,7 @@ class CptSaveThumbnail {
 				$currentFilePath = self::generateFilename($sourceImgPath, $croppedSize['width'], $croppedSize['height'], $activeImageSize->crop);
 				self::addDebug("filename: ".$currentFilePath);
 				$currentFilePathInfo = pathinfo($currentFilePath);
+				$currentFilePathInfo['basename'] = wp_basename($currentFilePath);//uses the i18n version of the file-basename
 				$temporaryCopyFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
 				$result = wp_crop_image(							// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.

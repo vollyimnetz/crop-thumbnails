@@ -4,8 +4,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkm
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
 Requires PHP: 5.3.0
-Tested up to: 5.0
-Stable tag: 1.2.4
+Tested up to: 5.2
+Stable tag: 1.2.5
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.2.5 =
+* fix a bug that may occure on utf8-filenames
+* refactoring vue-code and build
+
 = 1.2.4 =
 * change the enqueue-name of the vue.js-library provided with the plugin to "cpt_vue" to make it possible to prevent this specific include
 * update js-dev dependencies
