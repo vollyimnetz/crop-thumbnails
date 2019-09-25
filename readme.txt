@@ -126,6 +126,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 == Changelog ==
 = 1.2.5 =
 * fix a bug that may occure on utf8-filenames
+* update vue.js and the other libraries to current version
 * refactoring vue-code and build
 
 = 1.2.4 =
