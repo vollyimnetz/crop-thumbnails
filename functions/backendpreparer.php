@@ -128,7 +128,7 @@ jQuery(document).ready(function($) {
 		 * add link to featured image box
 		 */
 		var baseElem = $('#postimagediv');
-		if(!baseElem.length) { return; }//this is not wordpress < 5
+		if(!baseElem.length) { return; }//this is not WordPress < 5
 		
 		var featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
@@ -172,7 +172,7 @@ jQuery(document).ready(function($) {
 	function handleFeaturedImagePanel() {
 		// @see https://github.com/WordPress/gutenberg/tree/master/packages/editor/src/components/post-featured-image
 		
-		if(typeof wp.element === 'undefined') { return };//this is not wordpress 5.x
+		if(typeof wp.element === 'undefined') { return };//this is not WordPress 5.x
 
 		var el = wp.element.createElement;
 		function wrapPostFeaturedImage( OriginalComponent ) { 

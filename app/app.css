@@ -285,6 +285,7 @@ body.cpt_ModalIsOpen{
   text-align:center;
   box-sizing:border-box;
   box-shadow:inset 0 0 0 3px #fff, inset 0 0 0 7px transparent;
+  -webkit-transition:box-shadow 0.5s ease;
   transition:box-shadow 0.5s ease;
 }
 #cpt_crop_editor .cptImageSizelist li.active{
@@ -378,6 +379,7 @@ body.cpt_ModalIsOpen{
   background-repeat:no-repeat;
   box-shadow:0 0 1px rgba(0, 0, 0, 0.5);
   box-sizing:border-box;
+  -webkit-transition:-webkit-filter 0.5s ease;
   transition:-webkit-filter 0.5s ease;
   transition:filter 0.5s ease;
   transition:filter 0.5s ease, -webkit-filter 0.5s ease;
@@ -402,6 +404,7 @@ body.cpt_ModalIsOpen{
   top:0;
   left:0;
   background:#fff;
+  -webkit-transition:opacity 0.4s linear;
   transition:opacity 0.4s linear;
 }
 #cpt_crop_editor .loadingcontainer .cptLoadingSpinner{
@@ -419,6 +422,7 @@ body.cpt_ModalIsOpen{
 }
 #cpt_crop_editor .loadingcontainer .fade-enter-active,
 #cpt_crop_editor .loadingcontainer .fade-leave-active{
+  -webkit-transition:opacity 0.5s;
   transition:opacity 0.5s;
 }
 #cpt_crop_editor .loadingcontainer .fade-enter,
@@ -512,6 +516,7 @@ body.cpt_ModalIsOpen{
   height:100%;
   z-index:10;
   background:rgba(255, 255, 255, 0.9);
+  -webkit-transition:all 0.5s ease;
   transition:all 0.5s ease;
 }
 #cpt_crop_editor .cptWaitingWindow .msg{
@@ -548,18 +553,22 @@ body.cpt_ModalIsOpen{
 }
 @-webkit-keyframes cptRotateForever{
   0%{
-    transform:rotate(0deg);
+    -webkit-transform:rotate(0deg);
+            transform:rotate(0deg);
   }
   100%{
-    transform:rotate(360deg);
+    -webkit-transform:rotate(360deg);
+            transform:rotate(360deg);
   }
 }
 @keyframes cptRotateForever{
   0%{
-    transform:rotate(0deg);
+    -webkit-transform:rotate(0deg);
+            transform:rotate(0deg);
   }
   100%{
-    transform:rotate(360deg);
+    -webkit-transform:rotate(360deg);
+            transform:rotate(360deg);
   }
 }
 

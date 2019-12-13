@@ -76,7 +76,7 @@ class CropPostThumbnailsEditor {
 			'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
 			'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
 			'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
-			'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by wordpress.','crop-thumbnails')),
+			'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by WordPress.','crop-thumbnails')),
 			'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
 			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
 			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails'))

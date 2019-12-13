@@ -186,9 +186,9 @@ class CptSaveThumbnail {
 	}
 	
 	/**
-	 * This function is called by the wordpress-ajax-callback. Its only purpose is to call the
+	 * This function is called by the WordPress-ajax-callback. Its only purpose is to call the
 	 * saveThumbnail function and die().
-	 * All wordpress ajax-functions should call the "die()" function in the end. But this makes
+	 * All WordPress ajax-functions should call the "die()" function in the end. But this makes
 	 * phpunit tests impossible - so we have to wrap it.
 	 */
 	public function saveThumbnailAjaxWrap() {
@@ -323,7 +323,7 @@ class CptSaveThumbnail {
 
 
 	/**
-	 * Generate the Filename (and path) of the thumbnail based on width and height the same way as wordpress do.
+	 * Generate the Filename (and path) of the thumbnail based on width and height the same way as WordPress do.
 	 * @see generate_filename in wp-includes/class-wp-image-editor.php
 	 * @param string Path to the original (full-size) file.
 	 * @param int width of the new image
