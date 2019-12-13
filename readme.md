@@ -120,7 +120,7 @@ Parameters:
 * `$w` - The width of the thumbnail size
 * `$h` - The height of the thumbnail size
 * `$crop` - If true the thumbnail size is cropped
-
+* `$imageMetadata` - The Wordpress image-metadata array (added in version 1.2.6)
 
 
 ### FILTER `crop_thumbnails_before_update_metadata`

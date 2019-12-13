@@ -67,7 +67,7 @@ class CptSaveThumbnail {
 				
 				$croppedSize = self::getCroppedSize($activeImageSize,$imageMetadata,$input);
 				
-				$currentFilePath = self::generateFilename($sourceImgPath, $croppedSize['width'], $croppedSize['height'], $activeImageSize->crop);
+				$currentFilePath = self::generateFilename($sourceImgPath, $imageMetadata, $croppedSize['width'], $croppedSize['height'], $activeImageSize->crop);
 				self::addDebug("filename: ".$currentFilePath);
 				$currentFilePathInfo = pathinfo($currentFilePath);
 				$currentFilePathInfo['basename'] = wp_basename($currentFilePath);//uses the i18n version of the file-basename
@@ -325,20 +325,24 @@ class CptSaveThumbnail {
 	/**
 	 * Generate the Filename (and path) of the thumbnail based on width and height the same way as WordPress do.
 	 * @see generate_filename in wp-includes/class-wp-image-editor.php
-	 * @param string Path to the original (full-size) file.
-	 * @param int width of the new image
-	 * @param int height of the new image
-	 * @param boolean crop is this a cropped image-size
+	 * @param string $file Path to the original (full-size) file.
+	 * @param array $imageMetadata the WordPress image-metadata array
+	 * @param int $width width of the new image
+	 * @param int $height height of the new image
+	 * @param boolean $crop is this a cropped image-size
 	 * @return string path to the new image
 	 */
-	protected static function generateFilename( $file, $w, $h, $crop ){
+	protected static function generateFilename( $file, $imageMetadata, $w, $h, $crop ){
 		$info = pathinfo($file);
 		$dir = $info['dirname'];
 		$ext = $info['extension'];
 		$name = wp_basename($file, '.'.$ext);
+		if(!empty($imageMetadata['original_image'])) {
+			$name = wp_basename($imageMetadata['original_image'], '.'.$ext);
+		}
 		$suffix = $w.'x'.$h;
 		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
-		return apply_filters('crop_thumbnails_filename', $destfilename, $file, $w, $h, $crop, $info);
+		return apply_filters('crop_thumbnails_filename', $destfilename, $file, $w, $h, $crop, $info, $imageMetadata);
 	}
 
 	/**

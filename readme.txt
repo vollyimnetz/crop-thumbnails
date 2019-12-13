@@ -127,7 +127,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 = 1.2.6 =
 * update dependencies
 * fix typo
-
+* fix a bug where the image name of the thumbnail changed to "imagename-scaled-..." cause of the new features of WordPress 5.3
+* extend the filter "crop_thumbnails_filename" by the image-metadata-array
 
 = 1.2.5 =
 * fix a bug that may occure on utf8-filenames
