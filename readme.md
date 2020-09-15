@@ -6,7 +6,7 @@
 
 The plugin can be installed from the wordpress plugin repository. 
 
-https://wordpress.org/plugins-wp/crop-thumbnails/
+https://wordpress.org/plugins/crop-thumbnails/
 
 ## How to add custom cropped image-sizes
 This is the default wordpress way to add new image-sizes. 
