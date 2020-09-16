@@ -6,7 +6,7 @@ class CptSaveThumbnail {
 
 	protected static $debug = array();
 
-    /**
+	/**
 	 * Handle-function called via ajax request.
 	 * Check and crop multiple images. Update with wp_update_attachment_metadata if needed.
 	 * Input parameters:
@@ -144,13 +144,13 @@ class CptSaveThumbnail {
 	 * Whether we should delete old thumbnail file.
 	 *
 	 * We should delete when any of these happens:
-	 *	- the old size hasn't got the right image-size/image-ratio
-	 *	- the new image has a different file path
+	 *    - the old size hasn't got the right image-size/image-ratio
+	 *    - the new image has a different file path
 	 *
 	 * Otherwise, nobody will ever delete it correctly.
 	 *
-	 * @param  array  $oldSizeMetadata  The old image size from the database
-	 * @param  object  $activeImageSize The image size that should be used
+	 * @param  array  $oldSizeMetadata     The old image size from the database
+	 * @param  object $activeImageSize     The image size that should be used
 	 * @param  string $activeImageFilePath Full path to the new image
 	 * @return bool
 	 */
