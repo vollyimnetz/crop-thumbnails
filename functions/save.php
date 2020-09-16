@@ -6,7 +6,7 @@ class CptSaveThumbnail {
 
 	protected static $debug = array();
 
-	/**
+    /**
 	 * Handle-function called via ajax request.
 	 * Check and crop multiple images. Update with wp_update_attachment_metadata if needed.
 	 * Input parameters:
@@ -52,19 +52,6 @@ class CptSaveThumbnail {
 					continue;
 				}
 
-				$oldFile_toDelete = '';
-				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
-					self::addDebug('Image filename has changed ('.$activeImageSize->name . ')');
-					$changedImageName[ $activeImageSize->name ] = true;
-				} else {
-					//the old size hasent got the right image-size/image-ratio --> delete it or nobody will ever delete it correct
-					if($imageMetadata['sizes'][$activeImageSize->name]['width'] != intval($activeImageSize->width) || $imageMetadata['sizes'][$activeImageSize->name]['height'] != intval($activeImageSize->height) ) {
-						$oldFile_toDelete = $imageMetadata['sizes'][$activeImageSize->name]['file'];
-						$changedImageName[ $activeImageSize->name ] = true;
-					}
-				}
-
-
 				$croppedSize = self::getCroppedSize($activeImageSize,$imageMetadata,$input);
 
 				$currentFilePath = self::generateFilename($sourceImgPath, $imageMetadata, $croppedSize['width'], $croppedSize['height'], $activeImageSize->crop);
@@ -84,6 +71,15 @@ class CptSaveThumbnail {
 					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
 					$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
 				);
+
+				$oldFile_toDelete = '';
+				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
+					self::addDebug('Image filename has changed ('.$activeImageSize->name . ')');
+					$changedImageName[ $activeImageSize->name ] = true;
+				} elseif (self::shouldDeleteOldFile($imageMetadata['sizes'][$activeImageSize->name], $activeImageSize, $currentFilePath)) {
+					$oldFile_toDelete = $imageMetadata['sizes'][$activeImageSize->name]['file'];
+					$changedImageName[ $activeImageSize->name ] = true;
+				}
 
 				$_error = false;
 				if(empty($result)) {
@@ -142,6 +138,27 @@ class CptSaveThumbnail {
 			$jsonResult['error'] = $e->getMessage();
 			echo json_encode($jsonResult);
 		}
+	}
+
+	/**
+	 * Whether we should delete old thumbnail file.
+	 *
+	 * We should delete when any of these happens:
+	 *	- the old size hasn't got the right image-size/image-ratio
+	 *	- the new image has a different file path
+	 *
+	 * Otherwise, nobody will ever delete it correctly.
+	 *
+	 * @param  array  $oldSizeMetadata  The old image size from the database
+	 * @param  object  $activeImageSize The image size that should be used
+	 * @param  string $activeImageFilePath Full path to the new image
+	 * @return bool
+	 */
+	protected static function shouldDeleteOldFile($oldSizeMetadata, $activeImageSize, $activeImageFilePath)
+	{
+		return absint($oldSizeMetadata['width']) !== absint($activeImageSize->width)
+			|| absint($oldSizeMetadata['height']) !== absint($activeImageSize->height)
+			|| wp_basename($activeImageFilePath) !== $oldSizeMetadata['file'];
 	}
 
 	/**
