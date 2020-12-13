@@ -44,8 +44,8 @@ function cptGetWpVersion() {
 	return $version;
 }
 
-include_once(dirname(__FILE__).'/functions/helper.php');
-include_once(dirname(__FILE__).'/functions/settingsscreen.php');
-include_once(dirname(__FILE__).'/functions/editor.php');
-include_once(dirname(__FILE__).'/functions/backendpreparer.php');
-include_once(dirname(__FILE__).'/functions/save.php');
+include_once(__DIR__.'/functions/helper.php');
+include_once(__DIR__.'/functions/settingsscreen.php');
+include_once(__DIR__.'/functions/editor.php');
+include_once(__DIR__.'/functions/backendpreparer.php');
+include_once(__DIR__.'/functions/save.php');

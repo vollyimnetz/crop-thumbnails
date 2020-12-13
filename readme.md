@@ -150,10 +150,10 @@ Example
 ```php
 add_filter( 'image_size_names_choose', 'my_custom_sizes' );
 function my_custom_sizes( $sizes ) {
-	$sizes = array_merge( $sizes, array(
+	$sizes = array_merge( $sizes, [
 		'strange-size' => 'my new name',
 		'abc' => 'alphabet',
-	));
+	]);
 	return $sizes;
 }
 ```

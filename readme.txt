@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.3.0 =
+* remove support for Code below 5.4: ( the construct dirname(__FILE) become __DIR__, arrays will also be initialized using [] )
+* change app deployment to vue-cli
+
 = 1.2.6 =
 * update dependencies
 * fix typo

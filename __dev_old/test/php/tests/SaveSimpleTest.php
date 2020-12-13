@@ -26,7 +26,7 @@ class SaveSimpleTest extends CptTestCase {
 		\WP_Mock::wpFunction( 'wp_basename',[
 			'return' => function($path,$suffix) { 
 				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
-				return urldecode( basename( str_replace( array( '%2F', '%5C' ), '/', urlencode( $path ) ), $suffix ) ); 
+				return urldecode( basename( str_replace( [ '%2F', '%5C' ], '/', urlencode( $path ) ), $suffix ) ); 
 			}
 		]);
 		\WP_Mock::wpFunction( 'trailingslashit',[

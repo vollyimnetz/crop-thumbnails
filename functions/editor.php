@@ -11,7 +11,7 @@ class CropPostThumbnailsEditor {
 	protected $debugOutput = '';
 
 	function __construct() {
-		add_action('wp_ajax_cpt_cropdata', array($this, 'provideCropData') );
+		add_action('wp_ajax_cpt_cropdata', [$this, 'provideCropData'] );
 	}
 	
 	public function provideCropData() {
@@ -36,12 +36,12 @@ class CropPostThumbnailsEditor {
 	 */
 	protected static function doErrorResponse($statusCode, $errorMsg) {
 		http_response_code($statusCode);
-		echo json_encode(array(
+		echo json_encode([
 			'lang' => self::getLangArray(),
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase()),
 			'error' => $errorMsg,
 			'statusCode' => $statusCode
-		));
+		]);
 	}
 
 	/**
@@ -59,7 +59,7 @@ class CropPostThumbnailsEditor {
 	 * @return Array
 	 */
 	protected static function getLangArray() {
-		return array(
+		return [
 			'warningOriginalToSmall' => self::fixJsLangStrings(__('Warning: the original image is too small to be cropped in good quality with this thumbnail size.','crop-thumbnails')),
 			'cropDisabled' => self::fixJsLangStrings(__('Cropping is disabled for this post-type.','crop-thumbnails')),
 			'waiting' => self::fixJsLangStrings(__('Please wait until the images are cropped.','crop-thumbnails')),
@@ -80,7 +80,7 @@ class CropPostThumbnailsEditor {
 			'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
 			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
 			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails'))
-		);
+		];
 	}
 	
 	public function getCropData() {
@@ -88,20 +88,20 @@ class CropPostThumbnailsEditor {
 		$content_width = 9999;//override the idioty
 		
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
-		$result = array(
+		$result = [
 			'options' => $options,
 			'sourceImageId' => null,
-			'sourceImage' => array(
+			'sourceImage' => [
 				'full' => null,
 				'large' => null,
 				'medium_large' => null,
-			),
+			],
 			'sourceImageMeta' => null,
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes()),
 			'lang' => self::getLangArray(),
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase())
-		);
+		];
 		
 		//simple validation
 		if(empty($_REQUEST['imageId'])) {
@@ -168,7 +168,7 @@ class CropPostThumbnailsEditor {
 				
 				
 				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['id']);
-				$jsonDataValues = array(
+				$jsonDataValues = [
 					'name' => $imageSize['id'],
 					'nameLabel' => $imageSize['name'],//if you want to change the label of this image-size
 					'url' => $img_data[0],
@@ -179,7 +179,7 @@ class CropPostThumbnailsEditor {
 					'printRatio' => apply_filters('crop_thumbnails_editor_printratio', $ratioData['printRatio'], $imageSize['id']),
 					'hideByPostType' => self::shouldSizeBeHidden($options,$imageSize,$result['postTypeFilter']),
 					'crop' => true//legacy
-				);
+				];
 				
 				$result['imageSizes'][$key] = apply_filters('crop_thumbnails_editor_jsonDataValues', $jsonDataValues);
 				
@@ -193,7 +193,7 @@ class CropPostThumbnailsEditor {
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
-		$result = array(
+		$result = [
 			'url' => $orig_img[0],
 			'width' => $orig_img[1],
 			'height' => $orig_img[2],
@@ -201,17 +201,17 @@ class CropPostThumbnailsEditor {
 			'ratio' => ($orig_img[1]/$orig_ima_gcd) / ($orig_img[2]/$orig_ima_gcd),
 			'printRatio' => ($orig_img[1]/$orig_ima_gcd).':'.($orig_img[2]/$orig_ima_gcd),
 			'image_size' => $imageSize
-		);
+		];
 		return $result;
 	}
 	
 	protected function calculateRatioData($width,$height) {
 		$gcd = $this->gcd($width,$height);
-		$result = array(
+		$result = [
 			'gcd' => $gcd,
 			'ratio' => ($width/$gcd) / ($height/$gcd),
 			'printRatio' => $width/$gcd.':'.$height/$gcd
-		);
+		];
 		return $result;
 	}
 

@@ -15,7 +15,7 @@ abstract class CptTestCase extends PHPUnit_Framework_TestCase {
 		
 		self::$settingsMock = Mockery::mock('CropThumbnailsHelperInstance');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
-		self::$settingsMock->shouldReceive('getOptions')->andReturn(array('debug_data' => true));
+		self::$settingsMock->shouldReceive('getOptions')->andReturn(['debug_data' => true]);
 		
 		$GLOBALS['CROP_THUMBNAILS_HELPER'] = self::$settingsMock;
 		
@@ -29,14 +29,14 @@ abstract class CptTestCase extends PHPUnit_Framework_TestCase {
 
 		self::$settingsMock = Mockery::mock('CropThumbnailsHelperInstance');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
-		self::$settingsMock->shouldReceive('getOptions')->andReturn(array('debug_data' => true));
+		self::$settingsMock->shouldReceive('getOptions')->andReturn(['debug_data' => true]);
 
 		$GLOBALS['CROP_THUMBNAILS_HELPER'] = self::$settingsMock;
 
 		return new CropPostThumbnailsEditor();
 	}
 	
-	public function assertArrayEquals($array1, $array2, $rootPath = array()) {
+	public function assertArrayEquals($array1, $array2, $rootPath = []) {
 		foreach ($array1 as $key => $value) {
 			$this->assertArrayHasKey($key, $array2);
 

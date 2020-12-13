@@ -1,0 +1,197 @@
+.cropThumbnailSettings {
+  h2 { margin-top:3em; }
+  .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
+  .cpt_settings_submit { margin: 1.5em auto; }
+
+
+  #cpt_quicktest { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding:1em; 
+    strong { display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; text-transform:uppercase; 
+      &.success { background:#00cc00; }
+      &.fails { background:#cc0000; }
+      &.info { background:#008acc; }
+    }
+  }
+
+  .cptSettingsPostList { margin: 0;
+    &::after { content:""; display: block; clear:both; }
+    &>li { padding:0 4px 4px 0; box-sizing: border-box; margin: 0;
+      @media(min-width:760px) { width: 33.333%; float:left; }
+    }
+    section { border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 1em; 
+      h3 { margin-top:0; overflow: hidden; text-overflow: ellipsis; }
+      & ul { margin: 1em 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
+    }
+  }
+  .cptSettingsPostListDescription { text-align: center; font-size:1.2em; padding:1em; margin:0 0 4px; border: 1px solid rgba(0,0,0,0.1); }
+
+  .form-table th,
+  .form-table td { padding-top:0; padding-bottom:0; }
+}
+
+
+
+/**** button icon ****/
+.cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/**** featured image box ****/
+#postimagediv {
+  &.closed .cropFeaturedImageWrap { display: none; }
+  .cropFeaturedImageWrap { padding:0 12px; margin-top:0; }
+}
+
+/**** button in media dialog ****/
+.media-modal .compat-field-cropthumbnails th { width: 0; min-width: 0; margin:0; }
+.media-modal .compat-field-cropthumbnails td { width: auto; }
+
+
+
+/**** MODAL ****/
+/* @see https://www.w3schools.com/howto/howto_css_modals.asp */
+body.cpt_ModalIsOpen { overflow: hidden; }
+#cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; padding:0; box-sizing: border-box; background-color: rgba(0,0,0,0.4); 
+  @media(min-width:900px) { padding:40px; }
+
+  .cpt_ModalDialog { position: relative; background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 100%; max-width: 100%; height: 100%; margin-top:0; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+  .cpt_ModalHeader { height: 40px; }
+  .cpt_ModalHeader .cpt_ModalTitle { font-size:20px; font-weight: 300; line-height: 1; padding: 10px 50px 10px 20px; background: #eee; color:#000; }
+  .cpt_ModalContent { width:100%; height: 100%; padding-top:40px; margin-top:-40px; box-sizing: border-box; }
+  
+  /* The Close Button */
+  .cpt_ModalClose { color: #000; border:none; background: transparent; position: absolute; right:0; top:0; font-size: 38px; font-weight: 300; padding:0px 8px 10px 8px; line-height: 30px; }
+  .cpt_ModalClose:hover,
+  .cpt_ModalClose:focus { opacity: .6; text-decoration: none; cursor: pointer; }
+}
+
+
+/* crop-editor-layout */
+#cpt_crop_editor {
+  .mainWindow { width: 100%; height: 100%; }
+  .cptCropPane,
+  .cptSelectionPane { box-sizing: border-box; }
+
+  .cptCropPane { padding:0 20px 20px; }
+
+  @media(min-width:760px) {
+    .cptCropPane { position: absolute; right: 0; top:0; width:350px; height: 100%; overflow-y: auto; overflow-x: hidden; border:0; border-left:3px solid #eee; margin-top:0; padding:10px 20px; }
+    .cptSelectionPane { position: relative; width:100%; height: 100%; overflow:hidden; padding-right: 350px; }
+    .cptSelectionPaneInner { width: 100%; overflow-y: scroll; height: 100%; }
+  }
+  @media(min-width:1000px) {
+    .cptCropPane { width: 500px; }
+    .cptSelectionPane { padding-right: 500px; }
+  }
+
+
+  .header {background-color:#efefef; padding:5px; position: relative; z-index: 1000;}
+
+  .cptEditorInner { position: relative; overflow-y: auto; height: 100%; }
+  .cptEditorInner.loading { overflow-y: hidden; }
+
+  .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
+  .image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
+  .image-list { margin:0;padding:0;}
+  .image-list .entry { width:140px; float:left; border:1px solid #efefef; margin:5px;}
+  .image-list .entry h3 { font-weight: normal; font-size:1em; margin:0 5px; }
+  .image-list .entry img { width:130px; height:130px; margin:5px; }
+  .image-list .cursor, .image-list .cursor * { cursor:pointer;} 
+
+
+
+  .cptImageSizelist { border-top: 3px solid #efefef; padding-top:5px; margin-top:5px; 
+    &::after { content: ""; clear: both; display: block; }
+    li { cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; transition:box-shadow .5s ease; }
+    li.active { -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; }
+    li:hover,
+    li:focus {background: #eee; }
+
+    li { width: 50%; 
+      @media(min-width:520px) {  width: 33.32%; }
+      @media(min-width:760px) {  width: 50%; }
+      @media(min-width:1100px) { width: 33.32%; }
+      @media(min-width:1400px) { width: 25%; }
+      @media(min-width:1600px) { width: 20%; }
+    }
+  }
+
+
+
+  .cptImageSizeInner header,
+  .cptImageSizeInner .dimensions,
+  .cptImageSizeInner .ratio { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .cptImageSizeInner { line-height: 1.4; };
+  .cptImageSizeInner header { font-size:1em; font-weight: bold; }
+  .cptImageSizeInner .dimensions { font-size:0.8em; }
+  .cptImageSizeInner .ratio { font-size:0.8em; }
+  .cptImageSizeInner .lowResWarning,
+  .cptImageSizeInner .notYetCropped { color: #fff; position: absolute; bottom: 12px; left: 12px; background: #ea6c00; width: 30px; height: 30px; line-height: 28px; font-size: 23px; font-weight: 600; z-index: 1; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3); 
+    span { text-shadow: 1px 1px 1px rgba(0,0,0,0.3); }
+  }
+  .cptImageSizeInner .notYetCropped { background: #ea2f00; left:auto; right: 12px; 
+    span { line-height: 30px; }
+  }
+
+  .cptImageSizeInner .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; box-shadow: 0 0 1px rgba(0,0,0,0.5); box-sizing: border-box; transition: filter .5s ease; }
+
+  .cptImagesAreSelected li .cptImageBgContainer { filter:grayscale(100%); }
+  .cptImagesAreSelected li.active .cptImageBgContainer,
+  .cptImagesAreSelected li:focus .cptImageBgContainer { filter:grayscale(0%); }
+
+
+  .loadingcontainer { position: relative; }
+  .loadingcontainer .loadingMsg { opacity: 0; position: absolute; width: 100%; height: 100%; top:0; left:0; background: #fff; transition: opacity .4s linear; }
+  .loadingcontainer .cptLoadingSpinner { position: absolute; top:50%; left:50%; margin-left: -15px; margin-top: -15px; }
+  .loadingcontainer.loading .loadingMsg { opacity: 1; }
+  .loadingcontainer.loading .cptImageBgContainer { background: none !important; }
+  .loadingcontainer .fade-enter-active, 
+  .loadingcontainer .fade-leave-active { transition: opacity .5s }
+  .loadingcontainer .fade-enter, 
+  .loadingcontainer .fade-leave-to { opacity: 0; }
+
+  .cptSameRatioLabel { display: inline-block; margin:.3em 1em 0.3em 0; }
+
+  .cptSelectionPane>div>p { padding-left:1em; padding-right: 1em; margin:.3em; }
+
+  .cptCropPane .info { text-align: center; }
+  .cptCropPane h3 { margin:0;}
+  .cptCropPane button.cptGenerate { width: 100%; height:2em; font-size:1.4em; padding:0.5em 0; display:block; line-height: 0;}
+
+  .cropContainer { margin:.3em 0 .5em; opacity: .5; }
+  .cptEditorInner.cropEditorActive .cropContainer { opacity: 1; }
+  .cropContainer img.cptCroppingImage { max-width: 100%; height:auto; }
+
+  h4 { margin-bottom:0em;}
+  .step-info { font-size:0.9em; }
+
+  .jcrop-handle.ord-ne { margin-top: -8px; margin-right: -8px;}
+  .jcrop-handle.ord-nw { margin-top: -8px; margin-left: -8px;}
+  .jcrop-handle.ord-se { margin-bottom: -8px; margin-right: -8px;}
+  .jcrop-handle.ord-sw { margin-bottom: -8px; margin-left: -8px;}
+
+  .jcrop-handle.ord-ne,
+  .jcrop-handle.ord-nw,
+  .jcrop-handle.ord-se,
+  .jcrop-handle.ord-sw { width: 16px; height: 16px; }
+
+
+  .cpt-debug {clear: left; padding-left:5px;}
+  .cpt-debug .cpt-debug-handle { border:1px solid #aaa; background-color:#f1f1f1; padding:0.3em 1em;}
+  .cpt-debug.closed .content { display:none; }
+  .cpt-debug .content { font-family: monospace;margin-top:0.5em; }
+
+
+  .cptWaitingWindow { position: absolute; top:0; left:0; width: 100%; height: 100%; z-index: 10; background: rgba(255, 255, 255, 0.9); transition:all .5s ease; }
+  .cptWaitingWindow .msg { position: absolute; top:50%; width: 100%; margin-top:-4em; font-size: 2em; font-weight:bold; text-align: center; line-height: 1.3; padding: 0; }
+  .cptWaitingWindow .cptLoadingSpinner { height: 50px; width: 50px; margin-top:20px; }
+}
+
+.cptLoadingSpinner { height: 30px; width: 30px; border: 2px solid #0073aa; border-right-color: transparent; border-radius: 50%; display: inline-block;
+  animation-duration: 0.75s;
+  animation-iteration-count: infinite;
+  animation-name: cptRotateForever;
+  animation-timing-function: linear; 
+}
+@keyframes cptRotateForever {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

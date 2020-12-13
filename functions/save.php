@@ -1,10 +1,13 @@
 <?php
 $cptSave = new CptSaveThumbnail();
-add_action( 'wp_ajax_cptSaveThumbnail', array($cptSave, 'saveThumbnailAjaxWrap') );
 
 class CptSaveThumbnail {
 	
-	protected static $debug = array();
+	protected static $debug = [];
+
+	public function __construct() {
+		add_action( 'wp_ajax_cptSaveThumbnail', [$this, 'saveThumbnailAjaxWrap'] );
+	}
 	
 	/**
 	 * Handle-function called via ajax request.
@@ -17,14 +20,13 @@ class CptSaveThumbnail {
 	 * Called die() at the end.
 	 */
 	public function saveThumbnail() {
-		$jsonResult = array();
+		$jsonResult = [];
 		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		
 		try {
 			$input = $this->getValidatedInput();
 			self::addDebug('validated input data');
 			self::addDebug($input);
-			
 
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
 			if(empty($sourceImgPath)) {
@@ -44,8 +46,8 @@ class CptSaveThumbnail {
 			 * will be filled with the new image-url if the image format isn't in the attachements metadata, 
 			 * and Wordpress doesn't know about the image file
 			 */
-			$changedImageName = array();
-			$_processing_error = array();
+			$changedImageName = [];
+			$_processing_error = [];
 			foreach($input->activeImageSizes as $activeImageSize) {
 				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
 					self::addDebug("Image size not valid.");
@@ -73,7 +75,8 @@ class CptSaveThumbnail {
 				$currentFilePathInfo['basename'] = wp_basename($currentFilePath);//uses the i18n version of the file-basename
 				$temporaryCopyFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
-				$result = wp_crop_image(							// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
+				do_action('crop_thumbnails_before_wp_crop_image', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
+				$resultWpCropImage = wp_crop_image(					// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 					$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
 					$input->selection->x,							// * @param int $src_x The start x position to crop from.
 					$input->selection->y,							// * @param int $src_y The start y position to crop from.
@@ -84,9 +87,10 @@ class CptSaveThumbnail {
 					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
 					$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
 				);
+				do_action('crop_thumbnails_after_wp_crop_image', $input, $croppedSize, $temporaryCopyFile, $currentFilePath, $resultWpCropImage);
 				
 				$_error = false;
-				if(empty($result)) {
+				if(empty($resultWpCropImage)) {
 					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",'crop-thumbnails'), $activeImageSize->name);
 					$_error = true;
 				} else {
@@ -94,11 +98,11 @@ class CptSaveThumbnail {
 						self::addDebug("delete old image:".$oldFile_toDelete);
 						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
-					if(!@copy($result,$currentFilePath)) {
+					if(!@copy($resultWpCropImage,$currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't copy temporary file to media library.", 'crop-thumbnails');
 						$_error = true;
 					}
-					if(!@unlink($result)) {
+					if(!@unlink($resultWpCropImage)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't delete temporary file.", 'crop-thumbnails');
 						$_error = true;
 					}
@@ -182,7 +186,7 @@ class CptSaveThumbnail {
 			$croppedHeight = 10;
 		}
 		
-		return array('width' => $croppedWidth, 'height'=> $croppedHeight);
+		return ['width' => $croppedWidth, 'height'=> $croppedHeight];
 	}
 	
 	/**
@@ -204,7 +208,7 @@ class CptSaveThumbnail {
 		if(!empty(self::$debug)) {
 			return self::$debug;
 		}
-		return array();
+		return [];
 	}
 	
 	/**
@@ -223,23 +227,23 @@ class CptSaveThumbnail {
 		
 		$fileTypeInformations = wp_check_filetype($fullFilePath);
 
-		$newValues = array();
+		$newValues = [];
 		$newValues['file'] = $currentFilePathInfo['basename'];
 		$newValues['width'] = intval($croppedWidth);
 		$newValues['height'] = intval($croppedHeight);
 		$newValues['mime-type'] = $fileTypeInformations['type'];
-		$newValues['cpt_last_cropping_data'] = array(
+		$newValues['cpt_last_cropping_data'] = [
 			'x' => $croppingInput->selection->x,
 			'y' => $croppingInput->selection->y,
 			'x2' => $croppingInput->selection->x2,
 			'y2' => $croppingInput->selection->y2,
 			'original_width' => $imageMetadata['width'],
 			'original_height' => $imageMetadata['height'],
-		);
+		];
 		
-		$oldValues = array();
+		$oldValues = [];
 		if(empty($imageMetadata['sizes'])) {
-			$imageMetadata['sizes'] = array();
+			$imageMetadata['sizes'] = [];
 		}
 		if(!empty($imageMetadata['sizes'][$imageSizeName])) {
 			$oldValues = $imageMetadata['sizes'][$imageSizeName];
