@@ -1,13 +1,18 @@
 <?php
-$cptSave = new CptSaveThumbnail();
+
+add_action('after_setup_theme',function() {
+	//Add the ajax action for entring the cropping function.
+	add_action( 'wp_ajax_cptSaveThumbnail', [CptSaveThumbnail::class, 'saveThumbnailAjaxWrap'] );
+
+	//Add the crop_thumbnails_do_crop action for the default behaiviour of the plugin.
+	//You may exchange it with your own function, by removing the default action and store your own.
+	//You may add an additional action right before or after that action.
+	add_action( 'crop_thumbnails_do_crop', [CptSaveThumbnail::class, 'doWpCropAction'], 10, 4);
+});
 
 class CptSaveThumbnail {
 	
 	protected static $debug = [];
-
-	public function __construct() {
-		add_action( 'wp_ajax_cptSaveThumbnail', [$this, 'saveThumbnailAjaxWrap'] );
-	}
 	
 	/**
 	 * Handle-function called via ajax request.
@@ -19,12 +24,12 @@ class CptSaveThumbnail {
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
 	 * Called die() at the end.
 	 */
-	public function saveThumbnail() {
+	public static function saveThumbnail() {
 		$jsonResult = [];
 		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		
 		try {
-			$input = $this->getValidatedInput();
+			$input = self::getValidatedInput();
 			self::addDebug('validated input data');
 			self::addDebug($input);
 
@@ -75,19 +80,7 @@ class CptSaveThumbnail {
 				$currentFilePathInfo['basename'] = wp_basename($currentFilePath);//uses the i18n version of the file-basename
 				$temporaryCopyFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
-				do_action('crop_thumbnails_before_wp_crop_image', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
-				$resultWpCropImage = wp_crop_image(					// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-					$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
-					$input->selection->x,							// * @param int $src_x The start x position to crop from.
-					$input->selection->y,							// * @param int $src_y The start y position to crop from.
-					$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
-					$input->selection->y2 - $input->selection->y,	// * @param int $src_h The height to crop.
-					$croppedSize['width'],							// * @param int $dst_w The destination width.
-					$croppedSize['height'],							// * @param int $dst_h The destination height.
-					false,											// * @param int $src_abs Optional. If the source crop points are absolute.
-					$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
-				);
-				do_action('crop_thumbnails_after_wp_crop_image', $input, $croppedSize, $temporaryCopyFile, $currentFilePath, $resultWpCropImage);
+				$resultWpCropImage = do_action('crop_thumbnails_do_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
 				
 				$_error = false;
 				if(empty($resultWpCropImage)) {
@@ -147,6 +140,23 @@ class CptSaveThumbnail {
 			echo json_encode($jsonResult);
 		}
 	}
+
+	/**
+	 * This is the place where crop-thumbnails crops the images - using the wordpress default function.
+	 */
+	public static function doWpCropAction($input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
+		return wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
+			$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
+			$input->selection->x,							// * @param int $src_x The start x position to crop from.
+			$input->selection->y,							// * @param int $src_y The start y position to crop from.
+			$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
+			$input->selection->y2 - $input->selection->y,	// * @param int $src_h The height to crop.
+			$croppedSize['width'],							// * @param int $dst_w The destination width.
+			$croppedSize['height'],							// * @param int $dst_h The destination height.
+			false,											// * @param int $src_abs Optional. If the source crop points are absolute.
+			$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
+		);
+	}
 	
 	/**
 	 * Get the end-size of the cropped image in pixels.
@@ -195,8 +205,8 @@ class CptSaveThumbnail {
 	 * All WordPress ajax-functions should call the "die()" function in the end. But this makes
 	 * phpunit tests impossible - so we have to wrap it.
 	 */
-	public function saveThumbnailAjaxWrap() {
-		$this->saveThumbnail();
+	public static function saveThumbnailAjaxWrap() {
+		self::saveThumbnail();
 		die();
 	}
 
@@ -280,7 +290,7 @@ class CptSaveThumbnail {
 	 * @return object JSON-Object with submitted data
 	 * @throw Exception if the security validation fails
 	 */
-	protected function getValidatedInput() {
+	protected static function getValidatedInput() {
 
 		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
 			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);

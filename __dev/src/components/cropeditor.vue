@@ -30,7 +30,7 @@
                         </label>
                         <button type="button" class="button" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
                     </p>
-                    <ul class="cptImageSizelist">
+                    <ul class="cptImageSizelist" v-if="filteredImageSizes.length>0">
                         <li v-for="i in filteredImageSizes" :key="i.nameLabel" :class="imageSizeClass(i)" @click="toggleActive(i)">
                             <section class="cptImageSizeInner">
                                 <header>{{i.nameLabel}}</header>
@@ -45,6 +45,11 @@
                             </section>
                         </li>
                     </ul>
+                    <div class="cptImageSizelist" v-else>
+                        <div class="noImageSizesAvailable">
+                            {{lang.infoNoImageSizesAvailable}}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="cptCropPane">

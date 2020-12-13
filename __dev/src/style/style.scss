@@ -183,6 +183,8 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptWaitingWindow { position: absolute; top:0; left:0; width: 100%; height: 100%; z-index: 10; background: rgba(255, 255, 255, 0.9); transition:all .5s ease; }
   .cptWaitingWindow .msg { position: absolute; top:50%; width: 100%; margin-top:-4em; font-size: 2em; font-weight:bold; text-align: center; line-height: 1.3; padding: 0; }
   .cptWaitingWindow .cptLoadingSpinner { height: 50px; width: 50px; margin-top:20px; }
+
+  .noImageSizesAvailable { text-align: center; padding: 3em 0; }
 }
 
 .cptLoadingSpinner { height: 30px; width: 30px; border: 2px solid #0073aa; border-right-color: transparent; border-radius: 50%; display: inline-block;
