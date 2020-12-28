@@ -1,14 +1,13 @@
 <?php
 
-add_action('after_setup_theme',function() {
+add_action('after_setup_theme', function() {
 	//Add the ajax action for entring the cropping function.
-	add_action( 'wp_ajax_cptSaveThumbnail', [CptSaveThumbnail::class, 'saveThumbnailAjaxWrap'] );
+	add_action( 'wp_ajax_cptSaveThumbnail', [CptSaveThumbnail::class, 'saveThumbnailAjaxWrap'], 10);
 
-	//Add the crop_thumbnails_do_crop action for the default behaiviour of the plugin.
-	//You may exchange it with your own function, by removing the default action and store your own.
-	//You may add an additional action right before or after that action.
-	add_action( 'crop_thumbnails_do_crop', [CptSaveThumbnail::class, 'doWpCropAction'], 10, 4);
-});
+	//Add the crop_thumbnails_do_crop filter for the default behaiviour of the plugin.
+	//You may exchange it with your own function, by removing the default filter and store your own.
+	add_filter( 'crop_thumbnails_do_crop', [CptSaveThumbnail::class, 'filter_doWpCrop'], 10, 4);
+}, 10);
 
 class CptSaveThumbnail {
 	
@@ -80,7 +79,9 @@ class CptSaveThumbnail {
 				$currentFilePathInfo['basename'] = wp_basename($currentFilePath);//uses the i18n version of the file-basename
 				$temporaryCopyFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.$currentFilePathInfo['basename'];
 				
-				$resultWpCropImage = do_action('crop_thumbnails_do_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
+				do_action('crop_thumbnails_before_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
+				$resultWpCropImage = apply_filters('crop_thumbnails_do_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
+				do_action('crop_thumbnails_after_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath, $resultWpCropImage);
 				
 				$_error = false;
 				if(empty($resultWpCropImage)) {
@@ -144,7 +145,7 @@ class CptSaveThumbnail {
 	/**
 	 * This is the place where crop-thumbnails crops the images - using the wordpress default function.
 	 */
-	public static function doWpCropAction($input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
+	public static function filter_doWpCrop($input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
 		return wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 			$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
 			$input->selection->x,							// * @param int $src_x The start x position to crop from.

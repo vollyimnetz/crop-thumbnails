@@ -127,6 +127,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 = 1.3.0 =
 * remove support for Code below 5.4: ( the construct dirname(__FILE) become __DIR__, arrays will also be initialized using [] )
 * change app deployment to vue-cli
+* add the actions "crop_thumbnails_before_crop" and "crop_thumbnails_after_crop" to hook directly before and after the cropping
+* add the filter "crop_thumbnails_do_crop" to make an exchange of the cropping function possible
 
 = 1.2.6 =
 * update dependencies
