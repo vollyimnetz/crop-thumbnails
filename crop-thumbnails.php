@@ -29,12 +29,6 @@
 define('CROP_THUMBNAILS_VERSION','1.2.6');
 
 
-function cptLoadLanguage() {
-	load_plugin_textdomain( 'crop-thumbnails', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-add_action( 'init', 'cptLoadLanguage' );
-
-
 /**
  * returns the WpVersion in as a float
  */

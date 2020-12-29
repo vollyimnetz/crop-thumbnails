@@ -87,6 +87,10 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptEditorInner { position: relative; overflow-y: auto; height: 100%; }
   .cptEditorInner.loading { overflow-y: hidden; }
 
+  .cptSelectionPaneInner .cptToolbar { display:flex; padding: 5px 10px; 
+    label { display: inline-block; margin:.3em 1em 0.3em 0; }
+  }
+
   .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
   .image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
   .image-list { margin:0;padding:0;}
@@ -97,7 +101,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
 
 
 
-  .cptImageSizelist { border-top: 3px solid #efefef; padding-top:5px; margin-top:5px; 
+  .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; 
     &::after { content: ""; clear: both; display: block; }
     li { cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; transition:box-shadow .5s ease; }
     li.active { -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; }
@@ -148,8 +152,6 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .loadingcontainer .fade-enter, 
   .loadingcontainer .fade-leave-to { opacity: 0; }
 
-  .cptSameRatioLabel { display: inline-block; margin:.3em 1em 0.3em 0; }
-
   .cptSelectionPane>div>p { padding-left:1em; padding-right: 1em; margin:.3em; }
 
   .cptCropPane .info { text-align: center; }
@@ -184,7 +186,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptWaitingWindow .msg { position: absolute; top:50%; width: 100%; margin-top:-4em; font-size: 2em; font-weight:bold; text-align: center; line-height: 1.3; padding: 0; }
   .cptWaitingWindow .cptLoadingSpinner { height: 50px; width: 50px; margin-top:20px; }
 
-  .noImageSizesAvailable { text-align: center; padding: 3em 0; }
+  .noImageSizesAvailable { text-align: center; padding: 5em 0; }
 }
 
 .cptLoadingSpinner { height: 30px; width: 30px; border: 2px solid #0073aa; border-right-color: transparent; border-radius: 50%; display: inline-block;
