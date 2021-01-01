@@ -87,8 +87,8 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptEditorInner { position: relative; overflow-y: auto; height: 100%; }
   .cptEditorInner.loading { overflow-y: hidden; }
 
-  .cptSelectionPaneInner .cptToolbar { display:flex; padding: 5px 10px; 
-    label { display: inline-block; margin:.3em 1em 0.3em 0; }
+  .cptSelectionPaneInner .cptToolbar { display:flex; align-items: flex-start; padding: 5px 10px; 
+    label { display: inline-block; margin-right: 0.3em; }
   }
 
   .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
@@ -98,8 +98,6 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .image-list .entry h3 { font-weight: normal; font-size:1em; margin:0 5px; }
   .image-list .entry img { width:130px; height:130px; margin:5px; }
   .image-list .cursor, .image-list .cursor * { cursor:pointer;} 
-
-
 
   .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; 
     &::after { content: ""; clear: both; display: block; }
@@ -118,39 +116,41 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   }
 
 
+  .cptImageSizeInner { line-height: 1.4;
+    header,
+    .dimensions,
+    .ratio { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    header { font-size:1em; font-weight: bold; }
+    .dimensions { font-size:0.8em; }
+    .ratio { font-size:0.8em; }
+    .lowResWarning,
+    .notYetCropped { color: #fff; position: absolute; bottom: 12px; left: 12px; background: #ea6c00; width: 30px; height: 30px; line-height: 28px; font-size: 23px; font-weight: 600; z-index: 1; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3); 
+      span { text-shadow: 1px 1px 1px rgba(0,0,0,0.3); }
+    }
+    .notYetCropped { background: #ea2f00; left:auto; right: 12px; 
+      span { line-height: 30px; }
+    }
 
-  .cptImageSizeInner header,
-  .cptImageSizeInner .dimensions,
-  .cptImageSizeInner .ratio { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  .cptImageSizeInner { line-height: 1.4; };
-  .cptImageSizeInner header { font-size:1em; font-weight: bold; }
-  .cptImageSizeInner .dimensions { font-size:0.8em; }
-  .cptImageSizeInner .ratio { font-size:0.8em; }
-  .cptImageSizeInner .lowResWarning,
-  .cptImageSizeInner .notYetCropped { color: #fff; position: absolute; bottom: 12px; left: 12px; background: #ea6c00; width: 30px; height: 30px; line-height: 28px; font-size: 23px; font-weight: 600; z-index: 1; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3); 
-    span { text-shadow: 1px 1px 1px rgba(0,0,0,0.3); }
+    .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; box-shadow: 0 0 1px rgba(0,0,0,0.5); box-sizing: border-box; transition: filter .5s ease; }
   }
-  .cptImageSizeInner .notYetCropped { background: #ea2f00; left:auto; right: 12px; 
-    span { line-height: 30px; }
-  }
 
-  .cptImageSizeInner .cptImageBgContainer { width: 100%; padding-top:100%; background-size: contain; background-position: center; background-repeat: no-repeat; box-shadow: 0 0 1px rgba(0,0,0,0.5); box-sizing: border-box; transition: filter .5s ease; }
 
   .cptImagesAreSelected li .cptImageBgContainer { filter:grayscale(100%); }
   .cptImagesAreSelected li.active .cptImageBgContainer,
   .cptImagesAreSelected li:focus .cptImageBgContainer { filter:grayscale(0%); }
 
 
-  .loadingcontainer { position: relative; }
-  .loadingcontainer .loadingMsg { opacity: 0; position: absolute; width: 100%; height: 100%; top:0; left:0; background: #fff; transition: opacity .4s linear; }
-  .loadingcontainer .cptLoadingSpinner { position: absolute; top:50%; left:50%; margin-left: -15px; margin-top: -15px; }
-  .loadingcontainer.loading .loadingMsg { opacity: 1; }
-  .loadingcontainer.loading .cptImageBgContainer { background: none !important; }
-  .loadingcontainer .fade-enter-active, 
-  .loadingcontainer .fade-leave-active { transition: opacity .5s }
-  .loadingcontainer .fade-enter, 
-  .loadingcontainer .fade-leave-to { opacity: 0; }
+  .loadingcontainer { position: relative; 
+    .loadingMsg { opacity: 0; position: absolute; width: 100%; height: 100%; top:0; left:0; background: #fff; transition: opacity .4s linear; }
+    .cptLoadingSpinner { position: absolute; top:50%; left:50%; margin-left: -15px; margin-top: -15px; }
+    &.loading .loadingMsg { opacity: 1; }
+    &.loading .cptImageBgContainer { background: none !important; }
+    .fade-enter-active, 
+    .fade-leave-active { transition: opacity .5s }
+    .fade-enter, 
+    .fade-leave-to { opacity: 0; }
+  }
 
   .cptSelectionPane>div>p { padding-left:1em; padding-right: 1em; margin:.3em; }
 
@@ -175,6 +175,16 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .jcrop-handle.ord-se,
   .jcrop-handle.ord-sw { width: 16px; height: 16px; }
 
+  .selectionInfo {
+    .name { font-size:1em; font-weight: bold; }
+    .dimensions { font-size:0.9em; }
+    .lowResWarning,
+    .notYetCropped { margin:2px 0;
+      .icon { color: #fff; background: #ea6c00; font-size: 12px; line-height: 20px; width: 20px; height: 20px; display: inline-block; text-shadow: 1px 1px 1px rgba(0,0,0,0.3); text-align: center; margin-right: 0.5em; }
+      .text { font-size: 0.9em; }
+    }
+    .notYetCropped .icon { background: #ea2f00; }
+  }
 
   .cpt-debug {clear: left; padding-left:5px;}
   .cpt-debug .cpt-debug-handle { border:1px solid #aaa; background-color:#f1f1f1; padding:0.3em 1em;}

@@ -3,8 +3,8 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
-Requires PHP: 5.3.0
-Tested up to: 5.3.1
+Tested up to: 5.6.0
+Requires PHP: 5.6.0
 Stable tag: 1.2.6
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -125,11 +125,15 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 = 1.3.0 =
-* remove support for Code below 5.4: ( the construct dirname(__FILE) become __DIR__, arrays will also be initialized using [] )
+* remove support for Code below PHP 5.4: ( the construct dirname(__FILE) become __DIR__, arrays will also be initialized using [] )
 * remove legacy language translation (in pot/po/mo files) - if you want to have the plugin in your language you can use https://translate.wordpress.org/projects/wp-plugins/crop-thumbnails/
 * change app deployment to vue-cli
+* add functionality for grouping of image-sizes in crop editor
 * add the actions "crop_thumbnails_before_crop" and "crop_thumbnails_after_crop" to hook directly before and after the cropping
 * add the filter "crop_thumbnails_do_crop" to make an exchange of the cropping function possible
+* fix broken link (thanks to TangRufus - https://github.com/TangRufus)
+* add code contribution of TangRufus to make plugin compatibility with "Crop Thumbnails CDN Cache Busting" (thanks to TangRufus - https://github.com/TangRufus)
+* add the filter "crop_thumbnails_should_delete_old_file" to make an exchange of the check for file-deleting possible
 
 = 1.2.6 =
 * update dependencies

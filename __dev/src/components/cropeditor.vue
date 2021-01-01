@@ -20,7 +20,7 @@
 
         <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !cropData.noPermission">
             
-            <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (activeImageSizes.length>0) }">
+            <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (selectedImageSizes.length>0) }">
                 <div class="cptSelectionPaneInner">
                     <message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</message>
                     <div class="cptToolbar">
@@ -74,12 +74,34 @@
                     <img class="cptCroppingImage" ref="cptCroppingImage" :src="cropImage.url" />
                 </div>
         
-                <h4>{{ lang.instructions_header }}</h4>
-                <ul class="step-info">
-                    <li>{{ lang.instructions_step_1 }}</li>
-                    <li>{{ lang.instructions_step_2 }}</li>
-                    <li>{{ lang.instructions_step_3 }}</li>
-                </ul>
+                <div class="selectionInfo" v-if="selectedImageSizes.length>0">
+                    <h4>{{lang.headline_selected_image_sizes}}</h4>
+                    <ul>
+                        <li v-for="i in selectedImageSizes" :key="i.nameLabel">
+                            <div>
+                                <span class="name">{{i.nameLabel}}</span> <span class="dimensions">({{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }})</span>
+                            </div>
+                            <div class="lowResWarning" v-if="isLowRes(i)">
+                                <span class="icon">!</span> 
+                                <span class="text">{{lang.lowResWarning}}</span>
+                            </div>
+                            <div class="notYetCropped" v-if="i.url === cropData.sourceImage.full.url">
+                                <span class="icon dashicons dashicons-image-crop"></span>
+                                <span class="text">{{lang.notYetCropped}}</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <hr />
+                </div>
+
+                <div class="instructionInfo">
+                    <h4>{{ lang.instructions_header }}</h4>
+                    <ul class="step-info">
+                        <li>{{ lang.instructions_step_1 }}</li>
+                        <li>{{ lang.instructions_step_2 }}</li>
+                        <li>{{ lang.instructions_step_3 }}</li>
+                    </ul>
+                </div>
 
                 <div>
                     <button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
@@ -88,11 +110,6 @@
                     <pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
                 </div>
 
-                <div v-if="sameRatioMode==='group'">
-                    <ul>
-                        <li v-for="elem in activeImageSizes" :key="elem.nameLabel">{{elem.nameLabel}}</li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -169,7 +186,7 @@ export default {
             }
             return result;
         },
-        activeImageSizes() {
+        selectedImageSizes() {
             return this.cropData.imageSizes.filter(elem => elem.active );
         },
         sourceImageHasOrientation() {
@@ -204,7 +221,7 @@ export default {
             return baseClass;
         },
         loadCropData() {
-            var that = this;
+            let that = this;
             var getParameter = {
                 action : 'cpt_cropdata',
                 imageId : this.imageId,
@@ -263,23 +280,25 @@ export default {
             return false;
         },
         toggleActive(image) {
-            var newValue = !image.active;
+            let newValue = !image.active;
             
             if(image.active===false) {
                 this.makeAllInactive();
             }
-            
-            if(this.sameRatioMode === 'select' || this.setupRatioMode === 'group') {
+
+            if(this.sameRatioMode === 'select' || this.sameRatioMode === 'group') {
+                //multi select
                 this.cropData.imageSizes.forEach(i => {
-                    if (i.printRatio === image.printRatio && i.hideByPostType===false) {
+                    if (i.printRatio === image.printRatio) {
                         i.active = newValue;
                     }
                 });
             } else {
+                //single select
                 image.active = newValue;
             }
             
-            if(this.activeImageSizes.length>0) {
+            if(this.selectedImageSizes.length>0) {
                 this.activateCropArea();
             } else {
                 this.deactivateCropArea();
@@ -304,9 +323,9 @@ export default {
             });
         },
         updateCurrentCrop() {
-            var result = null;
+            let result = null;
             if(this.croppingApi!==null) {
-                var size = this.croppingApi.tellSelect();
+                let size = this.croppingApi.tellSelect();
                 result = {
                     width : Math.round(size.w),
                     height : Math.round(size.h)
@@ -314,29 +333,27 @@ export default {
             }
             this.currentCropSize = result;
         },
+        getPreselect( width, height, targetRatio ) {
+            let x0 = 0;
+            let y0 = 0;
+            let x1 = width;
+            let y1 = height;
+            let sourceRatio = width/height;
+            
+            if(sourceRatio <= targetRatio) {
+                y0 = (height / 2) - ((width / targetRatio) / 2);
+                y1 = height-y0;
+            } else {
+                x0 = (width / 2) - ((height * targetRatio) / 2);
+                x1 = width-x0;
+            }
+            return [x0,y0,x1,y1];
+        },
         activateCropArea() {
-            var that = this;
+            let that = this;
             that.deactivateCropArea();
             
-            function getPreselect( width, height, targetRatio ) {
-                var x0 = 0;
-                var y0 = 0;
-                var x1 = width;
-                var y1 = height;
-                var sourceRatio = width/height;
-                
-                if(sourceRatio <= targetRatio) {
-                    y0 = (height / 2) - ((width / targetRatio) / 2);
-                    y1 = height-y0;
-                } else {
-                    x0 = (width / 2) - ((height * targetRatio) / 2);
-                    x1 = width-x0;
-                }
-                var result = [x0,y0,x1,y1];
-                return result;
-            }
-            
-            var options = {
+            let options = {
                 trueSize: [ that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height ],
                 aspectRatio: 0,
                 setSelect: [],
@@ -344,7 +361,7 @@ export default {
             };
 
             //get the options
-            that.activeImageSizes.forEach(i => {
+            that.selectedImageSizes.forEach(i => {
                 if(options.aspectRatio === 0) {
                     options.aspectRatio = i.ratio;//initial
                 }
@@ -353,7 +370,7 @@ export default {
                 }
             });
             
-            options.setSelect = getPreselect(that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height, options.aspectRatio);
+            options.setSelect = this.getPreselect(that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height, options.aspectRatio);
 
             //debug
             if(that.cropData.options.debug_js) {
@@ -380,20 +397,19 @@ export default {
             }
         },
         cropThumbnails() {
-            var that = this;
+            let that = this;
             
-            function getDataOfActiveImageSizes() {
-                var result = [];
-                that.activeImageSizes.forEach((i) => {
+            function getDataOfSelectedImageSizes() {
+                let result = [];
+                that.selectedImageSizes.forEach((i) => {
                     if(i.active) {
-                        var tmp = {
+                        result.push({
                             name: i.name,
                             width:i.width,
                             height:i.height,
                             ratio:i.ratio,
                             crop:i.crop
-                        };
-                        result.push(tmp);
+                        });
                     }
                 });
                 return result;
@@ -402,19 +418,19 @@ export default {
             if(!that.loading && that.croppingApi!==null) {
                 that.loading = true;
                 
-                var cptRequestParams = {
+                const cptRequestParams = {
                     action : 'cptSaveThumbnail',
                     _ajax_nonce : that.nonce,
                     cookie : encodeURIComponent(document.cookie),
                     crop_thumbnails : JSON.stringify({
                         'selection' : that.croppingApi.tellSelect(),
                         'sourceImageId' : that.cropData.sourceImageId,
-                        'activeImageSizes' : getDataOfActiveImageSizes()
+                        'activeImageSizes' : getDataOfSelectedImageSizes()
                     })
                 };
                 
-                var request = jQuery.post(ajaxurl,cptRequestParams,null,'json');
-                request
+                jQuery
+                    .post(ajaxurl,cptRequestParams,null,'json')
                     .done((responseData) => {
                         if(that.cropData.options.debug_data) {
                             that.dataDebug = responseData.debug;
@@ -426,20 +442,20 @@ export default {
                         }
                         if(responseData.success!==undefined) {
                             if(responseData.changedImageName!==undefined) {
-                                //update activeImageSizes with the new URLs
-                                that.activeImageSizes.forEach((value,key) => {
+                                //update selectedImageSizes with the new URLs
+                                that.selectedImageSizes.forEach((value,key) => {
                                     if(responseData.changedImageName[value.name]!==undefined) {
                                         value.url = responseData.changedImageName[value.name];
                                     }
                                 });
                             }
-                            that.addCacheBreak(that.activeImageSizes);
+                            that.addCacheBreak(that.selectedImageSizes);
                             return;
                         }
                     })
                     .fail((response) => {
                         alert(that.lang.script_connection_error);
-                        var debug = {
+                        let debug = {
                             status: response.status,
                             statusText: response.statusText,
                             requestUrl: ajaxurl,

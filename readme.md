@@ -6,7 +6,7 @@
 
 The plugin can be installed from the wordpress plugin repository. 
 
-https://wordpress.org/plugins-wp/crop-thumbnails/
+https://wordpress.org/plugins/crop-thumbnails/
 
 ## How to add custom cropped image-sizes
 This is the default wordpress way to add new image-sizes. 
@@ -66,6 +66,18 @@ function myCustomPhpFooterCode() {
 
 ## Filters and action-hooks
 The plugin provides some filters/actions if you want to adjust or extend the behaviour.
+
+### ACTION `crop_thumbnails_before_crop`
+An action called directly before cropping.
+
+### ACTION `crop_thumbnails_after_crop`
+An action called directly after cropping.
+
+### FILTER `crop_thumbnails_do_crop`
+Filter for change the cropping function.
+
+### FILTER `crop_thumbnails_should_delete_old_file`
+Filter for checking if an old file should be deleted.
 
 ### ACTION `crop_thumbnails_after_save_new_thumb`
 This action is called after saving a thumbnail by the plugin.
