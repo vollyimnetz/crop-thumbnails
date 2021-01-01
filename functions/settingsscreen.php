@@ -4,21 +4,21 @@ class CropThumbnailsSettingsScreen {
 	protected static $cssPrefix = 'cpt_settings_';
 
 	public function __construct() {
-		add_action('admin_menu', array($this,'addOptionsPage'));
+		add_action('admin_menu', [$this,'addOptionsPage']);
 		if(is_admin()) {
-			add_filter('plugin_action_links', array($this,'addSettingsLinkToPluginPage'), 10, 2);
-			add_action('admin_head', array($this,'optionsPageStyle'));
+			add_filter('plugin_action_links', [$this,'addSettingsLinkToPluginPage'], 10, 2);
+			add_action('admin_head', [$this,'optionsPageStyle']);
 			
 			//needed for quick-test
-			add_action( 'wp_ajax_ctppluginquicktest', array(&$this, 'ajax_callback_admin_quicktest') );
+			add_action( 'wp_ajax_ctppluginquicktest', [&$this, 'ajax_callback_admin_quicktest'] );
 		}
 	}
 
 	public function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css',dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script('vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/app.js',dirname(__FILE__) ), array('vue'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/css/app.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('vue', plugins_url('app/js/chunk-vendors.js', __DIR__), [], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/js/app.js', __DIR__ ), ['vue'], CROP_THUMBNAILS_VERSION);
 		}
 	}
 
@@ -31,8 +31,8 @@ class CropThumbnailsSettingsScreen {
 	}
 
 	public function addOptionsPage() {
-		add_options_page(esc_html__('Crop Post Thumbnail Page','crop-thumbnails'), 'Crop-Thumbnails', 'manage_options', 'page-cpt', array($this,'optionsPage'));
-		add_action('admin_init', array($this,'settingsInitialisation'));
+		add_options_page(esc_html__('Crop Post Thumbnail Page','crop-thumbnails'), 'Crop-Thumbnails', 'manage_options', 'page-cpt', [$this,'optionsPage']);
+		add_action('admin_init', [$this,'settingsInitialisation']);
 	}
 
 	public function optionsPage() { ?>
@@ -70,37 +70,37 @@ class CropThumbnailsSettingsScreen {
 	}
 
 	public function settingsInitialisation(){
-		register_setting( self::$uniqeSettingsId, $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey(), array($this,'validateSettings') );
+		register_setting( self::$uniqeSettingsId, $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey(), [$this,'validateSettings'] );
 
 		$_sectionID = 'choose_sizes_section';
-		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), array($this,'sectionDescriptionChooseSizes'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Sizes and Post Types','crop-thumbnails'), [$this,'sectionDescriptionChooseSizes'], 'page1');
 
 		$_sectionID = 'userPermission';
-		add_settings_section($_sectionID, esc_html__('User Permission','crop-thumbnails'), array($this,'emptySectionDescription'), 'page1');
+		add_settings_section($_sectionID, esc_html__('User Permission','crop-thumbnails'), [$this,'emptySectionDescription'], 'page1');
 		$_tmpID = 'user_permission_only_on_edit_files';
-		add_settings_field($_tmpID, esc_html__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails'), 	[$this,'callback_'.$_tmpID], 'page1', $_sectionID, ['label_for' => self::$cssPrefix.$_tmpID ]);
 
 		$_sectionID = 'quick_test';
-		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), array($this,'sectionDescriptionTest'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), [$this,'sectionDescriptionTest'], 'page1');
 		
 		$_sectionID = 'developer';
-		add_settings_section($_sectionID, esc_html__('Developer Settings','crop-thumbnails'), array($this,'emptySectionDescription'), 'page1');
+		add_settings_section($_sectionID, esc_html__('Developer Settings','crop-thumbnails'), [$this,'emptySectionDescription'], 'page1');
 		$_tmpID = 'debug_js';
-		add_settings_field($_tmpID, esc_html__('Enable JS-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('Enable JS-Debug.','crop-thumbnails'), [$this,'callback_'.$_tmpID], 'page1', $_sectionID, ['label_for' => self::$cssPrefix.$_tmpID] );
 		$_tmpID = 'debug_data';
-		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), 	array($this,'callback_'.$_tmpID), 'page1', $_sectionID, array( 'label_for' => self::$cssPrefix.$_tmpID ));
+		add_settings_field($_tmpID, esc_html__('Enable Data-Debug.','crop-thumbnails'), [$this,'callback_'.$_tmpID], 'page1', $_sectionID, ['label_for' => self::$cssPrefix.$_tmpID] );
 	}
 
 	protected function vueSettingsScreen() {
-		$settings = array(
+		$settings = [
 			'options' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions(),
 			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),
 			'image_sizes' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes(),
-			'lang' => array(
+			'lang' => [
 				'choose_image_sizes' => esc_js(__('Choose the image sizes you do not want to show, if the user uses the button below the featured image box.','crop-thumbnails')),
 				'hide_on_post_type' => esc_js(__('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails'))
-			)
-		);
+			]
+		];
 		
 		?>
 		<div class="<?php echo self::$cssPrefix ?>submit">
@@ -161,7 +161,7 @@ class CropThumbnailsSettingsScreen {
 
 		$post_types = $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes();
 
-		$storeInDb = array();
+		$storeInDb = [];
 		//check input[hide_post_type] --> are the post_types real there
 		if(!empty($input['hide_post_type'])) {
 			foreach($input['hide_post_type'] as $_post_type_name=>$value) {
@@ -251,18 +251,18 @@ class CropThumbnailsSettingsScreen {
 		if(!current_user_can('manage_options')) die('forbidden');
 		check_ajax_referer('cpt_quicktest-ajax-nonce','security');//only for quicktest
 		
-		$report = array();
+		$report = [];
 		$doDeleteAttachement = false;
 		$doDeleteTempFile = false;
 		$attachmentId = -1;
 		
-		$sourceFile = dirname( __FILE__ ).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
+		$sourceFile = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
 		$tempFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
 		try {
 			$report[] = '<strong class="info">info</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
 			$report[] = '<strong class="info">info</strong> PHP '.phpversion();
 			$report[] = '<strong class="info">info</strong> PHP memory limit '.ini_get('memory_limit');
-			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(array('mime_type' => 'image/jpeg')).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
 			
 			//check if tmp-folder can be generated
 			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
@@ -285,14 +285,14 @@ class CropThumbnailsSettingsScreen {
 			
 			
 			//try to upload the file
-			$_FILES['cpt_quicktest'] = array(
+			$_FILES['cpt_quicktest'] = [
 				'name' => 'test_image.jpg',
 				'type' => 'image/jpeg',
 				'tmp_name' => $tempFile,
 				'error' => 0,
 				'size' => 102610
-			);
-			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, array(), array( 'test_form' => false, 'action'=>'test' ) );
+			];
+			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, [], ['test_form' => false, 'action'=>'test'] );
 			$doDeleteTempFile = false;//is be deleted automatically
 			if ( is_wp_error( $attachmentId ) ) {
 				throw new \Exception('<strong class="fails">fail</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');

@@ -12,7 +12,7 @@
  * This class is for overriding settings in php-tests - therefore the functions cant be static :(
  */
 class CropThumbnailsHelper {
-	protected static $defaultSizes = array('thumbnail','medium','medium_large','large');
+	protected static $defaultSizes = ['thumbnail','medium','medium_large','large'];
 	protected static $optionsKey = 'crop-post-thumbs';
 
 	public function getUploadDir() {
@@ -25,7 +25,7 @@ class CropThumbnailsHelper {
 	 * get the post types and delete some prebuild post types that we dont need
 	 */
 	public function getPostTypes() {
-		$post_types = get_post_types(array(),'objects');
+		$post_types = get_post_types([],'objects');
 		unset($post_types['nav_menu_item']);
 		unset($post_types['revision']);
 		unset($post_types['attachment']);
@@ -54,7 +54,7 @@ class CropThumbnailsHelper {
 		$tmp_sizes = apply_filters( 'image_size_names_choose', $image_size_names );
 		$image_size_names = array_merge($image_size_names,$tmp_sizes);
 		
-		$sizes = array();
+		$sizes = [];
 		foreach( $image_size_names as $sizeId=>$theName ) {
 
 			if ( in_array( $sizeId, self::$defaultSizes ) ) {
@@ -63,11 +63,11 @@ class CropThumbnailsHelper {
 				$sizes[ $sizeId ]['crop']   = (bool) get_option( $sizeId . '_crop' );
 			} else {
 				if(!empty($_wp_additional_image_sizes[ $sizeId ])) {
-					$sizes[ $sizeId ] = array(
+					$sizes[ $sizeId ] = [
 						'width'  => intval($_wp_additional_image_sizes[ $sizeId ]['width']),
 						'height' => intval($_wp_additional_image_sizes[ $sizeId ]['height']),
 						'crop'   => (bool) $_wp_additional_image_sizes[ $sizeId ]['crop']
-					);
+					];
 				}
 			}
 			$sizes[ $sizeId ]['name'] = $theName;

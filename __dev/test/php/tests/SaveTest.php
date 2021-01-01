@@ -18,7 +18,7 @@ class SaveTest extends CptTestCase {
 		\WP_Mock::wpFunction( 'wp_basename',[
 			'return' => function($path,$suffix) { 
 				//this is the content of the real function @see https://core.trac.wordpress.org/browser/tags/4.7.3/src/wp-includes/formatting.php#L0
-				return urldecode( basename( str_replace( array( '%2F', '%5C' ), '/', urlencode( $path ) ), $suffix ) ); 
+				return urldecode( basename( str_replace( [ '%2F', '%5C' ], '/', urlencode( $path ) ), $suffix ) ); 
 			}
 		]);
 		
@@ -100,7 +100,7 @@ class SaveTest extends CptTestCase {
 			'return' => function($imageId,$imageSizeName) use ($that,$testData) {
 				$that->assertEquals($imageId,$testData->sourceImageId);
 				$that->assertEquals($imageSizeName,'new-image-size');
-				return array('new/path/new-image-size-600x600.jpg',600,600);
+				return ['new/path/new-image-size-600x600.jpg',600,600];
 			},
 			'times' => 1
 		]);
@@ -264,7 +264,7 @@ class SaveTest extends CptTestCase {
 		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
 			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
 				$INPUT_wp_get_attachment_image_src = [$imageId,$imageSizeName];
-				return array('new/path/new-image-size-3000x500.jpg',3000,500);
+				return ['new/path/new-image-size-3000x500.jpg',3000,500];
 			},
 			'times' => 1
 		]);
@@ -394,7 +394,7 @@ class SaveTest extends CptTestCase {
 		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
 			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
 				$INPUT_wp_get_attachment_image_src = [$imageId,$imageSizeName];
-				return array('new/path/new-image-size-500x2000.jpg',500,2000);
+				return ['new/path/new-image-size-500x2000.jpg',500,2000];
 			},
 			'times' => 1
 		]);
@@ -525,7 +525,7 @@ class SaveTest extends CptTestCase {
 		\WP_Mock::wpFunction( 'wp_get_attachment_image_src',[
 			'return' => function($imageId,$imageSizeName) use (&$INPUT_wp_get_attachment_image_src) {
 				$INPUT_wp_get_attachment_image_src[] = [$imageId,$imageSizeName];
-				return array('new/path/new-image-size.jpg',123,123);
+				return ['new/path/new-image-size.jpg',123,123];
 			},
 			'times' => 2
 		]);

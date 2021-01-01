@@ -1,4 +1,5 @@
-import cropeditor from './components/cropeditor.vue';
+import cropeditor from './../components/cropeditor.vue';
+import Vue from 'vue';
 CROP_THUMBNAILS_VUE.modal = function() {
 	var $ = jQuery;
 	var that = this;

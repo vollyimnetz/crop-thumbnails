@@ -5,15 +5,15 @@
  */
 class CropPostThumbnailsBackendPreparer {
 	
-	protected $allowedMime = array('image/jpeg','image/png');
+	protected $allowedMime = ['image/jpeg','image/png'];
 	
 	public function __construct() {
 		if ( is_admin() ) {
 			//add style and javascript
-			add_action( 'admin_print_styles', array(&$this, 'adminHeaderCSS') );
-			add_action( 'admin_print_scripts', array(&$this, 'adminHeaderJS') );
+			add_action( 'admin_print_styles', [&$this, 'adminHeaderCSS'] );
+			add_action( 'admin_print_scripts', [&$this, 'adminHeaderJS'] );
 
-			add_filter( 'attachment_fields_to_edit', array($this,'add_button_to_attachment_edit_view'), 10, 2 );
+			add_filter( 'attachment_fields_to_edit', [$this,'add_button_to_attachment_edit_view'], 10, 2 );
 		}
 	}
 
@@ -47,7 +47,7 @@ class CropPostThumbnailsBackendPreparer {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_style('jcrop');
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/app.css', dirname(__FILE__)), array('jcrop'), CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/css/app.css', __DIR__), ['jcrop'], CROP_THUMBNAILS_VERSION);
 		}
 	}
 	
@@ -58,9 +58,9 @@ class CropPostThumbnailsBackendPreparer {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'cpt_vue', plugins_url('app/vendor/vue.min.js', dirname(__FILE__)), array(), CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/app.js', dirname(__FILE__)), array('jquery','cpt_vue','imagesloaded','json2','jcrop'), CROP_THUMBNAILS_VERSION);
-			add_action('admin_footer',array($this,'addLinksToAdmin'));
+			wp_enqueue_script( 'cpt_vue', plugins_url('app/js/chunk-vendors.js', __DIR__), [], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/js/app.js', __DIR__), ['jquery','cpt_vue','imagesloaded','jcrop'], CROP_THUMBNAILS_VERSION);
+			add_action('admin_footer', [$this,'addLinksToAdmin']);
 		}
 	}
 	
@@ -80,11 +80,11 @@ class CropPostThumbnailsBackendPreparer {
 			$html.= '<span class="wp-media-buttons-icon"></span> '.esc_html__('Crop Featured Image','crop-thumbnails');
 			$html.= '</a>';
 
-			$form_fields['cropthumbnails'] = array(
+			$form_fields['cropthumbnails'] = [
 				'label' => '&nbsp;',
 				'input' => 'html',
 				'html' => $html
-			);
+			];
 		}
 		return $form_fields;
 	}
