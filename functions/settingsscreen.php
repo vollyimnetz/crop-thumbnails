@@ -371,7 +371,7 @@ class CropThumbnailsSettingsScreen {
 		}
 		
 		$report[] = '<strong class="info">info</strong> Tests complete';
-		echo join($report,"<br />");
+		echo implode("<br />", $report);
 		exit();
 	}
 }

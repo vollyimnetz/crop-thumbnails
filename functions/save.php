@@ -91,7 +91,7 @@ class CptSaveThumbnail {
 				}
 
 				$_error = false;
-				if(empty($resultWpCropImage)) {
+				if(empty($resultWpCropImage) || is_wp_error($resultWpCropImage)) {
 					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",'crop-thumbnails'), $activeImageSize->name);
 					$_error = true;
 				} else {
@@ -99,7 +99,7 @@ class CptSaveThumbnail {
 						self::addDebug("delete old image:".$oldFile_toDelete);
 						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
-					if(!@copy($resultWpCropImage,$currentFilePath)) {
+					if(!@copy($resultWpCropImage, $currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't copy temporary file to media library.", 'crop-thumbnails');
 						$_error = true;
 					}

@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.3.1 =
+* fix bug on settings page (noticible only on strict configured php environments)
+* fix bug in file saving (noticible only on strict configured php environments)
+
 = 1.3.0 =
 * remove support for Code below PHP 5.4: ( the construct dirname(__FILE) become __DIR__, arrays will also be initialized using [] )
 * remove legacy language translation (in pot/po/mo files) - if you want to have the plugin in your language you can use https://translate.wordpress.org/projects/wp-plugins/crop-thumbnails/
