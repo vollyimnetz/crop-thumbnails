@@ -40,12 +40,13 @@
                                 <template v-if="sameRatioMode!=='group'">
                                     <header>{{i.nameLabel}}</header>
                                     <div class="lowResWarning" v-if="isLowRes(i)" :title="lang.lowResWarning"><span>!</span></div>
-                                    <div class="notYetCropped" v-if="!isLowRes(i) && i.url === cropData.sourceImage.full.url" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
+                                    <div class="notYetCropped" v-if="!isLowRes(i) && i.notYetCropped" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
                                     <div class="dimensions">{{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }}</div>
                                     <div class="ratio">{{ lang.ratio }} {{i.printRatio}}</div>
                                 </template>
                                 <template v-else>
                                     <header>{{i.printRatio}}</header>
+                                    <div class="notYetCropped" v-if="i.notYetCropped" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
                                 </template>
                                 
                                 <loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
@@ -85,7 +86,7 @@
                                 <span class="icon">!</span> 
                                 <span class="text">{{lang.lowResWarning}}</span>
                             </div>
-                            <div class="notYetCropped" v-if="i.url === cropData.sourceImage.full.url">
+                            <div class="notYetCropped" v-if="i.notYetCropped">
                                 <span class="icon dashicons dashicons-image-crop"></span>
                                 <span class="text">{{lang.notYetCropped}}</span>
                             </div>
@@ -174,12 +175,17 @@ export default {
             }
         },
         filteredImageSizes() {
-            let result = this.cropData.imageSizes;
+            let result = JSON.parse(JSON.stringify(this.cropData.imageSizes));
             
             if(this.sameRatioMode==='group') {
                 let remember = [];
                 result = result.filter(elem => {
-                    if(remember.indexOf(elem.printRatio)>-1) return false;
+                    let existingPrintRatioIndex = remember.indexOf(elem.printRatio);
+                    if(existingPrintRatioIndex>-1) {
+                        //notYetCropped is true if in one of the group-entries notYetCropped is true
+                        result[existingPrintRatioIndex].notYetCropped = result[existingPrintRatioIndex].notYetCropped || elem.notYetCropped;
+                        return false;
+                    }
                     remember.push(elem.printRatio);
                     return true;
                 });
@@ -247,8 +253,14 @@ export default {
                 that.loading = false;
                 that.setupRatioMode();
                 
-                if(that.cropData && that.cropData.imageSizes) {//remove elements with hideByPostType===true
+                if(that.cropData && that.cropData.imageSizes) {
+                    //remove elements with hideByPostType===true
                     that.cropData.imageSizes = that.cropData.imageSizes.filter(elem => !elem.hideByPostType);
+
+                    //apply notYetCropped variable
+                    that.cropData.imageSizes.forEach(elem => {
+                        elem.notYetCropped = elem.url === that.cropData.sourceImage.full.url;
+                    });
                 }
             });
         },

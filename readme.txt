@@ -3,7 +3,7 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
-Tested up to: 5.6.0
+Tested up to: 5.7.0
 Requires PHP: 5.6.0
 Stable tag: 1.3.0
 License: GPL v3
@@ -125,6 +125,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 = 1.3.1 =
+* crop-editor: if grouped, the notification for not yet cropped image-sizes now is visible if at least one of the images in the group is not yet cropped
 * fix bug on settings page (noticible only on strict configured php environments)
 * fix bug in file saving (noticible only on strict configured php environments)
 
@@ -146,7 +147,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * extend the filter "crop_thumbnails_filename" by the image-metadata-array
 
 = 1.2.5 =
-* fix a bug that may occure on utf8-filenames
+* fix a bug that may occur on utf8-filenames
 * update vue.js and the other libraries to current version
 * refactoring vue-code and build
 
@@ -291,7 +292,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * fix the missing crop-thumbnail-button in the attachment-list-view
 
 = 0.8.4 =
-* fix a bug that may occure on some systems with xdebug enabled and low xdebug.max_nesting_level (see: http://wordpress.org/support/topic/error-when-trying-to-crop-a-certain-image)
+* fix a bug that may occur on some systems with xdebug enabled and low xdebug.max_nesting_level (see: http://wordpress.org/support/topic/error-when-trying-to-crop-a-certain-image)
 * add dutch language (thanks to Max Gruson)
 
 = 0.8.3 =
