@@ -46,7 +46,7 @@
                                 </template>
                                 <template v-else>
                                     <header>{{i.printRatio}}</header>
-                                    <div class="notYetCropped" v-if="i.notYetCropped" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
+                                    <div class="notYetCropped" v-if="isImageInGroupNotYetCropped(i.printRatio)" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
                                 </template>
                                 
                                 <loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
@@ -175,7 +175,8 @@ export default {
             }
         },
         filteredImageSizes() {
-            let result = JSON.parse(JSON.stringify(this.cropData.imageSizes));
+            //let result = JSON.parse(JSON.stringify(this.cropData.imageSizes));
+            let result = this.cropData.imageSizes;
             
             if(this.sameRatioMode==='group') {
                 let remember = [];
@@ -183,7 +184,7 @@ export default {
                     let existingPrintRatioIndex = remember.indexOf(elem.printRatio);
                     if(existingPrintRatioIndex>-1) {
                         //notYetCropped is true if in one of the group-entries notYetCropped is true
-                        result[existingPrintRatioIndex].notYetCropped = result[existingPrintRatioIndex].notYetCropped || elem.notYetCropped;
+                        //result[existingPrintRatioIndex].notYetCropped = result[existingPrintRatioIndex].notYetCropped || elem.notYetCropped;
                         return false;
                     }
                     remember.push(elem.printRatio);
@@ -205,6 +206,9 @@ export default {
         }
     },
     methods:{
+        isImageInGroupNotYetCropped(printRatio) {
+            return this.cropData.imageSizes.filter(elem => elem.printRatio===printRatio && elem.notYetCropped).length>0;
+        },
         setupRatioMode() {
             this.sameRatioModeOptions = [
                 { value: null, text: this.lang.label_same_ratio_mode_nothing },
