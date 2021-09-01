@@ -2,7 +2,7 @@
  * Create Listener for click-events with element-class ".cropThumbnailsLink".
  * Open the modal box.
  */
-jQuery(document).ready(function($) {
+jQuery(function($) {
 	$(document).on('click', '.cropThumbnailsLink', function(e) {
 		e.preventDefault();
 

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="settingsData">
         <div class="cptSettingsPostListDescription">{{settingsData.lang.choose_image_sizes}}</div>
 
         <ul class="cptSettingsPostList">
@@ -38,8 +38,9 @@ export default {
     },
     components: {},
     data:() => ({
-        settingsData: JSON.parse(this.settings)
+        settingsData: null,
     }),
+    mounted() { this.settingsData =  JSON.parse(this.settings); },
     methods: {
         isButtonHiddenOnPostType(postType) {
             return (this.settingsData.options && this.settingsData.options.hide_post_type && this.settingsData.options.hide_post_type[postType] === "1");
