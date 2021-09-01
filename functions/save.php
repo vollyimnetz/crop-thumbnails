@@ -395,7 +395,7 @@ class CptSaveThumbnail {
 		 */
 		$outputFormats = apply_filters('image_editor_output_format', [], $file);
 		$fileTypeInformations = wp_check_filetype($file);
-		if (isset($outputFormats[$fileTypeInformations['type']])) {
+		if(isset($outputFormats[$fileTypeInformations['type']])) {
 			$ext = array_search($outputFormats[$fileTypeInformations['type']], wp_get_mime_types(), true);
 		}
 

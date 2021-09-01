@@ -128,6 +128,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * its possible to crop webp files with the plugin
 * library updates
 * code cleanup
+* add fix for using replacement MIME-type specified for sub-sizes (thanks to https://github.com/benjibee - https://github.com/vollyimnetz/crop-thumbnails/issues/55)
 
 = 1.3.1 =
 * crop-editor: if grouped, the notification for not yet cropped image-sizes now is visible if at least one of the images in the group is not yet cropped
