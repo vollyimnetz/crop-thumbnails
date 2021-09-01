@@ -3,9 +3,9 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
-Tested up to: 5.7.0
+Tested up to: 5.8.0
 Requires PHP: 5.6.0
-Stable tag: 1.3.1
+Stable tag: 1.4.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,12 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.4.0 =
+* its possible to crop webp files with the plugin
+* library updates
+* code cleanup
+* add fix for using replacement MIME-type specified for sub-sizes (thanks to https://github.com/benjibee - https://github.com/vollyimnetz/crop-thumbnails/issues/55)
+
 = 1.3.1 =
 * crop-editor: if grouped, the notification for not yet cropped image-sizes now is visible if at least one of the images in the group is not yet cropped
 * fix bug on settings page (noticible only on strict configured php environments)

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="settingsData">
         <div class="cptSettingsPostListDescription">{{settingsData.lang.choose_image_sizes}}</div>
 
         <ul class="cptSettingsPostList">
@@ -34,23 +34,18 @@
 <script>
 export default {
     props: {
-        settings: {
-            required: true
-        },
+        settings: { required: true },
     },
     components: {},
-    data: function () {
-        return {
-            settingsData: JSON.parse(this.settings)
-        };
-    },
-    mounted: function () { },
-    computed: {},
+    data:() => ({
+        settingsData: null,
+    }),
+    mounted() { this.settingsData =  JSON.parse(this.settings); },
     methods: {
-        isButtonHiddenOnPostType : function(postType) {
+        isButtonHiddenOnPostType(postType) {
             return (this.settingsData.options && this.settingsData.options.hide_post_type && this.settingsData.options.hide_post_type[postType] === "1");
         },
-        isImageSizeHidden : function(postType,imageSize) {
+        isImageSizeHidden(postType,imageSize) {
             return (this.settingsData.options && this.settingsData.options.hide_size && this.settingsData.options.hide_size[postType] && this.settingsData.options.hide_size[postType][imageSize] === "1");
         }
     }

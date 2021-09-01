@@ -14,49 +14,40 @@
 <script>
 export default {
     props:{
-        image : {
-            required: true,
-            type:String
-        }
+        image : { required: true, type:String }
     },
-    data:function() {
-        return {
-            status:null
-        };
-    },
+    data: () => ({
+        status:null
+    }),
+    mounted() { this.setup(); },
     watch:{
-        image:function() {
+        image() {
             this.setup();
         }
     },
-    mounted:function() {
-        this.setup();
-    },
     methods:{
-        setup : function() {
-            var that = this;
-            that.setStart();
-            setTimeout(function() {
-                var imgLoad = imagesLoaded( that.$el );
+        setup() {
+            this.setStart();
+            setTimeout(() => {
+                var imgLoad = imagesLoaded( this.$el );
                 imgLoad
-                    .once('done',function() {
-                        if(that.status!=='failed') {
-                            that.setComplete();
+                    .once('done',() => {
+                        if(this.status!=='failed') {
+                            this.setComplete();
                         }
                     })
-                    .once('fail',function() {
-                        that.setFailed();
-                    })
-                    ;
+                    .once('fail',() => {
+                        this.setFailed();
+                    });
             },300);
         },
-        setComplete : function() {
+        setComplete() {
             this.status = 'completed';
         },
-        setStart : function() {
+        setStart() {
             this.status = 'loading';
         },
-        setFailed : function() {
+        setFailed() {
             this.status = 'failed';
         }
     }

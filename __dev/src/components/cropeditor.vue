@@ -121,20 +121,10 @@
 import loadingcontainer from './loadingcontainer.vue';
 import message from './message.vue';
 export default {
+    components: { loadingcontainer, message },
     props:{
-        imageId : {
-            required: true,
-            type:Number
-        },
-        posttype : {
-            required:false,
-            type:String,
-            default:null
-        }
-    },
-    components: {
-        loadingcontainer,
-        message
+        imageId : { required: true, type:Number },
+        posttype : { required:false, type:String, default:null },
     },
     data:() =>({
         cropData : null,//
