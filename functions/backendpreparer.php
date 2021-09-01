@@ -5,7 +5,7 @@
  */
 class CropPostThumbnailsBackendPreparer {
 	
-	protected $allowedMime = ['image/jpeg','image/png'];
+	protected $allowedMime = ['image/webp','image/jpeg','image/png'];
 	
 	public function __construct() {
 		if ( is_admin() ) {

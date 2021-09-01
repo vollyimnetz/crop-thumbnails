@@ -8,13 +8,11 @@
 <script>
 export default {
     props:{},
-    data:function() {
-        return {
-            closed:false
-        };
-    },
+    data:() => ({
+        closed:false
+    }),
     methods:{
-        close : function() {
+        close() {
             this.closed = true;
         }
     }
