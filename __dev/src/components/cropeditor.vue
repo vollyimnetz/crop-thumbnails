@@ -1,6 +1,6 @@
 <template>
     <div class="cptEditorInner" v-if="cropData && lang" :class="{loading:loading,cropEditorActive:croppingApi}">
-        
+
         <div class="cptWaitingWindow" v-if="loading">
             <div class="msg">
                 {{ lang.waiting }}
@@ -9,17 +9,17 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="cptWaitingWindow cptCropDisabledMsg" v-if="cropData.hiddenOnPostType">
             <div class="msg">{{lang.cropDisabled}}</div>
         </div>
-        
+
         <div class="cptWaitingWindow cptNoPermissionMsg" v-if="cropData.noPermission">
             <div class="msg">{{lang.noPermission}}</div>
         </div>
 
         <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !cropData.noPermission">
-            
+
             <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (selectedImageSizes.length>0) }">
                 <div class="cptSelectionPaneInner">
                     <message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</message>
@@ -48,7 +48,7 @@
                                     <header>{{i.printRatio}}</header>
                                     <div class="notYetCropped" v-if="isImageInGroupNotYetCropped(i.printRatio)" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
                                 </template>
-                                
+
                                 <loadingcontainer :image="i.url+'?cacheBreak='+i.cacheBreak">
                                     <div class="cptImageBgContainer" :style="{'background-image': 'url('+i.url+'?cacheBreak='+i.cacheBreak+')'}"></div>
                                 </loadingcontainer>
@@ -70,11 +70,11 @@
                     <div class="ratio">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>
                 </div>
                 <button type="button" class="button cptGenerate" :class="{'button-primary':croppingApi}" @click="cropThumbnails()" :disabled="!croppingApi">{{ lang.label_crop }}</button>
-                
+
                 <div class="cropContainer">
                     <img class="cptCroppingImage" ref="cptCroppingImage" :src="cropImage.url" />
                 </div>
-        
+
                 <div class="selectionInfo" v-if="selectedImageSizes.length>0">
                     <h4>{{lang.headline_selected_image_sizes}}</h4>
                     <ul>
@@ -83,7 +83,7 @@
                                 <span class="name">{{i.nameLabel}}</span> <span class="dimensions">({{ lang.dimensions }} {{i.width}} x {{i.height}} {{ lang.pixel }})</span>
                             </div>
                             <div class="lowResWarning" v-if="isLowRes(i)">
-                                <span class="icon">!</span> 
+                                <span class="icon">!</span>
                                 <span class="text">{{lang.lowResWarning}}</span>
                             </div>
                             <div class="notYetCropped" v-if="i.notYetCropped">
@@ -94,6 +94,22 @@
                     </ul>
                     <hr />
                 </div>
+
+              <div v-if="!loading && croppingApi!==null">
+                <div><label>X
+                  <input name="x" type="number" :value="Math.round(croppingApi.tellSelect().x)" @blur="setValue" @keyup.enter="setValue"></label>
+                </div>
+                <div><label>Y
+                  <input name="y" type="number" :value="Math.round(croppingApi.tellSelect().y)" @blur="setValue" @keyup.enter="setValue"></label>
+                </div>
+                <div><label>X2
+                  <input name="x2" type="number" :value="Math.round(croppingApi.tellSelect().x2)" @blur="setValue" @keyup.enter="setValue"></label>
+                </div>
+                <div><label>Y2
+                  <input name="y2" type="number" :value="Math.round(croppingApi.tellSelect().y2)" @blur="setValue" @keyup.enter="setValue"></label>
+                </div>
+              </div>
+
 
                 <div class="instructionInfo">
                     <h4>{{ lang.instructions_header }}</h4>
@@ -135,7 +151,7 @@ export default {
         nonce : null,//the nonce for the crop-request
         showDebugType : null,//the type of the debug to show: null-> no debug open, 'js' -> show jsDebug, 'data' -> show dataDebug
         dataDebug : null,//will be filled after the crop request finished
-        
+
         sameRatioMode : null,// can be NULL, "select" or "group"
         sameRatioModeOptions: []
     }),
@@ -147,15 +163,15 @@ export default {
             if(this.cropData!==undefined) {
                 var result = this.cropData.sourceImage.full;
                 var targetRatio = Math.round(result.ratio * 10);
-                if(this.cropData.sourceImage.large!==null 
-                    && this.cropData.sourceImage.large.width>745 
+                if(this.cropData.sourceImage.large!==null
+                    && this.cropData.sourceImage.large.width>745
                     && targetRatio === Math.round(this.cropData.sourceImage.large.ratio * 10)
                     && this.cropData.sourceImage.full.url !== this.cropData.sourceImage.large.url
                     ) {
                     result = this.cropData.sourceImage.large;
                 }
                 if(this.cropData.sourceImage.medium_large!==null
-                    && this.cropData.sourceImage.medium_large.width>745 
+                    && this.cropData.sourceImage.medium_large.width>745
                     && targetRatio === Math.round(this.cropData.sourceImage.medium_large.ratio * 10)
                     && this.cropData.sourceImage.full.url !== this.cropData.sourceImage.medium_large.url
                     ) {
@@ -167,7 +183,7 @@ export default {
         filteredImageSizes() {
             //let result = JSON.parse(JSON.stringify(this.cropData.imageSizes));
             let result = this.cropData.imageSizes;
-            
+
             if(this.sameRatioMode==='group') {
                 let remember = [];
                 result = result.filter(elem => {
@@ -196,6 +212,11 @@ export default {
         }
     },
     methods:{
+        setValue( {target}) {
+          let values = this.croppingApi.tellSelect()
+          values[target.name] = parseInt(target.value)
+          this.croppingApi.setSelect([values.x, values.y, values.x2, values.y2])
+        },
         isImageInGroupNotYetCropped(printRatio) {
             return this.cropData.imageSizes.filter(elem => elem.printRatio===printRatio && elem.notYetCropped).length>0;
         },
@@ -205,7 +226,7 @@ export default {
                 { value: 'select', text: this.lang.label_same_ratio_mode_select },
                 { value: 'group', text: this.lang.label_same_ratio_mode_group },
             ];
-            
+
             try {
                 this.sameRatioMode = localStorage.getItem('cpt_same_ratio_mode');
             } catch(e) {}
@@ -246,7 +267,7 @@ export default {
             }).always(() => {
                 that.loading = false;
                 that.setupRatioMode();
-                
+
                 if(that.cropData && that.cropData.imageSizes) {
                     //remove elements with hideByPostType===true
                     that.cropData.imageSizes = that.cropData.imageSizes.filter(elem => !elem.hideByPostType);
@@ -287,7 +308,7 @@ export default {
         },
         toggleActive(image) {
             let newValue = !image.active;
-            
+
             if(image.active===false) {
                 this.makeAllInactive();
             }
@@ -303,7 +324,7 @@ export default {
                 //single select
                 image.active = newValue;
             }
-            
+
             if(this.selectedImageSizes.length>0) {
                 this.activateCropArea();
             } else {
@@ -345,7 +366,7 @@ export default {
             let x1 = width;
             let y1 = height;
             let sourceRatio = width/height;
-            
+
             if(sourceRatio <= targetRatio) {
                 y0 = (height / 2) - ((width / targetRatio) / 2);
                 y1 = height-y0;
@@ -358,7 +379,7 @@ export default {
         activateCropArea() {
             let that = this;
             that.deactivateCropArea();
-            
+
             let options = {
                 trueSize: [ that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height ],
                 aspectRatio: 0,
@@ -375,14 +396,14 @@ export default {
                     console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+i.name+'".');
                 }
             });
-            
+
             options.setSelect = this.getPreselect(that.cropData.sourceImage.full.width , that.cropData.sourceImage.full.height, options.aspectRatio);
 
             //debug
             if(that.cropData.options.debug_js) {
                 console.info('Cropping options',options);
             }
-            
+
             jQuery(this.$refs.cptCroppingImage).Jcrop(options, function() {
                 that.croppingApi = this;
                 that.updateCurrentCrop();
@@ -404,7 +425,7 @@ export default {
         },
         cropThumbnails() {
             let that = this;
-            
+
             function getDataOfSelectedImageSizes() {
                 let result = [];
                 that.selectedImageSizes.forEach((i) => {
@@ -420,10 +441,10 @@ export default {
                 });
                 return result;
             }
-            
+
             if(!that.loading && that.croppingApi!==null) {
                 that.loading = true;
-                
+
                 const cptRequestParams = {
                     action : 'cptSaveThumbnail',
                     _ajax_nonce : that.nonce,
@@ -434,7 +455,7 @@ export default {
                         'activeImageSizes' : getDataOfSelectedImageSizes()
                     })
                 };
-                
+
                 jQuery
                     .post(ajaxurl,cptRequestParams,null,'json')
                     .done((responseData) => {
