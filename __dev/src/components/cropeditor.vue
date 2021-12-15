@@ -96,17 +96,23 @@
                 </div>
 
               <div v-if="!loading && croppingApi!==null">
-                <div><label>X
+                <div><label>Oben Links: X
                   <input name="x" type="number" :value="Math.round(croppingApi.tellSelect().x)" @blur="setValue" @keyup.enter="setValue"></label>
                 </div>
-                <div><label>Y
+                <div><label>Oben Links: Y
                   <input name="y" type="number" :value="Math.round(croppingApi.tellSelect().y)" @blur="setValue" @keyup.enter="setValue"></label>
                 </div>
-                <div><label>X2
+                <div><label>Unten Rechts: X
                   <input name="x2" type="number" :value="Math.round(croppingApi.tellSelect().x2)" @blur="setValue" @keyup.enter="setValue"></label>
                 </div>
-                <div><label>Y2
+                <div><label>Unten Rechts: Y
                   <input name="y2" type="number" :value="Math.round(croppingApi.tellSelect().y2)" @blur="setValue" @keyup.enter="setValue"></label>
+                </div>
+                <div><label>Breite
+                  <input name="w" type="number" :value="Math.round(croppingApi.tellSelect().w)" @blur="setValue" @keyup.enter="setValue"></label>
+                </div>
+                <div><label>Höhe
+                  <input name="h" type="number" :value="Math.round(croppingApi.tellSelect().h)" @blur="setValue" @keyup.enter="setValue"></label>
                 </div>
               </div>
 
