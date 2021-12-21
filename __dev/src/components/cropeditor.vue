@@ -96,24 +96,17 @@
                 </div>
 
               <div v-if="!loading && croppingApi!==null">
-                <div><label>Oben Links: X
-                  <input name="x" type="number" :value="Math.round(croppingApi.tellSelect().x)" @blur="setValue" @keyup.enter="setValue"></label>
+                <div><label>Oben Links:
+                  <input :style="{maxWidth: 100 + 'px'}" name="x" type="number" :value="Math.round(croppingApi.tellSelect().x)" @blur="setValue" @keyup.enter="setValue"></label>
+                  <input :style="{maxWidth: 100 + 'px'}" name="y" type="number" :value="Math.round(croppingApi.tellSelect().y)" @blur="setValue" @keyup.enter="setValue">
                 </div>
-                <div><label>Oben Links: Y
-                  <input name="y" type="number" :value="Math.round(croppingApi.tellSelect().y)" @blur="setValue" @keyup.enter="setValue"></label>
+                <div><label>Unten Rechts:
+                  <input :style="{maxWidth: 100 + 'px'}" name="x2" type="number" :value="Math.round(croppingApi.tellSelect().x2)" @blur="setValue" @keyup.enter="setValue"></label>
+                    <input :style="{maxWidth: 100 + 'px'}" name="y2" type="number" :value="Math.round(croppingApi.tellSelect().y2)" @blur="setValue" @keyup.enter="setValue">
                 </div>
-                <div><label>Unten Rechts: X
-                  <input name="x2" type="number" :value="Math.round(croppingApi.tellSelect().x2)" @blur="setValue" @keyup.enter="setValue"></label>
-                </div>
-                <div><label>Unten Rechts: Y
-                  <input name="y2" type="number" :value="Math.round(croppingApi.tellSelect().y2)" @blur="setValue" @keyup.enter="setValue"></label>
-                </div>
-                <div><label>Breite
-                  <input name="w" type="number" :value="Math.round(croppingApi.tellSelect().w)" @blur="setValue" @keyup.enter="setValue"></label>
-                </div>
-                <div><label>Höhe
-                  <input name="h" type="number" :value="Math.round(croppingApi.tellSelect().h)" @blur="setValue" @keyup.enter="setValue"></label>
-                </div>
+                <div>Breite: {{ Math.round( croppingApi.tellSelect().w ) }}</div>
+                <div>Höhe: {{ Math.round( croppingApi.tellSelect().h ) }}</div>
+
               </div>
 
 
