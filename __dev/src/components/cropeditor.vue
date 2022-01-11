@@ -413,7 +413,7 @@ export default {
       });
 
       options.setSelect = this.getPreselect(that.cropData.sourceImage.full.width, that.cropData.sourceImage.full.height, options.aspectRatio);
-      options.minSize = options.maxSize = [828,600];
+      options.minSize = [828,600];
 
       //debug
       if (that.cropData.options.debug_js) {
