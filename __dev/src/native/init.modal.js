@@ -1,6 +1,6 @@
+import { createApp } from 'vue'
 import cropeditor from './../components/cropeditor.vue';
-import Vue from 'vue';
-CROP_THUMBNAILS_VUE.modal = function() {
+window.CROP_THUMBNAILS_VUE.modal = function() {
 	var $ = jQuery;
 	var that = this;
 	
@@ -21,8 +21,8 @@ CROP_THUMBNAILS_VUE.modal = function() {
 	 * @var Event
 	 */
 	that.close = function(event) {
-		CROP_THUMBNAILS_VUE.app.$destroy();
-		CROP_THUMBNAILS_VUE.app = null;
+		window.CROP_THUMBNAILS_VUE.app.unmount();
+		window.CROP_THUMBNAILS_VUE.app = null;
 		removeModal();
 		$('body').trigger('cropThumbnailModalClosed');
 		document.removeEventListener('keydown', that.closeByEscKey, true);
@@ -71,12 +71,10 @@ CROP_THUMBNAILS_VUE.modal = function() {
 		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
 		document.addEventListener('keydown', that.closeByEscKey, true);
 		
-		CROP_THUMBNAILS_VUE.app = new Vue({
-			el:'#cpt_crop_editor',
-			mounted:function() {
-				console.log('cpt_crop_editor mounted');
-			},
-			components: { cropeditor }
-		});
+		window.CROP_THUMBNAILS_VUE.app = createApp();
+
+		window.CROP_THUMBNAILS_VUE.app
+			.component('cropeditor',cropeditor)
+			.mount('#cpt_crop_editor')
 	};
 };

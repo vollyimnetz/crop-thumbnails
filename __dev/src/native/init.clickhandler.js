@@ -15,7 +15,7 @@ jQuery(function($) {
 			posttype = data.posttype;
 		}
 		
-		var modal = new CROP_THUMBNAILS_VUE.modal();
+		var modal = new window.CROP_THUMBNAILS_VUE.modal();
 		modal.open(data.image_id, posttype, title);
 	});
 });

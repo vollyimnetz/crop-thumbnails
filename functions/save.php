@@ -1,4 +1,5 @@
 <?php
+namespace crop_thumbnails;
 
 add_action('after_setup_theme', function() {
 	//Add the ajax action for entring the cropping function.
@@ -37,13 +38,13 @@ class CptSaveThumbnail {
 
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
 			if(empty($sourceImgPath)) {
-				throw new Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
+				throw new \Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
 			}
 			
 			
 			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
 			if(empty($imageMetadata)) {
-				throw new Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
+				throw new \Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
 			}
 			
 			//from DB

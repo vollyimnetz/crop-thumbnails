@@ -3,9 +3,9 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 4.6
-Tested up to: 5.8.0
-Requires PHP: 5.6.0
-Stable tag: 1.4.0
+Tested up to: 6.1.1
+Requires PHP: 8.0.0
+Stable tag: 1.5.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,13 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.5.0 =
+* bugfix for adding the crop-link multiple times (see https://github.com/vollyimnetz/crop-thumbnails/issues/72)
+* direct support for WebP-Express (see https://github.com/vollyimnetz/crop-thumbnails/issues/48)
+* add php namespace (crop_thumbnails)
+* update backend js build to vitejs
+* js-library updates
+
 = 1.4.0 =
 * its possible to crop webp files with the plugin
 * library updates

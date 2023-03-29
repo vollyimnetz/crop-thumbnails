@@ -5,7 +5,7 @@
  * ATTENTION: using this will also delete all other parameters on the images src-attribute.
  * @param {dom-element / jquery-selection} elem
  */
-CROP_THUMBNAILS_DO_CACHE_BREAK = function(elem) {
+window.CROP_THUMBNAILS_DO_CACHE_BREAK = function(elem) {
 	var $ = jQuery;
 	var images = $(elem);
 	for(var i = 0; i<images.length; i++) {
