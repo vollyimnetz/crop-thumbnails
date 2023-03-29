@@ -95,7 +95,7 @@ class SaveSimpleTest extends CptTestCase {
 		$_REQUEST['crop_thumbnails'] = self::getSimpleTestData();
 		
 		\WP_Mock::wpFunction('get_post', [ 
-			'return' => new stdClass()
+			'return' => new \stdClass()
 		]);
 		\WP_Mock::wpFunction( 'get_attached_file',[ 'return' => true ]);
 		\WP_Mock::wpFunction( 'wp_get_attachment_metadata',[ 'return' => true ]);
