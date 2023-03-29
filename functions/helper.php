@@ -1,4 +1,5 @@
 <?php
+namespace crop_thumbnails;
 
 /**
  * Do not use functions of this class directly, instead use

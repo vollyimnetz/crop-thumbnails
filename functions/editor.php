@@ -1,10 +1,11 @@
 <?php
+namespace crop_thumbnails;
 
 /**
  * Contains all code inside the croping-window
  */
 
-class CPT_ForbiddenException extends Exception {}
+class CPT_ForbiddenException extends \Exception {}
 
 class CropPostThumbnailsEditor {
 
@@ -18,11 +19,11 @@ class CropPostThumbnailsEditor {
 		header('Content-Type: application/json; charset=UTF-8');
 		try {
 			echo json_encode( $this->getCropData() );
-		} catch(InvalidArgumentException $e) {
+		} catch(\InvalidArgumentException $e) {
 			self::doErrorResponse(400, 'FAILURE while processing request: '.$e->getMessage());
 		} catch(CPT_ForbiddenException $e) {
 			self::doErrorResponse(403, 'ERROR not allowed.');
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			self::doErrorResponse(400, 'FAILURE while processing request.');
 		}
 		die();//to prevent to send back a "0"
@@ -110,13 +111,13 @@ class CropPostThumbnailsEditor {
 		
 		//simple validation
 		if(empty($_REQUEST['imageId'])) {
-			throw new InvalidArgumentException('Missing Parameter "imageId".');
+			throw new \InvalidArgumentException('Missing Parameter "imageId".');
 		}
 
 		
 		$imagePostObj = get_post(intval($_REQUEST['imageId']));
 		if(empty($imagePostObj) || $imagePostObj->post_type!=='attachment') {
-			throw new InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
+			throw new \InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
 		}
 		$result['sourceImageId'] = $imagePostObj->ID;
 

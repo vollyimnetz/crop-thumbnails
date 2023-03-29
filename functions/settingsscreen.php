@@ -1,4 +1,6 @@
 <?php
+namespace crop_thumbnails;
+
 class CropThumbnailsSettingsScreen {
 	protected static $uniqeSettingsId = 'cpt-settings';
 	protected static $cssPrefix = 'cpt_settings_';
@@ -16,9 +18,8 @@ class CropThumbnailsSettingsScreen {
 
 	public function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/css/app.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script('vue', plugins_url('app/js/chunk-vendors.js', __DIR__), [], CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/js/app.js', __DIR__ ), ['vue'], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), [], CROP_THUMBNAILS_VERSION);
 		}
 	}
 

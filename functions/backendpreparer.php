@@ -1,4 +1,5 @@
 <?php
+namespace crop_thumbnails;
 
 /**
  * Adds the Crop-Thumbnail-Editor to the Backend.
@@ -47,7 +48,7 @@ class CropPostThumbnailsBackendPreparer {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_style('jcrop');
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/css/app.css', __DIR__), ['jcrop'], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), ['jcrop'], CROP_THUMBNAILS_VERSION);
 		}
 	}
 	
@@ -58,8 +59,7 @@ class CropPostThumbnailsBackendPreparer {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'cpt_vue', plugins_url('app/js/chunk-vendors.js', __DIR__), [], CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script( 'cpt_crop_editor',  plugins_url('app/js/app.js', __DIR__), ['jquery','cpt_vue','imagesloaded','jcrop'], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded','jcrop'], CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer', [$this,'addLinksToAdmin']);
 		}
 	}
@@ -236,13 +236,15 @@ jQuery(document).ready(function($) {
 		$('#the-list tr').each(function() {
 			if ($(this).find('td span.media-icon').hasClass('image-icon')) {
 				var post_id = parseInt($(this).attr('id').substr(5));
-				var last_span = $(this).find('.column-title .row-actions span:last-child');
+				var last_span = $(this).find('.column-title .row-actions > span:last-child');
 				last_span.append(' | ');
 
 				var buttonContent = '';
+				buttonContent+= '<span class="cropThumbnailsLinkWrap">';
 				buttonContent+= '<a class="cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ post_id +',"viewmode":"single"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>">';
 				buttonContent+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?>';
 				buttonContent+= '</a>';
+				buttonContent+= '</span>';
 
 
 				last_span.parent().append( buttonContent);

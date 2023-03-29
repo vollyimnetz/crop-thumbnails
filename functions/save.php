@@ -1,4 +1,5 @@
 <?php
+namespace crop_thumbnails;
 
 add_action('after_setup_theme', function() {
 	//Add the ajax action for entring the cropping function.
@@ -37,13 +38,13 @@ class CptSaveThumbnail {
 
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
 			if(empty($sourceImgPath)) {
-				throw new Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
+				throw new \Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
 			}
 			
 			
 			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
 			if(empty($imageMetadata)) {
-				throw new Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
+				throw new \Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
 			}
 			
 			//from DB
@@ -140,7 +141,7 @@ class CptSaveThumbnail {
 			}
 			$jsonResult['success'] = time();//time for cache-breaker
 			echo json_encode($jsonResult);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			if(!empty($settings['debug_data'])) {
 				$jsonResult['debug'] = self::getDebug();
 			}
@@ -229,7 +230,7 @@ class CptSaveThumbnail {
 				$croppedWidth = $input->selection->x2 - $input->selection->x;
 				$croppedHeight = $input->selection->y2 - $input->selection->y;
 			}*/
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			$croppedWidth = 10;
 			$croppedHeight = 10;
 		}
@@ -331,26 +332,26 @@ class CptSaveThumbnail {
 	protected static function getValidatedInput() {
 
 		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
-			throw new Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
+			throw new \Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
 		}
 		
 		
 		if(empty($_REQUEST['crop_thumbnails'])) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		$input = json_decode(stripcslashes($_REQUEST['crop_thumbnails']));
 		
 		
 		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		
 		if(!self::isUserPermitted($input->sourceImageId)) {
-			throw new Exception(__("You are not permitted to crop the thumbnails.",'crop-thumbnails'), 1);
+			throw new \Exception(__("You are not permitted to crop the thumbnails.",'crop-thumbnails'), 1);
 		}
 		
 		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
-			throw new Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
 		
 		
@@ -360,14 +361,14 @@ class CptSaveThumbnail {
 		$input->selection->y2 = intval($input->selection->y2);
 		
 		if($input->selection->x < 0 || $input->selection->y < 0) {
-			throw new Exception(__('Cropping to these dimensions on this image is not possible.','crop-thumbnails'), 1);
+			throw new \Exception(__('Cropping to these dimensions on this image is not possible.','crop-thumbnails'), 1);
 		}
 		
 		
 		$input->sourceImageId = intval($input->sourceImageId);
 		$_tmp = get_post($input->sourceImageId);//need to be its own var - cause of old php versions
 		if(empty($_tmp)) {
-			throw new Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
+			throw new \Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
 		}
 		
 		return $input;

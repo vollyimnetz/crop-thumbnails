@@ -1,13 +1,12 @@
-var path = require('path');
-var copydir = require('copy-dir');
-var developmentSettings = require('./developmentSettings.js').settings;
+import copydir from 'copy-dir';
+import developmentSettings from './developmentSettings.js';
 
 if (typeof developmentSettings.exportFolder !== 'string') {
   console.error('You have to define an export-folder-setting in your developmentSettings.js!');
   exit();
 }
  
-copydir.sync(__dirname + '/..', developmentSettings.exportFolder, {
+copydir.sync('./..', developmentSettings.exportFolder, {
   filter: function(stat, filepath, filename){
     // do not want copy readme.md files
     if(stat === 'file' && filename === 'readme.md') {
@@ -20,4 +19,4 @@ copydir.sync(__dirname + '/..', developmentSettings.exportFolder, {
     return true;  // remind to return a true value when file check passed.
   }
 });
-console.log('done');
+console.log('exported to '+developmentSettings.exportFolder);

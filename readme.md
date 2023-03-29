@@ -11,6 +11,7 @@ https://wordpress.org/plugins/crop-thumbnails/
 ## How to add custom cropped image-sizes
 This is the default wordpress way to add new image-sizes. 
 ```php
+// php
 add_action('after_setup_theme', function() {
 	add_image_size('my-custom-imagesize', 500, 500, true);
 	//you have to set "true" to get a cropped size
@@ -22,6 +23,7 @@ add_action('after_setup_theme', function() {
 You may want to open a crop-thumbnail-modal-dialog on a custom location. To do so you can use the javascript modal-function of the plugin.
 
 ```javascript
+// javascript
 var modal = new CROP_THUMBNAILS_VUE.modal();
 modal.open(attachementId, postType, title);
 ```
@@ -29,7 +31,9 @@ modal.open(attachementId, postType, title);
 A full example that demonstrate adding a custom crop button right beside the default media button.
 
 ```php
-//perform an action on the admin footer to execute a php function
+// php
+
+// perform an action on the admin footer to execute a php function
 add_action('admin_footer', 'myCustomPhpFooterCode');
 function myCustomPhpFooterCode() {
 	//lets print some javascript code
@@ -37,7 +41,7 @@ function myCustomPhpFooterCode() {
 
 	?>
 	<script>
-	jQuery(document).ready(function($) {
+	jQuery(function($) {
 		//add a button right beside the add media button - adjust if you want the button somewhere else
 		$('#wp-content-media-buttons').append('<button type="button" id="myCustomButton" class="button">my custom crop button</button>');
 		
