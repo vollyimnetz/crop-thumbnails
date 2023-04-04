@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import cropeditor from './../components/cropeditor.vue';
+import jQuery from "jquery";
 window.CROP_THUMBNAILS_VUE.modal = function() {
 	var $ = jQuery;
 	var that = this;

@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import imagesLoaded from 'imagesloaded';
 export default {
     props:{
         image : { required: true, type:String }

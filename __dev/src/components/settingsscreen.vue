@@ -40,7 +40,7 @@ export default {
     data:() => ({
         settingsData: null,
     }),
-    mounted() { this.settingsData =  JSON.parse(this.settings); },
+    mounted() { this.settingsData = JSON.parse(this.settings); },
     methods: {
         isButtonHiddenOnPostType(postType) {
             return (this.settingsData.options && this.settingsData.options.hide_post_type && this.settingsData.options.hide_post_type[postType] === "1");
