@@ -99,7 +99,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .image-list .entry img { width:130px; height:130px; margin:5px; }
   .image-list .cursor, .image-list .cursor * { cursor:pointer;} 
 
-  .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; 
+  .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; padding:0;
     &::after { content: ""; clear: both; display: block; }
     li { cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; transition:box-shadow .5s ease; }
     li.active { -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; }
@@ -175,7 +175,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .jcrop-handle.ord-se,
   .jcrop-handle.ord-sw { width: 16px; height: 16px; }
 
-  .selectionInfo {
+  .selectionInfo { border-bottom: 2px solid rgba(0,0,0,0.3);
     .name { font-size:1em; font-weight: bold; }
     .dimensions { font-size:0.9em; }
     .lowResWarning,
@@ -197,6 +197,10 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptWaitingWindow .cptLoadingSpinner { height: 50px; width: 50px; margin-top:20px; }
 
   .noImageSizesAvailable { text-align: center; padding: 5em 0; }
+
+  .cpt_checkbox_large_handles_wrapper { border-top: 2px solid rgba(0,0,0,0.3); padding:.5em 0;
+    * { vertical-align: middle; }
+  }
 }
 
 .cptLoadingSpinner { height: 30px; width: 30px; border: 2px solid #0073aa; border-right-color: transparent; border-radius: 50%; display: inline-block;

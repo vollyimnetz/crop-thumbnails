@@ -82,6 +82,7 @@ const STUBS = [
             "label_same_ratio_mode_select": "gemeinsam auswählen",
             "label_same_ratio_mode_group": "gruppieren",
             "label_deselect_all": "nichts auswählen",
+            "label_large_handles": "große Kontrollflächen verwenden",
             "dimensions": "Größe:",
             "ratio": "Seitenverhältnis:",
             "cropped": "zugeschnitten",

@@ -76,6 +76,7 @@ class CropPostThumbnailsEditor {
 			'label_same_ratio_mode_select' => self::fixJsLangStrings(__('Select together','crop-thumbnails')),
 			'label_same_ratio_mode_group' => self::fixJsLangStrings(__('Group together','crop-thumbnails')),
 			'label_deselect_all' => self::fixJsLangStrings(__('deselect all','crop-thumbnails')),
+			'label_large_handles' => self::fixJsLangStrings(__('use large handles','crop-thumbnails')),
 			'dimensions' => self::fixJsLangStrings(__('Dimensions:','crop-thumbnails')),
 			'ratio' => self::fixJsLangStrings(__('Ratio:','crop-thumbnails')),
 			'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),

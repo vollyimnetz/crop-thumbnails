@@ -71,10 +71,10 @@
                 </div>
                 <button type="button" class="button cptGenerate" :class="{'button-primary':croppingApi}" @click="cropThumbnails()" :disabled="!croppingApi">{{ lang.label_crop }}</button>
                 
-                <div class="cropContainer" v-if="cropOptions">
-                    <JCrop :src="cropImage.url" :options="cropOptions" @activate="doActivate" @change="doChange" @remove="doRemove" @update="doUpdate"></JCrop>
+                <div class="cropContainer">
+                    <JCrop v-if="cropOptions" :class="{ largeHandles }" :src="cropImage.url" :options="cropOptions" @activate="doActivate" @change="doChange" @remove="doRemove" @update="doUpdate"></JCrop>
 
-                    <!--<img class="cptCroppingImage" ref="cptCroppingImage" :src="cropImage.url" />-->
+                    <img v-else class="cptCroppingImage" ref="cptCroppingImage" :src="cropImage.url" />
                 </div>
         
                 <div class="selectionInfo" v-if="selectedImageSizes.length>0">
@@ -94,7 +94,6 @@
                             </div>
                         </li>
                     </ul>
-                    <hr />
                 </div>
 
                 <div class="instructionInfo">
@@ -104,6 +103,13 @@
                         <li>{{ lang.instructions_step_2 }}</li>
                         <li>{{ lang.instructions_step_3 }}</li>
                     </ul>
+                </div>
+
+                <div class="cpt_checkbox_large_handles_wrapper">
+                    <label>
+                        <input type="checkbox" v-model="largeHandles" @change="updateHandleSize" />
+                        <span>{{ lang.label_large_handles }}</span>
+                    </label>
                 </div>
 
                 <div>
@@ -144,6 +150,7 @@ export default {
         sameRatioModeOptions: [],
 
         cropOptions: null,
+        largeHandles: false,
     }),
     mounted() {
         this.loadCropData();
@@ -203,8 +210,8 @@ export default {
     },
     methods:{
         doActivate(data) { /*console.info('doActivate',data);*/ },
-        doChange(data) { console.info('doChange',data); },
-        doRemove(data) { console.info('doRemove',data); },
+        doChange(data) { /*console.info('doChange',data);*/ },
+        doRemove(data) { /*console.info('doRemove',data);*/ },
         doUpdate(data) { /*console.info('doUpdate',data);*/ },
         isImageInGroupNotYetCropped(printRatio) {
             return this.cropData.imageSizes.filter(elem => elem.printRatio===printRatio && elem.notYetCropped).length>0;
@@ -222,6 +229,18 @@ export default {
         updateSameRatioMode() {
             try {
                 localStorage.setItem('cpt_same_ratio_mode', this.sameRatioMode);
+            } catch(e) {}
+        },
+        setupLargeHandles() {
+            try {
+                this.largeHandles = localStorage.getItem('cpt_large_handles');
+                if(this.largeHandles===null || this.largeHandles==="false") this.largeHandles = false;
+                if(this.largeHandles==="true") this.largeHandles = true;
+            } catch(e) {}
+        },
+        updateHandleSize() {
+            try {
+                localStorage.setItem('cpt_large_handles', this.largeHandles);
             } catch(e) {}
         },
         imageSizeClass(imageSize) {
@@ -256,6 +275,7 @@ export default {
             .always(() => {
                 this.loading = false;
                 this.setupRatioMode();
+                this.setupLargeHandles();
                 
                 if(this.cropData && this.cropData.imageSizes) {
                     //remove elements with hideByPostType===true

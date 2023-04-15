@@ -46,9 +46,7 @@ window.CROP_THUMBNAILS_VUE.modal = function() {
 		}
 	}
 	
-	that.open = function(imageId,posttype,title) {	
-		
-		
+	that.open = function(imageId,posttype,title) {
 		var id = imageId;
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
