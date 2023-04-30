@@ -2,9 +2,9 @@
 Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
-Requires at least: 4.6
-Tested up to: 6.1.1
-Requires PHP: 8.0.0
+Requires at least: 5.0
+Tested up to: 6.2.0
+Requires PHP: 7.4.0
 Stable tag: 1.5.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -124,6 +124,12 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.6.0 =
+* change crop library (now using https://advanced-cropper.github.io/vue-advanced-cropper)
+* revert php requirements back to 7.4
+* improve touch capabilities by adding an option for large handles
+* refactoring and code improvements
+
 = 1.5.0 =
 * bugfix for adding the crop-link multiple times (see https://github.com/vollyimnetz/crop-thumbnails/issues/72)
 * direct support for WebP-Express (see https://github.com/vollyimnetz/crop-thumbnails/issues/48)

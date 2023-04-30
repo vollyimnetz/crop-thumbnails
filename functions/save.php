@@ -62,7 +62,7 @@ class CptSaveThumbnail {
 					continue;
 				}
 
-				$croppedSize = self::getCroppedSize($activeImageSize,$imageMetadata,$input);
+				$croppedSize = self::getCroppedSize($activeImageSize, $imageMetadata, $input);
 				
 				$currentFilePath = self::generateFilename($sourceImgPath, $imageMetadata, $croppedSize['width'], $croppedSize['height'], $activeImageSize->crop);
 				self::addDebug("filename: ".$currentFilePath);
@@ -360,10 +360,10 @@ class CptSaveThumbnail {
 		$input->selection->x2 = intval($input->selection->x2);
 		$input->selection->y2 = intval($input->selection->y2);
 		
-		if($input->selection->x < 0 || $input->selection->y < 0) {
-			throw new \Exception(__('Cropping to these dimensions on this image is not possible.','crop-thumbnails'), 1);
-		}
-		
+		if($input->selection->x < 0) $input->selection->x = 0;
+		if($input->selection->y < 0) $input->selection->y = 0;
+		if($input->selection->x2 < 0) $input->selection->x2 = 0;
+		if($input->selection->y2 < 0) $input->selection->y2 = 0;
 		
 		$input->sourceImageId = intval($input->sourceImageId);
 		$_tmp = get_post($input->sourceImageId);//need to be its own var - cause of old php versions

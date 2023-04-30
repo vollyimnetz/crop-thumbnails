@@ -90,25 +90,16 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptSelectionPaneInner .cptToolbar { display:flex; align-items: flex-start; padding: 5px 10px; 
     label { display: inline-block; margin-right: 0.3em; }
   }
+  
+  .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; padding:3px; display: flex; flex-wrap: wrap;
+    .CropImageSize { cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px transparent; transition:box-shadow .5s ease; }
+    .CropImageSize.active { box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px #0073aa; }
+    .CropImageSize:hover,
+    .CropImageSize:focus {background: #eee; }
 
-  .listEmptyMsg { font-size:1.5em; text-align:center; padding:2em;}
-  .image-list .entry.post-thumbnail { border-color:#aad6f4; background-color:#efefef; }
-  .image-list { margin:0;padding:0;}
-  .image-list .entry { width:140px; float:left; border:1px solid #efefef; margin:5px;}
-  .image-list .entry h3 { font-weight: normal; font-size:1em; margin:0 5px; }
-  .image-list .entry img { width:130px; height:130px; margin:5px; }
-  .image-list .cursor, .image-list .cursor * { cursor:pointer;} 
-
-  .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; 
-    &::after { content: ""; clear: both; display: block; }
-    li { cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px transparent; transition:box-shadow .5s ease; }
-    li.active { -webkit-box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 7px #0073aa; }
-    li:hover,
-    li:focus {background: #eee; }
-
-    li { width: 50%; 
-      @media(min-width:520px) {  width: 33.32%; }
-      @media(min-width:760px) {  width: 50%; }
+    .CropImageSize { width: 50%; 
+      @media(min-width:520px)  { width: 33.32%; }
+      @media(min-width:760px)  { width: 50%; }
       @media(min-width:1100px) { width: 33.32%; }
       @media(min-width:1400px) { width: 25%; }
       @media(min-width:1600px) { width: 20%; }
@@ -116,7 +107,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   }
 
 
-  .cptImageSizeInner { line-height: 1.4;
+  .CropImageSize { line-height: 1.4;
     header,
     .dimensions,
     .ratio { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -158,24 +149,12 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptCropPane h3 { margin:0;}
   .cptCropPane button.cptGenerate { width: 100%; height:2em; font-size:1.4em; padding:0.5em 0; display:block; line-height: 0;}
 
-  .cropContainer { margin:.3em 0 .5em; opacity: .5; }
-  .cptEditorInner.cropEditorActive .cropContainer { opacity: 1; }
-  .cropContainer img.cptCroppingImage { max-width: 100%; height:auto; }
+  .cropContainer { margin:.3em 0 .5em; }
 
   h4 { margin-bottom:0em;}
   .step-info { font-size:0.9em; }
 
-  .jcrop-handle.ord-ne { margin-top: -8px; margin-right: -8px;}
-  .jcrop-handle.ord-nw { margin-top: -8px; margin-left: -8px;}
-  .jcrop-handle.ord-se { margin-bottom: -8px; margin-right: -8px;}
-  .jcrop-handle.ord-sw { margin-bottom: -8px; margin-left: -8px;}
-
-  .jcrop-handle.ord-ne,
-  .jcrop-handle.ord-nw,
-  .jcrop-handle.ord-se,
-  .jcrop-handle.ord-sw { width: 16px; height: 16px; }
-
-  .selectionInfo {
+  .selectionInfo { border-bottom: 2px solid rgba(0,0,0,0.3);
     .name { font-size:1em; font-weight: bold; }
     .dimensions { font-size:0.9em; }
     .lowResWarning,
@@ -197,6 +176,10 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptWaitingWindow .cptLoadingSpinner { height: 50px; width: 50px; margin-top:20px; }
 
   .noImageSizesAvailable { text-align: center; padding: 5em 0; }
+
+  .cpt_checkbox_large_handles_wrapper { border-top: 2px solid rgba(0,0,0,0.3); padding:.5em 0;
+    * { vertical-align: middle; }
+  }
 }
 
 .cptLoadingSpinner { height: 30px; width: 30px; border: 2px solid #0073aa; border-right-color: transparent; border-radius: 50%; display: inline-block;
