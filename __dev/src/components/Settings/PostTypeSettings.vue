@@ -23,7 +23,6 @@
                 <section v-if="postType">
                     <header><h3>{{postType.label}}</h3></header>
 
-                    
                     <ul class="cptImageSizes">
                         <template v-for="imageSize in settings.image_sizes">
                             <li v-if="imageSize.crop" :key="imageSize.id">
@@ -43,8 +42,6 @@
                 </section>
             </li>
         </ul>
-
-        <pre>{{form}}</pre>
 
         <div class="toolbar text-right">
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
@@ -70,7 +67,6 @@ export default {
             this.form = this.getNewFormArray();
         },
         getNewFormArray() {
-            console.log('getNewFormArray',this.settings)
             if(!this.settings.post_types) return [];
             if(!this.settings.image_sizes) return [];
             const result = [];
@@ -86,13 +82,11 @@ export default {
                     postType.imageSizes.push({
                         id: imageSize.id,
                         name: imageSize.name,
-                        active: this.isImageSizeHidden(postType.name, imageSize.id)
-                    })
+                        active: !!this.isImageSizeHidden(postType.name, imageSize.id),
+                    });
                 }
-
                 result.push(postType);
             }
-            console.log('getNewFormArray result', result)
             return result;
         },
         isButtonHiddenOnPostType(postType) {

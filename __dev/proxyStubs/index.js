@@ -2,9 +2,9 @@
  * this is for testing the system directly in the browser
  */
 const STUBS = [
-  { 
+{
     url: '/fake-ajax-url?action=cpt_cropdata&imageId=123&posttype=', 
-    method: 'GET', 
+    method: 'GET',
     content:
         {
         options: {
@@ -93,6 +93,79 @@ const STUBS = [
         hiddenOnPostType: false
     }
 },
+{
+    url: '/fake-ajax-url/for-settingsscreen/crop_thumbnails/v1/settings',
+    method: 'GET',
+    content:{
+        "options": {
+            "hide_post_type": { "custom_css": "1", "customize_changeset": "1", "wpcf7_contact_form": "1" },
+            "hide_size": {
+                "post": { "thumbnail": "1", "mitarbeiter": "1" },
+                "page": { "thumbnail": "1", "mitarbeiter": "1" },
+                "mitarbeiter": { "thumbnail": "1", "post-thumbnail": "1", "small-thumb": "1" },
+                "angebote": { "mitarbeiter": "1" }
+            }
+        },
+        "post_types": {
+            "post": { "name": "post", "label": "Beiträge", "description": "", "public": true },
+            "page": { "name": "page", "label": "Seiten", "description": "", "public": true },
+            "custom_css": { "name": "custom_css", "label": "Individuelles CSS", "description": "", "public": false },
+            "customize_changeset": { "name": "customize_changeset", "label": "Änderungs-Sets", "description": "", "public": false },
+            "oembed_cache": { "name": "oembed_cache", "label": "oEmbed-Antworten", "description": "", "public": false },
+            "user_request": { "name": "user_request", "label": "Benutzer-Anfragen", "description": "", "public": false },
+            "wp_block": { "name": "wp_block", "label": "Wiederverwendbare Blöcke", "description": "", "public": false },
+            "wp_template": { "name": "wp_template", "label": "Templates", "description": "Templates, die in dein Theme eingefügt werden können.", "public": false },
+            "wp_template_part": { "name": "wp_template_part", "label": "Template-Teile", "description": "Template-Teile zum Einfügen in dein Template.", "public": false },
+            "wp_global_styles": { "name": "wp_global_styles", "label": "Globale Stile", "description": "Globale Stile für die Verwendung in Themes.", "public": false },
+            "wp_navigation": { "name": "wp_navigation", "label": "Navigationsmenüs", "description": "Navigationsmenüs, die in deine Website eingefügt werden können.", "public": false },
+            "e-landing-page": { "name": "e-landing-page", "label": "Startseiten", "description": "", "public": true },
+            "elementor_library": { "name": "elementor_library", "label": "Meine Templates", "description": "", "public": true },
+            "wpcf7_contact_form": { "name": "wpcf7_contact_form", "label": "Kontaktformulare", "description": "", "public": true },
+            "tm_playlist": { "name": "tm_playlist", "label": "Playlist", "description": "", "public": true },
+            "tm_playlistentry": { "name": "tm_playlistentry", "label": "Playlist-Eintrag", "description": "", "public": false },
+            "lkgaudio": { "name": "lkgaudio", "label": "Audio-Mitschnitt", "description": "", "public": false },
+            "mitarbeiter": { "name": "mitarbeiter", "label": "Mitarbeiter", "description": "", "public": true },
+            "angebote": { "name": "angebote", "label": "Angebote", "description": "", "public": true },
+            "tmadditionalcontent": { "name": "tmadditionalcontent", "label": "Startseitenbild", "description": "", "public": false },
+            "material": { "name": "material", "label": "Material", "description": "", "public": false }
+        },
+        "image_sizes": {
+            "thumbnail": { "width": 200, "height": 200, "crop": true, "name": "thumbnail", "id": "thumbnail" },
+            "medium": { "width": 600, "height": 600, "crop": false, "name": "medium", "id": "medium" },
+            "medium_large": { "width": 768, "height": 0, "crop": false, "name": "medium_large", "id": "medium_large" },
+            "large": { "width": 1024, "height": 1024, "crop": false, "name": "large", "id": "large" },
+            "1536x1536": { "width": 1536, "height": 1536, "crop": false, "name": "1536x1536", "id": "1536x1536" },
+            "2048x2048": { "width": 2048, "height": 2048, "crop": false, "name": "2048x2048", "id": "2048x2048" },
+            "post-thumbnail": { "width": 625, "height": 275, "crop": true, "name": "post-thumbnail", "id": "post-thumbnail" },
+            "small-thumb": { "width": 250, "height": 140, "crop": true, "name": "small-thumb", "id": "small-thumb" },
+            "medium-thumb": { "width": 500, "height": 280, "crop": true, "name": "medium-thumb", "id": "medium-thumb" },
+            "mitarbeiter": { "width": 450, "height": 300, "crop": true, "name": "mitarbeiter", "id": "mitarbeiter" }
+        },
+        "lang": {
+            "general": {
+                "save_changes": "Änderungen speichern",
+                "successful_saved": "Successful saved",
+                "nav_post_types": "Größen und Eintragstypen",
+                "nav_plugin_test": "Plugin Test",
+                "nav_developer_settings": "Enwickler-Einstellungen",
+                "nav_user_permissions": "Benutzerberechtigung"
+            },
+            "user_permissions": {
+                "text": "Wenn aktiv, können nur Benutzer, die in der Lage sind, Dateien zu bearbeiten, Miniaturansichten zuschneiden. Ansonsten (Standard) kann jeder Benutzer, der Dateien hochladen kann, auch Miniaturansichten zuschneiden."
+            },
+            "posttype_settings": {
+                "intro_1": "Crop Thumbnails wurde erstellt um das Zuschneiden von Bildern für den Benutzer zu erleichtern. Oft muss der Nutzer nur eine Bildgröße zuschneiden, abhängig vom Typ des Eintrags. Das System (Wordpress) wird aber immer alle Größen erstellen. Hier können Sie auswählen für welche Eintragstypen welche Bildgrößen in der Plugin-Oberfläche angezeigt werden sollen.",
+                "intro_2": "Crop Thumbnails wird nur Bilder anzeigen die einen Zuschnitt besitzen. Bildgrößen ohne Zuschnitt werden immer ausgeblendet.",
+                "choose_image_sizes": "Wählen Sie die Bildgrößen, die Sie nicht anzeigen möchten, wenn der Benutzer den Button unter dem Beitragsbild verwendet.",
+                "hide_on_post_type": "Crop-Thumbnail-Button unter dem Beitragsbild ausblenden?"
+            },
+            "developer_settings": {
+                "enable_js_debug": "JS-Debug einschalten",
+                "enable_data_debug": "Daten-Debug einschalten"
+            }
+        }
+    }
+}
 ];
 
 
