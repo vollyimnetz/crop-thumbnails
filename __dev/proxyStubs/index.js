@@ -1,7 +1,6 @@
 /**
  * this is for testing the system directly in the browser
  */
-
 const STUBS = [
   { 
     url: '/fake-ajax-url?action=cpt_cropdata&imageId=123&posttype=', 
@@ -19,52 +18,47 @@ const STUBS = [
         },
         sourceImageId: 123,
         sourceImage: {
-            full: {
-                "url": "https://dummyimage.com/1080x1920/fff.png&text=testimage",
-                "width": 1080, "height": 1920, "gcd": "120", "ratio": 0.5625, "printRatio": "9:16", "image_size": "full"
+            "full": {
+                "url": "/testimages/testimage.jpeg",
+                "width": 1920, "height": 1280, "gcd": "640", "ratio": 1.5, "printRatio": "3:2", "image_size": "full"
             },
-            large: {
-                "url": "https://dummyimage.com/576x1024/fff.png&text=testimage",
-                "width": 576, "height": 1024, "gcd": "64", "ratio": 0.5625, "printRatio": "9:16", "image_size": "large"
+            "large": {
+                "url": "/testimages/testimage-1024x683.jpeg",
+                "width": 1024, "height": 683, "gcd": "1", "ratio": 1.499267935578331, "printRatio": "1024:683", "image_size": "large"
             },
-            medium_large: {
-                "url": "https://dummyimage.com/768x1365/fff.png&text=testimage",
-                "width": 768, "height": 1365, "gcd": "3", "ratio": 0.5626373626373626, "printRatio": "256:455", "image_size": "medium_large"
+            "medium_large": {
+                "url": "/testimages/testimage-768x512.jpeg",
+                "width": 768, "height": 512, "gcd": "256", "ratio": 1.5, "printRatio": "3:2", "image_size": "medium_large"
             }
         },
         sourceImageMeta: { "aperture": "0", "credit": "", "camera": "", "caption": "", "created_timestamp": "0", "copyright": "", "focal_length": "0", "iso": "0", "shutter_speed": "0", "title": "", "orientation": "0", "keywords": [] },
         postTypeFilter: null,
         imageSizes: [
             {
-                "name": "thumbnail",
-                "nameLabel": "thumbnail",
-                "url": "https://dummyimage.com/200x200/fff.png&text=testimage",
+                "name": "thumbnail", "nameLabel": "thumbnail",
+                "url": "/testimages/testimage-200x200.jpeg",
                 "width": 200, "height": 200, "gcd": "200", "ratio": 1, "printRatio": "1:1", "hideByPostType": false, "crop": true
             },
             {
-                "name": "post-thumbnail",
-                "nameLabel": "post-thumbnail",
-                "url": "https://dummyimage.com/625x275/fff.png&text=testimage",
+                "name": "post-thumbnail", "nameLabel": "post-thumbnail",
+                "url": "/testimages/testimage-625x275.jpeg",
                 "width": 625, "height": 275, "gcd": "25", "ratio": 2.272727272727273, "printRatio": "25:11", "hideByPostType": false, "crop": true
             },
             {
-                "name": "small-thumb",
-                "nameLabel": "small-thumb",
-                "url": "https://dummyimage.com/250x140/fff.png&text=testimage",
+                "name": "small-thumb", "nameLabel": "small-thumb",
+                "url": "/testimages/testimage-250x140.jpeg",
                 "width": 250, "height": 140, "gcd": "10", "ratio": 1.7857142857142858, "printRatio": "25:14", "hideByPostType": false, "crop": true
             },
             {
-                "name": "medium-thumb",
-                "nameLabel": "medium-thumb",
-                "url": "https://dummyimage.com/500x280/fff.png&text=testimage",
+                "name": "medium-thumb", "nameLabel": "medium-thumb",
+                "url": "/testimages/testimage-500x280.jpeg",
                 "width": 500, "height": 280, "gcd": "20", "ratio": 1.7857142857142858, "printRatio": "25:14", "hideByPostType": false, "crop": true
             },
             {
-                "name": "mitarbeiter",
-                "nameLabel": "mitarbeiter",
-                "url": "https://dummyimage.com/450x300/fff.png&text=testimage",
+                "name": "mitarbeiter", "nameLabel": "mitarbeiter",
+                "url": "/testimages/testimage-450x300.jpeg",
                 "width": 450, "height": 300, "gcd": "150", "ratio": 1.5, "printRatio": "3:2", "hideByPostType": false, "crop": true
-            }
+            },
         ],
         lang: {
             "warningOriginalToSmall": "Warung: das Original-Bild ist zu klein um es für diese Thumbnail-Größe in guter Qualität zuzuschneiden.",
@@ -72,6 +66,7 @@ const STUBS = [
             "waiting": "Bitte warten Sie bis die Bilder zugeschnitten wurden.",
             "rawImage": "Original-Bild",
             "pixel": "Pixel",
+            "instructions_overlay_text": "Wählen Sie eine Bildgröße aus.",
             "instructions_header": "Schnell-Anleitung",
             "instructions_step_1": "Schritt 1: Wählen Sie ein Bild aus der Liste.",
             "instructions_step_2": "Schritt 2: Ändern Sie den Auswahlrahmen im obigen Bild.",

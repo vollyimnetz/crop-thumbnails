@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel='stylesheet' href='https://www.totalmedial.de/system/wp-admin/load-styles.php?c=1&dir=ltr&load%5Bchunk_0%5D=dashicons,admin-bar,buttons,media-views,common,forms,admin-menu,dashboard,list-tables,edit,revisions,media,themes,about,nav-menu&load%5Bchunk_1%5D=s,wp-pointer,widgets,site-icon,l10n,wp-auth-check&ver=6.2' media='all' />
     <title>Vite + Vue</title>
 
     <style>
@@ -19,12 +20,16 @@
   </head>
   <body>
     <h1>Testpage</h1>
-
-    
     <script>
       window.ajaxurl = '/fake-ajax-url';
     </script>
-    <button class="cropThumbnailsLink" data-cropthumbnail='{"image_id": 123, "viewmode":"single"}' title="Test Dialog">open Editor</button>
+
+    <div id="cpt_crop_editor" style="background-color: #fff; border:1px solid black; height: 90vh;">
+      <crop-editor image-id="123" posttype="post"></crop-editor>
+    </div>
+    
+
+    <button class="cropThumbnailsLink" style="margin-top:5em;" data-cropthumbnail='{"image_id": 123, "viewmode":"single"}' title="Test Dialog">open Modal</button>
     
     <script type="module" src="/src/main.js"></script>
   </body>

@@ -66,6 +66,7 @@ class CropPostThumbnailsEditor {
 			'waiting' => self::fixJsLangStrings(__('Please wait until the images are cropped.','crop-thumbnails')),
 			'rawImage' => self::fixJsLangStrings(__('Raw','crop-thumbnails')),
 			'pixel' => self::fixJsLangStrings(__('pixel','crop-thumbnails')),
+			'instructions_overlay_text' => self::fixJsLangStrings(__('Choose an image size.','crop-thumbnails')),
 			'instructions_header' => self::fixJsLangStrings(__('Quick Instructions','crop-thumbnails')),
 			'instructions_step_1' => self::fixJsLangStrings(__('Step 1: Choose an image-size from the list.','crop-thumbnails')),
 			'instructions_step_2' => self::fixJsLangStrings(__('Step 2: Change the selection of the image above.','crop-thumbnails')),

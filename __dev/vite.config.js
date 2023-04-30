@@ -25,6 +25,18 @@ export default defineConfig({
     port: 8080,
     open: true,
     proxy: {
+      '/testimages': {
+        target: 'https://croptest.totalmedial.de',
+        secure: false,
+        changeOrigin: true,
+        logLevel: "info"
+      },
+      '/wp-admin': {
+        target: 'https://www.totalmedial.de',
+        secure: false,
+        changeOrigin: true,
+        logLevel: "info"
+      },
       '/fake-ajax-url': {
         target: 'https://www.totalmedial.de',//any real URL should work
         secure: false,
