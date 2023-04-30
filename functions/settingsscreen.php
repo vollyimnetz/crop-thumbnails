@@ -1,7 +1,7 @@
 <?php
 namespace crop_thumbnails;
 
-class CropThumbnailsSettingsScreen {
+class SettingsScreen {
 	protected static $uniqeSettingsId = 'cpt-settings';
 	protected static $cssPrefix = 'cpt_settings_';
 
@@ -40,15 +40,19 @@ class CropThumbnailsSettingsScreen {
 		<div class="wrap cropThumbnailSettings">
 		<div id="icon-options-general" class="icon32"><br /></div>
 		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
-			<form action="options.php" method="post">
-				<?php settings_fields( self::$uniqeSettingsId ); ?>
-				
-				<?php do_settings_sections('page1'); ?>
-				
-				<div class="<?php echo self::$cssPrefix ?>submit">
-					<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
-				</div>
-			</form>
+
+			<div id="<?php echo self::$cssPrefix ?>settingsscreen">
+				<cpt-settingsscreen settings="<?php echo esc_attr(json_encode($settings)) ?>"></cpt-settingsscreen>
+			</div>
+			
+			<?php /*
+			do_settings_sections('page1'); ?>
+			
+			<div class="<?php echo self::$cssPrefix ?>submit">
+				<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
+			</div>
+			*/
+			?>
 
 			<div class="<?php echo self::$cssPrefix; ?>paypal">
 				<h3><?php esc_html_e('Support the plugin author','crop-thumbnails') ?></h3>
@@ -80,9 +84,6 @@ class CropThumbnailsSettingsScreen {
 		add_settings_section($_sectionID, esc_html__('User Permission','crop-thumbnails'), [$this,'emptySectionDescription'], 'page1');
 		$_tmpID = 'user_permission_only_on_edit_files';
 		add_settings_field($_tmpID, esc_html__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails'), 	[$this,'callback_'.$_tmpID], 'page1', $_sectionID, ['label_for' => self::$cssPrefix.$_tmpID ]);
-
-		$_sectionID = 'quick_test';
-		add_settings_section($_sectionID, esc_html__('Plugin Test','crop-thumbnails'), [$this,'sectionDescriptionTest'], 'page1');
 		
 		$_sectionID = 'developer';
 		add_settings_section($_sectionID, esc_html__('Developer Settings','crop-thumbnails'), [$this,'emptySectionDescription'], 'page1');
@@ -102,28 +103,9 @@ class CropThumbnailsSettingsScreen {
 				'hide_on_post_type' => esc_js(__('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails'))
 			]
 		];
-		
-		?>
-		<div class="<?php echo self::$cssPrefix ?>submit">
-			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
-		</div>
-
-		<div id="<?php echo self::$cssPrefix ?>settingsscreen">
-			<cpt-settingsscreen settings="<?php echo esc_attr(json_encode($settings)) ?>"></cpt-settingsscreen>
-		</div>
-
-		<div class="<?php echo self::$cssPrefix ?>submit">
-			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
-		</div>	
-		<?php
 	}
 
-	public function sectionDescriptionChooseSizes() {?>
-		<p>
-			<?php esc_html_e('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..','crop-thumbnails') ?>
-			<br /><strong><?php esc_html_e('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','crop-thumbnails'); ?></strong>
-		</p>
-		<?php
+	public function sectionDescriptionChooseSizes() {
 		$this->vueSettingsScreen();
 	}
 
@@ -132,6 +114,7 @@ class CropThumbnailsSettingsScreen {
 
 	
 	public function callback_user_permission_only_on_edit_files() {
+		/*
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$_id = 'user_permission_only_on_edit_files';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
@@ -141,20 +124,25 @@ class CropThumbnailsSettingsScreen {
 			<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
 		</div>
 		<?php
+		*/
 	}
 
 	public function callback_debug_js() {
+		/*
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$_id = 'debug_js';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
 		echo '<input name="'.$GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey().'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false) . ' />';
+		*/
 	}
 
 	public function callback_debug_data() {
+		/*
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$_id = 'debug_data';
 		if(empty($options[$_id])) { $options[$_id] = ''; }
 		echo '<input name="'.$GLOBALS['CROP_THUMBNAILS_HELPER']->getOptionsKey().'['.$_id.']" id="'.self::$cssPrefix.$_id.'" type="checkbox" value="1" ' . checked( 1, $options[$_id], false ) . ' />';
+		*/
 	}
 
 	public function validateSettings($input) {
@@ -205,175 +193,12 @@ class CropThumbnailsSettingsScreen {
 		return $storeInDb;
 	}
 	
-	public function sectionDescriptionTest() {?>
-		<button type="button" class="button-secondary cpt_quicktest">Do plugin quick-test.</button>
-		
-		<script>
-		jQuery(document).ready(function($) {
-			var currentlyProcessing = false;
-			
-			
-			$('button.cpt_quicktest').click(function(e) {
-				e.preventDefault();
-				
-				if(!currentlyProcessing) {
-					currentlyProcessing = true;
-					var button = $(this);
-					$('#cpt_quicktest').remove();
-					
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {
-							action: 'ctppluginquicktest',
-							security: '<?php echo wp_create_nonce( "cpt_quicktest-ajax-nonce" );//only for quicktest ?>'
-						},
-						success: function(responseData){ 
-							var output = '<div id="cpt_quicktest">'+responseData+'</div>';
-							button.after(output);
-							currentlyProcessing = false;
-						},
-						error: function(responseData) {
-							var output = '<div id="cpt_quicktest"><strong class="fails">fail</strong> Failure processing the test - have a look on your server logs.</div>';
-							button.after(output);
-							currentlyProcessing = false;
-						}
-					});
-				}
-			});
-		});
-		</script>
-		<?php
+	public function sectionDescriptionTest() {
 	}
 
 
 	public function ajax_callback_admin_quicktest() {
-		//security
-		if(!current_user_can('manage_options')) die('forbidden');
-		check_ajax_referer('cpt_quicktest-ajax-nonce','security');//only for quicktest
-		
-		$report = [];
-		$doDeleteAttachement = false;
-		$doDeleteTempFile = false;
-		$attachmentId = -1;
-		
-		$sourceFile = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
-		$tempFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
-		try {
-			$report[] = '<strong class="info">info</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
-			$report[] = '<strong class="info">info</strong> PHP '.phpversion();
-			$report[] = '<strong class="info">info</strong> PHP memory limit '.ini_get('memory_limit');
-			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
-			
-			//check if tmp-folder can be generated
-			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-				$report[] = '<strong class="success">success</strong> Temporary directory exists';
-			} else {
-				if (!mkdir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-					throw new \Exception('<strong class="fails">fail</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
-				} else {
-					$report[] = '<strong class="success">success</strong> Temporary directory could be created';
-				}
-			}
-			
-			//creating the testfile in temporary directory
-			if(!@copy($sourceFile,$tempFile)) {
-				throw new \Exception('<strong class="fails">fail</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP?');
-			} else {
-				$report[] = '<strong class="success">success</strong> Copy testfile to temporary directory';
-				$doDeleteTempFile = true;
-			}
-			
-			
-			//try to upload the file
-			$_FILES['cpt_quicktest'] = [
-				'name' => 'test_image.jpg',
-				'type' => 'image/jpeg',
-				'tmp_name' => $tempFile,
-				'error' => 0,
-				'size' => 102610
-			];
-			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, [], ['test_form' => false, 'action'=>'test'] );
-			$doDeleteTempFile = false;//is be deleted automatically
-			if ( is_wp_error( $attachmentId ) ) {
-				throw new \Exception('<strong class="fails">fail</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
-			} else {
-				$report[] = '<strong class="success">success</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
-				$doDeleteAttachement = true;
-			}
-			
-			
-			//try to crop with the same function as the plugin does
-			$cropResult = wp_crop_image(    // * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-				$attachmentId,	            // * @param string|int $src The source file or Attachment ID.
-				130,                        // * @param int $src_x The start x position to crop from.
-				275,                        // * @param int $src_y The start y position to crop from.
-				945,                        // * @param int $src_w The width to crop.
-				120,                        // * @param int $src_h The height to crop.
-				200,                        // * @param int $dst_w The destination width.
-				25,                         // * @param int $dst_h The destination height.
-				false,                      // * @param int $src_abs Optional. If the source crop points are absolute.
-				$tempFile                   // * @param string $dst_file Optional. The destination file to write to.
-			);
-			if ( is_wp_error( $cropResult ) ) {
-				throw new \Exception('<strong class="fails">fail</strong> Cropping the file ('.$cropResult->get_error_message().')');
-			} else {
-				$report[] = '<strong class="success">success</strong> Cropping the file';
-				$doDeleteTempFile = true;
-				$doDeleteAttachement = true;
-			}
-			
-			
-			//check if the dimensions are correct
-			$fileDimensions = getimagesize($tempFile);
-			if(!empty($fileDimensions[0]) && !empty($fileDimensions[1]) && !empty($fileDimensions['mime'])) {
-				$_checkDimensionsOk = true;
-				if($fileDimensions[0]!==200 || $fileDimensions[1]!==25) {
-					$_checkDimensionsOk = false;
-					$report[] = '<strong class="fails">fail</strong> Cropped image dimensions are wrong.';
-				}
-				if($fileDimensions['mime']!=='image/jpeg') {
-					$_checkDimensionsOk = false;
-					$report[] = '<strong class="fails">fail</strong> Cropped image dimensions mime-type is wrong.';
-				}
-				
-				if($_checkDimensionsOk) {
-					$report[] = '<strong class="success">success</strong> Cropped image dimensions are correct.';
-				}
-			} else {
-				$report[] = '<strong class="fails">fail</strong> Problem with getting the image dimensions of the cropped file.';
-			}
-			
-			
-		} catch(\Exception $e) {
-			$report[] = $e->getMessage();
-		}
-		
-		
-		//DO CLEANUP
-		
-		//delete attachement file
-		if($doDeleteAttachement && $attachmentId!==-1) {
-			if ( false === wp_delete_attachment( $attachmentId ) ) {
-				$report[] = '<strong class="fails">fail</strong> Error while deleting test attachment';
-			} else {
-				$report[] = '<strong class="success">success</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
-			}
-		}
-		
-		
-		//deleting testfile form temporary directory
-		if($doDeleteTempFile) {
-			if(!@unlink($tempFile)) {
-				$report[] = '<strong class="fails">fail</strong> Remove testfile from temporary directory';
-			} else {
-				$report[] = '<strong class="success">success</strong> Remove testfile from temporary directory';
-			}
-		}
-		
-		$report[] = '<strong class="info">info</strong> Tests complete';
-		echo implode("<br />", $report);
 		exit();
 	}
 }
-$cptSettingsScreen = new CropThumbnailsSettingsScreen();
+$cptSettingsScreen = new SettingsScreen();

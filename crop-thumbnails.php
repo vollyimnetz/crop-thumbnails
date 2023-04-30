@@ -33,6 +33,7 @@ define('CROP_THUMBNAILS_VERSION','1.6.0');
 include_once __DIR__.'/functions/enqueuejsmodule.php';
 include_once __DIR__.'/functions/helper.php';
 include_once __DIR__.'/functions/settingsscreen.php';
+include_once __DIR__.'/functions/rest.settings.php';
 include_once __DIR__.'/functions/editor.php';
 include_once __DIR__.'/functions/backendpreparer.php';
 include_once __DIR__.'/functions/save.php';
