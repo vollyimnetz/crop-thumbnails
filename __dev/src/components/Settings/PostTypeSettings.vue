@@ -18,26 +18,23 @@
         <div class="cptSettingsPostListDescription">{{settings.lang.posttype_settings.choose_image_sizes}}</div>
         
         <ul class="cptSettingsPostList">
-            
-            <li v-for="postType in settings.post_types" :key="postType.name">
+            <li v-for="postType in form" :key="postType.name">
                 <section v-if="postType">
                     <header><h3>{{postType.label}}</h3></header>
 
                     <ul class="cptImageSizes">
-                        <template v-for="imageSize in settings.image_sizes">
-                            <li v-if="imageSize.crop" :key="imageSize.id">
-                                <label>
-                                    <input type="checkbox" :value="imageSize.id" :checked="isImageSizeHidden(postType.name,imageSize.id)"/>
-                                    <span class="name">{{imageSize.name}}</span>
-                                    <span class="defaultName" v-if="imageSize.name!==imageSize.id">({{imageSize.id}})</span>
-                                </label>
-                            </li>
-                        </template>
+                        <li v-for="imageSize in postType.imageSizes" :key="imageSize.id">
+                            <label>
+                                <input type="checkbox" v-model="imageSize.active" />
+                                <span class="name">{{imageSize.name}}</span>
+                                <span class="defaultName" v-if="imageSize.name!==imageSize.id">({{imageSize.id}})</span>
+                            </label>
+                        </li>
                     </ul>
                     
                     <label>
-                        <input id="cpt_settings_post" type="checkbox" :name="'crop-post-thumbs[hide_post_type]['+postType.name+']'" value="1" :checked="isButtonHiddenOnPostType(postType.name)">
-                        {{settings.lang.posttype_settings.hide_on_post_type}}
+                        <input type="checkbox" v-model="postType.hidden">
+                        <span>{{settings.lang.posttype_settings.hide_on_post_type}}</span>
                     </label>
                 </section>
             </li>
@@ -50,7 +47,7 @@
 </template>
 
 <script>
-import { savePostTypeSettings } from './api';
+import { savePostTypeSettings,transformToBoolValue } from './api';
 import Message from './../Message.vue';
 export default {
     components: { Message },
@@ -74,6 +71,7 @@ export default {
             for(const [key1, elem] of Object.entries(this.settings.post_types)) {
                 const postType = {
                     name: elem.name,
+                    label: elem.label,
                     imageSizes: [],
                     hidden: this.isButtonHiddenOnPostType(elem.name),
                 };
@@ -90,10 +88,16 @@ export default {
             return result;
         },
         isButtonHiddenOnPostType(postType) {
-            return (this.settings.options && this.settings.options.hide_post_type && this.settings.options.hide_post_type[postType] === "1");
+            if(!this.settings.options) return false;
+            if(!this.settings.options.hide_post_type) return false;
+            if(!this.settings.options.hide_post_type[postType]) return false;
+            return transformToBoolValue(this.settings.options.hide_post_type[postType])
         },
         isImageSizeHidden(postType,imageSize) {
-            return (this.settings.options && this.settings.options.hide_size && this.settings.options.hide_size[postType] && this.settings.options.hide_size[postType][imageSize] === "1");
+            if(!this.settings.options) return false;
+            if(!this.settings.options.hide_size) return false;
+            if(!this.settings.options.hide_size[postType]) return false;
+            return transformToBoolValue(this.settings.options.hide_size[postType][imageSize]);
         },
         doSave() {
             savePostTypeSettings(this.form)
@@ -110,3 +114,19 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.cpt_PostTypeSettings {
+    .cptSettingsPostList { display:flex; flex-wrap: wrap; padding:2px; margin: 0;
+        &>li { padding: 2px; box-sizing: border-box; margin: 0;
+            @media(min-width:760px) { width: calc(100% / 3); }
+        }
+    }
+    section { border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 1em; 
+        h3 { margin-top:0; overflow: hidden; text-overflow: ellipsis; }
+        & ul { margin: 1em 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
+    }
+
+    .cptSettingsPostListDescription { text-align: center; font-size:1.2em; padding:1em; margin:0; border: 1px solid rgba(0,0,0,0.1); }
+}
+</style>

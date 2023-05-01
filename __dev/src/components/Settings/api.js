@@ -34,3 +34,8 @@ export const saveDeveloperSettings = (data) => axios({
     data,
     headers: { 'X-WP-Nonce': wpApiSettings.nonce }
 });
+
+
+export const transformToBoolValue = value => {
+    return value === "1" || value === 1 || value === true || value=== "true";
+};

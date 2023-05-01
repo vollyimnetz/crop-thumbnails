@@ -2,37 +2,48 @@
     <div class="cpt_UserPermissions">
         <h2>{{settings.lang.general.nav_user_permissions}}</h2>
 
-        <label>
-            <input type="checkbox" value="1" />
-            {{settings.lang.user_permissions.text}}
-        </label>
+        <p>
+            <label>
+                <input type="checkbox" v-model="form.user_permission_only_on_edit_files" />
+                {{settings.lang.user_permissions.text}}
+            </label>
+        </p>
 
-        <div v-if="result==='error'">{{result}}</div>
-        <div v-if="result==='success'">{{settings.lang.general.successful_saved}}</div>
+        <p>
+            <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
+        </p>
 
-        <div>
-            <button type="button" class="button-secondary startTest" @click="doSave">{{settings.lang.general.save_changes}}</button>
-        </div>
+        <p v-if="result==='error'">{{result}}</p>
+        <p v-if="result==='success'">{{settings.lang.general.successful_saved}}</p>
     </div>
 </template>
 
 <script>
-import { saveUserPermission } from './api';
+import { saveUserPermission, transformToBoolValue } from './api';
 export default {
     props: {
         settings: { required:true, type:Object },
     },
+    mounted() { this.doSetup(); },
     data: () => ({
         loading: false,
         error: false,
         result: null,//may be "error" or "success"
+        form: {
+            user_permission_only_on_edit_files: false
+        }
     }),
     methods: {
+        doSetup() {
+            if(this.settings.options) {
+                this.form.user_permission_only_on_edit_files = transformToBoolValue(this.settings.options.user_permission_only_on_edit_files);
+            }
+        },
         doSave() {
             if(this.loading) return;
             this.loading = true;
             this.result = null;
-            saveUserPermission()
+            saveUserPermission(form)
                 .then(response => {
                     this.result = 'success';
                 })
@@ -48,15 +59,4 @@ export default {
 </script>
 
 <style lang="scss">
-.cpt_PluginTest {
-    .cptLoadingSpinner { margin:1em 0; }
-    .result { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding: 1em;
-        strong { display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; text-transform:uppercase; 
-            &.success { background:#00cc00; }
-            &.fails { background:#cc0000; }
-            &.info { background:#008acc; }
-        }
-    }
-    button.startTest { margin-top:1em; }
-}
 </style>

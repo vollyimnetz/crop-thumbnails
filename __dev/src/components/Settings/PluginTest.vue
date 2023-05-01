@@ -8,7 +8,7 @@
             <div v-for="(content,$index) in testResult" :key="$index" v-html="content"></div>
         </div>
         <div>
-            <button type="button" class="button-secondary startTest" @click="doTest">Start plugin quick-test.</button>
+            <button type="button" class="button-primary startTest" @click="doTest">Start plugin quick-test.</button>
         </div>
     </div>
 </template>

@@ -104,7 +104,7 @@ const STUBS = [
                 "page": { "thumbnail": "1", "mitarbeiter": "1" },
                 "mitarbeiter": { "thumbnail": "1", "post-thumbnail": "1", "small-thumb": "1" },
                 "angebote": { "mitarbeiter": "1" }
-            }
+            },
         },
         "post_types": {
             "post": { "name": "post", "label": "Beiträge", "description": "", "public": true },
@@ -162,6 +162,10 @@ const STUBS = [
             "developer_settings": {
                 "enable_js_debug": "JS-Debug einschalten",
                 "enable_data_debug": "Daten-Debug einschalten"
+            },
+            'paypal_info': {
+                'headline' : 'Support the plugin author',
+                'text' : 'You can support the plugin author (and let him know you love this plugin) by donating via Paypal. Thanks a lot!'
             }
         }
     }

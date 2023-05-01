@@ -6,7 +6,6 @@
             <button type="button" class="button" :class="{ 'button-primary': type==='developer_settings'}" @click="type='developer_settings'">{{settings.lang.general.nav_developer_settings}}</button>
             <button type="button" class="button" :class="{ 'button-primary': type==='quicktest'}" @click="type='quicktest'">{{settings.lang.general.nav_plugin_test}}</button>
             <button type="button" class="button" :class="{ 'button-primary': type==='toolkit'}" @click="type='toolkit'">Resize-Toolkit</button>
-
         </nav>
         <template v-if="type==='post_types_and_sizes'">
             <PostTypeSettings :settings="settings"></PostTypeSettings>
@@ -23,6 +22,9 @@
         <template v-if="type==='toolkit'">
             <Toolkit :settings="settings"></Toolkit>
         </template>
+        <div>
+            <PaypalInfo :settings="settings"></PaypalInfo>
+        </div>
     </div>
 </template>
 
@@ -32,11 +34,12 @@ import Toolkit from './Toolkit.vue';
 import QuickTest from './PluginTest.vue';
 import UserPermissions from './UserPermissions.vue';
 import DeveloperSettings from './DeveloperSettings.vue';
+import PaypalInfo from './PaypalInfo.vue';
 
 import { getSettings } from './api';
 
 export default {
-    components: { PostTypeSettings, Toolkit, QuickTest, UserPermissions, DeveloperSettings },
+    components: { PostTypeSettings, Toolkit, QuickTest, UserPermissions, DeveloperSettings, PaypalInfo },
     mounted() { this.doSetup(); },
     data: () => ({
         loading: false,
@@ -70,27 +73,6 @@ export default {
 
     .toolbar { margin:1em auto; }
     .toolbar.text-right { text-align: right; }
-}
-
-.cropThumbnailSettings {
-  h2 { margin-top:3em; }
-  .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
-  .cpt_settings_submit { margin: 1.5em auto; }
-
-
-  .cptSettingsPostList { margin: 0;
-    &::after { content:""; display: block; clear:both; }
-    &>li { padding:0 4px 4px 0; box-sizing: border-box; margin: 0;
-      @media(min-width:760px) { width: 33.333%; float:left; }
-    }
-    section { border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 1em; 
-      h3 { margin-top:0; overflow: hidden; text-overflow: ellipsis; }
-      & ul { margin: 1em 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
-    }
-  }
-  .cptSettingsPostListDescription { text-align: center; font-size:1.2em; padding:1em; margin:0 0 4px; border: 1px solid rgba(0,0,0,0.1); }
-
-  .form-table th,
-  .form-table td { padding-top:0; padding-bottom:0; }
+    h2 { margin-top:3em; }
 }
 </style>

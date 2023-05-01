@@ -52,8 +52,9 @@ class RestSettings {
 	}
 
 	public static function rest_status() {
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$result = [
-			'options' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions(),
+			'options' => $options,
 			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),
 			'image_sizes' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes(),
 			'lang' => [
@@ -75,8 +76,12 @@ class RestSettings {
 					'hide_on_post_type' => esc_js(__('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails'))
 				],
 				'developer_settings' => [
-					'enable_js_debug' => esc_js(__('Enable JS-Debug.','crop-thumbnails')),
-					'enable_data_debug' => esc_js(__('Enable Data-Debug.','crop-thumbnails')),
+					'enable_debug_js' => esc_js(__('Enable JS-Debug.','crop-thumbnails')),
+					'enable_debug_data' => esc_js(__('Enable Data-Debug.','crop-thumbnails')),
+				],
+				'paypal_info' => [
+					'headline' => esc_js(__('Support the plugin author','crop-thumbnails')),
+					'text' => esc_js(__('You can support the plugin author (and let him know you love this plugin) by donating via Paypal. Thanks a lot!','crop-thumbnails')),
 				]
 			]
 		];

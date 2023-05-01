@@ -37,38 +37,12 @@ class SettingsScreen {
 	}
 
 	public function optionsPage() { ?>
-		<div class="wrap cropThumbnailSettings">
-		<div id="icon-options-general" class="icon32"><br /></div>
-		<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
+		<div class="wrap cropThumbnailSettingsPage">
+			<div id="icon-options-general" class="icon32"><br /></div>
+			<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
 
 			<div id="<?php echo self::$cssPrefix ?>settingsscreen">
 				<cpt-settingsscreen settings="<?php echo esc_attr(json_encode($settings)) ?>"></cpt-settingsscreen>
-			</div>
-			
-			<?php /*
-			do_settings_sections('page1'); ?>
-			
-			<div class="<?php echo self::$cssPrefix ?>submit">
-				<input name="Submit" type="submit" value="<?php esc_attr_e('Save Changes','crop-thumbnails'); ?>" class="button-primary" />
-			</div>
-			*/
-			?>
-
-			<div class="<?php echo self::$cssPrefix; ?>paypal">
-				<h3><?php esc_html_e('Support the plugin author','crop-thumbnails') ?></h3>
-				<p><?php esc_html_e('You can support the plugin author (and let him know you love this plugin) by donating via Paypal. Thanks a lot!','crop-thumbnails'); ?></p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-					<input type="hidden" name="cmd" value="_donations">
-					<input type="hidden" name="business" value="volkmar.kantor@gmx.de">
-					<input type="hidden" name="lc" value="DE">
-					<input type="hidden" name="item_name" value="Volkmar Kantor - totalmedial.de">
-					<input type="hidden" name="item_number" value="crop-thumbnails">
-					<input type="hidden" name="no_note" value="0">
-					<input type="hidden" name="currency_code" value="EUR">
-					<input type="hidden" name="bn" value="PP-DonationsBF:btn_donateCC_LG.gif:NonHostedGuest">
-					<input type="image" src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal.">
-					<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-				</form>
 			</div>
 		</div>
 		<?php

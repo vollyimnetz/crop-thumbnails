@@ -4,14 +4,14 @@
 
         <p>
             <label>
-                <input type="checkbox" value="1" />
-                {{settings.lang.developer_settings.enable_js_debug}}
+                <input type="checkbox" v-model="form.enable_debug_js" />
+                {{settings.lang.developer_settings.enable_debug_js}}
             </label>
         </p>
         <p>
             <label>
-                <input type="checkbox" value="1" />
-                {{settings.lang.developer_settings.enable_data_debug}}
+                <input type="checkbox" v-model="form.enable_debug_data" />
+                {{settings.lang.developer_settings.enable_debug_data}}
             </label>
         </p>
 
@@ -20,28 +20,39 @@
         <div v-if="result==='success'">{{settings.lang.general.successful_saved}}</div>
 
         <div>
-            <button type="button" class="button-secondary startTest" @click="doSave">{{settings.lang.general.save_changes}}</button>
+            <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
         </div>
     </div>
 </template>
 
 <script>
-import { saveDeveloperSettings } from './api';
+import { saveDeveloperSettings, transformToBoolValue } from './api';
 export default {
     props: {
         settings: { required:true, type:Object },
     },
+    mounted() { this.doSetup(); },
     data: () => ({
         loading: false,
+        form: {
+            enable_debug_js: false,
+            enable_debug_data: false,
+        },
         error: false,
         result: null,//may be "error" or "success"
     }),
     methods: {
+        doSetup() {
+            if(this.settings.options) {
+                this.form.enable_debug_data = transformToBoolValue(this.settings.options.debug_data)
+                this.form.enable_debug_js = transformToBoolValue(this.settings.options.debug_js)
+            }
+        },
         doSave() {
             if(this.loading) return;
             this.loading = true;
             this.result = null;
-            saveDeveloperSettings()
+            saveDeveloperSettings(this.form)
                 .then(response => {
                     this.result = 'success';
                 })
