@@ -25,7 +25,7 @@
                     <ul class="cptImageSizes">
                         <li v-for="imageSize in postType.imageSizes" :key="imageSize.id">
                             <label>
-                                <input type="checkbox" v-model="imageSize.active" />
+                                <input type="checkbox" v-model="imageSize.hidden" />
                                 <span class="name">{{imageSize.name}}</span>
                                 <span class="defaultName" v-if="imageSize.name!==imageSize.id">({{imageSize.id}})</span>
                             </label>
@@ -80,7 +80,7 @@ export default {
                     postType.imageSizes.push({
                         id: imageSize.id,
                         name: imageSize.name,
-                        active: !!this.isImageSizeHidden(postType.name, imageSize.id),
+                        hidden: !!this.isImageSizeHidden(postType.name, imageSize.id),
                     });
                 }
                 result.push(postType);

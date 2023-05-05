@@ -9,12 +9,13 @@
             </label>
         </p>
 
+        <p v-if="result==='error'">{{result}}</p>
+        <p v-if="result==='success'">{{settings.lang.general.successful_saved}}</p>
+        
         <p>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
         </p>
 
-        <p v-if="result==='error'">{{result}}</p>
-        <p v-if="result==='success'">{{settings.lang.general.successful_saved}}</p>
     </div>
 </template>
 
@@ -43,7 +44,7 @@ export default {
             if(this.loading) return;
             this.loading = true;
             this.result = null;
-            saveUserPermission(form)
+            saveUserPermission(this.form)
                 .then(response => {
                     this.result = 'success';
                 })

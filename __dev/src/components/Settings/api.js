@@ -35,6 +35,14 @@ export const saveDeveloperSettings = (data) => axios({
     headers: { 'X-WP-Nonce': wpApiSettings.nonce }
 });
 
+export const resetSettings = (data) => axios({
+    url:`${wpApiSettings.root}crop_thumbnails/v1/settings/resetSettings`,
+    method: 'POST',
+    data,
+    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+});
+
+
 
 export const transformToBoolValue = value => {
     return value === "1" || value === 1 || value === true || value=== "true";

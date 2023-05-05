@@ -160,8 +160,8 @@ const STUBS = [
                 "hide_on_post_type": "Crop-Thumbnail-Button unter dem Beitragsbild ausblenden?"
             },
             "developer_settings": {
-                "enable_js_debug": "JS-Debug einschalten",
-                "enable_data_debug": "Daten-Debug einschalten"
+                "enable_debug_js": "JS-Debug einschalten",
+                "enable_debug_data": "Daten-Debug einschalten"
             },
             'paypal_info': {
                 'headline' : 'Support the plugin author',

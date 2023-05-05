@@ -68,7 +68,7 @@ if ( has_post_thumbnail() ) {
 
 = How to use this plugin on ACF taxonomy-images
 The "Adavanced Custom Fields" plugin has a functionality to add images to taxonomies. To add cropping functionality on these images you have to add a small code-snippet to your functions.php
-[Have a look on the github readme-page for details.](https://github.com/vollyimnetz/crop-thumbnails#filter-crop_thumbnails_activat_on_adminpages)
+[Have a look on the github readme-page for details.](https://github.com/vollyimnetz/crop-thumbnails#filter-crop_thumbnails_activate_on_adminpages)
 
 = I've cropped the image, but the new version do not appear in the frontend. =
 If you had viewed your image on the site before, your browser has cached the image. You can hard refresh the page by hitting:
@@ -124,6 +124,12 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.7.0 =
+* refactored backend settings
+* Writing error at filter corrected (crop_thumbnails_activat_on_adminpages -> crop_thumbnails_activate_on_adminpages) for compatibility purpose the old name is still working
+* add option to include the plugins javascript files on all admin pages
+* no longer include jcrop style or script
+
 = 1.6.0 =
 * change crop library (now using https://advanced-cropper.github.io/vue-advanced-cropper)
 * revert php requirements back to 7.4

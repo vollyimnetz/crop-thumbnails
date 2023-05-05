@@ -5,6 +5,8 @@ namespace crop_thumbnails;
  * Rest operations of the settings screen
  */
 class RestSettings {
+	const OPTIONS_KEY = 'crop-post-thumbs';
+
 	public static function init() {
 		add_action( 'rest_api_init', [self::class, 'initRest']);
 	}
@@ -41,6 +43,12 @@ class RestSettings {
 			'schema' => null,
 			'permission_callback' => [self::class, 'checkRestPermission']
 		]);
+		register_rest_route( 'crop_thumbnails/v1', 'settings/resetSettings', [
+			'methods' => 'POST',
+			'callback' => [self::class, 'rest_resetSettings'],
+			'schema' => null,
+			'permission_callback' => [self::class, 'checkRestPermission']
+		]);
 	}
 	
 	public static function checkRestPermission() {
@@ -51,8 +59,24 @@ class RestSettings {
 		return true;
 	}
 
+	public static function getOptions() {
+		return get_option(self::OPTIONS_KEY);
+	}
+
+	public static function setOptions($options) {
+		update_option(self::OPTIONS_KEY, $options, false);
+	}
+
+	public static function deleteOptions() {
+		delete_option(self::OPTIONS_KEY);
+	}
+
+	public static function rest_resetSettings() {
+		self::deleteOptions();
+	}
+
 	public static function rest_status() {
-		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		$options = self::getOptions();
 		$result = [
 			'options' => $options,
 			'post_types' => $GLOBALS['CROP_THUMBNAILS_HELPER']->getPostTypes(),
@@ -78,6 +102,9 @@ class RestSettings {
 				'developer_settings' => [
 					'enable_debug_js' => esc_js(__('Enable JS-Debug.','crop-thumbnails')),
 					'enable_debug_data' => esc_js(__('Enable Data-Debug.','crop-thumbnails')),
+					'include_js_on_all_admin_pages' => esc_js(__('Include plugins javascript on all admin pages (normally not needed, but usefull if you want to add the functionality also i.e. on categories).')),
+					'reset_settings' => esc_js(__('Reset all plugin settings','crop-thumbnails')),
+					'confirm_settings_reset' => esc_js(__('Are you sure, you want to reset all plugin settings?','crop-thumbnails')),
 				],
 				'paypal_info' => [
 					'headline' => esc_js(__('Support the plugin author','crop-thumbnails')),
@@ -89,18 +116,64 @@ class RestSettings {
 	}
 
 	public static function rest_postTypes(\WP_REST_Request $request) {
-		$input = $request->get_params();
-		return ['OK' => $input];
+		try {
+			$postTypes = $request->get_params();
+			$newOptions = self::getOptions();
+
+			$newOptions['hide_post_type'] = [];
+			$newOptions['hide_size'] = [];
+			if(!empty($postTypes)) foreach($postTypes as $postType) {
+				if($postType['hidden']===true) $newOptions['hide_post_type'][ $postType['name'] ] = "1";
+
+				if(!empty($postType['imageSizes'])) foreach($postType['imageSizes'] as $postImageSizes) {
+					if($postImageSizes['hidden']===true) {
+						if(empty( $newOptions['hide_size'][ $postType['name'] ] )) $newOptions['hide_size'][ $postType['name'] ] = [];
+						$newOptions['hide_size'][ $postType['name'] ][ $postImageSizes['id'] ] = "1";
+					}
+				}
+			}
+			self::setOptions($newOptions);
+
+			return ['input' => $postTypes, 'newOptions' => $newOptions];
+		} catch (\Throwable $th) {
+			return new \WP_REST_Response(['error' => $th->getMessage()], 423);// something went wrong
+		}
 	}
 
 	public static function rest_developerSettings(\WP_REST_Request $request) {
-		$input = $request->get_params();
-		return ['OK' => $input];
+		try {
+			$input = $request->get_params();
+			$newOptions = self::getOptions();
+
+			unset($newOptions['debug_js']);
+			unset($newOptions['debug_data']);
+			unset($newOptions['include_js_on_all_admin_pages']);
+			
+			if($input['enable_debug_js']) $newOptions['debug_js'] = 1;
+			if($input['enable_debug_data']) $newOptions['debug_data'] = 1;
+			if($input['include_js_on_all_admin_pages']) $newOptions['include_js_on_all_admin_pages'] = 1;
+
+			self::setOptions($newOptions);
+
+			return ['input' => $input, 'newOptions' => $newOptions];
+		} catch (\Throwable $th) {
+			return new \WP_REST_Response(['error' => $th->getMessage()], 423);// something went wrong
+		}
 	}
 
 	public static function rest_userPermission(\WP_REST_Request $request) {
-		$input = $request->get_params();
-		return ['OK' => $input];
+		try {
+			$input = $request->get_params();
+			$newOptions = self::getOptions();
+
+			unset($newOptions['user_permission_only_on_edit_files']);
+			
+			if($input['user_permission_only_on_edit_files']) $newOptions['user_permission_only_on_edit_files'] = 1;
+
+			return ['input' => $input, 'newOptions' => $newOptions];
+		} catch (\Throwable $th) {
+			return new \WP_REST_Response(['error' => $th->getMessage()], 423);// something went wrong
+		}
 	}
 
 	public static function rest_pluginTest() {
