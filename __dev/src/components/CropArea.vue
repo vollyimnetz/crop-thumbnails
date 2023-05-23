@@ -16,6 +16,18 @@
             @change="change"
             @ready="imageLoaded"
         ></cropper>
+        <div>
+            <button v-if="options" type="button" @click="moveY(-10)">-- Y</button>
+            <button v-if="options" type="button" @click="moveY(-1)">- Y</button>
+            <button v-if="options" type="button" @click="moveY(1)">+ Y</button>
+            <button v-if="options" type="button" @click="moveY(10)">++ Y</button>
+        </div>
+        <div>
+            <button v-if="options" type="button" @click="moveX(-10)">-- X</button>
+            <button v-if="options" type="button" @click="moveX(-1)">- X</button>
+            <button v-if="options" type="button" @click="moveX(1)">+ X</button>
+            <button v-if="options" type="button" @click="moveX(10)">++ X</button>
+        </div>
     </div>
 </template>
 
@@ -33,10 +45,11 @@ export default {
         options: { required:false, type: Object, default:null },
         largeHandles: { required:false, type: Boolean, default:false },
     },
-    emits: [ 'change', 'ready' ],
+    emits: [ 'change', 'ready', 'cancel' ],
     mounted() { this.doSetup(); },
     data: () =>({
-        loading:true
+        loading:true,
+        keyListener: null,
     }),
     computed: {
         loadingStyle() {
@@ -70,6 +83,46 @@ export default {
         }
     },
     methods: {
+        moveY(value) {
+            const { coordinates, image } = this.$refs.cropper.getResult();
+            if(value === -1) {//do small step
+                let stepSize = 10;
+                coordinates.top = (coordinates.top-stepSize < 0) ? 0 : coordinates.top-stepSize;
+            }
+            if(value === -10) {//do large step
+                let stepSize = 40;
+                coordinates.top = (coordinates.top-stepSize < 0) ? 0 : coordinates.top-stepSize;
+            }
+            if(value === 1) {//do small step
+                let stepSize = 10;
+                coordinates.top = (coordinates.top+stepSize > image.height) ? image.height : coordinates.top+stepSize;
+            }
+            if(value === 10) {//do large step
+                let stepSize = 40;
+                coordinates.top = (coordinates.top+stepSize > image.height) ? image.height : coordinates.top+stepSize;
+            }
+            this.$refs.cropper.setCoordinates(coordinates);
+        },
+        moveX(value) {
+            const { coordinates, image } = this.$refs.cropper.getResult();
+            if(value === -1) {//do small step
+                let stepSize = 10;
+                coordinates.left = (coordinates.left-stepSize < 0) ? 0 : coordinates.left-stepSize;
+            }
+            if(value === -10) {//do large step
+                let stepSize = 40;
+                coordinates.left = (coordinates.left-stepSize < 0) ? 0 : coordinates.left-stepSize;
+            }
+            if(value === 1) {//do small step
+                let stepSize = 10;
+                coordinates.left = (coordinates.left+stepSize > image.width) ? image.width : coordinates.left+stepSize;
+            }
+            if(value === 10) {//do large step
+                let stepSize = 40;
+                coordinates.left = (coordinates.left+stepSize > image.width) ? image.width : coordinates.left+stepSize;
+            }
+            this.$refs.cropper.setCoordinates(coordinates);
+        },
         imageLoaded() {
             this.$emit('ready');
             this.loading = false;
@@ -84,8 +137,9 @@ export default {
         },
         applyOptions() {
             if(!this.options) {
-                //do nothing
+                this.removeKeyboadShortcuts();
             } else {
+                this.addKeyboadShortcuts();
                 this.$refs.cropper.setCoordinates({
                     width: this.options.trueSize[0], height: this.options.trueSize[1],
                     left: this.options.setSelect[0], top: this.options.setSelect[1],
@@ -94,7 +148,45 @@ export default {
             setTimeout(() => {
                 this.$refs.cropper.refresh();
             },10);
-        }
+        },
+        addKeyboadShortcuts() {
+            document.addEventListener('keydown', this.handleKeyboadShortcuts);
+        },
+        removeKeyboadShortcuts() {
+            document.removeEventListener( 'keydown', this.handleKeyboadShortcuts);
+        },
+        handleKeyboadShortcuts(event) {
+            switch(event.key) {
+                case 'ArrowUp':
+                    // Handle the up key press
+                    this.moveY(-1);
+                    event.preventDefault();
+                    break;
+                case 'ArrowDown':
+                    // Handle the down key press
+                    this.moveY(1);
+                    event.preventDefault();
+                    break;
+                case 'ArrowLeft':
+                    // Handle the left key press
+                    this.moveX(-1);
+                    event.preventDefault();
+                    break;
+                case 'ArrowRight':
+                    this.moveX(1);
+                    // Handle the right key press
+                    event.preventDefault();
+                    break;
+                case 'Escape':
+                    // Handle the escape key press
+                    this.$emit('cancel');
+                    event.preventDefault();
+                    break;
+                default:
+                    // Ignore other key presses
+                    return;
+            }
+        },
     },
 };
 </script>
