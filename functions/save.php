@@ -301,7 +301,7 @@ class CptSaveThumbnail {
 		
 		do_action('crop_thumbnails_after_save_new_thumb', $fullFilePath, $imageSizeName, $imageMetadata['sizes'][$imageSizeName] );
 		
-		return apply_filters('crop_thumbnails_create_new_metadata', $imageMetadata, $imageSizeName, $croppedInput->sourceImageId );
+		return apply_filters('crop_thumbnails_create_new_metadata', $imageMetadata, $imageSizeName, $currentFilePathInfo, $croppedWidth, $croppedHeight, $croppingInput );
 	}
 
 	/**
