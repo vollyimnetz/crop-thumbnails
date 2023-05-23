@@ -76,7 +76,7 @@ export default {
             this.$refs.cropper.refresh();
         },
         doSetup() {
-            window.test_crop_thumbnails = this.$refs.cropper;
+            window.crop_thumbnails_cropper = this.$refs.cropper;
         },
         change({ coordinates }) {
             this.$emit('change', coordinates);

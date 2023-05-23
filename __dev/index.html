@@ -20,7 +20,17 @@
   </head>
   <body class="settings_page_page-cpt">
     <h1>Testpage</h1>
+    <button class="cropThumbnailsLink" style="margin:1em 0;" data-cropthumbnail='{"image_id": 123, "viewmode":"single"}' title="Test Dialog">open Modal</button>
     
+    
+    <script>
+      window.ajaxurl = '/fake-ajax-url';
+      </script>
+    <div id="cpt_crop_editor" style="background-color: #fff; border:1px solid black; height: 90vh;">
+      <crop-editor image-id="123" posttype="post"></crop-editor>
+    </div>
+
+    <hr />
 
     <script>
       window.wpApiSettings = {
@@ -35,17 +45,11 @@
     </div>
 
 
+
     <!--
-    <script>
-      window.ajaxurl = '/fake-ajax-url';
-    </script>
-    <div id="cpt_crop_editor" style="background-color: #fff; border:1px solid black; height: 90vh;">
-      <crop-editor image-id="123" posttype="post"></crop-editor>
-    </div>
     -->
 
-    <button class="cropThumbnailsLink" style="margin-top:5em;" data-cropthumbnail='{"image_id": 123, "viewmode":"single"}' title="Test Dialog">open Modal</button>
-    
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
