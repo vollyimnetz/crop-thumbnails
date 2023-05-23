@@ -92,6 +92,26 @@ Provided data:
 * `$imageMetadata['sizes'][$imageSizeName]`
 
 
+### FILTER `crop_thumbnails_after_save_new_thumb`
+This filter is called for every image-size after the crop of the image has been performed. It contains all of the modified metadata. With `$imageMetadata['sizes'][$imageSizeName]` you may access the last changed value.
+
+Parameters:
+* `$imageMetadata` (filter result)
+* `$imageSizeName`
+* `$currentFilePathInfo`
+* `$croppedWidth`
+* `$croppedHeight`
+* `$croppingInput` - you may want to use `$croppingInput->sourceImageId`
+
+
+### FILTER `crop_thumbnails_before_update_metadata`
+
+The filter is called right before the attachement metadata are saved.
+
+Parameters:
+* `$imageMetadata`
+* `$input->sourceImageId` - the id of the attachement
+
 
 ### FILTER `crop_thumbnails_editor_printratio`
 
@@ -137,15 +157,6 @@ Parameters:
 * `$h` - The height of the thumbnail size
 * `$crop` - If true the thumbnail size is cropped
 * `$imageMetadata` - The Wordpress image-metadata array (added in version 1.2.6)
-
-
-### FILTER `crop_thumbnails_before_update_metadata`
-
-The filter is called right before the attachement metadata are saved.
-
-Parameters:
-* `$imageMetadata`
-* `$input->sourceImageId` - the id of the attachement
 
 
 
