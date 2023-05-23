@@ -24,10 +24,13 @@
         <p v-if="result==='error'">{{result}}</p>
         <p v-if="result==='success'">{{settings.lang.general.successful_saved}}</p>
 
-        <div>
+        <p>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
+            <span class="cptLoadingSpinner small" v-if="loading"></span>
+        </p>
+        <p>
             <button type="button" class="button-secondary doResetBtn" @click="doResetSettings">{{settings.lang.developer_settings.reset_settings}}</button>
-        </div>
+        </p>
     </div>
 </template>
 

@@ -14,8 +14,8 @@
         
         <p>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
+            <span class="cptLoadingSpinner small" v-if="loading"></span>
         </p>
-
     </div>
 </template>
 

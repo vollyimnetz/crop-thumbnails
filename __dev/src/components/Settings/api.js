@@ -22,7 +22,7 @@ export const savePostTypeSettings = (data) => axios({
 });
 
 export const saveUserPermission = (data) => axios({
-    url:`${wpApiSettings.root}crop_thumbnails/v1/settings/userPermissions`,
+    url:`${wpApiSettings.root}crop_thumbnails/v1/settings/userPermission`,
     method: 'POST',
     data,
     headers: { 'X-WP-Nonce': wpApiSettings.nonce }

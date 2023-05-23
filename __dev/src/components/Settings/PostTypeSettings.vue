@@ -12,6 +12,7 @@
         </p>
 
         <div class="toolbar text-right">
+            <div class="cptLoadingSpinner small" v-if="loading"></div>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
         </div>
 
@@ -41,6 +42,7 @@
         </ul>
 
         <div class="toolbar text-right">
+            <div class="cptLoadingSpinner small" v-if="loading"></div>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
         </div>
     </div>
@@ -57,7 +59,8 @@ export default {
     mounted() { this.doSetup(); },
     components: {},
     data:() => ({
-        form:null
+        loading: false,
+        form: null
     }),
     methods: {
         doSetup() {
@@ -100,6 +103,8 @@ export default {
             return transformToBoolValue(this.settings.options.hide_size[postType][imageSize]);
         },
         doSave() {
+            if(this.loading) return;
+            this.loading = true;
             savePostTypeSettings(this.form)
                 .then(response => {
                     this.result = response.data

@@ -157,6 +157,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   animation-name: cptRotateForever;
   animation-timing-function: linear; 
 }
+.cptLoadingSpinner.small { vertical-align: middle; height: 20px; width: 20px; margin:0 1em; }
 @keyframes cptRotateForever {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

@@ -169,6 +169,8 @@ class RestSettings {
 			unset($newOptions['user_permission_only_on_edit_files']);
 			
 			if($input['user_permission_only_on_edit_files']) $newOptions['user_permission_only_on_edit_files'] = 1;
+			
+			self::setOptions($newOptions);
 
 			return ['input' => $input, 'newOptions' => $newOptions];
 		} catch (\Throwable $th) {

@@ -2,7 +2,7 @@
     <div class="cpt_PaypalInfo">
         <h3>{{settings.lang.paypal_info.headline}}</h3>
         <p>{{settings.lang.paypal_info.text}}</p>
-        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
             <input type="hidden" name="cmd" value="_donations">
             <input type="hidden" name="business" value="volkmar.kantor@gmx.de">
             <input type="hidden" name="lc" value="DE">
