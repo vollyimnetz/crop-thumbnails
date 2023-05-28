@@ -139,9 +139,12 @@ jQuery(document).ready(function($) {
 		featuredImageLinkButton+= '</a>';
 		featuredImageLinkButton+= '</p>';
 		baseElem.find('.inside').after( $(featuredImageLinkButton) );
+		console.log('handleFeaturedImageBox', wp.media.featuredImage.get());
+
 		
 		
 		function updateCropFeaturedImageButton(currentId) {
+			console.log('updateCropFeaturedImageButton', currentId);
 			var wrap = baseElem.find('.cropFeaturedImageWrap');
 			
 			if(currentId===-1) {
@@ -152,7 +155,7 @@ jQuery(document).ready(function($) {
 			var link = wrap.find('a');
 			var data = link.data('cropthumbnail');
 			data.image_id = currentId;
-			link.data('cropthumbnail',data);
+			link.attr('data-cropthumbnail', JSON.stringify(data));
 		}
 		
 		wp.media.featuredImage.frame().on( 'select', function(){

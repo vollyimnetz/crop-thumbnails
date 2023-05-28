@@ -62,7 +62,7 @@ export default {
         holdTimeout_right: null,
         holdTimeout_up: null,
         holdTimeout_down: null,
-        
+
         repeatInterval_left: null,
         repeatInterval_right: null,
         repeatInterval_up: null,
@@ -296,7 +296,7 @@ export default {
     &.noOptions .vue-advanced-cropper::after { content:""; display: block; position: absolute; top:0; left:0; width: 100%; height: 100%; background: rgba(255,255,255,0.3); }
 
     --colorNormal: #539fea;
-    --colorBg: rgba(0,0,0,.2);
+    --colorBg: rgba(255,255,255,.2);
     --colorHover: #f59500;
     --handleSize: 25px;
     &.largeHandles {
@@ -305,13 +305,14 @@ export default {
     .vue-simple-handler::before,
     .vue-simple-handler::after { content:""; display:block; position:absolute; border:6px solid var(--colorBg); height: 100%; width: 100%; top:0; left:0; z-index:1; box-sizing: border-box; }
     .vue-simple-handler::after { border:4px solid var(--colorNormal); top:0; left:0; z-index:2; }
-    .vue-simple-handler--east-north::before { border-left:0; border-bottom:0; top:2px; left:-2px; }
+    .vue-simple-handler::before { width: calc(100% + 2px); height: calc(100% + 2px); }
+    .vue-simple-handler--east-north::before { border-left:0; border-bottom:0; top:2px; left:-4px; }
     .vue-simple-handler--east-north::after { border-left:0; border-bottom:0; top:3px; left:-3px; }
     .vue-simple-handler--west-north::before { border-right:0; border-bottom:0; top:2px; left:2px; }
     .vue-simple-handler--west-north::after { border-right:0; border-bottom:0; top:3px; left:3px; }
-    .vue-simple-handler--east-south::before { border-left:0; border-top:0; top:-2px; left:-2px; }
+    .vue-simple-handler--east-south::before { border-left:0; border-top:0; top:-4px; left:-4px; }
     .vue-simple-handler--east-south::after { border-left:0; border-top:0; top:-3px; left:-3px; }
-    .vue-simple-handler--west-south::before { border-right:0; border-top:0; top:-2px; left:2px; }
+    .vue-simple-handler--west-south::before { border-right:0; border-top:0; top:-4px; left:2px; }
     .vue-simple-handler--west-south::after { border-right:0; border-top:0; top:-3px; left:3px; }
     .vue-simple-handler--hover::after { border-color: #f59500; }
 
@@ -319,7 +320,7 @@ export default {
     .vue-simple-handler--east-north,
     .vue-simple-handler--west-north,
     .vue-simple-handler--east-south,
-    .vue-simple-handler--west-south { border-color:#539fea; border-width: 0; height: calc( var(--handleSize) - 10px); width: calc( var(--handleSize) - 10px); }
+    .vue-simple-handler--west-south { border-color:#539fea; border-width: 0; height: calc( var(--handleSize) - 10px); width: calc( var(--handleSize) - 10px); opacity: 1; }
     .vue-handler-wrapper--north,
     .vue-handler-wrapper--south,
     .vue-handler-wrapper--east,
