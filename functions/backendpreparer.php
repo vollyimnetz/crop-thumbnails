@@ -139,12 +139,9 @@ jQuery(document).ready(function($) {
 		featuredImageLinkButton+= '</a>';
 		featuredImageLinkButton+= '</p>';
 		baseElem.find('.inside').after( $(featuredImageLinkButton) );
-		console.log('handleFeaturedImageBox', wp.media.featuredImage.get());
-
 		
 		
 		function updateCropFeaturedImageButton(currentId) {
-			console.log('updateCropFeaturedImageButton', currentId);
 			var wrap = baseElem.find('.cropFeaturedImageWrap');
 			
 			if(currentId===-1) {
