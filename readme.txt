@@ -130,6 +130,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 * Add new filter (crop_thumbnails_create_new_metadata) after processing the metadata of a certain imagesize.
 * add backend setting to include the plugins javascript files on all admin pages
 * no longer include jcrop style or script
+* improved visibility of corner handles
+* reintroduce keyboard-shortcuts on selection (left, right, up, down to move selection, ESC to leave the selection)
 
 = 1.6.0 =
 * change crop library (now using https://advanced-cropper.github.io/vue-advanced-cropper)
