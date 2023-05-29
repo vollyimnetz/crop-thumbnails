@@ -92,6 +92,26 @@ Provided data:
 * `$imageMetadata['sizes'][$imageSizeName]`
 
 
+### FILTER `crop_thumbnails_after_save_new_thumb`
+This filter is called for every image-size after the crop of the image has been performed. It contains all of the modified metadata. With `$imageMetadata['sizes'][$imageSizeName]` you may access the last changed value.
+
+Parameters:
+* `$imageMetadata` (filter result)
+* `$imageSizeName`
+* `$currentFilePathInfo`
+* `$croppedWidth`
+* `$croppedHeight`
+* `$croppingInput` - you may want to use `$croppingInput->sourceImageId`
+
+
+### FILTER `crop_thumbnails_before_update_metadata`
+
+The filter is called right before the attachement metadata are saved.
+
+Parameters:
+* `$imageMetadata`
+* `$input->sourceImageId` - the id of the attachement
+
 
 ### FILTER `crop_thumbnails_editor_printratio`
 
@@ -139,15 +159,6 @@ Parameters:
 * `$imageMetadata` - The Wordpress image-metadata array (added in version 1.2.6)
 
 
-### FILTER `crop_thumbnails_before_update_metadata`
-
-The filter is called right before the attachement metadata are saved.
-
-Parameters:
-* `$imageMetadata`
-* `$input->sourceImageId` - the id of the attachement
-
-
 
 ### FILTER `crop_thumbnails_image_sizes`
 
@@ -174,13 +185,13 @@ function my_custom_sizes( $sizes ) {
 }
 ```
 
-### FILTER `crop_thumbnails_activat_on_adminpages`
+### FILTER `crop_thumbnails_activate_on_adminpages`
 
 Filter for adding/removing the plugins js/css files from a certain admin-page. If, for example, you have a ACF-driven image-input field on a taxonomy page. The crop thumbnails plugin will not work unless you add the following lines in your functions.php (else the js/css will not be included on the taxonomy edit-page and the plugin therefore can not work).
 
 Example
 ```php
-add_filter('crop_thumbnails_activat_on_adminpages', function($oldValue) {
+add_filter('crop_thumbnails_activate_on_adminpages', function($oldValue) {
 	global $pagenow;
 	return $oldValue || $pagenow==='term.php';
 	//for adding taxonomy edit-page to the list of pages where crop-thumbnails work

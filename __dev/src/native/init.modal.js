@@ -7,7 +7,7 @@ window.CROP_THUMBNAILS_VUE.modal = function() {
 	var that = this;
 	
 	function removeModal() {
-		$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').unbind('click');
+		$('#cpt_Modal .cpt_ModalClose, #cpt_Modal').off('click');
 		$('#cpt_Modal').remove();
 		$('body').removeClass('cpt_ModalIsOpen');
 	}
@@ -67,7 +67,7 @@ window.CROP_THUMBNAILS_VUE.modal = function() {
 		
 		
 		$('body').prepend(modalHtml).addClass('cpt_ModalIsOpen');
-		$('#cpt_Modal .cpt_ModalClose').click(that.close);
+		$('#cpt_Modal .cpt_ModalClose').on('click', that.close);
 		$('#cpt_Modal').on('touchstart mousedown',that.closeByBackground);
 		document.addEventListener('keydown', that.closeByEscKey, true);
 		

@@ -24,7 +24,7 @@ class CropPostThumbnailsBackendPreparer {
 	 * 
 	 * How to enhance the result.
 	 * <code>
-	 * add_filter('crop_thumbnails_activat_on_adminpages', function($oldValue) {
+	 * add_filter('crop_thumbnails_activate_on_adminpages', function($oldValue) {
 	 * 	global $pagenow;
 	 * 	return $oldValue || $pagenow==='term.php';//for adding taxonomy edit-page to the list of pages where crop-thumbnails work
 	 * });
@@ -32,12 +32,16 @@ class CropPostThumbnailsBackendPreparer {
 	 */
 	protected function shouldCropThumbnailsBeActive() {
 		global $pagenow;
+		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$result = ($pagenow == 'post.php'
 			|| $pagenow == 'post-new.php'
 			|| $pagenow == 'page.php'
 			|| $pagenow == 'page-new.php'
-			|| $pagenow == 'upload.php');
-		$result = apply_filters('crop_thumbnails_activat_on_adminpages',$result);
+			|| $pagenow == 'upload.php'
+			|| !empty($options['include_js_on_all_admin_pages'])
+			);
+		$result = apply_filters('crop_thumbnails_activat_on_adminpages', $result);//leagacy filter with typo error
+		$result = apply_filters('crop_thumbnails_activate_on_adminpages', $result);
 		return $result;
 	}
 	
@@ -47,8 +51,7 @@ class CropPostThumbnailsBackendPreparer {
 	public function adminHeaderCSS() {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
-			wp_enqueue_style('jcrop');
-			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), ['jcrop'], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
 		}
 	}
 	
@@ -58,8 +61,7 @@ class CropPostThumbnailsBackendPreparer {
 	function adminHeaderJS() {
 		global $pagenow;
 		if ($this->shouldCropThumbnailsBeActive()) {
-			wp_enqueue_script( 'jcrop' );
-			wp_enqueue_script( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded','jcrop'], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded'], CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer', [$this,'addLinksToAdmin']);
 		}
 	}
@@ -127,10 +129,10 @@ jQuery(document).ready(function($) {
 		/**
 		 * add link to featured image box
 		 */
-		var baseElem = $('#postimagediv');
+		const baseElem = $('#postimagediv');
 		if(!baseElem.length) { return; }//this is not WordPress < 5
 		
-		var featuredImageLinkButton = '';
+		let featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
 		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>">';
 		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?>';
@@ -140,17 +142,17 @@ jQuery(document).ready(function($) {
 		
 		
 		function updateCropFeaturedImageButton(currentId) {
-			var wrap = baseElem.find('.cropFeaturedImageWrap');
+			const wrap = baseElem.find('.cropFeaturedImageWrap');
 			
 			if(currentId===-1) {
 				wrap.addClass('hidden');
 			} else {
 				wrap.removeClass('hidden');
 			}
-			var link = wrap.find('a');
-			var data = link.data('cropthumbnail');
+			const link = wrap.find('a');
+			const data = JSON.parse( link[0].dataset.cropthumbnail );;
 			data.image_id = currentId;
-			link.data('cropthumbnail',data);
+			link.attr('data-cropthumbnail', JSON.stringify(data));
 		}
 		
 		wp.media.featuredImage.frame().on( 'select', function(){
@@ -203,9 +205,9 @@ jQuery(document).ready(function($) {
 			} 
 		}
 		if(typeof wp.hooks !== 'undefined' && typeof wp.hooks.addFilter !== 'undefined') {
-			wp.hooks.addFilter( 
-				'editor.PostFeaturedImage', 
-				'crop-thumbnails/wrap-post-featured-image', 
+			wp.hooks.addFilter(
+				'editor.PostFeaturedImage',
+				'crop-thumbnails/wrap-post-featured-image',
 				wrapPostFeaturedImage
 			);
 		}	

@@ -1,6 +1,6 @@
 
 import { createApp } from 'vue'
-import SettingsScreen from './../components/SettingsScreen.vue'
+import SettingsScreen from './../components/Settings/SettingsScreen.vue'
 import jQuery from "jquery";
 jQuery(function ($) {
     if($('body.settings_page_page-cpt').length>0) {

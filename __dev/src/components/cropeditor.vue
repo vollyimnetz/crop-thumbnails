@@ -54,7 +54,7 @@
                 <button type="button" class="button cptGenerate" :class="{'button-primary':cropLoaded}" @click="cropThumbnails()" :disabled="!cropLoaded">{{ lang.label_crop }}</button>
                 
                 <div class="cropContainer" v-if="cropImage.url">
-                    <CropArea :baseImage="cropImage" :options="cropOptions" :lang="lang" @change="updateCurrentCrop" @ready="cropAreaLoaded" :largeHandles="largeHandles"></CropArea>
+                    <CropArea :baseImage="cropImage" :options="cropOptions" :lang="lang" @change="updateCurrentCrop" @ready="cropAreaLoaded" @cancel="makeAllInactive()" :largeHandles="largeHandles"></CropArea>
                 </div>
         
                 <div class="selectionInfo" v-if="selectedImageSizes.length>0">

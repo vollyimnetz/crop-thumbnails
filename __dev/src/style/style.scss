@@ -1,34 +1,3 @@
-.cropThumbnailSettings {
-  h2 { margin-top:3em; }
-  .cpt_settings_paypal { border:1px solid #298CBA; border-radius:3px; background-color:#f6f6f6; max-width:30em; padding:0 0.5em; margin:2em 0; text-align:center; }
-  .cpt_settings_submit { margin: 1.5em auto; }
-
-
-  #cpt_quicktest { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding:1em; 
-    strong { display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; text-transform:uppercase; 
-      &.success { background:#00cc00; }
-      &.fails { background:#cc0000; }
-      &.info { background:#008acc; }
-    }
-  }
-
-  .cptSettingsPostList { margin: 0;
-    &::after { content:""; display: block; clear:both; }
-    &>li { padding:0 4px 4px 0; box-sizing: border-box; margin: 0;
-      @media(min-width:760px) { width: 33.333%; float:left; }
-    }
-    section { border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 1em; 
-      h3 { margin-top:0; overflow: hidden; text-overflow: ellipsis; }
-      & ul { margin: 1em 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
-    }
-  }
-  .cptSettingsPostListDescription { text-align: center; font-size:1.2em; padding:1em; margin:0 0 4px; border: 1px solid rgba(0,0,0,0.1); }
-
-  .form-table th,
-  .form-table td { padding-top:0; padding-bottom:0; }
-}
-
-
 
 /**** button icon ****/
 .cropThumbnailsLink .wp-media-buttons-icon::before { content: "\f165"; font: normal 12px/1 dashicons; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -188,6 +157,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   animation-name: cptRotateForever;
   animation-timing-function: linear; 
 }
+.cptLoadingSpinner.small { vertical-align: middle; height: 20px; width: 20px; margin:0 1em; }
 @keyframes cptRotateForever {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

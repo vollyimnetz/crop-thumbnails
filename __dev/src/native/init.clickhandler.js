@@ -4,19 +4,16 @@
  */
 import jQuery from "jquery";
 jQuery(function($) {
-	$(document).on('click', '.cropThumbnailsLink', function(e) {
+	$(document).on('click', '.cropThumbnailsLink', (e, elem) => {
 		e.preventDefault();
-
-		//get the data from the link
-		var data = $(this).data('cropthumbnail');
-
-		var title = $(this).attr('title');
-		var posttype = null;
-		if(data.posttype!==undefined) {
-			posttype = data.posttype;
-		}
 		
-		var modal = new window.CROP_THUMBNAILS_VUE.modal();
+		//get the data from the link
+		const data = JSON.parse( e.target.dataset.cropthumbnail );
+		if(!data) return;
+		const title = e.target.title
+		const posttype = data.posttype!==undefined ? data.posttype : null;
+		
+		const modal = new window.CROP_THUMBNAILS_VUE.modal();
 		modal.open(data.image_id, posttype, title);
 	});
 });
