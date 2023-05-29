@@ -94,7 +94,7 @@ class RestSettings {
 					'text' => esc_js(__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails')),
 				],
 				'posttype_settings' => [
-					'intro_1' => esc_js(__('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type..','crop-thumbnails')),
+					'intro_1' => esc_js(__('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type.','crop-thumbnails')),
 					'intro_2' => esc_js(__('Crop-Thumbnails will only show cropped images. Sizes with no crop will always be hidden.','crop-thumbnails')),
 					'choose_image_sizes' => esc_js(__('Choose the image sizes you do not want to show, if the user uses the button below the featured image box.','crop-thumbnails')),
 					'hide_on_post_type' => esc_js(__('Hide Crop-Thumbnails button below the featured image?','crop-thumbnails'))
@@ -102,7 +102,7 @@ class RestSettings {
 				'developer_settings' => [
 					'enable_debug_js' => esc_js(__('Enable JS-Debug.','crop-thumbnails')),
 					'enable_debug_data' => esc_js(__('Enable Data-Debug.','crop-thumbnails')),
-					'include_js_on_all_admin_pages' => esc_js(__('Include plugins javascript on all admin pages (normally not needed, but usefull if you want to add the functionality also i.e. on categories).')),
+					'include_js_on_all_admin_pages' => esc_js(__('Include plugins javascript on all admin pages (normally not needed, but usefull if you want to add the functionality also i.e. on categories).','crop-thumbnails')),
 					'reset_settings' => esc_js(__('Reset all plugin settings','crop-thumbnails')),
 					'confirm_settings_reset' => esc_js(__('Are you sure, you want to reset all plugin settings?','crop-thumbnails')),
 				],
