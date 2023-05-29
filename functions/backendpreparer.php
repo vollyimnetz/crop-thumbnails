@@ -129,10 +129,10 @@ jQuery(document).ready(function($) {
 		/**
 		 * add link to featured image box
 		 */
-		var baseElem = $('#postimagediv');
+		const baseElem = $('#postimagediv');
 		if(!baseElem.length) { return; }//this is not WordPress < 5
 		
-		var featuredImageLinkButton = '';
+		let featuredImageLinkButton = '';
 		featuredImageLinkButton+= '<p class="cropFeaturedImageWrap hidden">';
 		featuredImageLinkButton+= '<a class="button cropThumbnailsLink" href="#" data-cropthumbnail=\'{"image_id":'+ parseInt(wp.media.featuredImage.get()) +',"viewmode":"single","posttype":"<?php echo get_post_type(); ?>"}\' title="<?php esc_attr_e('Crop Featured Image','crop-thumbnails') ?>">';
 		featuredImageLinkButton+= '<span class="wp-media-buttons-icon"></span> <?php esc_html_e('Crop Featured Image','crop-thumbnails'); ?>';
@@ -142,15 +142,15 @@ jQuery(document).ready(function($) {
 		
 		
 		function updateCropFeaturedImageButton(currentId) {
-			var wrap = baseElem.find('.cropFeaturedImageWrap');
+			const wrap = baseElem.find('.cropFeaturedImageWrap');
 			
 			if(currentId===-1) {
 				wrap.addClass('hidden');
 			} else {
 				wrap.removeClass('hidden');
 			}
-			var link = wrap.find('a');
-			var data = link.data('cropthumbnail');
+			const link = wrap.find('a');
+			const data = JSON.parse( link[0].dataset.cropthumbnail );;
 			data.image_id = currentId;
 			link.attr('data-cropthumbnail', JSON.stringify(data));
 		}

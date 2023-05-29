@@ -3,7 +3,7 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 5.0
-Tested up to: 6.2.0
+Tested up to: 6.2.2
 Requires PHP: 7.4.0
 Stable tag: 1.7.0
 License: GPL v3
@@ -132,6 +132,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * no longer include jcrop style or script
 * improved visibility of corner handles
 * reintroduce keyboard-shortcuts on selection (left, right, up, down to move selection, ESC to leave the selection)
+* bugfixes and improvements
 
 = 1.6.0 =
 * change crop library (now using https://advanced-cropper.github.io/vue-advanced-cropper)
