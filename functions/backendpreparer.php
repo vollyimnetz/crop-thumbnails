@@ -109,9 +109,6 @@ class CropPostThumbnailsBackendPreparer {
 	 * adds the links into post-types and the media-library
 	 */
 	function addLinksToAdmin() {
-
-
-		
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function($) {

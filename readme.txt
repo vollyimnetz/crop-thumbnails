@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 5.0
 Tested up to: 6.2.2
 Requires PHP: 7.4.0
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.7.1 =
+* fix settings screen not loading
+
 = 1.7.0 =
 * refactored backend settings
 * Typo error at filter corrected (crop_thumbnails_activat_on_adminpages -> crop_thumbnails_activate_on_adminpages) for compatibility purpose the old name is still working
