@@ -7,7 +7,7 @@
                 <button type="button" class="button" :class="{ 'button-primary': type==='user_permissions'}" @click="type='user_permissions'">{{settings.lang.general.nav_user_permissions}}</button>
                 <button type="button" class="button" :class="{ 'button-primary': type==='developer_settings'}" @click="type='developer_settings'">{{settings.lang.general.nav_developer_settings}}</button>
                 <button type="button" class="button" :class="{ 'button-primary': type==='quicktest'}" @click="type='quicktest'">{{settings.lang.general.nav_plugin_test}}</button>
-                <!--<button type="button" class="button" :class="{ 'button-primary': type==='toolkit'}" @click="type='toolkit'">Resize-Toolkit</button>-->
+                <button type="button" class="button" :class="{ 'button-primary': type==='toolkit'}" @click="type='toolkit'">Resize-Toolkit</button>
             </nav>
             <template v-if="type==='post_types_and_sizes'">
                 <PostTypeSettings :settings="settings"></PostTypeSettings>
@@ -33,7 +33,7 @@
 
 <script>
 import PostTypeSettings from './PostTypeSettings.vue';
-import Toolkit from './Toolkit.vue';
+import Toolkit from './Toolkit/Toolkit.vue';
 import QuickTest from './PluginTest.vue';
 import UserPermissions from './UserPermissions.vue';
 import DeveloperSettings from './DeveloperSettings.vue';
@@ -46,7 +46,8 @@ export default {
     mounted() { this.doSetup(); },
     data: () => ({
         loading: false,
-        type: 'post_types_and_sizes',
+        //type: 'post_types_and_sizes',
+        type: 'toolkit',
         settings: null,
     }),
     methods: {

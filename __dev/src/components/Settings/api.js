@@ -43,6 +43,13 @@ export const resetSettings = (data) => axios({
 });
 
 
+export const toolkitBase = () => axios({
+    url:`${wpApiSettings.root}crop_thumbnails/v1/toolkit/base`,
+    method: 'GET',
+    headers: { 'X-WP-Nonce': wpApiSettings.nonce }
+});
+
+
 
 export const transformToBoolValue = value => {
     return value === "1" || value === 1 || value === true || value=== "true";
