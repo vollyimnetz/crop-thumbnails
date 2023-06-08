@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 5.0
 Tested up to: 6.2.2
 Requires PHP: 7.4.0
-Stable tag: 1.7.1
+Stable tag: 1.7.2
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.7.2 =
+* fix php notice on settings screen
+
 = 1.7.1 =
 * fix settings screen not loading
 

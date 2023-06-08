@@ -6,7 +6,7 @@ namespace crop_thumbnails;
  * Plugin URI: https://wordpress.org/extend/plugins/crop-thumbnails/
  * Author: Volkmar Kantor
  * Author URI: https://www.totalmedial.de
- * Version: 1.7.1
+ * Version: 1.7.2
  * Description: The easy way to adjust your cropped image sizes.
  * 
  * 
@@ -28,7 +28,7 @@ namespace crop_thumbnails;
  */
 
 
-define('CROP_THUMBNAILS_VERSION','1.7.1');
+define('CROP_THUMBNAILS_VERSION','1.7.2');
 
 include_once __DIR__.'/functions/enqueuejsmodule.php';
 include_once __DIR__.'/functions/helper.php';
