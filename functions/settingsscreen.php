@@ -38,7 +38,7 @@ class SettingsScreen {
 			<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
 
 			<div id="<?php echo self::$cssPrefix ?>settingsscreen">
-				<cpt-settingsscreen settings="<?php echo esc_attr(json_encode($settings)) ?>"></cpt-settingsscreen>
+				<cpt-settingsscreen></cpt-settingsscreen>
 			</div>
 		</div>
 		<?php
