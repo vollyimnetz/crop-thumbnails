@@ -56,7 +56,10 @@ class CptSaveThumbnail {
 			 */
 			$changedImageName = [];
 			$_processing_error = [];
-			foreach($input->activeImageSizes as $activeImageSize) {
+
+            $imageSizes = apply_filters('crop_thumbnails_active_image_sizes', $input->activeImageSizes);
+
+			foreach($imageSizes as $activeImageSize) {
 				if(!self::isImageSizeValid($activeImageSize,$dbImageSizes)) {
 					self::addDebug("Image size not valid.");
 					continue;
