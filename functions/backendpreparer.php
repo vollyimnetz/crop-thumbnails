@@ -6,7 +6,7 @@ namespace crop_thumbnails;
  */
 class CropPostThumbnailsBackendPreparer {
 	
-	protected $allowedMime = ['image/webp','image/jpeg','image/png'];
+	protected $allowedMime = ['image/webp','image/jpeg','image/jpg','image/png'];
 	
 	public function __construct() {
 		if ( is_admin() ) {
