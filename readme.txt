@@ -126,6 +126,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 == Changelog ==
 = 1.8.0 =
 * add to more filters for controlling what crop-sizes should be available (thanks to https://github.com/wijzijnweb)
+* update frontend libraries
 
 = 1.7.2 =
 * fix php notice on settings screen
