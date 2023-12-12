@@ -193,6 +193,8 @@ class CropPostThumbnailsEditor {
 				
 			}//END froeach
 		}
+
+        $result['imageSizes'] = apply_filters('crop_thumbnails_crop_data_image_sizes', $result['imageSizes']);
 		
 		if(is_array($result['imageSizes'])) $result['imageSizes'] = array_values($result['imageSizes']);
 		return $result;
