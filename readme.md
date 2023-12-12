@@ -4,12 +4,12 @@
 
 ## Installation
 
-The plugin can be installed from the wordpress plugin repository. 
+The plugin can be installed from the wordpress plugin repository.
 
 https://wordpress.org/plugins/crop-thumbnails/
 
 ## How to add custom cropped image-sizes
-This is the default wordpress way to add new image-sizes. 
+This is the default wordpress way to add new image-sizes.
 ```php
 // php
 add_action('after_setup_theme', function() {
@@ -44,9 +44,9 @@ function myCustomPhpFooterCode() {
 	jQuery(function($) {
 		//add a button right beside the add media button - adjust if you want the button somewhere else
 		$('#wp-content-media-buttons').append('<button type="button" id="myCustomButton" class="button">my custom crop button</button>');
-		
+
 		$('#myCustomButton').click(function() {
-			/** 
+			/**
 			 * the ID of the image you want to open
 			 * you may want to read the value by javascript from somewhere
 			 **/
@@ -214,3 +214,12 @@ add_filter('crop_thumbnails_user_permission_check', function($oldValue, $imageId
 	return $oldValue;
 }, 10, 2);
 ```
+
+### FILTER `crop_thumbnails_crop_data_image_sizes`
+
+Filter vor changing the available image sizes in the frontend. You may use this in conjuction with `crop_thumbnails_active_image_sizes` to limit the image-sizes that can be cropped.
+
+
+### FILTER `crop_thumbnails_active_image_sizes`
+
+Filter for changing the available image sizes when processing the images. You may use this in conjuction with `crop_thumbnails_crop_data_image_sizes` to limit the image-sizes that can be cropped.

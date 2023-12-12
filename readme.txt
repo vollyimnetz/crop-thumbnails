@@ -3,9 +3,9 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 5.0
-Tested up to: 6.2.2
+Tested up to: 6.4.2
 Requires PHP: 7.4.0
-Stable tag: 1.7.2
+Stable tag: 1.8.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,7 +30,7 @@ You can use the built in installer and upgrader, or you can install the plugin m
 == Frequently Asked Questions ==
 
 = How to define cropped image sizes? =
-The plugin do not add additional image sizes, it only provides functionality to edit the crop area. 
+The plugin do not add additional image sizes, it only provides functionality to edit the crop area.
 
 You can use "`add_image_size`" inside your functions.php to add additional cropped image sizes. [See "add_image_size" documentation](https://developer.wordpress.org/reference/functions/add_image_size/).
 `
@@ -38,16 +38,16 @@ add_action( 'after_setup_theme', 'my_adjust_image_sizes' );
 function my_adjust_image_sizes() {
     //add an cropped image-size with 800 x 250 Pixels
     add_image_size( 'my-custom-image-size', 800, 250, true );
-    
-    
-    /** 
+
+
+    /**
      * The following image sizes use a dynamic value.
      * USE WITH CARE
      * Also the plugin supports these image-sizes, i do not recommend them!
      **/
     //a dynamic cropped image size with 500 pixel height and the width of the original image
     add_image_size( 'my-dynamic-width-1', 9999, 500, true );
-    
+
     //a dynamic cropped image with the same ratio as the original image and 500 pixel width
     add_image_size( 'my-dynamic-zero-height-1', 500, 0, true );
 }
@@ -55,8 +55,8 @@ function my_adjust_image_sizes() {
 
 After you add the image-size any futher image uploads will produce a cropped image "my-custom-image-size" which you can use in post-loop:
 `
-if ( has_post_thumbnail() ) { 
-    the_post_thumbnail( 'my-custom-image-size' ); 
+if ( has_post_thumbnail() ) {
+    the_post_thumbnail( 'my-custom-image-size' );
 }
 `
 
@@ -124,6 +124,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.8.0 =
+* add to more filters for controlling what crop-sizes should be available (thanks to https://github.com/wijzijnweb)
+
 = 1.7.2 =
 * fix php notice on settings screen
 

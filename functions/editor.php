@@ -14,7 +14,7 @@ class CropPostThumbnailsEditor {
 	function __construct() {
 		add_action('wp_ajax_cpt_cropdata', [$this, 'provideCropData'] );
 	}
-	
+
 	public function provideCropData() {
 		header('Content-Type: application/json; charset=UTF-8');
 		try {
@@ -90,11 +90,11 @@ class CropPostThumbnailsEditor {
 			'headline_selected_image_sizes' => self::fixJsLangStrings(__('Selected image sizes','crop-thumbnails')),
 		];
 	}
-	
+
 	public function getCropData() {
 		global $content_width;//include nasty content_width
 		$content_width = 9999;//override the idioty
-		
+
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
 		$result = [
 			'options' => $options,
@@ -110,13 +110,13 @@ class CropPostThumbnailsEditor {
 			'lang' => self::getLangArray(),
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase())
 		];
-		
+
 		//simple validation
 		if(empty($_REQUEST['imageId'])) {
 			throw new \InvalidArgumentException('Missing Parameter "imageId".');
 		}
 
-		
+
 		$imagePostObj = get_post(intval($_REQUEST['imageId']));
 		if(empty($imagePostObj) || $imagePostObj->post_type!=='attachment') {
 			throw new \InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
@@ -130,28 +130,28 @@ class CropPostThumbnailsEditor {
 		if(!empty($_REQUEST['posttype']) && post_type_exists($_REQUEST['posttype'])) {
 			$result['postTypeFilter'] = $_REQUEST['posttype'];
 		}
-		
+
 		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');
 		$result['sourceImage']['large'] = $this->getUncroppedImageData($imagePostObj->ID, 'large');
 		$result['sourceImage']['medium_large'] = $this->getUncroppedImageData($imagePostObj->ID, 'medium_large');
-		
+
 		//image meta data
 		$meta_raw = wp_get_attachment_metadata($imagePostObj->ID);
 		if(!empty($meta_raw['image_meta'])) {
 			$result['sourceImageMeta'] = $meta_raw['image_meta'];
 		}
-		
+
 		$result['hiddenOnPostType'] = self::shouldBeHiddenOnPostType($options, $result['postTypeFilter']);
 		if(!$result['hiddenOnPostType']) {
-			
+
 			foreach($result['imageSizes'] as $key => $imageSize) {
-				
+
 				if(empty($imageSize['crop']) || $imageSize['width']<0 || $imageSize['height']<0) {
 					//we do not need uncropped image sizes
 					unset($result['imageSizes'][$key]);
 					continue;//to the next entry
 				}
-				
+
 				//DEFINE RATIO AND GCD
 				if($imageSize['width'] ===0 || $imageSize['height']===0) {
 					$ratioData = $this->calculateRatioData($result['sourceImage']['full']['width'],$result['sourceImage']['full']['height']);
@@ -159,10 +159,10 @@ class CropPostThumbnailsEditor {
 					//DEFAULT RATIO - defined by the defined image-size
 					$ratioData = $this->calculateRatioData($imageSize['width'],$imageSize['height']);
 				}
-				
-				
-				
-				
+
+
+
+
 				//DYNAMIC RATIO
 				//the dynamic ratio is defined by the original image size and fix width OR height
 				//@eee https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
@@ -173,8 +173,8 @@ class CropPostThumbnailsEditor {
 					//if you define height with 9999 - it crops for the exect defined width but the full height
 					$ratioData = $this->calculateRatioData($imageSize['width'], $result['sourceImage']['full']['height']);
 				}
-				
-				
+
+
 				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['id']);
 				$jsonDataValues = [
 					'name' => $imageSize['id'],
@@ -188,18 +188,18 @@ class CropPostThumbnailsEditor {
 					'hideByPostType' => self::shouldSizeBeHidden($options,$imageSize,$result['postTypeFilter']),
 					'crop' => true//legacy
 				];
-				
+
 				$result['imageSizes'][$key] = apply_filters('crop_thumbnails_editor_jsonDataValues', $jsonDataValues);
-				
+
 			}//END froeach
 		}
 
-        $result['imageSizes'] = apply_filters('crop_thumbnails_crop_data_image_sizes', $result['imageSizes']);
-		
+		$result['imageSizes'] = apply_filters('crop_thumbnails_crop_data_image_sizes', $result['imageSizes']);
+
 		if(is_array($result['imageSizes'])) $result['imageSizes'] = array_values($result['imageSizes']);
 		return $result;
 	}
-	
+
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
@@ -214,7 +214,7 @@ class CropPostThumbnailsEditor {
 		];
 		return $result;
 	}
-	
+
 	protected function calculateRatioData($width,$height) {
 		$gcd = $this->gcd($width,$height);
 		$result = [
