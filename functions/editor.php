@@ -100,6 +100,7 @@ class CropPostThumbnailsEditor {
 			'options' => $options,
 			'sourceImageId' => null,
 			'sourceImage' => [
+				'original_image' => null,
 				'full' => null,
 				'large' => null,
 				'medium_large' => null,
@@ -131,6 +132,7 @@ class CropPostThumbnailsEditor {
 			$result['postTypeFilter'] = $_REQUEST['posttype'];
 		}
 
+		$result['sourceImage']['original_image'] = $this->getUncroppedImageData($imagePostObj->ID, 'original_image');
 		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');
 		$result['sourceImage']['large'] = $this->getUncroppedImageData($imagePostObj->ID, 'large');
 		$result['sourceImage']['medium_large'] = $this->getUncroppedImageData($imagePostObj->ID, 'medium_large');
@@ -202,6 +204,10 @@ class CropPostThumbnailsEditor {
 
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
+		if($imageSize === 'original_image') {
+			$tmp = getimagesize(wp_get_original_image_path($ID));
+			$orig_img = [ wp_get_original_image_url($ID), $tmp[0], $tmp[1], false ];
+		}
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
 		$result = [
 			'url' => $orig_img[0],

@@ -19,7 +19,7 @@
     "vue-advanced-cropper": "^2.8.8"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.1.0",
+    "@vitejs/plugin-vue": "^5.1.4",
     "sass": "^1.38.2",
     "vite": "^5.0.8"
   }

@@ -1,6 +1,6 @@
 <template>
     <div class="cptEditorInner" v-if="cropData && lang" :class="{ loading }">
-        
+
         <div class="cptWaitingWindow" v-if="loading">
             <div class="msg">
                 {{ lang.waiting }}
@@ -9,17 +9,17 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="cptWaitingWindow cptCropDisabledMsg" v-if="cropData.hiddenOnPostType">
             <div class="msg">{{lang.cropDisabled}}</div>
         </div>
-        
+
         <div class="cptWaitingWindow cptNoPermissionMsg" v-if="cropData.noPermission">
             <div class="msg">{{lang.noPermission}}</div>
         </div>
 
         <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !cropData.noPermission">
-            
+
             <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (selectedImageSizes.length>0) }">
                 <div class="cptSelectionPaneInner">
                     <Message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</Message>
@@ -52,11 +52,11 @@
                     <div class="ratio">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>
                 </div>
                 <button type="button" class="button cptGenerate" :class="{'button-primary':cropLoaded}" @click="cropThumbnails()" :disabled="!cropLoaded">{{ lang.label_crop }}</button>
-                
+
                 <div class="cropContainer" v-if="cropImage.url">
                     <CropArea :baseImage="cropImage" :options="cropOptions" :lang="lang" @change="updateCurrentCrop" @ready="cropAreaLoaded" @cancel="makeAllInactive()" :largeHandles="largeHandles"></CropArea>
                 </div>
-        
+
                 <div class="selectionInfo" v-if="selectedImageSizes.length>0">
                     <h4>{{lang.headline_selected_image_sizes}}</h4>
                     <ul>
@@ -92,6 +92,16 @@
                     </label>
                 </div>
 
+                <div class="cpt_checkbox_large_handles_wrapper">
+                    <label>
+                        <input type="checkbox" v-model="useOriginalImage" @change="updateHandleSize" />
+                        <span>{{ lang.label_use_original_image }}</span>
+                    </label>
+                    <pre>{{cropImage}}</pre>
+                </div>
+
+
+
                 <div>
                     <button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
                     <button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
@@ -107,7 +117,7 @@
 
 <script>
 import CropImageSize from './CropImageSize.vue';
-import Message from './Message.vue';
+import Message from './message.vue';
 import jQuery from 'jquery';
 import CropArea from './CropArea.vue';
 import { isLowRes, getCenterPreselect } from './cropCalculations';
@@ -126,12 +136,13 @@ export default {
         nonce : null,//the nonce for the crop-request
         showDebugType : null,//the type of the debug to show: null-> no debug open, 'js' -> show jsDebug, 'data' -> show dataDebug
         dataDebug : null,//will be filled after the crop request finished
-        
+
         sameRatioMode : null,// can be NULL, "select" or "group"
         sameRatioModeOptions: [],
 
         cropOptions: null,
         largeHandles: false,
+        useOriginalImage: false,
     }),
     mounted() {
         this.loadCropData();
@@ -142,6 +153,7 @@ export default {
          */
         cropImage() {
             if(!this.cropData) return null;
+            if(this.useOriginalImage) return this.cropData.sourceImage.original_image;
             return this.cropData.sourceImage.full;
         },
         filteredImageSizes() {
@@ -189,9 +201,8 @@ export default {
             this.cropLoaded = true;
         },
         updateCurrentCrop(data) {
-            
-            this.currentCropSize = { 
-                width: data.width, 
+            this.currentCropSize = {
+                width: data.width,
                 height: data.height,
                 left: data.left,
                 top: data.top,
@@ -229,44 +240,44 @@ export default {
             };
             this.loading = true;
             jQuery.get(ajaxurl, getParameter, (responseData) => {
-                this.makeAllInactive(responseData.imageSizes);
-                this.addCacheBreak(responseData.imageSizes);
-                this.cropData = responseData;
-                this.lang = this.cropData.lang;
-                this.nonce = this.cropData.nonce;
-                delete this.cropData.nonce;
-            })
-            .fail((data) => {
-                this.cropData = data.responseJSON;
-                this.lang = this.cropData.lang;
-                this.nonce = this.cropData.nonce;
-                delete this.cropData.nonce;
-                if(data.status===403) {
-                    this.cropData.noPermission = true;
-                }
-            })
-            .always(() => {
-                this.loading = false;
-                this.setupRatioMode();
-                this.setupHandleSize();
-                
-                if(this.cropData && this.cropData.imageSizes) {
-                    //remove elements with hideByPostType===true
-                    this.cropData.imageSizes = this.cropData.imageSizes.filter(elem => !elem.hideByPostType);
+                    this.makeAllInactive(responseData.imageSizes);
+                    this.addCacheBreak(responseData.imageSizes);
+                    this.cropData = responseData;
+                    this.lang = this.cropData.lang;
+                    this.nonce = this.cropData.nonce;
+                    delete this.cropData.nonce;
+                })
+                .fail((data) => {
+                    this.cropData = data.responseJSON;
+                    this.lang = this.cropData.lang;
+                    this.nonce = this.cropData.nonce;
+                    delete this.cropData.nonce;
+                    if(data.status===403) {
+                        this.cropData.noPermission = true;
+                    }
+                })
+                .always(() => {
+                    this.loading = false;
+                    this.setupRatioMode();
+                    this.setupHandleSize();
 
-                    //apply notYetCropped variable
-                    this.cropData.imageSizes.forEach(elem => {
-                        elem.notYetCropped = elem.url === this.cropData.sourceImage.full.url;
-                    });
-                }
-            });
+                    if(this.cropData && this.cropData.imageSizes) {
+                        //remove elements with hideByPostType===true
+                        this.cropData.imageSizes = this.cropData.imageSizes.filter(elem => !elem.hideByPostType);
+
+                        //apply notYetCropped variable
+                        this.cropData.imageSizes.forEach(elem => {
+                            elem.notYetCropped = elem.url === this.cropData.sourceImage.full.url;
+                        });
+                    }
+                });
         },
         isLowRes(image) {
             return isLowRes(image, this.currentCropSize);
         },
         toggleActive(image) {
             let newValue = !image.active;
-            
+
             if(image.active===false) {
                 this.makeAllInactive();
             }
@@ -282,7 +293,7 @@ export default {
                 //single select
                 image.active = newValue;
             }
-            
+
             if(this.selectedImageSizes.length>0) {
                 this.activateCropArea();
             } else {
@@ -327,7 +338,7 @@ export default {
                     console.info('Crop Thumbnails: print ratio is different from normal ratio on image size "'+i.name+'".');
                 }
             });
-            
+
             options.setSelect = getCenterPreselect(this.cropImage.width , this.cropImage.height, options.aspectRatio);
 
             //debug
@@ -370,18 +381,19 @@ export default {
         cropThumbnails() {
             if(!this.loading && this.cropImage) {
                 this.loading = true;
-                
+
                 const cptRequestParams = {
                     action : 'cptSaveThumbnail',
                     _ajax_nonce : this.nonce,
                     cookie : encodeURIComponent(document.cookie),
                     crop_thumbnails : JSON.stringify({
-                        'selection' : this.getSelectionForApi(),
-                        'sourceImageId' : this.cropData.sourceImageId,
-                        'activeImageSizes' : this.selectedImageSizesData
+                        selection : this.getSelectionForApi(),
+                        sourceImageId : this.cropData.sourceImageId,
+                        activeImageSizes : this.selectedImageSizesData,
+                        useOriginalImage : this.useOriginalImage
                     })
                 };
-                
+
                 jQuery
                     .post(ajaxurl, cptRequestParams, null, 'json')
                     .done((responseData) => {

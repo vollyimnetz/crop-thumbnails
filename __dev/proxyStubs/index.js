@@ -3,7 +3,7 @@
  */
 const STUBS = [
 {
-    url: '/fake-ajax-url?action=cpt_cropdata&imageId=123&posttype=', 
+    url: '/fake-ajax-url?action=cpt_cropdata&imageId=123&posttype=',
     method: 'GET',
     content:
         {
@@ -18,8 +18,12 @@ const STUBS = [
         },
         sourceImageId: 123,
         sourceImage: {
-            "full": {
+            "original_image": {
                 "url": "/testimages/testimage.jpeg",
+                "width": 5472, "height": 3648, "gcd": "1824", "ratio": 1.5, "printRatio": "3:2", "image_size": "original_image"
+            },
+            "full": {
+                "url": "/testimages/testimage-scaled.jpeg",
                 "width": 1920, "height": 1280, "gcd": "640", "ratio": 1.5, "printRatio": "3:2", "image_size": "full"
             },
             "large": {
@@ -61,33 +65,33 @@ const STUBS = [
             },
         ],
         lang: {
-            "warningOriginalToSmall": "Warung: das Original-Bild ist zu klein um es für diese Thumbnail-Größe in guter Qualität zuzuschneiden.",
-            "cropDisabled": "Das Zuschneiden ist für diesen Eintragstyp deaktiviert.",
+            "warningOriginalToSmall": "Warung: das Original-Bild ist zu klein um es f\u00fcr diese Thumbnail-Gr\u00f6\u00dfe in guter Qualit\u00e4t zuzuschneiden.",
+            "cropDisabled": "Das Zuschneiden ist f\u00fcr diesen Eintragstyp deaktiviert.",
             "waiting": "Bitte warten Sie bis die Bilder zugeschnitten wurden.",
             "rawImage": "Original-Bild",
             "pixel": "Pixel",
-            "instructions_overlay_text": "Wählen Sie eine Bildgröße aus.",
+            "instructions_overlay_text": "W\u00e4hlen Sie eine Bildgr\u00f6\u00dfe aus.",
             "instructions_header": "Schnell-Anleitung",
-            "instructions_step_1": "Schritt 1: Wählen Sie ein Bild aus der Liste.",
-            "instructions_step_2": "Schritt 2: Ändern Sie den Auswahlrahmen im obigen Bild.",
-            "instructions_step_3": "Schritt 3: Klicken Sie auf \"Zuschnitt übernehmen\".",
-            "label_crop": "Zuschnitt übernehmen",
-            "label_same_ratio_mode": "Bilder mit gleichem Seitenverhältnis",
+            "instructions_step_1": "Schritt 1: W\u00e4hlen Sie eine Bildgr\u00f6\u00dfe aus der Liste.",
+            "instructions_step_2": "Schritt 2: \u00c4ndern Sie den Auswahlrahmen im obigen Bild.",
+            "instructions_step_3": "Schritt 3: Klicken Sie auf \"Zuschnitt \u00fcbernehmen\".",
+            "label_crop": "Zuschnitt \u00fcbernehmen",
+            "label_same_ratio_mode": "Bilder mit gleichem Seitenverh\u00e4ltnis",
             "label_same_ratio_mode_nothing": "nichts tun",
-            "label_same_ratio_mode_select": "gemeinsam auswählen",
+            "label_same_ratio_mode_select": "gemeinsam ausw\u00e4hlen",
             "label_same_ratio_mode_group": "gruppieren",
-            "label_deselect_all": "nichts auswählen",
-            "label_large_handles": "große Kontrollflächen verwenden",
-            "dimensions": "Größe:",
-            "ratio": "Seitenverhältnis:",
+            "label_deselect_all": "nichts ausw\u00e4hlen",
+            "label_large_handles": "gro\u00dfe Kontrollfl\u00e4chen verwenden",
+            "dimensions": "Gr\u00f6\u00dfe:",
+            "ratio": "Seitenverh\u00e4ltnis:",
             "cropped": "zugeschnitten",
-            "lowResWarning": "Original-Bild ist zu klein für guten Bildzuschnitt!",
+            "lowResWarning": "Original-Bild ist zu klein f\u00fcr guten Bildzuschnitt!",
             "notYetCropped": "Wurde bisher nicht von WordPress zugeschnitten.",
-            "message_image_orientation": "Dieses Bild nutzt eine Bild-Rotation in seinen EXIF-Metadaten. Beachten Sie, dass das zu gedrehten oder gespiegelten Bildern beim Safari-Browser (IPad, IPhone) führen kann.",
+            "message_image_orientation": "Dieses Bild nutzt eine Bild-Rotation in seinen EXIF-Metadaten. Beachten Sie, dass das zu gedrehten oder gespiegelten Bildern beim Safari-Browser (IPad, IPhone) f\u00fchren kann.",
             "script_connection_error": "Fehler beim Verbindungsaufbau zum Server.",
             "noPermission": "Es ist dir nicht gestattet, die Miniaturansichten zuzuschneiden.",
-            "infoNoImageSizesAvailable": "Keine Bildgrößen für den Bild-Zuschnitt verfügbar.",
-            "headline_selected_image_sizes": "Ausgewählte Bildgrößen"
+            "infoNoImageSizesAvailable": "Keine Bildgr\u00f6\u00dfen f\u00fcr den Bild-Zuschnitt verf\u00fcgbar.",
+            "headline_selected_image_sizes": "Ausgew\u00e4hlte Bildgr\u00f6\u00dfen"
         },
         nonce: "abc123",
         hiddenOnPostType: false
