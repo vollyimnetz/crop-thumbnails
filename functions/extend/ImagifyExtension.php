@@ -12,40 +12,52 @@ namespace crop_thumbnails\extend;
  * @since 1.8.0
  * @package crop-thumbnails
  */
-class ImagifyExtension
-{
+class ImagifyExtension {
+
+	/**
+	 * Extends the functionality of the Imagify plugin by adding a custom action.
+	 *
+	 * This method hooks into the 'plugins_loaded' action to check if the 
+	 * Imagify_Auto_Optimization class and its 'do_auto_optimization' method exist.
+	 * If they do, it adds another action 'crop_thumbnails_after_save_new_thumb' 
+	 * which triggers the 'actionDoWebPConvertion' method after a new thumbnail 
+	 * is created. The hook provides the file path of the new thumbnail.
+	 *
+	 * @return void
+	 */
 	 public static function doExtend() {
 
-		// crop_thumbnails_after_save_new_thumb is a hook that is triggered after a new thumbnail is created amd returns the file path of the new thumbnail (not the URL)
-		 add_action( 'crop_thumbnails_after_save_new_thumb', array( self::class, 'actionDoWebPConvertion' ), 100, 1 );
+		 add_action('plugins_loaded', function() {
+
+			 if ( class_exists( Imagify_Auto_Optimization::class) && method_exists( Imagify_Auto_Optimization::class, 'do_auto_optimization' ) ) {
+				// crop_thumbnails_after_save_new_thumb is a hook that is triggered after a new thumbnail is created amd returns the file path of the new thumbnail (not the URL)
+				add_action( 'crop_thumbnails_after_save_new_thumb', array( self::class, 'actionDoWebPConvertion' ), 100, 1 );
+			}
+		});
 
 	 }
  
+
 	/**
-	 * Perform WebP conversion for the given image file path.
+	 * Converts an image to WebP format using Imagify.
 	 *
-	 * This method checks if the Imagify_Auto_Optimization class and its method
-	 * do_auto_optimization exist. If they do, it attempts to optimize the image
-	 * for WebP format.
+	 * This method attempts to optimize an image file by converting it to WebP format.
+	 * It uses the Imagify_Auto_Optimization class to perform the optimization.
 	 *
-	 * @param string $image_file_path The file path of the image to be converted to WebP.
+	 * @param string $image_file_path The file path of the image to be converted.
 	 *
 	 * @return void
 	 */
 	 public static function actionDoWebPConvertion( $image_file_path ) {
 
-		 if ( class_exists( Imagify_Auto_Optimization::class) && method_exists( Imagify_Auto_Optimization::class, 'do_auto_optimization' ) ) {
+		$imagify       = new Imagify_Auto_Optimization();
+		$sourceImageId = self::getImageIdByFilePath( $image_file_path );
 
-			 $imagify       = new Imagify_Auto_Optimization();
-			 $sourceImageId = self::getImageIdByFilePath( $image_file_path );
-
-			 if ( $sourceImageId ) {
-				 $imagify->do_auto_optimization( $sourceImageId, $is_new_image = false );
-			 } else {
-				 error_log( 'class ImagifyExtension $sourceImageId is empty. Unable to run imagify do_auto_optimization()' );
-			 }
-		 }
-
+		if ( $sourceImageId ) {
+			$imagify->do_auto_optimization( $sourceImageId, $is_new_image = false );
+		} else {
+			error_log( 'class ImagifyExtension $sourceImageId is empty. Unable to run imagify do_auto_optimization()' );
+		}
 	 }
  
 	/**
