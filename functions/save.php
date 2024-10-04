@@ -186,8 +186,13 @@ class CptSaveThumbnail {
 	 *
 	 */
 	public static function filter_doWpCrop($baseResult, $input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
+		$src = $input->sourceImageId;
+		if(!empty($input->useOriginalImage)) {
+			//use the original image instead of the cropped one
+			$src = wp_get_original_image_url($input->sourceImageId);
+		}
 		return wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-			$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
+			$src,											// * @param string|int $src The source file or Attachment ID.
 			$input->selection->x,							// * @param int $src_x The start x position to crop from.
 			$input->selection->y,							// * @param int $src_y The start y position to crop from.
 			$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
@@ -252,6 +257,7 @@ class CptSaveThumbnail {
 	}
 
 	protected static function addDebug($text) {
+		error_log(print_r($text,true));
 		self::$debug[] = $text;
 	}
 

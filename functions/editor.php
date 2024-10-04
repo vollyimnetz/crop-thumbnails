@@ -83,6 +83,8 @@ class CropPostThumbnailsEditor {
 			'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
 			'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
 			'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by WordPress.','crop-thumbnails')),
+			'label_use_original_image' => self::fixJsLangStrings(__('Use the real original image','crop-thumbnails')),
+			'info_use_original_image' => self::fixJsLangStrings(__('As your original uploaded image was quit big, Wordpress has generates an scaled image. You may use the real original image to get the best quality.','crop-thumbnails')),
 			'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
 			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
 			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails')),
@@ -175,7 +177,6 @@ class CropPostThumbnailsEditor {
 					//if you define height with 9999 - it crops for the exect defined width but the full height
 					$ratioData = $this->calculateRatioData($imageSize['width'], $result['sourceImage']['full']['height']);
 				}
-
 
 				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['id']);
 				$jsonDataValues = [

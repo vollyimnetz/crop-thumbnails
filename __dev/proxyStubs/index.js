@@ -87,6 +87,8 @@ const STUBS = [
             "cropped": "zugeschnitten",
             "lowResWarning": "Original-Bild ist zu klein f\u00fcr guten Bildzuschnitt!",
             "notYetCropped": "Wurde bisher nicht von WordPress zugeschnitten.",
+            'label_use_original_image' : 'Use the real original image',
+			'info_use_original_image' : 'As your original uploaded image was quit big, Wordpress has generates an scaled image. You may use the real original image to get the best quality.',
             "message_image_orientation": "Dieses Bild nutzt eine Bild-Rotation in seinen EXIF-Metadaten. Beachten Sie, dass das zu gedrehten oder gespiegelten Bildern beim Safari-Browser (IPad, IPhone) f\u00fchren kann.",
             "script_connection_error": "Fehler beim Verbindungsaufbau zum Server.",
             "noPermission": "Es ist dir nicht gestattet, die Miniaturansichten zuzuschneiden.",

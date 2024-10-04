@@ -124,6 +124,11 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.9.0 =
+* add possible to use the original image if the image was scaled by wordpress
+* add image/avif to allowed mime types
+* update frontend libraries
+
 = 1.8.0 =
 * add to more filters for controlling what crop-sizes should be available (thanks to https://github.com/wijzijnweb)
 * update frontend libraries

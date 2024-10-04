@@ -47,9 +47,9 @@
             </div>
             <div class="cptCropPane">
                 <div class="info">
-                    <h3>{{ lang.rawImage }}</h3>
-                    <div class="dimensions">{{ lang.dimensions }} {{cropData.sourceImage.full.width}} x {{cropData.sourceImage.full.height}} {{ lang.pixel }}</div>
-                    <div class="ratio">{{ lang.ratio }} {{cropData.sourceImage.full.printRatio}}</div>
+                    <h3>{{ lang.rawImage }} <span v-if="hasScaledFullImage">(scaled)</span></h3>
+                    <div class="dimensions">{{ lang.dimensions }} {{ cropImage.width }} x {{ cropImage.height }} {{ lang.pixel }}</div>
+                    <div class="ratio">{{ lang.ratio }} {{ cropImage.printRatio }}</div>
                 </div>
                 <button type="button" class="button cptGenerate" :class="{'button-primary':cropLoaded}" @click="cropThumbnails()" :disabled="!cropLoaded">{{ lang.label_crop }}</button>
 
@@ -92,12 +92,12 @@
                     </label>
                 </div>
 
-                <div class="cpt_checkbox_large_handles_wrapper">
+                <div class="cpt_checkbox_large_handles_wrapper" v-if="hasScaledFullImage">
                     <label>
                         <input type="checkbox" v-model="useOriginalImage" @change="updateHandleSize" />
                         <span>{{ lang.label_use_original_image }}</span>
                     </label>
-                    <pre>{{cropImage}}</pre>
+                    <p>{{ lang.info_use_original_image }}</p>
                 </div>
 
 
@@ -127,6 +127,9 @@ export default {
         imageId : { required: true, type: Number },
         posttype : { required: false, type: String, default: null },
     },
+    mounted() {
+        this.loadCropData();
+    },
     data:() =>({
         cropData : null,//
         loading : false,//will be true as long as the crop-request is running
@@ -144,17 +147,17 @@ export default {
         largeHandles: false,
         useOriginalImage: false,
     }),
-    mounted() {
-        this.loadCropData();
-    },
     computed:{
+        cropImageSize() {
+            if(this.useOriginalImage) return 'original_image';
+            return 'full';
+        },
         /**
          * the image to apply the crop on usually this is the "full" image-size. Sometimes the "large" image size is sufficiant.
          */
         cropImage() {
             if(!this.cropData) return null;
-            if(this.useOriginalImage) return this.cropData.sourceImage.original_image;
-            return this.cropData.sourceImage.full;
+            return this.cropData.sourceImage[this.cropImageSize];
         },
         filteredImageSizes() {
             let result = this.cropData.imageSizes;
@@ -194,6 +197,9 @@ export default {
                         && this.cropData.sourceImageMeta.orientation !== '0');
             } catch(e) {}
             return false;
+        },
+        hasScaledFullImage() {
+            return this.cropData.sourceImage.full.width !== this.cropData.sourceImage.original_image.width;
         }
     },
     methods:{
