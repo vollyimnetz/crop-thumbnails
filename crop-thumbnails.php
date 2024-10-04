@@ -38,3 +38,4 @@ include_once __DIR__.'/functions/editor.php';
 include_once __DIR__.'/functions/backendpreparer.php';
 include_once __DIR__.'/functions/save.php';
 include_once __DIR__.'/functions/extend/WebPExpressExtension.php';
+include_once __DIR__.'/functions/extend/ImagifyExtension.php';
