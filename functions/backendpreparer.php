@@ -16,7 +16,41 @@ class CropPostThumbnailsBackendPreparer {
 
 			add_filter( 'attachment_fields_to_edit', [$this,'add_button_to_attachment_edit_view'], 10, 2 );
 		}
+
+		//add_action( 'elementor/frontend/after_register_scripts', [$this, 'elementor_register'] );
 	}
+
+	/*
+	//the following code is for the elementor integration - but as the events are not fired correctly, it is not working
+
+	public function elementor_register() {
+		if(class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->preview->is_preview()) {
+			//@see https://developers.elementor.com/docs/addons/initialization/#Registering_Custom_Scripts
+			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
+			wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded','wp-api'], CROP_THUMBNAILS_VERSION);
+			add_action('wp_footer', [$this,'elementor_addButtonFunctionality']);
+		}
+	}
+
+	public function elementor_addButtonFunctionality() {
+		?>
+		<script>
+
+		jQuery(function($) {
+			setTimeout(function() {
+				console.log('init elementor crop thumbnails');
+				// Event für das Öffnen des Mediendialogs anhängen
+				$(document.getElementById('elementor-editor-wrapper')).on('click', '.cropThumbnailsLink', function() {
+					console.log('do something');
+				});
+			},1000);
+		});
+
+		</script>
+		<?php
+	}
+	//*/
+
 
 	/**
 	 * Check if the crop-thumbnail-dialog should be available on the following pages. The default pages are
@@ -33,11 +67,11 @@ class CropPostThumbnailsBackendPreparer {
 	protected function shouldCropThumbnailsBeActive() {
 		global $pagenow;
 		$options = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
-		$result = ($pagenow == 'post.php'
-			|| $pagenow == 'post-new.php'
-			|| $pagenow == 'page.php'
-			|| $pagenow == 'page-new.php'
-			|| $pagenow == 'upload.php'
+		$result = ($pagenow === 'post.php'
+			|| $pagenow === 'post-new.php'
+			|| $pagenow === 'page.php'
+			|| $pagenow === 'page-new.php'
+			|| $pagenow === 'upload.php'
 			|| !empty($options['include_js_on_all_admin_pages'])
 			);
 		$result = apply_filters('crop_thumbnails_activat_on_adminpages', $result);//leagacy filter with typo error
@@ -49,8 +83,7 @@ class CropPostThumbnailsBackendPreparer {
 	 * For adding the styles in the backend
 	 */
 	public function adminHeaderCSS() {
-		global $pagenow;
-		if ($this->shouldCropThumbnailsBeActive()) {
+		if($this->shouldCropThumbnailsBeActive()) {
 			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
 		}
 	}
@@ -58,10 +91,9 @@ class CropPostThumbnailsBackendPreparer {
 	/**
 	 * For adding the "crop-thumbnail"-link on posts, pages and the mediathek
 	 */
-	function adminHeaderJS() {
-		global $pagenow;
-		if ($this->shouldCropThumbnailsBeActive()) {
-			wp_enqueue_script( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded'], CROP_THUMBNAILS_VERSION);
+	public function adminHeaderJS() {
+		if($this->shouldCropThumbnailsBeActive()) {
+			wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded','wp-api'], CROP_THUMBNAILS_VERSION);
 			add_action('admin_footer', [$this,'addLinksToAdmin']);
 		}
 	}
@@ -111,7 +143,8 @@ class CropPostThumbnailsBackendPreparer {
 	function addLinksToAdmin() {
 ?>
 <script type="text/javascript">
-jQuery(document).ready(function($) {
+
+jQuery(function($) {
 
 	/**
 	 * Global accessable id of the current post (will be null if no post-element is present)
