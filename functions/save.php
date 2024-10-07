@@ -191,7 +191,6 @@ class CptSaveThumbnail {
 	 *
 	 */
 	public static function filter_doWpCrop($baseResult, $input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
-		error_log('hier');
 		$input = apply_filters('crop_thumbnails_optimize_input_before_crop', $input);
 		$src = $input->sourceImageId;
 
