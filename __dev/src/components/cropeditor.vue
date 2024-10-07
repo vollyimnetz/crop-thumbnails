@@ -1,8 +1,7 @@
 <template>
-    <div class="cptEditorInner" v-if="cropData && lang" :class="{ loading }">
+    <div class="cptEditorInner" v-if="cropData" :class="{ loading }">
         <div class="cptWaitingWindow" v-if="loading">
             <div class="msg">
-                {{ lang.waiting }}
                 <div>
                     <div class="cptLoadingSpinner"></div>
                 </div>
@@ -13,15 +12,11 @@
             <div class="msg">{{lang.cropDisabled}}</div>
         </div>
 
-        <div class="cptWaitingWindow cptNoPermissionMsg" v-if="!cropData.noPermission && error_cropData">
-            <div class="msg">{{lang.unknownError}}</div>
+        <div class="cptWaitingWindow cptNoPermissionMsg" v-if="!!errorMessage">
+            <div class="msg">{{errorMessage}}</div>
         </div>
 
-        <div class="cptWaitingWindow cptNoPermissionMsg" v-if="cropData.noPermission">
-            <div class="msg">{{lang.noPermission}}</div>
-        </div>
-
-        <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !cropData.noPermission && !error_cropData">
+        <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !errorMessage">
 
             <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (selectedImageSizes.length>0) }">
                 <div class="cptSelectionPaneInner">
@@ -125,7 +120,6 @@ export default {
     },
     data:() =>({
         cropData : null,//
-        error_cropData: false,
         loading : false,//will be true as long as the crop-request is running
         cropLoaded : false,//the object of the crop-library
         currentCropSize : null,//the size of the crop region (needed for lowResWarning)
@@ -137,7 +131,9 @@ export default {
         sameRatioModeOptions: [],
 
         cropOptions: null,
-        largeHandles: false
+        largeHandles: false,
+
+        errorMessage: false,
     }),
     computed:{
         cropBaseSize() {
@@ -235,7 +231,7 @@ export default {
             return this.cropData.imageSizes.filter(elem => elem.printRatio===printRatio && elem.notYetCropped).length>0;
         },
         setupRatioMode() {
-            if(this.error_cropData) return;
+            if(this.errorMessage) return;
             this.sameRatioModeOptions = [
                 { value: null, text: this.lang.label_same_ratio_mode_nothing },
                 { value: 'select', text: this.lang.label_same_ratio_mode_select },
@@ -266,7 +262,7 @@ export default {
                 posttype : this.posttype
             };
             this.loading = true;
-            this.error_cropData = false;
+            this.errorMessage = false;
             getCropData(params)
                 .then((response) => {
                     this.makeAllInactive(response.data.imageSizes);
@@ -276,12 +272,16 @@ export default {
                     delete this.cropData.nonce;
                 })
                 .catch((error) => {
-                    this.error_cropData = true;
                     this.cropData = error.response.data;
                     this.nonce = this.cropData.nonce;
                     delete this.cropData.nonce;
-
-                    if(error.status===403) this.cropData.noPermission = true;
+                    this.errorMessage = 'ERROR';
+                    if(error.response.data.lang) this.errorMessage = error.response.data.lang.unknownError;
+                    if(error.status===403) {
+                        if(error.response.data.message) this.errorMessage = error.response.data.message;
+                        if(error.response.data.lang) this.errorMessage = error.response.data.lang.noPermission;
+                    }
+                    console.error('crop-thumbnails connection error', this.errorMessage, this.cropData);
                 })
                 .finally(() => {
                     this.loading = false;

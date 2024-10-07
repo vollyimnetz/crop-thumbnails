@@ -24,14 +24,6 @@ class CropPostThumbnailsEditor {
 		}
 	}
 
-	public static function checkCropRestPermission() {
-		if(!current_user_can('edit_posts')) {
-			error_log('Try to access without permission (API).');
-			return false;
-		}
-		return true;
-	}
-
 	/**
 	 * Will return an error-object for the frontend
 	 * @param string $errorMsg the provided errormessage

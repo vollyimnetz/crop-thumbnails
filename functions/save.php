@@ -21,6 +21,18 @@ class CptSaveThumbnail {
 
 	protected static $debug = [];
 
+	public static function checkRestPermission() {
+		$return = false;
+		$cropThumbnailSettings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		if(current_user_can('edit_files')) {
+			$return = true;
+		}
+		if(current_user_can('upload_files') && empty($cropThumbnailSettings['user_permission_only_on_edit_files'])) {
+			$return = true;
+		}
+		return $return;
+	}
+
 	/**
 	 * Handle-function called via ajax request.
 	 * Check and crop multiple images. Update with wp_update_attachment_metadata if needed.
@@ -435,14 +447,7 @@ class CptSaveThumbnail {
 	 * @return boolean true if the user is permitted
 	 */
 	public static function isUserPermitted($imageId) {
-		$return = false;
-		$cropThumbnailSettings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
-		if(current_user_can('edit_files')) {
-			$return = true;
-		}
-		if(current_user_can('upload_files') && empty($cropThumbnailSettings['user_permission_only_on_edit_files'])) {
-			$return = true;
-		}
+		$return = self::checkRestPermission();
 		return apply_filters('crop_thumbnails_user_permission_check', $return, $imageId);
 	}
 

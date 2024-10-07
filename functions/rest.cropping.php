@@ -17,13 +17,13 @@ class RestCropping {
 			'methods' => 'GET',
 			'callback' => [CropPostThumbnailsEditor::class, 'rest_cropdata'],
 			'schema' => null,
-			'permission_callback' => [CropPostThumbnailsEditor::class, 'checkCropRestPermission']
+			'permission_callback' => [CptSaveThumbnail::class, 'checkRestPermission']
 		]);
 		register_rest_route( 'crop_thumbnails/v1', 'crop', [
 			'methods' => 'POST',
 			'callback' => [CptSaveThumbnail::class, 'saveThumbnail'],
 			'schema' => null,
-			'permission_callback' => [CropPostThumbnailsEditor::class, 'checkCropRestPermission']
+			'permission_callback' => [CptSaveThumbnail::class, 'checkRestPermission']
 		]);
 	}
 }
