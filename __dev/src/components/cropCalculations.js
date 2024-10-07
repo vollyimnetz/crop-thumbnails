@@ -41,7 +41,7 @@ export const getCenterPreselect = ( width, height, targetRatio ) => {
     let x1 = width;
     let y1 = height;
     let sourceRatio = width/height;
-    
+
     if(sourceRatio <= targetRatio) {
         y0 = (height / 2) - ((width / targetRatio) / 2);
         y1 = height-y0;

@@ -11,38 +11,38 @@ class CropPostThumbnailsEditor {
 
 	protected $debugOutput = '';
 
-	function __construct() {
-		add_action('wp_ajax_cpt_cropdata', [$this, 'provideCropData'] );
-	}
-
-	public function provideCropData() {
-		header('Content-Type: application/json; charset=UTF-8');
+	public static function rest_cropdata() {
 		try {
-			echo json_encode( $this->getCropData() );
+			$cpte = new CropPostThumbnailsEditor();
+			return $cpte->getCropData();
 		} catch(\InvalidArgumentException $e) {
-			self::doErrorResponse(400, 'FAILURE while processing request: '.$e->getMessage());
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request: '.$e->getMessage()), 400);
 		} catch(CPT_ForbiddenException $e) {
-			self::doErrorResponse(403, 'ERROR not allowed.');
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('ERROR not allowed.'), 403);
 		} catch(\Exception $e) {
-			self::doErrorResponse(400, 'FAILURE while processing request.');
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request.'), 400);
 		}
-		die();//to prevent to send back a "0"
 	}
 
+	public static function checkCropRestPermission() {
+		if(!current_user_can('edit_posts')) {
+			error_log('Try to access without permission (API).');
+			return false;
+		}
+		return true;
+	}
 
 	/**
-	 * Will directly print an error-output
-	 * @param int $statusCode the statuscode of the response
+	 * Will return an error-object for the frontend
 	 * @param string $errorMsg the provided errormessage
+	 * @return array
 	 */
-	protected static function doErrorResponse($statusCode, $errorMsg) {
-		http_response_code($statusCode);
-		echo json_encode([
+	public static function getErrorData($errorMsg) {
+		return [
 			'lang' => self::getLangArray(),
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase()),
-			'error' => $errorMsg,
-			'statusCode' => $statusCode
-		]);
+			'error' => $errorMsg
+		];
 	}
 
 	/**
@@ -83,11 +83,10 @@ class CropPostThumbnailsEditor {
 			'cropped' => self::fixJsLangStrings(__('cropped','crop-thumbnails')),
 			'lowResWarning' => self::fixJsLangStrings(__('Original image size too small for good crop quality!','crop-thumbnails')),
 			'notYetCropped' => self::fixJsLangStrings(__('Not yet cropped by WordPress.','crop-thumbnails')),
-			'label_use_original_image' => self::fixJsLangStrings(__('Use the real original image','crop-thumbnails')),
-			'info_use_original_image' => self::fixJsLangStrings(__('As your original uploaded image was quit big, Wordpress has generates an scaled image. You may use the real original image to get the best quality.','crop-thumbnails')),
 			'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
 			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
 			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails')),
+			'unknownError' => self::fixJsLangStrings(__('An unknown error occured.','crop-thumbnails')),
 			'infoNoImageSizesAvailable' => self::fixJsLangStrings(__('No image sizes for cropping available.','crop-thumbnails')),
 			'headline_selected_image_sizes' => self::fixJsLangStrings(__('Selected image sizes','crop-thumbnails')),
 		];
@@ -293,5 +292,3 @@ class CropPostThumbnailsEditor {
 		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
 	}
 }
-
-$cpte = new CropPostThumbnailsEditor();

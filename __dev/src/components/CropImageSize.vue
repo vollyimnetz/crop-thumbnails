@@ -1,7 +1,7 @@
 <template>
     <section class="CropImageSize" :class="cssClass">
         <template v-if="sameRatioMode!=='group'">
-            <header>{{image.nameLabel}}</header>
+            <header>{{image.nameLabel}} asdf</header>
             <div class="lowResWarning" v-if="isLowRes" :title="lang.lowResWarning"><span>!</span></div>
             <div class="notYetCropped" v-if="!isLowRes && image.notYetCropped" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
             <div class="dimensions">{{ lang.dimensions }} {{image.width}} x {{image.height}} {{ lang.pixel }}</div>
@@ -11,7 +11,7 @@
             <header>{{image.printRatio}}</header>
             <div class="notYetCropped" v-if="notYetCropped" :title="lang.notYetCropped"><span class="dashicons dashicons-image-crop"></span></div>
         </template>
-        
+
         <LoadingContainer :image="image.url+'?cacheBreak='+image.cacheBreak">
             <div class="cptImageBgContainer" :style="{'background-image': 'url('+image.url+'?cacheBreak='+image.cacheBreak+')'}"></div>
         </LoadingContainer>

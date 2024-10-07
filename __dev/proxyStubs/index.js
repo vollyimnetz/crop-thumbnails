@@ -3,7 +3,7 @@
  */
 const STUBS = [
 {
-    url: '/fake-ajax-url?action=cpt_cropdata&imageId=123&posttype=',
+    url: '/fake-ajax-url/crop_thumbnails/v1/crop?imageId=123&posttype=',
     method: 'GET',
     content:
         {
@@ -63,6 +63,11 @@ const STUBS = [
                 "url": "/testimages/testimage-450x300.jpeg",
                 "width": 450, "height": 300, "gcd": "150", "ratio": 1.5, "printRatio": "3:2", "hideByPostType": false, "crop": true
             },
+            {
+                "name": "issue-94", "nameLabel": "issue-94",
+                "url": "testimages/testimage-3840x2160.jpeg",
+                "width": 3840, "height": 2160, "gcd": "240", "ratio": 1.7777777777777777, "printRatio": "16:9", "hideByPostType": false, "crop": true
+            }
         ],
         lang: {
             "warningOriginalToSmall": "Warung: das Original-Bild ist zu klein um es f\u00fcr diese Thumbnail-Gr\u00f6\u00dfe in guter Qualit\u00e4t zuzuschneiden.",
@@ -100,7 +105,7 @@ const STUBS = [
     }
 },
 {
-    url: '/fake-ajax-url/for-settingsscreen/crop_thumbnails/v1/settings',
+    url: '/fake-ajax-url/crop_thumbnails/v1/settings',
     method: 'GET',
     content:{
         "options": {

@@ -1,25 +1,28 @@
 <?php
+namespace crop_thumbnails\tests;
+use \PHPUnit\Framework\TestCase;
+
 define('TEST_PLUGIN_BASE',__DIR__.'/../../../..');
 
 \WP_Mock::bootstrap();
 
 
 /** END global wordpress functions **/
-abstract class CptTestCase extends PHPUnit_Framework_TestCase {
-	
+abstract class CptTestCase extends TestCase {
+
 	public static $settingsMock;
-	
+
 	protected function get_CptSaveThumbnail() {
 		include_once TEST_PLUGIN_BASE.'/functions/save.php';
 		include_once TEST_PLUGIN_BASE.'/functions/helper.php';
-		
-		self::$settingsMock = Mockery::mock('CropThumbnailsHelperInstance');
+
+		self::$settingsMock = \Mockery::mock('CropThumbnailsHelperInstance');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
 		self::$settingsMock->shouldReceive('getOptions')->andReturn(['debug_data' => true]);
-		
+
 		$GLOBALS['CROP_THUMBNAILS_HELPER'] = self::$settingsMock;
-		
-		return new CptSaveThumbnail();
+
+		return new \crop_thumbnails\CptSaveThumbnail();
 	}
 
 	protected function get_CropPostThumbnailsEditor() {
@@ -27,15 +30,15 @@ abstract class CptTestCase extends PHPUnit_Framework_TestCase {
 		include_once TEST_PLUGIN_BASE.'/functions/save.php';
 		include_once TEST_PLUGIN_BASE.'/functions/editor.php';
 
-		self::$settingsMock = Mockery::mock('CropThumbnailsHelperInstance');
+		self::$settingsMock = \Mockery::mock('CropThumbnailsHelperInstance');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
 		self::$settingsMock->shouldReceive('getOptions')->andReturn(['debug_data' => true]);
 
 		$GLOBALS['CROP_THUMBNAILS_HELPER'] = self::$settingsMock;
 
-		return new CropPostThumbnailsEditor();
+		return new \crop_thumbnails\CropPostThumbnailsEditor();
 	}
-	
+
 	public function assertArrayEquals($array1, $array2, $rootPath = []) {
 		foreach ($array1 as $key => $value) {
 			$this->assertArrayHasKey($key, $array2);
