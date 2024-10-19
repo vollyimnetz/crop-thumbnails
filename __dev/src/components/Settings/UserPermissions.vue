@@ -42,7 +42,6 @@ export default {
     mounted() { this.doSetup(); },
     data: () => ({
         loading: false,
-        error: false,
         result: null,//may be "error" or "success"
         form: {
             same_ratio_mode: null,

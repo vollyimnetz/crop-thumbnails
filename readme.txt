@@ -125,10 +125,13 @@ If you fork and planning to publish the forked plugin, please contact me.
 
 == Changelog ==
 = 1.9.0 =
-* recalculate the crop region on the server side to always use the original uploaded image for cropping
-* the settings screen > user settings do have a new option for a global same ratio option
+* there was a contribution by Aaron Summer (https://github.com/aaronsummers) via Github to make the plugin more compatible with the Imagify plugin - Thank you Aaron!
+* recalculate the crop region on the server side to always use the original uploaded image for cropping (instead of the eventually scaled "full" image)
+* the settings screen > user settings do have a new option. You can set the a global "same ratio option" that is applied to all users.
 * add image/avif to allowed mime types
 * update frontend libraries
+* improve plugin test: add plugin list and copy to clipboard button
+* change all remaining ajax request to rest-api
 
 = 1.8.0 =
 * add to more filters for controlling what crop-sizes should be available (thanks to https://github.com/wijzijnweb)

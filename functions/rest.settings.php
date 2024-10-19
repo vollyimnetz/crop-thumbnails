@@ -201,27 +201,27 @@ class RestSettings {
 		$sourceFile = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
 		$tempFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
 		try {
-			$report[] = '<strong class="info">info</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
-			$report[] = '<strong class="info">info</strong> PHP '.phpversion();
-			$report[] = '<strong class="info">info</strong> PHP memory limit '.ini_get('memory_limit');
-			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+			$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
+			$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
+			$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
+			$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
 
 			//check if tmp-folder can be generated
 			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-				$report[] = '<strong class="success">success</strong> Temporary directory exists';
+				$report[] = '<strong class="success">SUCCESS</strong> Temporary directory exists';
 			} else {
 				if (!mkdir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-					throw new \Exception('<strong class="fails">fail</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
+					throw new \Exception('<strong class="fails">FAIL</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
 				} else {
-					$report[] = '<strong class="success">success</strong> Temporary directory could be created';
+					$report[] = '<strong class="success">SUCCESS</strong> Temporary directory could be created';
 				}
 			}
 
 			//creating the testfile in temporary directory
 			if(!@copy($sourceFile,$tempFile)) {
-				throw new \Exception('<strong class="fails">fail</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP?');
+				throw new \Exception('<strong class="fails">FAIL</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP?');
 			} else {
-				$report[] = '<strong class="success">success</strong> Copy testfile to temporary directory';
+				$report[] = '<strong class="success">SUCCESS</strong> Copy testfile to temporary directory';
 				$doDeleteTempFile = true;
 			}
 
@@ -237,9 +237,9 @@ class RestSettings {
 			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, [], ['test_form' => false, 'action'=>'test'] );
 			$doDeleteTempFile = false;//is be deleted automatically
 			if ( is_wp_error( $attachmentId ) ) {
-				throw new \Exception('<strong class="fails">fail</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
+				throw new \Exception('<strong class="fails">FAIL</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
 			} else {
-				$report[] = '<strong class="success">success</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
+				$report[] = '<strong class="success">SUCCESS</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
 				$doDeleteAttachement = true;
 			}
 
@@ -257,9 +257,9 @@ class RestSettings {
 				$tempFile                   // * @param string $dst_file Optional. The destination file to write to.
 			);
 			if ( is_wp_error( $cropResult ) ) {
-				throw new \Exception('<strong class="fails">fail</strong> Cropping the file ('.$cropResult->get_error_message().')');
+				throw new \Exception('<strong class="fails">FAIL</strong> Cropping the file ('.$cropResult->get_error_message().')');
 			} else {
-				$report[] = '<strong class="success">success</strong> Cropping the file';
+				$report[] = '<strong class="success">SUCCESS</strong> Cropping the file';
 				$doDeleteTempFile = true;
 				$doDeleteAttachement = true;
 			}
@@ -271,18 +271,18 @@ class RestSettings {
 				$_checkDimensionsOk = true;
 				if($fileDimensions[0]!==200 || $fileDimensions[1]!==25) {
 					$_checkDimensionsOk = false;
-					$report[] = '<strong class="fails">fail</strong> Cropped image dimensions are wrong.';
+					$report[] = '<strong class="fails">FAIL</strong> Cropped image dimensions are wrong.';
 				}
 				if($fileDimensions['mime']!=='image/jpeg') {
 					$_checkDimensionsOk = false;
-					$report[] = '<strong class="fails">fail</strong> Cropped image dimensions mime-type is wrong.';
+					$report[] = '<strong class="fails">FAIL</strong> Cropped image dimensions mime-type is wrong.';
 				}
 
 				if($_checkDimensionsOk) {
-					$report[] = '<strong class="success">success</strong> Cropped image dimensions are correct.';
+					$report[] = '<strong class="success">SUCCESS</strong> Cropped image dimensions are correct.';
 				}
 			} else {
-				$report[] = '<strong class="fails">fail</strong> Problem with getting the image dimensions of the cropped file.';
+				$report[] = '<strong class="fails">FAIL</strong> Problem with getting the image dimensions of the cropped file.';
 			}
 
 			//DO CLEANUP
@@ -290,9 +290,9 @@ class RestSettings {
 			//delete attachement file
 			if($doDeleteAttachement && $attachmentId!==-1) {
 				if ( false === wp_delete_attachment( $attachmentId ) ) {
-					$report[] = '<strong class="fails">fail</strong> Error while deleting test attachment';
+					$report[] = '<strong class="fails">FAIL</strong> Error while deleting test attachment';
 				} else {
-					$report[] = '<strong class="success">success</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
+					$report[] = '<strong class="success">SUCCESS</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
 				}
 			}
 
@@ -300,18 +300,29 @@ class RestSettings {
 			//deleting testfile form temporary directory
 			if($doDeleteTempFile) {
 				if(!@unlink($tempFile)) {
-					$report[] = '<strong class="fails">fail</strong> Remove testfile from temporary directory';
+					$report[] = '<strong class="fails">FAIL</strong> Remove testfile from temporary directory';
 				} else {
-					$report[] = '<strong class="success">success</strong> Remove testfile from temporary directory';
+					$report[] = '<strong class="success">SUCCESS</strong> Remove testfile from temporary directory';
 				}
 			}
 
-			$report[] = '<strong class="info">info</strong> Tests complete';
+			$report[] = '<strong class="info">INFO</strong> Tests complete';
+			self::appendSystemInfo($report);
 			return $report;
 		} catch (\Throwable $th) {
 			$report[] = $th->getMessage();
 		}
 		return $report;
+	}
+
+	private static function appendSystemInfo(&$report) {
+		// get all plugins
+		$activePlugins = get_option('active_plugins');
+
+		$report[] = '<strong class="info">INFO</strong> ----- Active Plugins -----';
+		foreach($activePlugins as $pluginPath) {
+			$report[] = '<strong class="info">INFO</strong> - '.$pluginPath;
+		}
 	}
 }
 RestSettings::init();

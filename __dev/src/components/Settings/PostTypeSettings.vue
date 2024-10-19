@@ -12,12 +12,15 @@
         </p>
 
         <div class="toolbar text-right">
+            <span v-if="result==='error'">{{result}}</span>
+            <span v-if="result==='success'">{{settings.lang.general.successful_saved}}</span>
+
             <div class="cptLoadingSpinner small" v-if="loading"></div>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
         </div>
 
         <div class="cptSettingsPostListDescription">{{settings.lang.posttype_settings.choose_image_sizes}}</div>
-        
+
         <ul class="cptSettingsPostList">
             <li v-for="postType in form" :key="postType.name">
                 <section v-if="postType">
@@ -32,7 +35,7 @@
                             </label>
                         </li>
                     </ul>
-                    
+
                     <label>
                         <input type="checkbox" v-model="postType.hidden">
                         <span>{{settings.lang.posttype_settings.hide_on_post_type}}</span>
@@ -41,7 +44,11 @@
             </li>
         </ul>
 
+
         <div class="toolbar text-right">
+            <span v-if="result==='error'">{{result}}</span>
+            <span v-if="result==='success'">{{settings.lang.general.successful_saved}}</span>
+
             <div class="cptLoadingSpinner small" v-if="loading"></div>
             <button type="button" class="button-primary doSaveBtn" @click="doSave">{{settings.lang.general.save_changes}}</button>
         </div>
@@ -59,6 +66,7 @@ export default {
     mounted() { this.doSetup(); },
     components: {},
     data:() => ({
+        result: null,//may be "error" or "success"
         loading: false,
         form: null
     }),
@@ -70,7 +78,7 @@ export default {
             if(!this.settings.post_types) return [];
             if(!this.settings.image_sizes) return [];
             const result = [];
-            
+
             for(const [key1, elem] of Object.entries(this.settings.post_types)) {
                 const postType = {
                     name: elem.name,
@@ -105,12 +113,13 @@ export default {
         doSave() {
             if(this.loading) return;
             this.loading = true;
+            this.result = null;
             savePostTypeSettings(this.form)
                 .then(response => {
-                    this.result = response.data
+                    this.result = 'success';
                 })
                 .catch(error => {
-                    this.error = true;
+                    this.result = 'error';
                 })
                 .then(() =>{
                     this.loading = false;
@@ -127,10 +136,12 @@ export default {
             @media(min-width:760px) { width: calc(100% / 3); }
         }
     }
-    section { border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 1em; 
+    section { border: 1px solid rgba(0,0,0,0.1); background: #fff; padding: 1em;
         h3 { margin-top:0; overflow: hidden; text-overflow: ellipsis; }
         & ul { margin: 1em 0; border-bottom: 1px solid rgba(0,0,0,0.1); }
     }
+
+    .doSaveBtn { margin-left: 1em; }
 
     .cptSettingsPostListDescription { text-align: center; font-size:1.2em; padding:1em; margin:0; border: 1px solid rgba(0,0,0,0.1); }
 }
