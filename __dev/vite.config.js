@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      vue: 'vue/dist/vue.esm-browser.prod.js'
+      vue : 'vue/dist/vue.esm-bundler'
     }
   },
   build: {
@@ -20,6 +20,9 @@ export default defineConfig({
         assetFileNames: `[name].[ext]`
       }
     }
+  },
+  css :{
+    preprocessorOptions : { scss: { api: "modern", } }
   },
   server: {
     port: 8080,

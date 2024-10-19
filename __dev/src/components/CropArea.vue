@@ -276,7 +276,17 @@ export default {
 </script>
 
 <style lang="scss">
-.CropArea { position: relative;
+.CropArea {
+    --colorNormal: #539fea;
+    --colorBg: rgba(255,255,255,.2);
+    --colorHover: #f59500;
+    --handleSize: 25px;
+    &.largeHandles {
+        --handleSize: 40px;
+    }
+
+    position: relative;
+
     .cptLoadingSpinner { position: absolute; z-index: 2; left:calc(50% - 30px/2); top: calc(50% - 30px/2); }
     .cptOverlayMessage { position: absolute; z-index: 2; left:0; top:0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
         &>div { background: rgba(0,0,0,0.8); color:#fff; box-shadow: 0 0 1em rgba(0,0,0,0.8); border-radius:.3em; display: block; padding: 0.5em 1em; font-size: 1.3em; text-align: center; }
@@ -295,13 +305,7 @@ export default {
     &.noOptions .vue-rectangle-stencil { visibility:hidden; }
     &.noOptions .vue-advanced-cropper::after { content:""; display: block; position: absolute; top:0; left:0; width: 100%; height: 100%; background: rgba(255,255,255,0.3); }
 
-    --colorNormal: #539fea;
-    --colorBg: rgba(255,255,255,.2);
-    --colorHover: #f59500;
-    --handleSize: 25px;
-    &.largeHandles {
-        --handleSize: 40px;
-    }
+
     .vue-simple-handler::before,
     .vue-simple-handler::after { content:""; display:block; position:absolute; border:6px solid var(--colorBg); height: 100%; width: 100%; top:0; left:0; z-index:1; box-sizing: border-box; }
     .vue-simple-handler::after { border:4px solid var(--colorNormal); top:0; left:0; z-index:2; }

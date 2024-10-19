@@ -5,6 +5,7 @@
         <div class="result" v-if="error"><strong class="fails">fail</strong> Failure processing the test - have a look on your server logs.</div>
         <div class="result" v-if="testResult && !error">
             <div v-for="(content,$index) in testResult" :key="$index" v-html="content"></div>
+            <div><button  type="button" class="button-secondary" @click="copyToClipboard">Copy to Clipboard</button></div>
         </div>
         <div>
             <button type="button" class="button-primary startTest" @click="doTest">Start plugin quick-test.</button>
@@ -41,6 +42,11 @@ export default {
                 .then(() =>{
                     this.loading = false;
                 })
+        },
+        copyToClipboard() {
+            //strip tags
+            let text = this.testResult.map(item => item.replace(/<[^>]*>?/gm, ''));
+            if(navigator.clipboard) navigator.clipboard.writeText(text.join('\n'));
         }
     }
 };
@@ -49,7 +55,7 @@ export default {
 <style lang="scss">
 .cpt_PluginTest {
     .result { white-space:nowrap; background:#fff; border:1px solid #ddd; margin: 1em auto; padding: 1em;
-        strong { display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; text-transform:uppercase; 
+        strong { display: inline-block; color:#fff; padding:3px 8px; margin-bottom: 1px; text-transform:uppercase;
             &.success { background:#00cc00; }
             &.fails { background:#cc0000; }
             &.info { background:#008acc; }

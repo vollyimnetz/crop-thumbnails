@@ -12,7 +12,7 @@ class RestSettings {
 	}
 
 	public static function initRest() {
-		//add endpoint customeranalysis
+		//add endpoints for settings
 		register_rest_route( 'crop_thumbnails/v1', 'settings', [
 			'methods' => 'GET',
 			'callback' => [self::class, 'rest_status'],
@@ -50,7 +50,7 @@ class RestSettings {
 			'permission_callback' => [self::class, 'checkRestPermission']
 		]);
 	}
-	
+
 	public static function checkRestPermission() {
 		if(!current_user_can('manage_options')) {
 			error_log('Try to access without permission (API).');
@@ -88,10 +88,17 @@ class RestSettings {
 					'nav_post_types' => esc_js(__('Sizes and Post Types','crop-thumbnails')),
 					'nav_plugin_test' => esc_js(__('Plugin Test','crop-thumbnails')),
 					'nav_developer_settings' => esc_js(__('Developer Settings','crop-thumbnails')),
-					'nav_user_permissions' => esc_js(__('User Permission','crop-thumbnails')),
+					'nav_user_permissions' => esc_js(__('User Settings','crop-thumbnails')),
 				],
-				'user_permissions' => [
-					'text' => esc_js(__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails')),
+				'user_settings' => [
+					'nav_user_permissions' => esc_js(__('User Permission','crop-thumbnails')),
+					'text_user_permissions' => esc_js(__('When active, only users who are able to edit files can crop thumbnails. Otherwise (default), any user who can upload files can also crop thumbnails.','crop-thumbnails')),
+					'nav_same_ratio_mode' => esc_js(__('Grouping with same aspect ration','crop-thumbnails')),
+					'text_same_ratio_mode' => esc_js(__('You may specify that users do not have a selection option for “Grouping with the same aspect ratio”. Select the type of grouping that should apply to all users here.','crop-thumbnails')),
+					'label_same_ratio_mode' => esc_js(__('Images with same ratio','crop-thumbnails')),
+					'label_same_ratio_mode_default' => esc_js(__('Let user decide (default)','crop-thumbnails')),
+					'label_same_ratio_mode_select' => esc_js(__('Select together','crop-thumbnails')),
+					'label_same_ratio_mode_group' => esc_js(__('Group together','crop-thumbnails')),
 				],
 				'posttype_settings' => [
 					'intro_1' => esc_js(__('Crop-Thumbnails is designed to make cropping images easy. For some post types, not all crop sizes are needed, but the plugin will automatically create all the crop sizes. Here you can select which crop sizes are available in the cropping interface for each post type.','crop-thumbnails')),
@@ -148,7 +155,7 @@ class RestSettings {
 			unset($newOptions['debug_js']);
 			unset($newOptions['debug_data']);
 			unset($newOptions['include_js_on_all_admin_pages']);
-			
+
 			if($input['enable_debug_js']) $newOptions['debug_js'] = 1;
 			if($input['enable_debug_data']) $newOptions['debug_data'] = 1;
 			if($input['include_js_on_all_admin_pages']) $newOptions['include_js_on_all_admin_pages'] = 1;
@@ -167,9 +174,11 @@ class RestSettings {
 			$newOptions = self::getOptions();
 
 			unset($newOptions['user_permission_only_on_edit_files']);
-			
+			unset($newOptions['same_ratio_mode']);
+
 			if($input['user_permission_only_on_edit_files']) $newOptions['user_permission_only_on_edit_files'] = 1;
-			
+			if(!empty($input['same_ratio_mode']) && in_array($input['same_ratio_mode'], ['select','group'])) $newOptions['same_ratio_mode'] = $input['same_ratio_mode'];
+
 			self::setOptions($newOptions);
 
 			return ['input' => $input, 'newOptions' => $newOptions];
@@ -188,35 +197,35 @@ class RestSettings {
 		$doDeleteAttachement = false;
 		$doDeleteTempFile = false;
 		$attachmentId = -1;
-		
+
 		$sourceFile = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
 		$tempFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
 		try {
-			$report[] = '<strong class="info">info</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
-			$report[] = '<strong class="info">info</strong> PHP '.phpversion();
-			$report[] = '<strong class="info">info</strong> PHP memory limit '.ini_get('memory_limit');
-			$report[] = '<strong class="info">info</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
-			
+			$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
+			$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
+			$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
+			$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+
 			//check if tmp-folder can be generated
 			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-				$report[] = '<strong class="success">success</strong> Temporary directory exists';
+				$report[] = '<strong class="success">SUCCESS</strong> Temporary directory exists';
 			} else {
 				if (!mkdir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-					throw new \Exception('<strong class="fails">fail</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
+					throw new \Exception('<strong class="fails">FAIL</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
 				} else {
-					$report[] = '<strong class="success">success</strong> Temporary directory could be created';
+					$report[] = '<strong class="success">SUCCESS</strong> Temporary directory could be created';
 				}
 			}
-			
+
 			//creating the testfile in temporary directory
 			if(!@copy($sourceFile,$tempFile)) {
-				throw new \Exception('<strong class="fails">fail</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP?');
+				throw new \Exception('<strong class="fails">FAIL</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP?');
 			} else {
-				$report[] = '<strong class="success">success</strong> Copy testfile to temporary directory';
+				$report[] = '<strong class="success">SUCCESS</strong> Copy testfile to temporary directory';
 				$doDeleteTempFile = true;
 			}
-			
-			
+
+
 			//try to upload the file
 			$_FILES['cpt_quicktest'] = [
 				'name' => 'test_image.jpg',
@@ -228,13 +237,13 @@ class RestSettings {
 			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, [], ['test_form' => false, 'action'=>'test'] );
 			$doDeleteTempFile = false;//is be deleted automatically
 			if ( is_wp_error( $attachmentId ) ) {
-				throw new \Exception('<strong class="fails">fail</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
+				throw new \Exception('<strong class="fails">FAIL</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
 			} else {
-				$report[] = '<strong class="success">success</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
+				$report[] = '<strong class="success">SUCCESS</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
 				$doDeleteAttachement = true;
 			}
-			
-			
+
+
 			//try to crop with the same function as the plugin does
 			$cropResult = wp_crop_image(    // * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 				$attachmentId,	            // * @param string|int $src The source file or Attachment ID.
@@ -248,61 +257,72 @@ class RestSettings {
 				$tempFile                   // * @param string $dst_file Optional. The destination file to write to.
 			);
 			if ( is_wp_error( $cropResult ) ) {
-				throw new \Exception('<strong class="fails">fail</strong> Cropping the file ('.$cropResult->get_error_message().')');
+				throw new \Exception('<strong class="fails">FAIL</strong> Cropping the file ('.$cropResult->get_error_message().')');
 			} else {
-				$report[] = '<strong class="success">success</strong> Cropping the file';
+				$report[] = '<strong class="success">SUCCESS</strong> Cropping the file';
 				$doDeleteTempFile = true;
 				$doDeleteAttachement = true;
 			}
-			
-			
+
+
 			//check if the dimensions are correct
 			$fileDimensions = getimagesize($tempFile);
 			if(!empty($fileDimensions[0]) && !empty($fileDimensions[1]) && !empty($fileDimensions['mime'])) {
 				$_checkDimensionsOk = true;
 				if($fileDimensions[0]!==200 || $fileDimensions[1]!==25) {
 					$_checkDimensionsOk = false;
-					$report[] = '<strong class="fails">fail</strong> Cropped image dimensions are wrong.';
+					$report[] = '<strong class="fails">FAIL</strong> Cropped image dimensions are wrong.';
 				}
 				if($fileDimensions['mime']!=='image/jpeg') {
 					$_checkDimensionsOk = false;
-					$report[] = '<strong class="fails">fail</strong> Cropped image dimensions mime-type is wrong.';
+					$report[] = '<strong class="fails">FAIL</strong> Cropped image dimensions mime-type is wrong.';
 				}
-				
+
 				if($_checkDimensionsOk) {
-					$report[] = '<strong class="success">success</strong> Cropped image dimensions are correct.';
+					$report[] = '<strong class="success">SUCCESS</strong> Cropped image dimensions are correct.';
 				}
 			} else {
-				$report[] = '<strong class="fails">fail</strong> Problem with getting the image dimensions of the cropped file.';
+				$report[] = '<strong class="fails">FAIL</strong> Problem with getting the image dimensions of the cropped file.';
 			}
-			
+
 			//DO CLEANUP
-		
+
 			//delete attachement file
 			if($doDeleteAttachement && $attachmentId!==-1) {
 				if ( false === wp_delete_attachment( $attachmentId ) ) {
-					$report[] = '<strong class="fails">fail</strong> Error while deleting test attachment';
+					$report[] = '<strong class="fails">FAIL</strong> Error while deleting test attachment';
 				} else {
-					$report[] = '<strong class="success">success</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
+					$report[] = '<strong class="success">SUCCESS</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
 				}
 			}
-			
-			
+
+
 			//deleting testfile form temporary directory
 			if($doDeleteTempFile) {
 				if(!@unlink($tempFile)) {
-					$report[] = '<strong class="fails">fail</strong> Remove testfile from temporary directory';
+					$report[] = '<strong class="fails">FAIL</strong> Remove testfile from temporary directory';
 				} else {
-					$report[] = '<strong class="success">success</strong> Remove testfile from temporary directory';
+					$report[] = '<strong class="success">SUCCESS</strong> Remove testfile from temporary directory';
 				}
 			}
-			
-			$report[] = '<strong class="info">info</strong> Tests complete';
+
+			$report[] = '<strong class="info">INFO</strong> Tests complete';
+			self::appendSystemInfo($report);
 			return $report;
 		} catch (\Throwable $th) {
 			$report[] = $th->getMessage();
 		}
 		return $report;
+	}
+
+	private static function appendSystemInfo(&$report) {
+		// get all plugins
+		$activePlugins = get_option('active_plugins');
+
+		$report[] = '<strong class="info">INFO</strong> ----- Active Plugins -----';
+		foreach($activePlugins as $pluginPath) {
+			$report[] = '<strong class="info">INFO</strong> - '.$pluginPath;
+		}
 	}
 }
 RestSettings::init();

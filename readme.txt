@@ -3,9 +3,9 @@ Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
 Requires at least: 5.0
-Tested up to: 6.4.2
+Tested up to: 6.6.2
 Requires PHP: 7.4.0
-Stable tag: 1.8.0
+Stable tag: 1.9.0
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,15 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.9.0 =
+* there was a contribution by Aaron Summer (https://github.com/aaronsummers) via Github to make the plugin more compatible with the Imagify plugin - Thank you Aaron!
+* recalculate the crop region on the server side to always use the original uploaded image for cropping (instead of the eventually scaled "full" image)
+* the settings screen > user settings do have a new option. You can set the a global "same ratio option" that is applied to all users.
+* add image/avif to allowed mime types
+* update frontend libraries
+* improve plugin test: add plugin list and copy to clipboard button
+* change all remaining ajax request to rest-api
+
 = 1.8.0 =
 * add to more filters for controlling what crop-sizes should be available (thanks to https://github.com/wijzijnweb)
 * update frontend libraries

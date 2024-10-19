@@ -71,6 +71,15 @@ function myCustomPhpFooterCode() {
 ## Filters and action-hooks
 The plugin provides some filters/actions if you want to adjust or extend the behaviour.
 
+### FILTER `crop_thumbnails_before_get_validated_input`
+Filter with one input-variable. Will be run directly before input validation.
+
+### FILTER `crop_thumbnails_after_get_validated_input`
+Filter with one input-variable. Will be run directly after input validation.
+
+### FILTER `crop_thumbnails_optimize_input_before_crop`
+Posibility to optimize the input directly before the crop ist done. If you use this filter the resulting value will not be saved in metadata.
+
 ### ACTION `crop_thumbnails_before_crop`
 An action called directly before cropping.
 

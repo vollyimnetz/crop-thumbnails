@@ -11,38 +11,30 @@ class CropPostThumbnailsEditor {
 
 	protected $debugOutput = '';
 
-	function __construct() {
-		add_action('wp_ajax_cpt_cropdata', [$this, 'provideCropData'] );
-	}
-
-	public function provideCropData() {
-		header('Content-Type: application/json; charset=UTF-8');
+	public static function rest_cropdata() {
 		try {
-			echo json_encode( $this->getCropData() );
+			$cpte = new CropPostThumbnailsEditor();
+			return $cpte->getCropData();
 		} catch(\InvalidArgumentException $e) {
-			self::doErrorResponse(400, 'FAILURE while processing request: '.$e->getMessage());
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request: '.$e->getMessage()), 400);
 		} catch(CPT_ForbiddenException $e) {
-			self::doErrorResponse(403, 'ERROR not allowed.');
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('ERROR not allowed.'), 403);
 		} catch(\Exception $e) {
-			self::doErrorResponse(400, 'FAILURE while processing request.');
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request.'), 400);
 		}
-		die();//to prevent to send back a "0"
 	}
-
 
 	/**
-	 * Will directly print an error-output
-	 * @param int $statusCode the statuscode of the response
+	 * Will return an error-object for the frontend
 	 * @param string $errorMsg the provided errormessage
+	 * @return array
 	 */
-	protected static function doErrorResponse($statusCode, $errorMsg) {
-		http_response_code($statusCode);
-		echo json_encode([
+	public static function getErrorData($errorMsg) {
+		return [
 			'lang' => self::getLangArray(),
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase()),
-			'error' => $errorMsg,
-			'statusCode' => $statusCode
-		]);
+			'error' => $errorMsg
+		];
 	}
 
 	/**
@@ -86,6 +78,7 @@ class CropPostThumbnailsEditor {
 			'message_image_orientation' => self::fixJsLangStrings(__('This image has an image orientation value in its exif-metadata. Be aware that this may result in rotatated or mirrored images on safari ipad / iphone.','crop-thumbnails')),
 			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
 			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails')),
+			'unknownError' => self::fixJsLangStrings(__('An unknown error occured.','crop-thumbnails')),
 			'infoNoImageSizesAvailable' => self::fixJsLangStrings(__('No image sizes for cropping available.','crop-thumbnails')),
 			'headline_selected_image_sizes' => self::fixJsLangStrings(__('Selected image sizes','crop-thumbnails')),
 		];
@@ -100,6 +93,7 @@ class CropPostThumbnailsEditor {
 			'options' => $options,
 			'sourceImageId' => null,
 			'sourceImage' => [
+				'original_image' => null,
 				'full' => null,
 				'large' => null,
 				'medium_large' => null,
@@ -131,6 +125,7 @@ class CropPostThumbnailsEditor {
 			$result['postTypeFilter'] = $_REQUEST['posttype'];
 		}
 
+		$result['sourceImage']['original_image'] = $this->getUncroppedImageData($imagePostObj->ID, 'original_image');
 		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');
 		$result['sourceImage']['large'] = $this->getUncroppedImageData($imagePostObj->ID, 'large');
 		$result['sourceImage']['medium_large'] = $this->getUncroppedImageData($imagePostObj->ID, 'medium_large');
@@ -174,7 +169,6 @@ class CropPostThumbnailsEditor {
 					$ratioData = $this->calculateRatioData($imageSize['width'], $result['sourceImage']['full']['height']);
 				}
 
-
 				$img_data = wp_get_attachment_image_src($imagePostObj->ID, $imageSize['id']);
 				$jsonDataValues = [
 					'name' => $imageSize['id'],
@@ -202,6 +196,10 @@ class CropPostThumbnailsEditor {
 
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
+		if($imageSize === 'original_image') {
+			$tmp = getimagesize(wp_get_original_image_path($ID));
+			$orig_img = [ wp_get_original_image_url($ID), $tmp[0], $tmp[1], false ];
+		}
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
 		$result = [
 			'url' => $orig_img[0],
@@ -286,5 +284,3 @@ class CropPostThumbnailsEditor {
 		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
 	}
 }
-
-$cpte = new CropPostThumbnailsEditor();

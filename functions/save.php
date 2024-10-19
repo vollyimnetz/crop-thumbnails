@@ -1,6 +1,7 @@
 <?php
 namespace crop_thumbnails;
 
+
 add_action('after_setup_theme', function() {
 	//Add the ajax action for entring the cropping function.
 	add_action( 'wp_ajax_cptSaveThumbnail', [CptSaveThumbnail::class, 'saveThumbnailAjaxWrap'], 10);
@@ -11,28 +12,44 @@ add_action('after_setup_theme', function() {
 
 	//add the function to determine if an old file should be deleted
 	add_filter( 'crop_thumbnails_should_delete_old_file', [CptSaveThumbnail::class, 'filter_shouldDeleteOldFile'], 10, 4);
+
+	//add_filter( 'crop_thumbnails_optimize_input_before_crop', [CptSaveThumbnail::class, 'filter_optimizeInputForScaledImages'], 10, 1);
+	add_filter( 'crop_thumbnails_after_get_validated_input', [CptSaveThumbnail::class, 'filter_optimizeInputForScaledImages'], 10, 1);
 }, 10);
 
 class CptSaveThumbnail {
 
 	protected static $debug = [];
 
+	public static function checkRestPermission() {
+		$return = false;
+		$cropThumbnailSettings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
+		if(current_user_can('edit_files')) {
+			$return = true;
+		}
+		if(current_user_can('upload_files') && empty($cropThumbnailSettings['user_permission_only_on_edit_files'])) {
+			$return = true;
+		}
+		return $return;
+	}
+
 	/**
 	 * Handle-function called via ajax request.
 	 * Check and crop multiple images. Update with wp_update_attachment_metadata if needed.
 	 * Input parameters:
 	 *    * $_REQUEST['selection'] - json-object - data of the selection/crop
-	 *    * $_REQUEST['raw_values'] - json-object - data of the original image
+	 *    * $_REQUEST['sourceImageId'] - int - the ID of the original image
 	 *    * $_REQUEST['activeImageSizes'] - json-array - array with data of the images to crop
 	 * The main code is wraped via try-catch - the errorMessage will send back to JavaScript for displaying in an alert-box.
-	 * Called die() at the end.
+	 * @return array JSON-Object with the result of the cropping
 	 */
-	public static function saveThumbnail() {
+	public static function saveThumbnail($request) {
+		if(!function_exists('wp_crop_image')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+
 		$jsonResult = [];
 		$settings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
-
 		try {
-			$input = self::getValidatedInput();
+			$input = self::getValidatedInput($request);
 			self::addDebug('validated input data');
 			self::addDebug($input);
 
@@ -75,7 +92,6 @@ class CptSaveThumbnail {
 				do_action('crop_thumbnails_before_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
 				$resultWpCropImage = apply_filters('crop_thumbnails_do_crop', null, $input, $croppedSize, $temporaryCopyFile, $currentFilePath);
 				do_action('crop_thumbnails_after_crop', $input, $croppedSize, $temporaryCopyFile, $currentFilePath, $resultWpCropImage);
-
 
 				$oldFile_toDelete = '';
 				if(empty($imageMetadata['sizes'][$activeImageSize->name])) {
@@ -125,6 +141,7 @@ class CptSaveThumbnail {
 			//otherwise new sizes will not be updated
 			$imageMetadata = apply_filters('crop_thumbnails_before_update_metadata', $imageMetadata, $input->sourceImageId);
 			wp_update_attachment_metadata( $input->sourceImageId, $imageMetadata);
+			self::addDebug('metadata updated: '.print_r($imageMetadata,true));
 
 			//generate result;
 			if(!empty($changedImageName)) {
@@ -142,13 +159,13 @@ class CptSaveThumbnail {
 				$jsonResult['debug'] = self::getDebug();
 			}
 			$jsonResult['success'] = time();//time for cache-breaker
-			echo json_encode($jsonResult);
+			return $jsonResult;
 		} catch (\Exception $e) {
 			if(!empty($settings['debug_data'])) {
 				$jsonResult['debug'] = self::getDebug();
 			}
 			$jsonResult['error'] = $e->getMessage();
-			echo json_encode($jsonResult);
+			return $jsonResult;
 		}
 	}
 
@@ -186,8 +203,15 @@ class CptSaveThumbnail {
 	 *
 	 */
 	public static function filter_doWpCrop($baseResult, $input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
-		return wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-			$input->sourceImageId,							// * @param string|int $src The source file or Attachment ID.
+		$input = apply_filters('crop_thumbnails_optimize_input_before_crop', $input);
+		$src = $input->sourceImageId;
+
+		if(!empty($input->selection->cropBaseSize) && $input->selection->cropBaseSize === 'original_image') {
+			//use the original image instead of the cropped one
+			$src = wp_get_original_image_path($input->sourceImageId);
+		}
+		return \wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
+			$src,											// * @param string|int $src The source file or Attachment ID.
 			$input->selection->x,							// * @param int $src_x The start x position to crop from.
 			$input->selection->y,							// * @param int $src_y The start y position to crop from.
 			$input->selection->x2 - $input->selection->x,	// * @param int $src_w The width to crop.
@@ -240,17 +264,6 @@ class CptSaveThumbnail {
 		return ['width' => $croppedWidth, 'height'=> $croppedHeight];
 	}
 
-	/**
-	 * This function is called by the WordPress-ajax-callback. Its only purpose is to call the
-	 * saveThumbnail function and die().
-	 * All WordPress ajax-functions should call the "die()" function in the end. But this makes
-	 * phpunit tests impossible - so we have to wrap it.
-	 */
-	public static function saveThumbnailAjaxWrap() {
-		self::saveThumbnail();
-		die();
-	}
-
 	protected static function addDebug($text) {
 		self::$debug[] = $text;
 	}
@@ -284,12 +297,29 @@ class CptSaveThumbnail {
 		$newValues['height'] = intval($croppedHeight);
 		$newValues['mime-type'] = $fileTypeInformations['type'];
 		$newValues['cpt_last_cropping_data'] = [
+			'version' => 2,//the version of the following data --> version 1 had no version information
+			/**
+			 * version 1 had no version information and contained the following data:
+			 * 'x' => $croppingInput->selection->x,
+			 * 'y' => $croppingInput->selection->y,
+			 * 'x2' => $croppingInput->selection->x2,
+			 * 'y2' => $croppingInput->selection->y2,
+			 * 'original_width' => $imageMetadata['width'],
+			 * 'original_height' => $imageMetadata['height'],
+			 *
+			 * version 2 contains the following data:
+			 * 'version' => 2,
+			 * 'x' => $croppingInput->selection->x,
+			 * 'y' => $croppingInput->selection->y,
+			 * 'x2' => $croppingInput->selection->x2,
+			 * 'y2' => $croppingInput->selection->y2
+			 * original_width and original_height are not stored anymore, as the plugin will always use the original image for cropping
+			 */
+
 			'x' => $croppingInput->selection->x,
 			'y' => $croppingInput->selection->y,
 			'x2' => $croppingInput->selection->x2,
-			'y2' => $croppingInput->selection->y2,
-			'original_width' => $imageMetadata['width'],
-			'original_height' => $imageMetadata['height'],
+			'y2' => $croppingInput->selection->y2
 		];
 
 		$oldValues = [];
@@ -332,18 +362,14 @@ class CptSaveThumbnail {
 	 * @return object JSON-Object with submitted data
 	 * @throw Exception if the security validation fails
 	 */
-	protected static function getValidatedInput() {
-
-		if(!check_ajax_referer($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase(),'_ajax_nonce',false)) {
-			throw new \Exception(__("ERROR: Security Check failed (maybe a timeout - please try again).",'crop-thumbnails'), 1);
-		}
-
-
-		if(empty($_REQUEST['crop_thumbnails'])) {
+	protected static function getValidatedInput($request) {
+		$input = json_decode( $request->get_body(), false );
+		if(empty($input) || empty($input->crop_thumbnails)) {
 			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
 		}
-		$input = json_decode(stripcslashes($_REQUEST['crop_thumbnails']));
 
+		$input = $input->crop_thumbnails;
+		$input = apply_filters('crop_thumbnails_before_get_validated_input', $input);
 
 		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
 			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
@@ -374,7 +400,7 @@ class CptSaveThumbnail {
 			throw new \Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
 		}
 
-		return $input;
+		return apply_filters('crop_thumbnails_after_get_validated_input', $input);
 	}
 
 
@@ -421,14 +447,53 @@ class CptSaveThumbnail {
 	 * @return boolean true if the user is permitted
 	 */
 	public static function isUserPermitted($imageId) {
-		$return = false;
-		$cropThumbnailSettings = $GLOBALS['CROP_THUMBNAILS_HELPER']->getOptions();
-		if(current_user_can('edit_files')) {
-			$return = true;
-		}
-		if(current_user_can('upload_files') && empty($cropThumbnailSettings['user_permission_only_on_edit_files'])) {
-			$return = true;
-		}
+		$return = self::checkRestPermission();
 		return apply_filters('crop_thumbnails_user_permission_check', $return, $imageId);
+	}
+
+	/**
+	 * Filter function to optimize the input data for images that are scaled.
+	 * As we the frontend will send the crop-values based on an scaled image, we need to adjust them to fit the original image.
+	 * This function will adjust the crop-values to the original image-size.
+	 * @param object $input the input data
+	 * @return object the adjusted input data
+	 */
+	public static function filter_optimizeInputForScaledImages($input) {
+		if(empty($input->selection->cropBaseSize)) return $input;
+		if($input->selection->cropBaseSize === 'original_image') return $input;
+
+		//check if the image is scaled
+		$originalFile = wp_get_original_image_path($input->sourceImageId);
+		list( $baseFile, $baseFileWidth, $baseFileHeight ) = wp_get_attachment_image_src($input->sourceImageId, $input->selection->cropBaseSize);
+		if(empty($originalFile) || empty($baseFile) || $originalFile === $baseFile) return $input;//no need to do anything
+
+		//self::addDebug('filter_optimizeInputForScaledImages input: '.print_r($input->selection,true));
+
+		//the image is scaled - we need to adjust the crop-values
+		$originalFileData = getimagesize($originalFile);
+		$baseFileData = getimagesize($baseFile);
+		$scale = $originalFileData[1] / $baseFileData[1];
+		$input->selection->x = intval($input->selection->x * $scale);
+		$input->selection->y = intval($input->selection->y * $scale);
+		$input->selection->x2 = intval($input->selection->x2 * $scale);
+		$input->selection->y2 = intval($input->selection->y2 * $scale);
+
+		//make sure new values are not bigger than the original image
+		if($input->selection->x2 > $originalFileData[0]) $input->selection->x2 = $originalFileData[0];
+		if($input->selection->y2 > $originalFileData[1]) $input->selection->y2 = $originalFileData[1];
+
+		//make sure the crop is not smaller than the base-image
+		if($input->selection->x < 0) $input->selection->x = 0;
+		if($input->selection->y < 0) $input->selection->y = 0;
+
+		//recalculate the width and height of the crop
+		$input->selection->w = $input->selection->x2 - $input->selection->x;
+		$input->selection->h = $input->selection->y2 - $input->selection->y;
+
+		//set the new base-size
+		$input->selection->cropBaseSize = 'original_image';
+
+		self::addDebug('Selection adjusted for scaled image. Scale: '.$scale);
+		return $input;
 	}
 }
