@@ -93,8 +93,8 @@ class CropPostThumbnailsBackendPreparer {
 	 */
 	public function adminHeaderJS() {
 		if($this->shouldCropThumbnailsBeActive()) {
-			wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['jquery','imagesloaded','wp-api'], CROP_THUMBNAILS_VERSION);
-			add_action('admin_footer', [$this,'addLinksToAdmin']);
+			wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['imagesloaded', 'wp-api'], CROP_THUMBNAILS_VERSION);
+			add_action('admin_footer', [$this, 'addLinksToAdmin']);
 		}
 	}
 
