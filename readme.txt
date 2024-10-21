@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 6.5
 Tested up to: 6.6.2
 Requires PHP: 7.4.0
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.9.1 =
+* remove of a debug message that was visible in the frontend
+* raise minimal wordpress version to 6.5 (because of usage of wp_enqueue_script_module)
+
 = 1.9.0 =
 * there was a contribution by Aaron Summer (https://github.com/aaronsummers) via Github to make the plugin more compatible with the Imagify plugin - Thank you Aaron!
 * recalculate the crop region on the server side to always use the original uploaded image for cropping (instead of the eventually scaled "full" image)
