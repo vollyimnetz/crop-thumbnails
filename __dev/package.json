@@ -8,7 +8,7 @@
     "hot": "vite",
     "dev": "vite build --watch",
     "build": "vite build --emptyOutDir",
-    "export": "node export.js",
+    "export": "node ./export.js",
     "phptest": "sh runPhpTests.sh"
   },
   "dependencies": {
