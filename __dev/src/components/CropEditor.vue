@@ -96,7 +96,6 @@
                     <pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
                     <pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
                 </div>
-
             </div>
         </div>
     </div>
@@ -105,18 +104,18 @@
 
 <script>
 import CropImageSize from './CropImageSize.vue';
-import Message from './message.vue';
+import Message from './Message.vue';
 import CropArea from './CropArea.vue';
 import { isLowRes, getCenterPreselect } from './cropCalculations';
 import { getCropData, saveCrop } from './api';
 export default {
     components: { CropImageSize, Message, CropArea },
     props:{
-        imageId : { required: true, type: Number },
+        imageId : { required: true, type: [Number, String] },
         posttype : { required: false, type: String, default: null },
     },
     mounted() {
-        this.loadCropData();
+        this.doSetup();
     },
     data:() =>({
         cropData : null,//
@@ -216,6 +215,12 @@ export default {
         }
     },
     methods:{
+        doSetup() {
+            if(typeof this.imageId === 'string') {
+                this.imageId = parseInt(this.imageId);
+            }
+            this.loadCropData();
+        },
         cropAreaLoaded() {
             this.cropLoaded = true;
         },
@@ -257,7 +262,7 @@ export default {
             try { localStorage.setItem('cpt_large_handles', this.largeHandles); } catch(e) {}
         },
         loadCropData() {
-            var params = {
+            let params = {
                 imageId : this.imageId,
                 posttype : this.posttype
             };
@@ -387,22 +392,21 @@ export default {
         },
         getSelectionForApi() {
             let result = {
-                x: Math.floor(this.currentCropSize.left),
-                y: Math.floor(this.currentCropSize.top),
-                x2: Math.floor(this.currentCropSize.left + this.currentCropSize.width),
-                y2: Math.floor(this.currentCropSize.top + this.currentCropSize.height),
-                w: Math.floor(this.currentCropSize.width),
-                h: Math.floor(this.currentCropSize.height),
-                cropBaseSize: this.cropBaseSize
+                x: Math.floor(this.realCurrentCropSize.left),
+                y: Math.floor(this.realCurrentCropSize.top),
+                x2: Math.floor((this.realCurrentCropSize.left + this.realCurrentCropSize.width)),
+                y2: Math.floor((this.realCurrentCropSize.top + this.realCurrentCropSize.height)),
+                w: Math.floor(this.realCurrentCropSize.width),
+                h: Math.floor(this.realCurrentCropSize.height),
             };
 
             if(result.x < 0) result.x = 0;
             if(result.y < 0) result.y = 0;
-            if(this.cropImage) {
-                if(result.x2 > this.cropImage.width) result.x2 = this.cropImage.width;
-                if(result.y2 > this.cropImage.height) result.y2 = this.cropImage.height;
-                if(result.w > this.cropImage.width) result.w = this.cropImage.width;
-                if(result.h > this.cropImage.height) result.h = this.cropImage.height;
+            if(this.originalImage) {
+                if(result.x2 > this.originalImage.width) result.x2 = this.originalImage.width;
+                if(result.y2 > this.originalImage.height) result.y2 = this.originalImage.height;
+                if(result.w > this.originalImage.width) result.w = this.originalImage.width;
+                if(result.h > this.originalImage.height) result.h = this.originalImage.height;
             }
             return result;
         },
@@ -417,7 +421,7 @@ export default {
                         activeImageSizes : this.selectedImageSizesData
                     }
                 };
-
+                //console.log('request data', cropRequest);
                 saveCrop(cropRequest)
                     .then((response) => {
                         if(this.cropData.options.debug_data) {

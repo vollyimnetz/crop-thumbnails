@@ -16,7 +16,11 @@ class SettingsScreen {
 	public function optionsPageStyle() {
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
 			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
-			wp_enqueue_script_module('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), ['wp-api'], CROP_THUMBNAILS_VERSION);
+			if(function_exists('wp_enqueue_script_module')) {
+				wp_enqueue_script_module('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), ['wp-api'], CROP_THUMBNAILS_VERSION);
+			} else {
+				wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), ['wp-api'], CROP_THUMBNAILS_VERSION);
+			}
 			wp_enqueue_script('wp-api');//wp_enqueue_script_module seem not to load wp-api correctly
 		}
 	}

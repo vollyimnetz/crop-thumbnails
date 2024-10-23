@@ -26,9 +26,9 @@ export default {
     props: {
         image: { required:true, type: Object },
         lang: { required:true, type: Object },
-        sameRatioMode: { required:true, type: [Object, String] },
+        sameRatioMode: { required:true, type: [Object, String, null] },
         notYetCropped: { required:true, type: Boolean },
-        currentCropSize: { required:true, type: [Object, String] },
+        currentCropSize: { required:true, type: [Object, String, null] },
     },
     computed:{
         isLowRes() {

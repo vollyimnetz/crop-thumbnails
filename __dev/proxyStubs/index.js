@@ -5,16 +5,17 @@ const STUBS = [
 {
     url: '/fake-ajax-url/crop_thumbnails/v1/crop?imageId=123&posttype=',
     method: 'GET',
-    content:
-        {
-        options: {
+    content: {
+        "options": {
             "hide_post_type": { "custom_css": "1", "customize_changeset": "1", "wpcf7_contact_form": "1" },
             "hide_size": {
                 "post": { "thumbnail": "1", "mitarbeiter": "1" },
                 "page": { "thumbnail": "1", "mitarbeiter": "1" },
                 "mitarbeiter": { "thumbnail": "1", "post-thumbnail": "1", "small-thumb": "1" },
                 "angebote": { "mitarbeiter": "1" }
-            }
+            },
+            "user_permission_only_on_edit_files": 1,
+            //"same_ratio_mode": "group"
         },
         sourceImageId: 123,
         sourceImage: {
@@ -69,36 +70,35 @@ const STUBS = [
                 "width": 3840, "height": 2160, "gcd": "240", "ratio": 1.7777777777777777, "printRatio": "16:9", "hideByPostType": false, "crop": true
             }
         ],
-        lang: {
-            "warningOriginalToSmall": "Warung: das Original-Bild ist zu klein um es f\u00fcr diese Thumbnail-Gr\u00f6\u00dfe in guter Qualit\u00e4t zuzuschneiden.",
-            "cropDisabled": "Das Zuschneiden ist f\u00fcr diesen Eintragstyp deaktiviert.",
+        "lang": {
+            "warningOriginalToSmall": "Warung: das Original-Bild ist zu klein um es für diese Thumbnail-Größe in guter Qualität zuzuschneiden.",
+            "cropDisabled": "Das Zuschneiden ist für diesen Eintragstyp deaktiviert.",
             "waiting": "Bitte warten Sie bis die Bilder zugeschnitten wurden.",
             "rawImage": "Original-Bild",
             "pixel": "Pixel",
-            "instructions_overlay_text": "W\u00e4hlen Sie eine Bildgr\u00f6\u00dfe aus.",
+            "instructions_overlay_text": "Wählen Sie eine Bildgröße aus.",
             "instructions_header": "Schnell-Anleitung",
-            "instructions_step_1": "Schritt 1: W\u00e4hlen Sie eine Bildgr\u00f6\u00dfe aus der Liste.",
-            "instructions_step_2": "Schritt 2: \u00c4ndern Sie den Auswahlrahmen im obigen Bild.",
-            "instructions_step_3": "Schritt 3: Klicken Sie auf \"Zuschnitt \u00fcbernehmen\".",
-            "label_crop": "Zuschnitt \u00fcbernehmen",
-            "label_same_ratio_mode": "Bilder mit gleichem Seitenverh\u00e4ltnis",
+            "instructions_step_1": "Schritt 1: Wählen Sie eine Bildgröße aus der Liste.",
+            "instructions_step_2": "Schritt 2: Ändern Sie den Auswahlrahmen im obigen Bild.",
+            "instructions_step_3": "Schritt 3: Klicken Sie auf \"Zuschnitt übernehmen\".",
+            "label_crop": "Zuschnitt übernehmen",
+            "label_same_ratio_mode": "Bilder mit gleichem Seitenverhältnis",
             "label_same_ratio_mode_nothing": "nichts tun",
-            "label_same_ratio_mode_select": "gemeinsam ausw\u00e4hlen",
+            "label_same_ratio_mode_select": "gemeinsam auswählen",
             "label_same_ratio_mode_group": "gruppieren",
-            "label_deselect_all": "nichts ausw\u00e4hlen",
-            "label_large_handles": "gro\u00dfe Kontrollfl\u00e4chen verwenden",
-            "dimensions": "Gr\u00f6\u00dfe:",
-            "ratio": "Seitenverh\u00e4ltnis:",
+            "label_deselect_all": "nichts auswählen",
+            "label_large_handles": "große Kontrollflächen verwenden",
+            "dimensions": "Größe:",
+            "ratio": "Seitenverhältnis:",
             "cropped": "zugeschnitten",
-            "lowResWarning": "Original-Bild ist zu klein f\u00fcr guten Bildzuschnitt!",
+            "lowResWarning": "Original-Bild ist zu klein für guten Bildzuschnitt!",
             "notYetCropped": "Wurde bisher nicht von WordPress zugeschnitten.",
-            'label_use_original_image' : 'Use the real original image',
-            'info_use_original_image' : 'As your original uploaded image was quit big, Wordpress has generates an scaled image. You may use the real original image to get the best quality.',
-            "message_image_orientation": "Dieses Bild nutzt eine Bild-Rotation in seinen EXIF-Metadaten. Beachten Sie, dass das zu gedrehten oder gespiegelten Bildern beim Safari-Browser (IPad, IPhone) f\u00fchren kann.",
+            "message_image_orientation": "Dieses Bild nutzt eine Bild-Rotation in seinen EXIF-Metadaten. Beachten Sie, dass das zu gedrehten oder gespiegelten Bildern beim Safari-Browser (IPad, IPhone) führen kann.",
             "script_connection_error": "Fehler beim Verbindungsaufbau zum Server.",
             "noPermission": "Es ist dir nicht gestattet, die Miniaturansichten zuzuschneiden.",
-            "infoNoImageSizesAvailable": "Keine Bildgr\u00f6\u00dfen f\u00fcr den Bild-Zuschnitt verf\u00fcgbar.",
-            "headline_selected_image_sizes": "Ausgew\u00e4hlte Bildgr\u00f6\u00dfen"
+            "unknownError": "Ein unbekannter Fehler ist aufgetreten.",
+            "infoNoImageSizesAvailable": "Keine Bildgrößen für den Bild-Zuschnitt verfügbar.",
+            "headline_selected_image_sizes": "Ausgewählte Bildgrößen"
         },
         nonce: "abc123",
         hiddenOnPostType: false

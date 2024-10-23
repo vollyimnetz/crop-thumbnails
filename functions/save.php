@@ -12,9 +12,6 @@ add_action('after_setup_theme', function() {
 
 	//add the function to determine if an old file should be deleted
 	add_filter( 'crop_thumbnails_should_delete_old_file', [CptSaveThumbnail::class, 'filter_shouldDeleteOldFile'], 10, 4);
-
-	//add_filter( 'crop_thumbnails_optimize_input_before_crop', [CptSaveThumbnail::class, 'filter_optimizeInputForScaledImages'], 10, 1);
-	add_filter( 'crop_thumbnails_after_get_validated_input', [CptSaveThumbnail::class, 'filter_optimizeInputForScaledImages'], 10, 1);
 }, 10);
 
 class CptSaveThumbnail {
@@ -204,12 +201,8 @@ class CptSaveThumbnail {
 	 */
 	public static function filter_doWpCrop($baseResult, $input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
 		$input = apply_filters('crop_thumbnails_optimize_input_before_crop', $input);
-		$src = $input->sourceImageId;
 
-		if(!empty($input->selection->cropBaseSize) && $input->selection->cropBaseSize === 'original_image') {
-			//use the original image instead of the cropped one
-			$src = wp_get_original_image_path($input->sourceImageId);
-		}
+		$src = wp_get_original_image_path($input->sourceImageId);
 		return \wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 			$src,											// * @param string|int $src The source file or Attachment ID.
 			$input->selection->x,							// * @param int $src_x The start x position to crop from.
@@ -449,51 +442,5 @@ class CptSaveThumbnail {
 	public static function isUserPermitted($imageId) {
 		$return = self::checkRestPermission();
 		return apply_filters('crop_thumbnails_user_permission_check', $return, $imageId);
-	}
-
-	/**
-	 * Filter function to optimize the input data for images that are scaled.
-	 * As we the frontend will send the crop-values based on an scaled image, we need to adjust them to fit the original image.
-	 * This function will adjust the crop-values to the original image-size.
-	 * @param object $input the input data
-	 * @return object the adjusted input data
-	 */
-	public static function filter_optimizeInputForScaledImages($input) {
-		if(empty($input->selection->cropBaseSize)) return $input;
-		if($input->selection->cropBaseSize === 'original_image') return $input;
-
-		//check if the image is scaled
-		$originalFile = wp_get_original_image_path($input->sourceImageId);
-		list( $baseFile, $baseFileWidth, $baseFileHeight ) = wp_get_attachment_image_src($input->sourceImageId, $input->selection->cropBaseSize);
-		if(empty($originalFile) || empty($baseFile) || $originalFile === $baseFile) return $input;//no need to do anything
-
-		//self::addDebug('filter_optimizeInputForScaledImages input: '.print_r($input->selection,true));
-
-		//the image is scaled - we need to adjust the crop-values
-		$originalFileData = getimagesize($originalFile);
-		$baseFileData = getimagesize($baseFile);
-		$scale = $originalFileData[1] / $baseFileData[1];
-		$input->selection->x = intval($input->selection->x * $scale);
-		$input->selection->y = intval($input->selection->y * $scale);
-		$input->selection->x2 = intval($input->selection->x2 * $scale);
-		$input->selection->y2 = intval($input->selection->y2 * $scale);
-
-		//make sure new values are not bigger than the original image
-		if($input->selection->x2 > $originalFileData[0]) $input->selection->x2 = $originalFileData[0];
-		if($input->selection->y2 > $originalFileData[1]) $input->selection->y2 = $originalFileData[1];
-
-		//make sure the crop is not smaller than the base-image
-		if($input->selection->x < 0) $input->selection->x = 0;
-		if($input->selection->y < 0) $input->selection->y = 0;
-
-		//recalculate the width and height of the crop
-		$input->selection->w = $input->selection->x2 - $input->selection->x;
-		$input->selection->h = $input->selection->y2 - $input->selection->y;
-
-		//set the new base-size
-		$input->selection->cropBaseSize = 'original_image';
-
-		self::addDebug('Selection adjusted for scaled image. Scale: '.$scale);
-		return $input;
 	}
 }

@@ -204,6 +204,7 @@ class RestSettings {
 			$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
 			$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
 			$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
+			$report[] = '<strong class="info">INFO</strong> Server '.(!empty($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : $_ENV['SERVER_SOFTWARE']);
 			$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
 
 			//check if tmp-folder can be generated
@@ -323,6 +324,14 @@ class RestSettings {
 		foreach($activePlugins as $pluginPath) {
 			$report[] = '<strong class="info">INFO</strong> - '.$pluginPath;
 		}
+		$imageSizes = $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes();
+		if(!empty($imageSizes)) {
+			$report[] = '<strong class="info">INFO</strong> ----- Image Sizes -----';
+			foreach($imageSizes as $imageSize) {
+				$report[] = '<strong class="info">INFO</strong> <code>'.json_encode($imageSize).'</code>';
+			}
+		}
+
 	}
 }
 RestSettings::init();
