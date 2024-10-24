@@ -93,8 +93,12 @@
                 <div>
                     <button type="button" class="button" v-if="cropData.options.debug_js" @click="showDebugClick('js')">show JS-Debug</button>
                     <button type="button" class="button" v-if="cropData.options.debug_data && dataDebug!==null" @click="showDebugClick('data')">show Data-Debug</button>
-                    <pre v-if="showDebugType==='data'">{{ dataDebug }}</pre>
-                    <pre v-if="showDebugType==='js'"><br />cropImage:{{cropImage}}<br />cropData:{{ cropData }}</pre>
+                    <pre class="cropThumbnailDebug" v-if="showDebugType==='data'">{{ dataDebug }}
+                        <button class="copyDebug" @click="copyToClipboard(dataDebug)">Copy</button>
+                    </pre>
+                    <pre class="cropThumbnailDebug" v-if="showDebugType==='js'">{{ cropData }}
+                        <button class="copyDebug" @click="copyToClipboard(cropData)">Copy</button>
+                    </pre>
                 </div>
             </div>
         </div>
@@ -127,7 +131,6 @@ export default {
         dataDebug : null,//will be filled after the crop request finished
 
         sameRatioMode : null,// can be NULL, "select" or "group"
-        sameRatioModeOptions: [],
 
         cropOptions: null,
         largeHandles: false,
@@ -212,13 +215,18 @@ export default {
         },
         hasSettingsSameRatioMode() {
             return this.options?.same_ratio_mode ?? false;
+        },
+        sameRatioModeOptions() {
+            if(!this.lang) return [];
+            return [
+                { value: null, text: this.lang.label_same_ratio_mode_nothing },
+                { value: 'select', text: this.lang.label_same_ratio_mode_select },
+                { value: 'group', text: this.lang.label_same_ratio_mode_group },
+            ];
         }
     },
     methods:{
         doSetup() {
-            if(typeof this.imageId === 'string') {
-                this.imageId = parseInt(this.imageId);
-            }
             this.loadCropData();
         },
         cropAreaLoaded() {
@@ -237,11 +245,6 @@ export default {
         },
         setupRatioMode() {
             if(this.errorMessage) return;
-            this.sameRatioModeOptions = [
-                { value: null, text: this.lang.label_same_ratio_mode_nothing },
-                { value: 'select', text: this.lang.label_same_ratio_mode_select },
-                { value: 'group', text: this.lang.label_same_ratio_mode_group },
-            ];
             try { this.sameRatioMode = localStorage.getItem('cpt_same_ratio_mode'); } catch(e) {}
 
             if(this.hasSettingsSameRatioMode) {
@@ -458,6 +461,17 @@ export default {
                     .finally(() => {
                         this.loading = false;
                     });
+            }
+        },
+        copyToClipboard(text) {
+            try {
+                if(typeof text === 'object') text = JSON.stringify(text, null, "\t");
+                //use the clipboard API
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Text copied to clipboard');
+                });
+            } catch (error) {
+                alert('Error while try to copy to clipboard');
             }
         }
     }

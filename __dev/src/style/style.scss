@@ -17,14 +17,14 @@
 /**** MODAL ****/
 /* @see https://www.w3schools.com/howto/howto_css_modals.asp */
 body.cpt_ModalIsOpen { overflow: hidden; }
-#cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; padding:0; box-sizing: border-box; background-color: rgba(0,0,0,0.4); 
+#cpt_Modal { display: block; position: fixed; z-index: 99999999; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; padding:0; box-sizing: border-box; background-color: rgba(0,0,0,0.4);
   @media(min-width:900px) { padding:40px; }
 
   .cpt_ModalDialog { position: relative; background-color: #fff; overflow: hidden; margin: auto; padding: 0px; width: 100%; max-width: 100%; height: 100%; margin-top:0; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
   .cpt_ModalHeader { height: 40px; }
   .cpt_ModalHeader .cpt_ModalTitle { font-size:20px; font-weight: 300; line-height: 1; padding: 10px 50px 10px 20px; background: #eee; color:#000; }
   .cpt_ModalContent { width:100%; height: 100%; padding-top:40px; margin-top:-40px; box-sizing: border-box; }
-  
+
   /* The Close Button */
   .cpt_ModalClose { color: #000; border:none; background: transparent; position: absolute; right:0; top:0; font-size: 38px; font-weight: 300; padding:0px 8px 10px 8px; line-height: 30px; }
   .cpt_ModalClose:hover,
@@ -56,17 +56,17 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptEditorInner { position: relative; overflow-y: auto; height: 100%; }
   .cptEditorInner.loading { overflow-y: hidden; }
 
-  .cptSelectionPaneInner .cptToolbar { display:flex; align-items: flex-start; padding: 5px 10px; 
+  .cptSelectionPaneInner .cptToolbar { display:flex; align-items: flex-start; padding: 5px 10px;
     label { display: inline-block; margin-right: 0.3em; }
   }
-  
+
   .cptImageSizelist { border-top: 3px solid #efefef; margin-top:0; padding:3px; display: flex; flex-wrap: wrap;
     .CropImageSize { cursor:pointer; position: relative; float: left; padding: 8px; margin: 0; color: #444; cursor: pointer; list-style: none; text-align: center; box-sizing: border-box; box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px transparent; transition:box-shadow .5s ease; }
     .CropImageSize.active { box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px #0073aa; }
     .CropImageSize:hover,
     .CropImageSize:focus {background: #eee; }
 
-    .CropImageSize { width: 50%; 
+    .CropImageSize { width: 50%;
       @media(min-width:520px)  { width: 33.32%; }
       @media(min-width:760px)  { width: 50%; }
       @media(min-width:1100px) { width: 33.32%; }
@@ -75,20 +75,24 @@ body.cpt_ModalIsOpen { overflow: hidden; }
     }
   }
 
+  pre.cropThumbnailDebug { background-color: #f0f0f0; overflow-x: scroll; padding:5px; font-size: .8em; position: relative;
+    .copyDebug { position: absolute; top:0; right:0; padding: 5px; background: #fff; cursor: pointer; border:1px solid #444; }
+  }
+
 
   .CropImageSize { line-height: 1.4;
     header,
     .dimensions,
     .ratio { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    
+
     header { font-size:1em; font-weight: bold; }
     .dimensions { font-size:0.8em; }
     .ratio { font-size:0.8em; }
     .lowResWarning,
-    .notYetCropped { color: #fff; position: absolute; bottom: 12px; left: 12px; background: #ea6c00; width: 30px; height: 30px; line-height: 28px; font-size: 23px; font-weight: 600; z-index: 1; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3); 
+    .notYetCropped { color: #fff; position: absolute; bottom: 12px; left: 12px; background: #ea6c00; width: 30px; height: 30px; line-height: 28px; font-size: 23px; font-weight: 600; z-index: 1; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3);
       span { text-shadow: 1px 1px 1px rgba(0,0,0,0.3); }
     }
-    .notYetCropped { background: #ea2f00; left:auto; right: 12px; 
+    .notYetCropped { background: #ea2f00; left:auto; right: 12px;
       span { line-height: 30px; }
     }
 
@@ -101,14 +105,14 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   .cptImagesAreSelected li:focus .cptImageBgContainer { filter:grayscale(0%); }
 
 
-  .loadingcontainer { position: relative; 
+  .loadingcontainer { position: relative;
     .loadingMsg { opacity: 0; position: absolute; width: 100%; height: 100%; top:0; left:0; background: #fff; transition: opacity .4s linear; }
     .cptLoadingSpinner { position: absolute; top:50%; left:50%; margin-left: -15px; margin-top: -15px; }
     &.loading .loadingMsg { opacity: 1; }
     &.loading .cptImageBgContainer { background: none !important; }
-    .fade-enter-active, 
+    .fade-enter-active,
     .fade-leave-active { transition: opacity .5s }
-    .fade-enter, 
+    .fade-enter,
     .fade-leave-to { opacity: 0; }
   }
 
@@ -155,7 +159,7 @@ body.cpt_ModalIsOpen { overflow: hidden; }
   animation-duration: 0.75s;
   animation-iteration-count: infinite;
   animation-name: cptRotateForever;
-  animation-timing-function: linear; 
+  animation-timing-function: linear;
 }
 .cptLoadingSpinner.small { vertical-align: middle; height: 20px; width: 20px; margin:0 1em; }
 @keyframes cptRotateForever {

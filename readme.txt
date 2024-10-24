@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 5.0
 Tested up to: 6.6.2
 Requires PHP: 7.4.0
-Stable tag: 1.9.2
+Stable tag: 1.9.3
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.9.3 =
+* use rename instead of copy-unlink to move the files from the temporary directory
+* improve logging
+
 = 1.9.2 =
 * hardend the crop solution by calculating the crop region in the frontend
 * lower the minimal wordpress version to 5.0 (add a fallback for wp_enqueue_script_module)

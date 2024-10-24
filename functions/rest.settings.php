@@ -195,18 +195,12 @@ class RestSettings {
 
 		$report = [];
 		$doDeleteAttachement = false;
-		$doDeleteTempFile = false;
 		$attachmentId = -1;
+		$testComplete = false;
 
 		$sourceFile = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'test_image.jpg';
 		$tempFile = $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir().DIRECTORY_SEPARATOR.'testfile.jpg';
 		try {
-			$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
-			$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
-			$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
-			$report[] = '<strong class="info">INFO</strong> Server '.(!empty($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : $_ENV['SERVER_SOFTWARE']);
-			$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
-
 			//check if tmp-folder can be generated
 			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
 				$report[] = '<strong class="success">SUCCESS</strong> Temporary directory exists';
@@ -219,11 +213,10 @@ class RestSettings {
 			}
 
 			//creating the testfile in temporary directory
-			if(!@copy($sourceFile,$tempFile)) {
-				throw new \Exception('<strong class="fails">FAIL</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP?');
+			if(!@copy($sourceFile, $tempFile)) {
+				throw new \Exception('<strong class="fails">FAIL</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP? ['.$sourceFile.' --> '.$tempFile.']');
 			} else {
 				$report[] = '<strong class="success">SUCCESS</strong> Copy testfile to temporary directory';
-				$doDeleteTempFile = true;
 			}
 
 
@@ -236,7 +229,7 @@ class RestSettings {
 				'size' => 102610
 			];
 			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, [], ['test_form' => false, 'action'=>'test'] );
-			$doDeleteTempFile = false;//is be deleted automatically
+
 			if ( is_wp_error( $attachmentId ) ) {
 				throw new \Exception('<strong class="fails">FAIL</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
 			} else {
@@ -246,8 +239,9 @@ class RestSettings {
 
 
 			//try to crop with the same function as the plugin does
+			$src = wp_get_original_image_path($attachmentId);
 			$cropResult = wp_crop_image(    // * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
-				$attachmentId,	            // * @param string|int $src The source file or Attachment ID.
+				$src,	                    // * @param string|int $src The source file or Attachment ID.
 				130,                        // * @param int $src_x The start x position to crop from.
 				275,                        // * @param int $src_y The start y position to crop from.
 				945,                        // * @param int $src_w The width to crop.
@@ -261,7 +255,6 @@ class RestSettings {
 				throw new \Exception('<strong class="fails">FAIL</strong> Cropping the file ('.$cropResult->get_error_message().')');
 			} else {
 				$report[] = '<strong class="success">SUCCESS</strong> Cropping the file';
-				$doDeleteTempFile = true;
 				$doDeleteAttachement = true;
 			}
 
@@ -298,25 +291,34 @@ class RestSettings {
 			}
 
 
-			//deleting testfile form temporary directory
-			if($doDeleteTempFile) {
-				if(!@unlink($tempFile)) {
-					$report[] = '<strong class="fails">FAIL</strong> Remove testfile from temporary directory';
-				} else {
-					$report[] = '<strong class="success">SUCCESS</strong> Remove testfile from temporary directory';
-				}
-			}
-
-			$report[] = '<strong class="info">INFO</strong> Tests complete';
-			self::appendSystemInfo($report);
-			return $report;
+			$testComplete = true;
 		} catch (\Throwable $th) {
 			$report[] = $th->getMessage();
 		}
+
+		//deleting testfile form temporary directory
+		if(file_exists($tempFile)) {
+			if(!@unlink($tempFile)) {
+				$report[] = '<strong class="fails">FAIL</strong> Remove testfile from temporary directory';
+			} else {
+				$report[] = '<strong class="success">SUCCESS</strong> Remove testfile from temporary directory';
+			}
+		}
+
+		if($testComplete) $report[] = '<strong class="info">INFO</strong> Tests complete';
+
+		self::appendSystemInfo($report);
 		return $report;
 	}
 
 	private static function appendSystemInfo(&$report) {
+		$report[] = '<strong class="info">INFO</strong> ----- System -----';
+		$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
+		$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
+		$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
+		$report[] = '<strong class="info">INFO</strong> Server '.(!empty($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : $_ENV['SERVER_SOFTWARE']);
+		$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+
 		// get all plugins
 		$activePlugins = get_option('active_plugins');
 

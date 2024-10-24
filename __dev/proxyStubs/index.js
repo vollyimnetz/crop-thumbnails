@@ -3,7 +3,7 @@
  */
 const STUBS = [
 {
-    url: '/fake-ajax-url/crop_thumbnails/v1/crop?imageId=123&posttype=',
+    url: '/fake-ajax-url/crop_thumbnails/v1/crop?imageId=123',
     method: 'GET',
     content: {
         "options": {

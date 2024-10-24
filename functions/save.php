@@ -115,11 +115,11 @@ class CptSaveThumbnail {
 						self::addDebug("delete old image:".$oldFile_toDelete);
 						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
 					}
-					if(!@copy($resultWpCropImage, $currentFilePath)) {
+					if(!@rename($resultWpCropImage, $currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't copy temporary file to media library.", 'crop-thumbnails');
 						$_error = true;
 					}
-					if(!@unlink($resultWpCropImage)) {
+					if(file_exists($resultWpCropImage) && !@unlink($resultWpCropImage)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't delete temporary file.", 'crop-thumbnails');
 						$_error = true;
 					}
@@ -138,7 +138,8 @@ class CptSaveThumbnail {
 			//otherwise new sizes will not be updated
 			$imageMetadata = apply_filters('crop_thumbnails_before_update_metadata', $imageMetadata, $input->sourceImageId);
 			wp_update_attachment_metadata( $input->sourceImageId, $imageMetadata);
-			self::addDebug('metadata updated: '.print_r($imageMetadata,true));
+			self::addDebug('metadata updated:');
+			self::addDebug($imageMetadata);
 
 			//generate result;
 			if(!empty($changedImageName)) {
