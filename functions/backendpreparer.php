@@ -95,6 +95,7 @@ class CropPostThumbnailsBackendPreparer {
 		if($this->shouldCropThumbnailsBeActive()) {
 			if(function_exists('wp_enqueue_script_module')) {
 				wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['imagesloaded', 'wp-api'], CROP_THUMBNAILS_VERSION);
+				wp_enqueue_script('wp-api');
 			} else {
 				wp_enqueue_script( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['imagesloaded', 'wp-api'], CROP_THUMBNAILS_VERSION);
 			}

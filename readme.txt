@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 5.0
 Tested up to: 6.6.2
 Requires PHP: 7.4.0
-Stable tag: 1.9.3
+Stable tag: 1.9.4
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+
+= 1.9.4 =
+* add wp-api script to wp-backend (seems that wp_enqueue_script_module to not do this on there own)
+
 = 1.9.3 =
 * use rename instead of copy-unlink to move the files from the temporary directory
 * improve logging
