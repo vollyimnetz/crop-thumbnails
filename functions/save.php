@@ -417,8 +417,8 @@ class CptSaveThumbnail {
 		 * since WordPress 5.8 the image extension / MIME type may differ from that of the
 		 * original file so we'll use the below hook to check if any defaults are overwritten.
 		 */
-		$outputFormats = apply_filters('image_editor_output_format', [], $file);
 		$fileTypeInformations = wp_check_filetype($file);
+		$outputFormats = apply_filters('image_editor_output_format', [], $file, $fileTypeInformations['type']);
 		if(isset($outputFormats[$fileTypeInformations['type']])) {
 			$ext = array_search($outputFormats[$fileTypeInformations['type']], wp_get_mime_types(), true);
 		}
