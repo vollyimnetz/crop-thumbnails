@@ -224,9 +224,24 @@ add_filter('crop_thumbnails_user_permission_check', function($oldValue, $imageId
 }, 10, 2);
 ```
 
+### FILTER `crop_thumbnails_crop_data`
+
+Filter for changing the data used by the editor to crop an image. You may for example change the available image sizes in the frontend. You may use this in conjuction with `crop_thumbnails_active_image_sizes` to limit the image-sizes that can be cropped.
+
+If you want to use another image size in the crop-area-background you may change the default `large` with the following code:
+
+```php
+add_filter('crop_thumbnails_crop_data', function($cropData) {
+	$cropData['cropBaseSize'] = 'original_image';// possible values "original_image", "full", "large", "medium_large"
+	return $cropData;
+});
+```
+
 ### FILTER `crop_thumbnails_crop_data_image_sizes`
 
-Filter vor changing the available image sizes in the frontend. You may use this in conjuction with `crop_thumbnails_active_image_sizes` to limit the image-sizes that can be cropped.
+DEPRECATED ( use `crop_thumbnails_crop_data` instead)
+
+Filter for changing the available image sizes in the frontend. You may use this in conjuction with `crop_thumbnails_active_image_sizes` to limit the image-sizes that can be cropped.
 
 
 ### FILTER `crop_thumbnails_active_image_sizes`

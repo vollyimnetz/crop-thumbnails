@@ -136,16 +136,15 @@ export default {
         largeHandles: false,
 
         errorMessage: false,
+        cropBaseSize: null,
     }),
     computed:{
-        cropBaseSize() {
-            return 'large';
-        },
         /**
          * the image to apply the crop on usually this is the "full" image-size. Sometimes the "large" image size is sufficiant.
          */
         cropImage() {
             if(!this.cropData) return null;
+            if(!this.cropBaseSize) return null;
             return this.cropData.sourceImage[this.cropBaseSize];
         },
         originalImage() {
@@ -276,6 +275,7 @@ export default {
                     this.makeAllInactive(response.data.imageSizes);
                     this.addCacheBreak(response.data.imageSizes);
                     this.cropData = response.data;
+                    this.cropBaseSize = this.cropData.cropBaseSize;
                     this.nonce = this.cropData.nonce;
                     delete this.cropData.nonce;
                 })

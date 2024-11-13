@@ -98,6 +98,7 @@ class CropPostThumbnailsEditor {
 				'large' => null,
 				'medium_large' => null,
 			],
+			'cropBaseSize' => 'large',
 			'sourceImageMeta' => null,
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes()),
@@ -191,7 +192,8 @@ class CropPostThumbnailsEditor {
 		$result['imageSizes'] = apply_filters('crop_thumbnails_crop_data_image_sizes', $result['imageSizes']);
 
 		if(is_array($result['imageSizes'])) $result['imageSizes'] = array_values($result['imageSizes']);
-		return $result;
+
+		return apply_filters('crop_thumbnails_crop_data', $result);
 	}
 
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
