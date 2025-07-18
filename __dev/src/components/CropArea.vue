@@ -89,7 +89,7 @@ export default {
         },
         stencilProps() {
             if(!this.options) return {};
-            setTimeout(() => { this.$refs.cropper.refresh(); console.log('cropper.refresh stencilProps '); }, 10);
+            setTimeout(() => { this.$refs.cropper.refresh(); }, 10);
             return {
                 aspectRatio: this.options.aspectRatio,
                 handlers: {
@@ -131,7 +131,6 @@ export default {
             this.loading = false;
             setTimeout(() => {
                 this.$refs.cropper.refresh();
-                console.log('cropper.refresh imageLoaded');
             }, 10);
         },
         doSetup() {
@@ -146,14 +145,12 @@ export default {
                 this.removeKeyboardShortcuts();
             } else {
                 this.addKeyboardShortcuts();
-                console.log('cropper.setCoordinate', this.options);
                 this.$refs.cropper.setCoordinates({
                     width: this.options.trueSize[0], height: this.options.trueSize[1],
                     left: this.options.setSelect[0], top: this.options.setSelect[1],
                 });
             }
             setTimeout(() => {
-                console.log('cropper.refresh applyOptions');
                 this.$refs.cropper.refresh();
             },10);
         },

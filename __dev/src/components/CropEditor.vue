@@ -423,7 +423,7 @@ export default {
                         activeImageSizes : this.selectedImageSizesData
                     }
                 };
-                //console.log('request data', cropRequest);
+
                 saveCrop(cropRequest)
                     .then((response) => {
                         if(this.cropData.options.debug_data) {

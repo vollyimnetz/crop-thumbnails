@@ -98,7 +98,7 @@ class CropPostThumbnailsEditor {
 				'large' => null,
 				'medium_large' => null,
 			],
-			'cropBaseSize' => 'large',
+			'cropBaseSize' => 'full',
 			'sourceImageMeta' => null,
 			'postTypeFilter' => null,
 			'imageSizes' => array_values($GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes()),
@@ -199,7 +199,7 @@ class CropPostThumbnailsEditor {
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
 		if($imageSize === 'original_image') {
-			$tmp = getimagesize(wp_get_original_image_path($ID));
+			$tmp = wp_getimagesize(wp_get_original_image_path($ID));
 			$orig_img = [ wp_get_original_image_url($ID), $tmp[0], $tmp[1], false ];
 		}
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
