@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 5.0
 Tested up to: 6.6.2
 Requires PHP: 7.4.0
-Stable tag: 1.9.5
+Stable tag: 1.9.6
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,9 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.9.6 =
+* change the basesize for cropping from "large" to "full" to prevent that the wrong dimensions are created for the crop
+
 = 1.9.5 =
 * fix wrong filter parameter count for "image_editor_output_format"
 * add filter `crop_thumbnails_crop_data` to make the crop-area-background-image editable

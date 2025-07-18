@@ -31,7 +31,6 @@
                         <button type="button" class="button cptDeselectAll" @click="makeAllInactive()">{{lang.label_deselect_all}}</button>
                     </div>
 
-
                     <section class="cptImageSizelist" v-if="filteredImageSizes.length>0">
                         <CropImageSize v-for="i in filteredImageSizes" :key="i.nameLabel" @click="toggleActive(i)" :image="i" :lang="lang" :currentCropSize="realCurrentCropSize" :sameRatioMode="sameRatioMode" :notYetCropped="isImageInGroupNotYetCropped(i.printRatio)"></CropImageSize>
                     </section>
@@ -424,7 +423,7 @@ export default {
                         activeImageSizes : this.selectedImageSizesData
                     }
                 };
-                //console.log('request data', cropRequest);
+
                 saveCrop(cropRequest)
                     .then((response) => {
                         if(this.cropData.options.debug_data) {

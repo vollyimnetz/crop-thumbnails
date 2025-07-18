@@ -129,7 +129,9 @@ export default {
         imageLoaded() {
             this.$emit('ready');
             this.loading = false;
-            this.$refs.cropper.refresh();
+            setTimeout(() => {
+                this.$refs.cropper.refresh();
+            }, 10);
         },
         doSetup() {
             window.crop_thumbnails_cropper = this.$refs.cropper;
