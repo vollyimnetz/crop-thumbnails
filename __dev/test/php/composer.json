@@ -1,12 +1,13 @@
 {
     "name": "cropthumbnailstests/php",
     "require-dev": {
-        "10up/wp_mock": "^1.0"
+        "10up/wp_mock": "^1.0",
+        "phpunit/phpunit": "^9.6"
     },
     "autoload": {
         "psr-4": {
             "Kantor\\Php\\": "src/",
-            "CptTests": "./tests/"
+            "CptTests\\": "./tests/"
         }
     },
     "authors": [

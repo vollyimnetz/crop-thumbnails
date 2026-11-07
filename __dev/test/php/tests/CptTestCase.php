@@ -12,13 +12,13 @@ abstract class CptTestCase extends TestCase {
 
 	public static $settingsMock;
 
-	protected function get_CptSaveThumbnail() {
+	protected function get_CptSaveThumbnail($options = ['debug_data' => true]) {
 		include_once TEST_PLUGIN_BASE.'/functions/save.php';
 		include_once TEST_PLUGIN_BASE.'/functions/helper.php';
 
 		self::$settingsMock = \Mockery::mock('CropThumbnailsHelperInstance');
 		self::$settingsMock->shouldReceive('getNonceBase')->andReturn('any');
-		self::$settingsMock->shouldReceive('getOptions')->andReturn(['debug_data' => true]);
+		self::$settingsMock->shouldReceive('getOptions')->andReturn($options);
 
 		$GLOBALS['CROP_THUMBNAILS_HELPER'] = self::$settingsMock;
 

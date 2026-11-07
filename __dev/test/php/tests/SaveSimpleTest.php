@@ -56,7 +56,7 @@ class SaveSimpleTest extends CptTestCase {
 	public function should_fail_if_called_without_any_request_data() {
 		/** SETUP **/
 		self::doDefaultMocks();
-		$cpt = $this->get_CptSaveThumbnail();
+		$cpt = $this->get_CptSaveThumbnail(['debug_data' => false]);
 
 		/** TEST **/
 		$request = \Mockery::mock('WP_REST_Request');

@@ -4,6 +4,7 @@ namespace crop_thumbnails\tests;
 use Mockery;
 
 include_once __DIR__.'/CptTestCase.php';
+include_once __DIR__.'/ApplyFiltersOverride.php';
 
 class SaveTest extends CptTestCase {
 
@@ -46,9 +47,17 @@ class SaveTest extends CptTestCase {
 		]);
 
 		self::$cpt = $this->get_CptSaveThumbnail();
+
+		//The default crop filter is registered on "after_setup_theme", which does not run in unit tests - so run it explicitly.
+		$GLOBALS['CPT_TEST_RUN_DEFAULT_CROP_FILTER'] = true;
+		\WP_Mock::userFunction('is_wp_error', ['return' => false]);
+		\WP_Mock::userFunction('absint', ['return' => function($v) { return abs((int) $v); }]);
+		\WP_Mock::userFunction('wp_delete_file', ['return' => function($file) { @unlink($file); }]);
+		\WP_Mock::userFunction('wp_get_original_image_path', ['return' => __DIR__.'/data/test.jpg']);
 	}
 
 	public function tearDown():void {
+		unset($GLOBALS['CPT_TEST_RUN_DEFAULT_CROP_FILTER']);
 		self::$cpt = null;
 		\WP_Mock::tearDown();
 	}
@@ -158,14 +167,14 @@ class SaveTest extends CptTestCase {
 		@unlink($file4);
 
 		//did the function return correct values
-		$this->assertTrue(isset($result->debug),'The result should return debug values.');
-		$this->assertTrue(empty($result->error),'The result should not return any errors.');
-		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
-		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		$this->assertTrue(isset($result['debug']),'The result should return debug values.');
+		$this->assertTrue(empty($result['error']),'The result should not return any errors.');
+		$this->assertTrue(empty($result['processingErrors']),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result['success']),'The result should not return an not empty success message.');
 
 		//changedImageName should have an value with "new-image-size"
 		$sizeName = 'new-image-size';
-		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-600x600.jpg');
+		$this->assertEquals($result['changedImageName'][$sizeName], 'new/path/new-image-size-600x600.jpg');
 
 		//check $INPUT_wp_update_attachement_metadata
 		//the metadata should have an additional entry "new-image-size"
@@ -179,36 +188,32 @@ class SaveTest extends CptTestCase {
 
 		//the metadata have an added cpt_last_cropping_data
 		$newAttachementMetadata['sizes']['thumbnail']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 0,
 			'y' => 535,
 			'x2' => 664,
 			'y2' => 1200,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 		$newAttachementMetadata['sizes']['strange-image-ratio']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 0,
 			'y' => 535,
 			'x2' => 664,
 			'y2' => 1200,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 		$newAttachementMetadata['sizes']['normal1x1']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 0,
 			'y' => 535,
 			'x2' => 664,
 			'y2' => 1200,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 		$newAttachementMetadata['sizes']['new-image-size']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 0,
 			'y' => 535,
 			'x2' => 664,
 			'y2' => 1200,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
@@ -306,7 +311,8 @@ class SaveTest extends CptTestCase {
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-2');
 
-		$this->assertEquals($INPUT_wp_cron_image[0], $testData->sourceImageId);
+		//the plugin crops from the original image file (wp_get_original_image_path), not from the attachment id
+		$this->assertEquals($INPUT_wp_cron_image[0], __DIR__.'/data/test.jpg');
 		$this->assertEquals($INPUT_wp_cron_image[1], 1009);
 		$this->assertEquals($INPUT_wp_cron_image[2], 364);
 		$this->assertEquals($INPUT_wp_cron_image[3], 1312);
@@ -320,14 +326,14 @@ class SaveTest extends CptTestCase {
 		@unlink($file1);
 
 		//did the function return correct values
-		$this->assertTrue(isset($result->debug),'The result should return debug values.');
-		$this->assertTrue(empty($result->error),'The result should not return any errors.');
-		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
-		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		$this->assertTrue(isset($result['debug']),'The result should return debug values.');
+		$this->assertTrue(empty($result['error']),'The result should not return any errors.');
+		$this->assertTrue(empty($result['processingErrors']),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result['success']),'The result should not return an not empty success message.');
 
 		//changedImageName should have an value with "new-image-size"
 		$sizeName = 'dynamic-2';
-		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-3000x500.jpg');
+		$this->assertEquals($result['changedImageName'][$sizeName], 'new/path/new-image-size-3000x500.jpg');
 
 		//check $INPUT_wp_get_attachment_metadata
 		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
@@ -337,12 +343,11 @@ class SaveTest extends CptTestCase {
 		//the metadata should have an changed value for dynamic-2
 		$newAttachementMetadata = $attachementMetadata;
 		$newAttachementMetadata['sizes']['dynamic-2']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 1009,
 			'y' => 364,
 			'x2' => 2321,
 			'y2' => 583,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
 		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
@@ -434,7 +439,8 @@ class SaveTest extends CptTestCase {
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[0], $testData->sourceImageId);
 		$this->assertEquals($INPUT_wp_get_attachment_image_src[1], 'dynamic-1');
 
-		$this->assertEquals($INPUT_wp_cron_image[0], $testData->sourceImageId);
+		//the plugin crops from the original image file (wp_get_original_image_path), not from the attachment id
+		$this->assertEquals($INPUT_wp_cron_image[0], __DIR__.'/data/test.jpg');
 		$this->assertEquals($INPUT_wp_cron_image[1], 1583);
 		$this->assertEquals($INPUT_wp_cron_image[2], 345);
 		$this->assertEquals($INPUT_wp_cron_image[3], 236);
@@ -448,14 +454,14 @@ class SaveTest extends CptTestCase {
 		@unlink($file1);
 
 		//did the function return correct values
-		$this->assertTrue(isset($result->debug),'The result should return debug values.');
-		$this->assertTrue(empty($result->error),'The result should not return any errors.');
-		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
-		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		$this->assertTrue(isset($result['debug']),'The result should return debug values.');
+		$this->assertTrue(empty($result['error']),'The result should not return any errors.');
+		$this->assertTrue(empty($result['processingErrors']),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result['success']),'The result should not return an not empty success message.');
 
 		//changedImageName should have an value with "new-image-size"
 		$sizeName = 'dynamic-1';
-		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size-500x2000.jpg');
+		$this->assertEquals($result['changedImageName'][$sizeName], 'new/path/new-image-size-500x2000.jpg');
 
 		//check $INPUT_wp_get_attachment_metadata
 		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
@@ -465,12 +471,11 @@ class SaveTest extends CptTestCase {
 		//the metadata should have an additional entry "new-image-size"
 		$newAttachementMetadata = $attachementMetadata;
 		$newAttachementMetadata['sizes']['dynamic-1']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 1583,
 			'y' => 345,
 			'x2' => 1819,
 			'y2' => 1289,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 		$this->assertEquals($INPUT_wp_update_attachement_metadata[0],$testData->sourceImageId);
 		$this->assertArrayEquals($INPUT_wp_update_attachement_metadata[1],$newAttachementMetadata);
@@ -561,7 +566,7 @@ class SaveTest extends CptTestCase {
 		$file1 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-750x500.jpg';
 		$file2 = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'test-400x266.jpg';
 
-		//print_r($result);
+		//#print_r($result);
 
 		/*
 		//did the function copy the image file correctly?
@@ -603,16 +608,16 @@ class SaveTest extends CptTestCase {
 		@unlink($file2);
 
 		//did the function return correct values
-		$this->assertTrue(isset($result->debug),'The result should return debug values.');
-		$this->assertTrue(empty($result->error),'The result should not return any errors.');
-		$this->assertTrue(empty($result->processingErrors),'The result should not return any processingErrors.');
-		$this->assertTrue(!empty($result->success),'The result should not return an not empty success message.');
+		$this->assertTrue(isset($result['debug']),'The result should return debug values.');
+		$this->assertTrue(empty($result['error']),'The result should not return any errors.');
+		$this->assertTrue(empty($result['processingErrors']),'The result should not return any processingErrors.');
+		$this->assertTrue(!empty($result['success']),'The result should not return an not empty success message.');
 
 		//changedImageName should have an value with "new-image-size"
 		$sizeName = 'dynamic-zero-width';
-		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size.jpg');
+		$this->assertEquals($result['changedImageName'][$sizeName], 'new/path/new-image-size.jpg');
 		$sizeName = 'dynamic-zero-height';
-		$this->assertEquals($result->changedImageName->$sizeName, 'new/path/new-image-size.jpg');
+		$this->assertEquals($result['changedImageName'][$sizeName], 'new/path/new-image-size.jpg');
 
 		//check $INPUT_wp_get_attachment_metadata
 		$that->assertEquals($INPUT_wp_get_attachment_metadata[0], $testData->sourceImageId);
@@ -622,12 +627,11 @@ class SaveTest extends CptTestCase {
 		//the metadata should have an additional entry "new-image-size"
 		$newAttachementMetadata = $attachementMetadata;
 		$newAttachementMetadata['sizes']['dynamic-zero-height']['cpt_last_cropping_data'] = [
+			'version' => 2,
 			'x' => 1654,
 			'y' => 874,
 			'x2' => 2578,
 			'y2' => 1490,
-			'original_width' => 3000,
-			'original_height' => 2000,
 		];
 		$newAttachementMetadata['sizes']['dynamic-zero-width']['cpt_last_cropping_data'] = $newAttachementMetadata['sizes']['dynamic-zero-height']['cpt_last_cropping_data'];
 

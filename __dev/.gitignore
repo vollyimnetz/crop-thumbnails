@@ -2,7 +2,7 @@
 node_modules
 test/php/vendor
 developmentSettings.js
-
+test/php/.phpunit.result.cache
 
 # local env files
 .env.local
