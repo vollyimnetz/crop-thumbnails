@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Rest operations of the settings screen
  */
@@ -53,14 +55,17 @@ class RestSettings {
 
 	public static function checkRestPermission() {
 		if(!current_user_can('manage_options')) {
-			error_log('Try to access without permission (API).');
+			if(defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('Try to access without permission (API).');// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only in debug mode
+			}
 			return false;
 		}
 		return true;
 	}
 
 	public static function getOptions() {
-		return get_option(self::OPTIONS_KEY);
+		$options = get_option(self::OPTIONS_KEY);
+		return is_array($options) ? $options : [];//the option does not exist (or was reset) until the first save
 	}
 
 	public static function setOptions($options) {
@@ -209,7 +214,7 @@ class RestSettings {
 			if(is_dir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
 				$report[] = '<strong class="success">SUCCESS</strong> Temporary directory exists';
 			} else {
-				if (!mkdir($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
+				if (!wp_mkdir_p($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
 					throw new \Exception('<strong class="fails">FAIL</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
 				} else {
 					$report[] = '<strong class="success">SUCCESS</strong> Temporary directory could be created';
@@ -302,7 +307,8 @@ class RestSettings {
 
 		//deleting testfile form temporary directory
 		if(file_exists($tempFile)) {
-			if(!@unlink($tempFile)) {
+			wp_delete_file($tempFile);
+			if(file_exists($tempFile)) {
 				$report[] = '<strong class="fails">FAIL</strong> Remove testfile from temporary directory';
 			} else {
 				$report[] = '<strong class="success">SUCCESS</strong> Remove testfile from temporary directory';

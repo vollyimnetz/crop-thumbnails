@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 
 add_action('after_setup_theme', function() {
 	//Add the crop_thumbnails_do_crop filter for the default behaiviour of the plugin.
@@ -49,13 +51,13 @@ class CptSaveThumbnail {
 
 			$sourceImgPath = get_attached_file( $input->sourceImageId );
 			if(empty($sourceImgPath)) {
-				throw new \Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);
+				throw new \Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 			}
 
 
 			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
 			if(empty($imageMetadata)) {
-				throw new \Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);
+				throw new \Exception(__("ERROR: Can't find original image metadata!",'crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 			}
 
 			//from DB
@@ -111,19 +113,24 @@ class CptSaveThumbnail {
 
 				$_error = false;
 				if(empty($resultWpCropImage) || is_wp_error($resultWpCropImage)) {
+					/* translators: %s: name of the image size */
 					$_processing_error[$activeImageSize->name][] = sprintf(__("Can't generate filesize '%s'.",'crop-thumbnails'), $activeImageSize->name);
 					$_error = true;
 				} else {
 					if(!empty($oldFile_toDelete)) {
 						$oldFilesToDelete[] = $currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete;
 					}
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename -- moves the temporary crop into the media library, WP_Filesystem would need credentials in this context
 					if(!@rename($resultWpCropImage, $currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't copy temporary file to media library.", 'crop-thumbnails');
 						$_error = true;
 					}
-					if(file_exists($resultWpCropImage) && !@unlink($resultWpCropImage)) {
-						$_processing_error[$activeImageSize->name][] = __("Can't delete temporary file.", 'crop-thumbnails');
-						$_error = true;
+					if(file_exists($resultWpCropImage)) {
+						wp_delete_file($resultWpCropImage);
+						if(file_exists($resultWpCropImage)) {
+							$_processing_error[$activeImageSize->name][] = __("Can't delete temporary file.", 'crop-thumbnails');
+							$_error = true;
+						}
 					}
 				}
 
@@ -396,22 +403,22 @@ class CptSaveThumbnail {
 	protected static function getValidatedInput($request) {
 		$input = json_decode( $request->get_body(), false );
 		if(empty($input) || empty($input->crop_thumbnails)) {
-			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 		}
 
 		$input = $input->crop_thumbnails;
 		$input = apply_filters('crop_thumbnails_before_get_validated_input', $input);
 
 		if(empty($input->selection) || empty($input->sourceImageId) || !isset($input->activeImageSizes)) {
-			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 		}
 
 		if(!self::isUserPermitted($input->sourceImageId)) {
-			throw new \Exception(__("You are not permitted to crop the thumbnails.",'crop-thumbnails'), 1);
+			throw new \Exception(__("You are not permitted to crop the thumbnails.",'crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 		}
 
 		if(!isset($input->selection->x) || !isset($input->selection->y) || !isset($input->selection->x2) || !isset($input->selection->y2)) {
-			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);
+			throw new \Exception(__('ERROR: Submitted data is incomplete.','crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 		}
 
 
@@ -428,7 +435,7 @@ class CptSaveThumbnail {
 		$input->sourceImageId = intval($input->sourceImageId);
 		$_tmp = get_post($input->sourceImageId);//need to be its own var - cause of old php versions
 		if(empty($_tmp) || $_tmp->post_type!=='attachment') {
-			throw new \Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
+			throw new \Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 		}
 
 		return apply_filters('crop_thumbnails_after_get_validated_input', $input);
@@ -455,7 +462,7 @@ class CptSaveThumbnail {
 		 * original file so we'll use the below hook to check if any defaults are overwritten.
 		 */
 		$fileTypeInformations = wp_check_filetype($file);
-		$outputFormats = apply_filters('image_editor_output_format', [], $file, $fileTypeInformations['type']);
+		$outputFormats = apply_filters('image_editor_output_format', [], $file, $fileTypeInformations['type']);// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter
 		if(isset($outputFormats[$fileTypeInformations['type']])) {
 			$ext = array_search($outputFormats[$fileTypeInformations['type']], wp_get_mime_types(), true);
 		}

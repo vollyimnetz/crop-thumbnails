@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 if(!function_exists('wp_enqueue_script_module')) {
 	//add type="module" to certain scripts
 	add_filter('script_loader_tag', function($tag, $handle, $src) {

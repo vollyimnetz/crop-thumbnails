@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 class SettingsScreen {
 	protected static $uniqeSettingsId = 'cpt-settings';
 	protected static $cssPrefix = 'cpt_settings_';
@@ -14,12 +16,13 @@ class SettingsScreen {
 	}
 
 	public function optionsPageStyle() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- only checks which admin page is shown, nothing is processed
 		if(!empty($_REQUEST['page']) && $_REQUEST['page']==='page-cpt') {
 			wp_enqueue_style('crop-thumbnails-options-style', plugins_url('app/main.css', __DIR__), [], CROP_THUMBNAILS_VERSION);
 			if(function_exists('wp_enqueue_script_module')) {
 				wp_enqueue_script_module('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), [], CROP_THUMBNAILS_VERSION);
 			} else {
-				wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), ['wp-api'], CROP_THUMBNAILS_VERSION);
+				wp_enqueue_script('crop-thumbnails-options-js', plugins_url('app/main.js', __DIR__ ), ['wp-api'], CROP_THUMBNAILS_VERSION, false);
 			}
 			wp_enqueue_script('wp-api');//wp_enqueue_script_module seem not to load wp-api correctly
 		}
@@ -42,11 +45,11 @@ class SettingsScreen {
 			<div id="icon-options-general" class="icon32"><br /></div>
 			<h2>Crop-Thumbnails <?php esc_attr_e('Settings','crop-thumbnails'); ?></h2>
 
-			<div id="<?php echo self::$cssPrefix ?>settingsscreen">
+			<div id="<?php echo esc_attr(self::$cssPrefix) ?>settingsscreen">
 				<cpt-settingsscreen></cpt-settingsscreen>
 			</div>
 		</div>
 		<?php
 	}
 }
-$cptSettingsScreen = new SettingsScreen();
+new SettingsScreen();

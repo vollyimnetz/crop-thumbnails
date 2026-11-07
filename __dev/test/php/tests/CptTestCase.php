@@ -2,6 +2,7 @@
 namespace crop_thumbnails\tests;
 use \PHPUnit\Framework\TestCase;
 
+if(!defined('ABSPATH')) define('ABSPATH', __DIR__.'/');//the plugin files stop if ABSPATH is not defined
 define('TEST_PLUGIN_BASE',__DIR__.'/../../../..');
 
 \WP_Mock::bootstrap();

@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Rest operations of the settings screen
  */

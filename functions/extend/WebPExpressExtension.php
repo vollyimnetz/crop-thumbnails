@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails\extend;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * ExtendWebpExpress is added for compatibility reasons.
  * Once the 

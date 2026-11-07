@@ -27,6 +27,8 @@ namespace crop_thumbnails;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+defined( 'ABSPATH' ) || exit;
+
 define('CROP_THUMBNAILS_VERSION','1.10.0');
 
 include_once __DIR__.'/functions/enqueuejsmodule.php';

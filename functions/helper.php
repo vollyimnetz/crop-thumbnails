@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Do not use functions of this class directly, instead use
  * $GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()
@@ -52,7 +54,7 @@ class CropThumbnailsHelper {
 			$image_size_names[$key] = $key;
 		}
 		
-		$tmp_sizes = apply_filters( 'image_size_names_choose', $image_size_names );
+		$tmp_sizes = apply_filters( 'image_size_names_choose', $image_size_names );// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core filter
 		$image_size_names = array_merge($image_size_names,$tmp_sizes);
 		
 		$sizes = [];

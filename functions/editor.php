@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Contains all code inside the croping-window
  */
@@ -106,6 +108,7 @@ class CropPostThumbnailsEditor {
 			'nonce' => wp_create_nonce($GLOBALS['CROP_THUMBNAILS_HELPER']->getNonceBase())
 		];
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- REST read route, the REST nonce (X-WP-Nonce) is verified by WordPress core; access is checked below with isUserPermitted()
 		//simple validation
 		if(empty($_REQUEST['imageId'])) {
 			throw new \InvalidArgumentException('Missing Parameter "imageId".');
@@ -128,6 +131,7 @@ class CropPostThumbnailsEditor {
 				$result['postTypeFilter'] = $postTypeFilter;
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$result['sourceImage']['original_image'] = $this->getUncroppedImageData($imagePostObj->ID, 'original_image');
 		$result['sourceImage']['full'] = $this->getUncroppedImageData($imagePostObj->ID, 'full');

@@ -1,8 +1,8 @@
-=== Crop-Thumbnails ===
+=== Crop Thumbnails ===
 Contributors: volkmar-kantor
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=volkmar%2ekantor%40gmx%2ede&lc=DE&item_name=Volkmar%20Kantor%20%2d%20totalmedial%2ede&item_number=crop%2dthumbnails&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: post-thumbnails, images, media library
-Requires at least: 5.0
+Requires at least: 5.7
 Tested up to: 7.1
 Requires PHP: 7.4.0
 Stable tag: 1.10.0
@@ -129,6 +129,8 @@ If you fork and planning to publish the forked plugin, please contact me.
 * fix deleting a file that is still used by another image size when re-cropping
 * security: check if the user is allowed to edit the image before reading or cropping it (thanks to Pedro Pinho for reporting)
 * security: harden input handling of the settings endpoints
+* the plugin requires WordPress 5.7 or newer (it already used functions of that version)
+* code cleanup (escaping, direct file access protection, WordPress file functions)
 * filter `crop_thumbnails_user_permission_check`: the default value now also contains the permission to edit the specific image (see github readme)
 
 = 1.9.7 =
