@@ -70,6 +70,12 @@ class CptSaveThumbnail {
 			 */
 			$changedImageName = [];
 			$_processing_error = [];
+			/**
+			 * Old files that are no longer needed by the size they belonged to.
+			 * They are deleted after all sizes are processed, and only if no size in the final metadata references them
+			 * (WordPress shares one file between sizes with identical dimensions).
+			 */
+			$oldFilesToDelete = [];
 
 			$_activeImageSizes = apply_filters('crop_thumbnails_active_image_sizes', $input->activeImageSizes);
 			foreach($_activeImageSizes as $activeImageSize) {
@@ -112,8 +118,7 @@ class CptSaveThumbnail {
 					$_error = true;
 				} else {
 					if(!empty($oldFile_toDelete)) {
-						self::addDebug("delete old image:".$oldFile_toDelete);
-						@unlink($currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete);
+						$oldFilesToDelete[] = $currentFilePathInfo['dirname'].DIRECTORY_SEPARATOR.$oldFile_toDelete;
 					}
 					if(!@rename($resultWpCropImage, $currentFilePath)) {
 						$_processing_error[$activeImageSize->name][] = __("Can't copy temporary file to media library.", 'crop-thumbnails');
@@ -133,6 +138,8 @@ class CptSaveThumbnail {
 					self::addDebug($_processing_error);
 				}
 			}//END foreach
+
+			self::deleteUnusedFiles($oldFilesToDelete, $imageMetadata);
 
 			//we have to update the posts metadate
 			//otherwise new sizes will not be updated
@@ -164,6 +171,39 @@ class CptSaveThumbnail {
 			}
 			$jsonResult['error'] = $e->getMessage();
 			return $jsonResult;
+		}
+	}
+
+	/**
+	 * Delete the given files, but keep every file that is still referenced by the metadata
+	 * (main file, original image or any image size - WordPress shares files between sizes with identical dimensions).
+	 *
+	 * @param string[] $files full paths of the deletion candidates
+	 * @param array $imageMetadata the final (updated) attachment metadata
+	 */
+	protected static function deleteUnusedFiles($files, $imageMetadata) {
+		$used = [];
+		if(!empty($imageMetadata['file'])) {
+			$used[] = wp_basename($imageMetadata['file']);
+		}
+		if(!empty($imageMetadata['original_image'])) {
+			$used[] = wp_basename($imageMetadata['original_image']);
+		}
+		if(!empty($imageMetadata['sizes']) && is_array($imageMetadata['sizes'])) {
+			foreach($imageMetadata['sizes'] as $size) {
+				if(!empty($size['file'])) {
+					$used[] = wp_basename($size['file']);
+				}
+			}
+		}
+
+		foreach(array_unique($files) as $file) {
+			if(in_array(wp_basename($file), $used, true)) {
+				self::addDebug('keep old image (still in use):'.$file);
+				continue;
+			}
+			self::addDebug('delete old image:'.$file);
+			wp_delete_file($file);
 		}
 	}
 
@@ -423,9 +463,10 @@ class CptSaveThumbnail {
 			$ext = array_search($outputFormats[$fileTypeInformations['type']], wp_get_mime_types(), true);
 		}
 
-		$name = wp_basename($file, '.'.$ext);
+		//the base name has to be taken with the extension of the source file (not the output extension)
+		$name = wp_basename($file, '.'.$info['extension']);
 		if(!empty($imageMetadata['original_image'])) {
-			$name = wp_basename($imageMetadata['original_image'], '.'.$ext);
+			$name = wp_basename($imageMetadata['original_image'], '.'.pathinfo($imageMetadata['original_image'], PATHINFO_EXTENSION));
 		}
 		$suffix = $w.'x'.$h;
 		$destfilename = $dir.'/'.$name.'-'.$suffix.'.'.$ext;
