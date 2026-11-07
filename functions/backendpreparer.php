@@ -74,7 +74,6 @@ class CropPostThumbnailsBackendPreparer {
 			|| $pagenow === 'upload.php'
 			|| !empty($options['include_js_on_all_admin_pages'])
 			);
-		$result = apply_filters('crop_thumbnails_activat_on_adminpages', $result);//leagacy filter with typo error
 		$result = apply_filters('crop_thumbnails_activate_on_adminpages', $result);
 		return $result;
 	}
@@ -94,7 +93,8 @@ class CropPostThumbnailsBackendPreparer {
 	public function adminHeaderJS() {
 		if($this->shouldCropThumbnailsBeActive()) {
 			if(function_exists('wp_enqueue_script_module')) {
-				wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['imagesloaded', 'wp-api'], CROP_THUMBNAILS_VERSION);
+				wp_enqueue_script_module( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), [], CROP_THUMBNAILS_VERSION);
+				wp_enqueue_script('imagesloaded');
 				wp_enqueue_script('wp-api');
 			} else {
 				wp_enqueue_script( 'cpt_crop_editor', plugins_url('app/main.js', __DIR__), ['imagesloaded', 'wp-api'], CROP_THUMBNAILS_VERSION);
