@@ -39,7 +39,7 @@ class SaveTest extends CptTestCase {
 		]);
 
 		\WP_Mock::userFunction('get_post', [
-			'return' => new \stdClass()
+			'return' => (object) ['post_type' => 'attachment']
 		]);
 
 		\WP_Mock::userFunction( 'wp_check_filetype',[

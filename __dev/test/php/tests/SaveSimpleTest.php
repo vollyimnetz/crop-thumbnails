@@ -13,6 +13,8 @@ class SaveSimpleTest extends CptTestCase {
 		\WP_Mock::userFunction( '__', ['return' => function($param) { return $param; } ]);
 
 		\WP_Mock::userFunction( 'current_user_can',[ 'return' => true ]);
+
+		\WP_Mock::userFunction( 'absint', ['return' => function($v) { return abs((int) $v); }]);
 	}
 
 	public function tearDown():void {
@@ -95,7 +97,7 @@ class SaveSimpleTest extends CptTestCase {
 		$cpt = $this->get_CptSaveThumbnail();
 
 		\WP_Mock::userFunction('get_post', [
-			'return' => new \stdClass()
+			'return' => (object) ['post_type' => 'attachment']
 		]);
 		\WP_Mock::userFunction( 'get_attached_file',[ 'return' => true ]);
 		\WP_Mock::userFunction( 'wp_get_attachment_metadata',[ 'return' => true ]);

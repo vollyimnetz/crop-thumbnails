@@ -130,12 +130,16 @@ class RestSettings {
 			$newOptions['hide_post_type'] = [];
 			$newOptions['hide_size'] = [];
 			if(!empty($postTypes)) foreach($postTypes as $postType) {
-				if($postType['hidden']===true) $newOptions['hide_post_type'][ $postType['name'] ] = "1";
+				if(!is_array($postType) || empty($postType['name']) || !is_string($postType['name'])) continue;
+				$postTypeName = sanitize_text_field($postType['name']);
 
-				if(!empty($postType['imageSizes'])) foreach($postType['imageSizes'] as $postImageSizes) {
-					if($postImageSizes['hidden']===true) {
-						if(empty( $newOptions['hide_size'][ $postType['name'] ] )) $newOptions['hide_size'][ $postType['name'] ] = [];
-						$newOptions['hide_size'][ $postType['name'] ][ $postImageSizes['id'] ] = "1";
+				if(isset($postType['hidden']) && $postType['hidden']===true) $newOptions['hide_post_type'][ $postTypeName ] = "1";
+
+				if(!empty($postType['imageSizes']) && is_array($postType['imageSizes'])) foreach($postType['imageSizes'] as $postImageSizes) {
+					if(!is_array($postImageSizes) || empty($postImageSizes['id']) || !is_string($postImageSizes['id'])) continue;
+					if(isset($postImageSizes['hidden']) && $postImageSizes['hidden']===true) {
+						if(empty( $newOptions['hide_size'][ $postTypeName ] )) $newOptions['hide_size'][ $postTypeName ] = [];
+						$newOptions['hide_size'][ $postTypeName ][ sanitize_text_field($postImageSizes['id']) ] = "1";
 					}
 				}
 			}
@@ -156,9 +160,9 @@ class RestSettings {
 			unset($newOptions['debug_data']);
 			unset($newOptions['include_js_on_all_admin_pages']);
 
-			if($input['enable_debug_js']) $newOptions['debug_js'] = 1;
-			if($input['enable_debug_data']) $newOptions['debug_data'] = 1;
-			if($input['include_js_on_all_admin_pages']) $newOptions['include_js_on_all_admin_pages'] = 1;
+			if(!empty($input['enable_debug_js'])) $newOptions['debug_js'] = 1;
+			if(!empty($input['enable_debug_data'])) $newOptions['debug_data'] = 1;
+			if(!empty($input['include_js_on_all_admin_pages'])) $newOptions['include_js_on_all_admin_pages'] = 1;
 
 			self::setOptions($newOptions);
 
@@ -176,8 +180,8 @@ class RestSettings {
 			unset($newOptions['user_permission_only_on_edit_files']);
 			unset($newOptions['same_ratio_mode']);
 
-			if($input['user_permission_only_on_edit_files']) $newOptions['user_permission_only_on_edit_files'] = 1;
-			if(!empty($input['same_ratio_mode']) && in_array($input['same_ratio_mode'], ['select','group'])) $newOptions['same_ratio_mode'] = $input['same_ratio_mode'];
+			if(!empty($input['user_permission_only_on_edit_files'])) $newOptions['user_permission_only_on_edit_files'] = 1;
+			if(!empty($input['same_ratio_mode']) && in_array($input['same_ratio_mode'], ['select','group'], true)) $newOptions['same_ratio_mode'] = $input['same_ratio_mode'];
 
 			self::setOptions($newOptions);
 
@@ -316,7 +320,7 @@ class RestSettings {
 		$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
 		$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
 		$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
-		$report[] = '<strong class="info">INFO</strong> Server '.(!empty($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : $_ENV['SERVER_SOFTWARE']);
+		$report[] = '<strong class="info">INFO</strong> Server '.esc_html(!empty($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : '');
 		$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
 
 		// get all plugins
@@ -324,7 +328,7 @@ class RestSettings {
 
 		$report[] = '<strong class="info">INFO</strong> ----- Active Plugins -----';
 		foreach($activePlugins as $pluginPath) {
-			$report[] = '<strong class="info">INFO</strong> - '.$pluginPath;
+			$report[] = '<strong class="info">INFO</strong> - '.esc_html($pluginPath);
 		}
 		$imageSizes = $GLOBALS['CROP_THUMBNAILS_HELPER']->getImageSizes();
 		if(!empty($imageSizes)) {

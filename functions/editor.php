@@ -112,9 +112,9 @@ class CropPostThumbnailsEditor {
 		}
 
 
-		$imagePostObj = get_post(intval($_REQUEST['imageId']));
+		$imagePostObj = get_post(absint($_REQUEST['imageId']));
 		if(empty($imagePostObj) || $imagePostObj->post_type!=='attachment') {
-			throw new \InvalidArgumentException('Image with ID:'.intval($_REQUEST['imageId']).' could not be found');
+			throw new \InvalidArgumentException('Image with ID:'.absint($_REQUEST['imageId']).' could not be found');
 		}
 		$result['sourceImageId'] = $imagePostObj->ID;
 
@@ -122,8 +122,11 @@ class CropPostThumbnailsEditor {
 			throw new CPT_ForbiddenException();
 		}
 
-		if(!empty($_REQUEST['posttype']) && post_type_exists($_REQUEST['posttype'])) {
-			$result['postTypeFilter'] = $_REQUEST['posttype'];
+		if(!empty($_REQUEST['posttype']) && is_string($_REQUEST['posttype'])) {
+			$postTypeFilter = sanitize_key(wp_unslash($_REQUEST['posttype']));
+			if(post_type_exists($postTypeFilter)) {
+				$result['postTypeFilter'] = $postTypeFilter;
+			}
 		}
 
 		$result['sourceImage']['original_image'] = $this->getUncroppedImageData($imagePostObj->ID, 'original_image');

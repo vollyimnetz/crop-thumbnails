@@ -3,9 +3,6 @@ namespace crop_thumbnails;
 
 
 add_action('after_setup_theme', function() {
-	//Add the ajax action for entring the cropping function.
-	add_action( 'wp_ajax_cptSaveThumbnail', [CptSaveThumbnail::class, 'saveThumbnailAjaxWrap'], 10);
-
 	//Add the crop_thumbnails_do_crop filter for the default behaiviour of the plugin.
 	//You may exchange it with your own function, by removing the default filter and store your own.
 	add_filter( 'crop_thumbnails_do_crop', [CptSaveThumbnail::class, 'filter_doWpCrop'], 10, 5);
@@ -430,7 +427,7 @@ class CptSaveThumbnail {
 
 		$input->sourceImageId = intval($input->sourceImageId);
 		$_tmp = get_post($input->sourceImageId);//need to be its own var - cause of old php versions
-		if(empty($_tmp)) {
+		if(empty($_tmp) || $_tmp->post_type!=='attachment') {
 			throw new \Exception(__("ERROR: Can't find original image in database!",'crop-thumbnails'), 1);
 		}
 
@@ -474,15 +471,35 @@ class CptSaveThumbnail {
 	}
 
 	/**
-	 * Check if the user is permitted to crop the thumbnails.
+	 * Check if the user is permitted to crop the thumbnails of the given image.
+	 *
+	 * Two checks have to pass:
+	 *  - the global check (see checkRestPermission) - the user is allowed to use the plugin at all
+	 *  - the object check - the user is allowed to edit this specific attachment (i.e. an author is not allowed to crop images of other users)
 	 *
 	 * You may override the default result of this function by using the filter 'crop_thumbnails_user_permission_check'.
 	 *
-	 * @param int $imageId The ID of the image that should be cropped (not used in default test)
+	 * @param int $imageId The ID of the image that should be cropped
 	 * @return boolean true if the user is permitted
 	 */
 	public static function isUserPermitted($imageId) {
 		$return = self::checkRestPermission();
+		if($return) {
+			$return = self::checkImagePermission($imageId);
+		}
 		return apply_filters('crop_thumbnails_user_permission_check', $return, $imageId);
+	}
+
+	/**
+	 * Object based permission check - may the current user edit this attachment?
+	 * @param int $imageId the attachment-id
+	 * @return boolean
+	 */
+	protected static function checkImagePermission($imageId) {
+		$imageId = absint($imageId);
+		if(empty($imageId)) {
+			return false;
+		}
+		return (bool) current_user_can('edit_post', $imageId);
 	}
 }

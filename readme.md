@@ -211,6 +211,12 @@ add_filter('crop_thumbnails_activate_on_adminpages', function($oldValue) {
 
 You can customize the user permissions, that are needed to crop the thumbnails by using this filter.
 
+Since version 1.10.0 the default value (`$oldValue`) is only `true` if **both** conditions are met:
+- the user may use the plugin at all (`edit_files`, or `upload_files` if the setting "only users who can edit files" is not active), **and**
+- the user may edit this specific image (`current_user_can('edit_post', $imageId)`).
+
+So authors can only crop their own images; editors and administrators can crop all images. Return `true` from the filter if you want to allow cropping beyond that (i.e. let authors crop images of other users).
+
 Example
 ```php
 add_filter('crop_thumbnails_user_permission_check', function($oldValue, $imageId) {
