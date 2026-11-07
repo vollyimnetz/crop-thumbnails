@@ -5,7 +5,7 @@ Tags: post-thumbnails, images, media library
 Requires at least: 5.0
 Tested up to: 6.8.2
 Requires PHP: 7.4.0
-Stable tag: 1.9.7
+Stable tag: 1.9.8
 License: GPL v3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -124,6 +124,10 @@ If you fork and planning to publish the forked plugin, please contact me.
 5. Quicktest on settings-page, to check if your system is correct setup.
 
 == Changelog ==
+= 1.9.8 =
+* fix crop filename keeping the source extension (e.g. "photo.jpg-150x150.webp") if `image_editor_output_format` is used
+* fix deleting a file that is still used by another image size when re-cropping
+
 = 1.9.7 =
 * fix the script loading in the backend if using wp_enqueue_script_module
 * Remove legacy filter with typo error: "crop_thumbnails_activat_on_adminpages"
