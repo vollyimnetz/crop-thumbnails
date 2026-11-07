@@ -278,6 +278,7 @@ export default {
 </script>
 
 <style lang="scss">
+@use "sass:meta";
 .CropArea {
     --colorNormal: #539fea;
     --colorBg: rgba(255,255,255,.2);
@@ -301,7 +302,7 @@ export default {
     }
 
 
-    @import 'vue-advanced-cropper/dist/theme.compact.scss';
+    @include meta.load-css('vue-advanced-cropper/dist/theme.compact.scss');
 
     &.noOptions .vue-advanced-cropper__foreground,
     &.noOptions .vue-rectangle-stencil { visibility:hidden; }
