@@ -1,6 +1,8 @@
 <?php
 namespace crop_thumbnails\extend;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Imagify is added for compatibility reasons.
  * This class will trigger the Imagify optimization when a new thumbnail is created. 
@@ -56,7 +58,9 @@ class ImagifyExtension {
 		if ( $sourceImageId ) {
 			$imagify->do_auto_optimization( $sourceImageId, $is_new_image = false );
 		} else {
-			error_log( 'class ImagifyExtension $sourceImageId is empty. Unable to run imagify do_auto_optimization()' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'class ImagifyExtension $sourceImageId is empty. Unable to run imagify do_auto_optimization()' );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only in debug mode
+			}
 		}
 	 }
  
@@ -95,17 +99,32 @@ class ImagifyExtension {
 	 */
 	 private static function attachmentQuery( $relative_path ) {
 
+		$cacheKey = 'imagify_attachment_' . md5( $relative_path );
+		$cached = wp_cache_get( $cacheKey, 'crop_thumbnails' );
+		if ( false !== $cached ) {
+			if ( ! $cached ) {
+				return null;
+			}
+			// A cached ID may be stale (e.g. attachment deleted within the cache lifetime); only trust it if it is still an attachment.
+			if ( 'attachment' === get_post_type( (int) $cached ) ) {
+				return (int) $cached;
+			}
+			wp_cache_delete( $cacheKey, 'crop_thumbnails' );
+		}
+
 		global $wpdb;
 		// Get the image ID by the relative image path
-		$query = $wpdb->prepare( "
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery -- the table name comes from $wpdb, the value is prepared; the result is cached below
+		$id = $wpdb->get_var( $wpdb->prepare( "
 			SELECT ID
 			FROM $wpdb->posts
 			WHERE post_type = 'attachment'
 			AND guid LIKE %s
 			LIMIT 1
-		", '%' . $wpdb->esc_like( $relative_path ) );
- 
-		 return $wpdb->get_var( $query );
+		", '%' . $wpdb->esc_like( $relative_path ) ) );
+
+		wp_cache_set( $cacheKey, $id ? (int) $id : 0, 'crop_thumbnails', MINUTE_IN_SECONDS );
+		return $id ? (int) $id : null;
 
 	 }
 }
