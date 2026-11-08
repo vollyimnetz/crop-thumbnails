@@ -250,23 +250,24 @@ jQuery(function($) {
 		}
 	}
 
+	/** remember the edited post (used to derive the post-type, i.e. when cropping from the media dialog) **/
+	if ($('body.post-php, body.page-php, body.page-new-php, body.post-new-php').length > 0) {
+		var post_id_hidden = $('#post_ID');//classic editor: form#post, block editor: form.metabox-base-form
+		if (post_id_hidden.length) {
+			CROP_THUMBNAILS_CURRENT_POST_ID = parseInt(post_id_hidden.val());
+		}
+	}
+
 	<?php if(self::showCropButtonOnThisAdminPage()) : ?>
 	/** add link on posts and pages **/
-	if ($('body.post-php, body.page-php, body.page-new.php, body.post-new-php').length > 0) {
-		var post_id_hidden = $('form#post #post_ID');
-		if (post_id_hidden) {
+	if (CROP_THUMBNAILS_CURRENT_POST_ID !== null && !isNaN(CROP_THUMBNAILS_CURRENT_POST_ID)) {
+		handleFeaturedImageBox();
+		handleFeaturedImagePanel();
 
-			post_id_hidden = parseInt(post_id_hidden.val());
-			CROP_THUMBNAILS_CURRENT_POST_ID = post_id_hidden;
-
-			handleFeaturedImageBox();
-			handleFeaturedImagePanel();
-
-			$('body').on('cropThumbnailModalClosed',function() {
-				//lets cache-break the crop-thumbnail-preview-box
-				CROP_THUMBNAILS_DO_CACHE_BREAK($('#postimagediv img'));
-			});
-		}
+		$('body').on('cropThumbnailModalClosed',function() {
+			//lets cache-break the crop-thumbnail-preview-box
+			CROP_THUMBNAILS_DO_CACHE_BREAK($('#postimagediv img'));
+		});
 	}
 	<?php endif; ?>
 

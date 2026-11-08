@@ -47,7 +47,7 @@ window.CROP_THUMBNAILS_VUE.modal = function() {
 		}
 	}
 	
-	that.open = function(imageId,posttype,title) {
+	that.open = function(imageId,posttype,title,postId) {
 		var id = imageId;
 		var modalHtml = '';
 		modalHtml+= '<div id="cpt_Modal" class="cpt_Modal">';
@@ -57,8 +57,11 @@ window.CROP_THUMBNAILS_VUE.modal = function() {
 		
 		modalHtml+= '<div class="cpt_ModalContent" id="cpt_crop_editor">';
 		modalHtml+= '<crop-editor :image-id="'+id+'"';
-		if(typeof posttype === 'string') {
+		if(typeof posttype === 'string' && /^[a-z0-9_-]+$/.test(posttype)) {
 			modalHtml+= ' posttype="'+posttype+'"';
+		}
+		if(postId!==null && postId!==undefined && parseInt(postId)>0) {
+			modalHtml+= ' :post-id="'+parseInt(postId)+'"';
 		}
 		modalHtml+= '></crop-editor>'
 		modalHtml+= '</div>';//end cpt_ModalContent

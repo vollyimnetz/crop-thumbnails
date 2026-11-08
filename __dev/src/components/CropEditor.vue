@@ -116,6 +116,7 @@ export default {
     props:{
         imageId : { required: true, type: [Number, String] },
         posttype : { required: false, type: String, default: null },
+        postId : { required: false, type: [Number, String], default: null },
     },
     mounted() {
         this.doSetup();
@@ -265,7 +266,8 @@ export default {
         loadCropData() {
             let params = {
                 imageId : this.imageId,
-                posttype : this.posttype
+                posttype : this.posttype,
+                postId : this.postId
             };
             this.loading = true;
             this.errorMessage = false;

@@ -14,6 +14,10 @@ jQuery(function($) {
 		const posttype = data.posttype!==undefined ? data.posttype : null;
 
 		const modal = new window.CROP_THUMBNAILS_VUE.modal();
-		modal.open(data.image_id, posttype, title);
+		//the post that is currently edited (null outside of the post-edit-screens) - the server derives the post-type from it
+		let postId = data.post_id!==undefined ? data.post_id : window.CROP_THUMBNAILS_CURRENT_POST_ID;
+		if(postId===undefined || isNaN(parseInt(postId))) postId = null;
+
+		modal.open(data.image_id, posttype, title, postId);
 	});
 });

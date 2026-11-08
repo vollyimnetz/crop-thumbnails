@@ -131,6 +131,16 @@ class CropPostThumbnailsEditor {
 				$result['postTypeFilter'] = $postTypeFilter;
 			}
 		}
+		if(empty($result['postTypeFilter']) && !empty($_REQUEST['postId']) && is_scalar($_REQUEST['postId'])) {
+			// no explicit post-type (i.e. cropping from the media dialog inside the post-editor) - derive it from the edited post
+			$editedPostId = absint($_REQUEST['postId']);
+			if($editedPostId>0 && current_user_can('edit_post', $editedPostId)) {
+				$derivedPostType = get_post_type($editedPostId);
+				if(!empty($derivedPostType) && $derivedPostType!=='attachment' && post_type_exists($derivedPostType)) {
+					$result['postTypeFilter'] = $derivedPostType;
+				}
+			}
+		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$result['sourceImage']['original_image'] = $this->getUncroppedImageData($imagePostObj->ID, 'original_image');
