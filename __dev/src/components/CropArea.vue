@@ -297,12 +297,10 @@ export default {
     // - the background is visible outside of the selection, the stencil preview inside of it
     .vue-advanced-cropper__background,
     .vue-circle-stencil__preview {
+        // conic-gradient: only horizontal/vertical edges - the usual 45deg linear-gradient technique shows a thin diagonal line in the dark squares
         background-color: var(--checkerLight);
-        background-image:
-            linear-gradient(45deg, var(--checkerDark) 25%, transparent 25%, transparent 75%, var(--checkerDark) 75%),
-            linear-gradient(45deg, var(--checkerDark) 25%, transparent 25%, transparent 75%, var(--checkerDark) 75%);
+        background-image: conic-gradient(var(--checkerDark) 25%, var(--checkerLight) 0 50%, var(--checkerDark) 0 75%, var(--checkerLight) 0);
         background-size: 16px 16px;
-        background-position: 0 0, 8px 8px;
     }
 
     .cptLoadingSpinner { position: absolute; z-index: 2; left:calc(50% - 30px/2); top: calc(50% - 30px/2); }
