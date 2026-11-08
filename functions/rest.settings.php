@@ -129,12 +129,12 @@ class RestSettings {
 
 	public static function rest_postTypes(\WP_REST_Request $request) {
 		try {
-			$postTypes = $request->get_params();
+			$postTypes = $request->get_json_params();
 			$newOptions = self::getOptions();
 
 			$newOptions['hide_post_type'] = [];
 			$newOptions['hide_size'] = [];
-			if(!empty($postTypes)) foreach($postTypes as $postType) {
+			if(is_array($postTypes)) foreach($postTypes as $postType) {
 				if(!is_array($postType) || empty($postType['name']) || !is_string($postType['name'])) continue;
 				$postTypeName = sanitize_text_field($postType['name']);
 
