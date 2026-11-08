@@ -32,7 +32,7 @@ class CropPostThumbnailsEditor {
 			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request.'), 400);
 		} catch(\Throwable $e) {
 			//i.e. DivisionByZeroError or TypeError (PHP 8) - these are no Exceptions and would end in an empty HTTP 500
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- the details should not be sent to the browser
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- the server log is the only place for this information (the details should not be sent to the browser)
 			error_log('crop-thumbnails: '.get_class($e).': '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine());
 			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request.'), 500);
 		}

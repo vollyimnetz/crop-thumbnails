@@ -178,6 +178,15 @@ class CptSaveThumbnail {
 			}
 			$jsonResult['error'] = $e->getMessage();
 			return $jsonResult;
+		} catch (\Throwable $e) {
+			//PHP errors (i.e. TypeError, ValueError, DivisionByZeroError) are no Exceptions - without this the request would end in an empty HTTP 500
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- the server log is the only place for this information (the details should not be sent to the browser)
+			error_log('crop-thumbnails: '.get_class($e).': '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine());
+			if(!empty($settings['debug_data'])) {
+				$jsonResult['debug'] = self::getDebug();
+			}
+			$jsonResult['error'] = __('An unknown error occured.','crop-thumbnails');
+			return $jsonResult;
 		}
 	}
 

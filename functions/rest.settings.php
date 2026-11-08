@@ -4,6 +4,12 @@ namespace crop_thumbnails;
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Failure of the plugin test. The message is built by the plugin (contains html markup, dynamic values have to be escaped when the message is created).
+ * Every other Throwable is escaped before it is shown.
+ */
+class CPT_PluginTestException extends \Exception {}
+
+/**
  * Rest operations of the settings screen
  */
 class RestSettings {
@@ -55,9 +61,7 @@ class RestSettings {
 
 	public static function checkRestPermission() {
 		if(!current_user_can('manage_options')) {
-			if(defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Try to access without permission (API).');// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only in debug mode
-			}
+			error_log('crop-thumbnails: Try to access without permission (API).');// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- the server log is the only place for this information
 			return false;
 		}
 		return true;
@@ -215,7 +219,7 @@ class RestSettings {
 				$report[] = '<strong class="success">SUCCESS</strong> Temporary directory exists';
 			} else {
 				if (!wp_mkdir_p($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir())) {
-					throw new \Exception('<strong class="fails">FAIL</strong> Creating the temporary directory ('.esc_attr($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
+					throw new CPT_PluginTestException('<strong class="fails">FAIL</strong> Creating the temporary directory ('.esc_html($GLOBALS['CROP_THUMBNAILS_HELPER']->getUploadDir()).') | is the upload-directory writable with PHP?');
 				} else {
 					$report[] = '<strong class="success">SUCCESS</strong> Temporary directory could be created';
 				}
@@ -223,7 +227,7 @@ class RestSettings {
 
 			//creating the testfile in temporary directory
 			if(!@copy($sourceFile, $tempFile)) {
-				throw new \Exception('<strong class="fails">FAIL</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP? ['.$sourceFile.' --> '.$tempFile.']');
+				throw new CPT_PluginTestException('<strong class="fails">FAIL</strong> Copy testfile to temporary directory | is the tmp-directory writable with PHP? ['.esc_html($sourceFile).' --> '.esc_html($tempFile).']');
 			} else {
 				$report[] = '<strong class="success">SUCCESS</strong> Copy testfile to temporary directory';
 			}
@@ -240,9 +244,9 @@ class RestSettings {
 			$attachmentId = media_handle_upload( 'cpt_quicktest', 0, [], ['test_form' => false, 'action'=>'test'] );
 
 			if ( is_wp_error( $attachmentId ) ) {
-				throw new \Exception('<strong class="fails">FAIL</strong> Adding testfile to media-library ('.$attachmentId->get_error_message().') | is the upload-directory writable with PHP?');
+				throw new CPT_PluginTestException('<strong class="fails">FAIL</strong> Adding testfile to media-library ('.esc_html($attachmentId->get_error_message()).') | is the upload-directory writable with PHP?');
 			} else {
-				$report[] = '<strong class="success">SUCCESS</strong> Testfile was successfully added to media-library. (ID:'.$attachmentId.')';
+				$report[] = '<strong class="success">SUCCESS</strong> Testfile was successfully added to media-library. (ID:'.intval($attachmentId).')';
 				$doDeleteAttachement = true;
 			}
 
@@ -261,7 +265,7 @@ class RestSettings {
 				$tempFile                   // * @param string $dst_file Optional. The destination file to write to.
 			);
 			if ( is_wp_error( $cropResult ) ) {
-				throw new \Exception('<strong class="fails">FAIL</strong> Cropping the file ('.$cropResult->get_error_message().')');
+				throw new CPT_PluginTestException('<strong class="fails">FAIL</strong> Cropping the file ('.esc_html($cropResult->get_error_message()).')');
 			} else {
 				$report[] = '<strong class="success">SUCCESS</strong> Cropping the file';
 				$doDeleteAttachement = true;
@@ -295,14 +299,16 @@ class RestSettings {
 				if ( false === wp_delete_attachment( $attachmentId ) ) {
 					$report[] = '<strong class="fails">FAIL</strong> Error while deleting test attachment';
 				} else {
-					$report[] = '<strong class="success">SUCCESS</strong> Test-attachement successfull deleted (ID:'.$attachmentId.')';
+					$report[] = '<strong class="success">SUCCESS</strong> Test-attachement successfull deleted (ID:'.intval($attachmentId).')';
 				}
 			}
 
 
 			$testComplete = true;
+		} catch (CPT_PluginTestException $th) {
+			$report[] = $th->getMessage();//built above, dynamic values are escaped
 		} catch (\Throwable $th) {
-			$report[] = $th->getMessage();
+			$report[] = '<strong class="fails">FAIL</strong> '.esc_html($th->getMessage());
 		}
 
 		//deleting testfile form temporary directory
@@ -324,10 +330,10 @@ class RestSettings {
 	private static function appendSystemInfo(&$report) {
 		$report[] = '<strong class="info">INFO</strong> ----- System -----';
 		$report[] = '<strong class="info">INFO</strong> Crop-Thumbnails '.CROP_THUMBNAILS_VERSION;
-		$report[] = '<strong class="info">INFO</strong> PHP '.phpversion();
-		$report[] = '<strong class="info">INFO</strong> PHP memory limit '.ini_get('memory_limit');
+		$report[] = '<strong class="info">INFO</strong> PHP '.esc_html(phpversion());
+		$report[] = '<strong class="info">INFO</strong> PHP memory limit '.esc_html(ini_get('memory_limit'));
 		$report[] = '<strong class="info">INFO</strong> Server '.esc_html(!empty($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : '');
-		$report[] = '<strong class="info">INFO</strong> '._wp_image_editor_choose(['mime_type' => 'image/jpeg']).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
+		$report[] = '<strong class="info">INFO</strong> '.esc_html((string) _wp_image_editor_choose(['mime_type' => 'image/jpeg'])).' <small>(choosed Wordpress imageeditor class for jpg)</small>';
 
 		// get all plugins
 		$activePlugins = get_option('active_plugins');
@@ -340,7 +346,7 @@ class RestSettings {
 		if(!empty($imageSizes)) {
 			$report[] = '<strong class="info">INFO</strong> ----- Image Sizes -----';
 			foreach($imageSizes as $imageSize) {
-				$report[] = '<strong class="info">INFO</strong> <code>'.json_encode($imageSize).'</code>';
+				$report[] = '<strong class="info">INFO</strong> <code>'.esc_html(wp_json_encode($imageSize)).'</code>';
 			}
 		}
 

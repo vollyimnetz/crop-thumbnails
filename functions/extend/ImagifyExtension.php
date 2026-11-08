@@ -58,9 +58,7 @@ class ImagifyExtension {
 		if ( $sourceImageId ) {
 			$imagify->do_auto_optimization( $sourceImageId, $is_new_image = false );
 		} else {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'class ImagifyExtension $sourceImageId is empty. Unable to run imagify do_auto_optimization()' );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- only in debug mode
-			}
+			error_log( 'crop-thumbnails: class ImagifyExtension $sourceImageId is empty. Unable to run imagify do_auto_optimization()' );// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- the server log is the only place for this information
 		}
 	 }
  
