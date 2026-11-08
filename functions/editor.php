@@ -9,6 +9,11 @@ defined( 'ABSPATH' ) || exit;
 
 class CPT_ForbiddenException extends \Exception {}
 
+/**
+ * The image file (i.e. the original of a scaled image) does not exist or is not readable.
+ */
+class CPT_ImageFileMissingException extends \Exception {}
+
 class CropPostThumbnailsEditor {
 
 	protected $debugOutput = '';
@@ -21,8 +26,15 @@ class CropPostThumbnailsEditor {
 			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request: '.$e->getMessage()), 400);
 		} catch(CPT_ForbiddenException $e) {
 			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('ERROR not allowed.'), 403);
+		} catch(CPT_ImageFileMissingException $e) {
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('ERROR image file not found.'), 404);
 		} catch(\Exception $e) {
 			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request.'), 400);
+		} catch(\Throwable $e) {
+			//i.e. DivisionByZeroError or TypeError (PHP 8) - these are no Exceptions and would end in an empty HTTP 500
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- the details should not be sent to the browser
+			error_log('crop-thumbnails: '.get_class($e).': '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine());
+			return new \WP_REST_Response(CropPostThumbnailsEditor::getErrorData('FAILURE while processing request.'), 500);
 		}
 	}
 
@@ -81,6 +93,7 @@ class CropPostThumbnailsEditor {
 			'script_connection_error' => self::fixJsLangStrings(__('The plugin can not correctly connect to the server.','crop-thumbnails')),
 			'noPermission' => self::fixJsLangStrings(__('You are not permitted to crop the thumbnails.','crop-thumbnails')),
 			'unknownError' => self::fixJsLangStrings(__('An unknown error occured.','crop-thumbnails')),
+			'imageFileMissing' => self::fixJsLangStrings(__('The image file could not be found (the original of this image is missing). Cropping is not possible.','crop-thumbnails')),
 			'infoNoImageSizesAvailable' => self::fixJsLangStrings(__('No image sizes for cropping available.','crop-thumbnails')),
 			'headline_selected_image_sizes' => self::fixJsLangStrings(__('Selected image sizes','crop-thumbnails')),
 		];
@@ -216,8 +229,16 @@ class CropPostThumbnailsEditor {
 	protected function getUncroppedImageData($ID, $imageSize = 'full') {
 		$orig_img = wp_get_attachment_image_src($ID, $imageSize);
 		if($imageSize === 'original_image') {
-			$tmp = wp_getimagesize(wp_get_original_image_path($ID));
+			//the original of a scaled image may be missing on the disk (migration, cleanup, ...)
+			$originalPath = wp_get_original_image_path($ID);
+			$tmp = (!empty($originalPath) && is_readable($originalPath)) ? wp_getimagesize($originalPath) : false;
+			if(empty($tmp[0]) || empty($tmp[1])) {
+				throw new CPT_ImageFileMissingException('The original image of attachment '.absint($ID).' is missing or not readable.');
+			}
 			$orig_img = [ wp_get_original_image_url($ID), $tmp[0], $tmp[1], false ];
+		}
+		if(empty($orig_img) || empty($orig_img[1]) || empty($orig_img[2])) {
+			throw new CPT_ImageFileMissingException('The image size "'.esc_html($imageSize).'" of attachment '.absint($ID).' has no valid dimensions.');
 		}
 		$orig_ima_gcd = $this->gcd($orig_img[1], $orig_img[2]);
 		$result = [
@@ -289,6 +310,10 @@ class CropPostThumbnailsEditor {
 	 * Greatest cummon divisor
 	 */
 	protected function gcd($a, $b) {
+		//invalid dimensions: return 1 so that the ratio calculations never divide by zero
+		if(!is_numeric($a) || !is_numeric($b) || $a<=0 || $b<=0) {
+			return 1;
+		}
 		if(function_exists('gmp_gcd')) {
 			$gcd = gmp_strval(gmp_gcd($a,$b));
 			return ($gcd);
@@ -299,7 +324,9 @@ class CropPostThumbnailsEditor {
 	}
 
 	protected static function my_gcd($a, $b) {
-		$b = ( $a == 0 )? 0 : $b;
+		if($a == 0 || $b == 0) {//PHP >= 8 throws a DivisionByZeroError on modulo by zero
+			return 0;
+		}
 		return ( $a % $b )? self::my_gcd($b, abs($a - $b)) : $b;
 	}
 }

@@ -281,16 +281,22 @@ export default {
                     delete this.cropData.nonce;
                 })
                 .catch((error) => {
-                    this.cropData = error.response.data;
-                    this.nonce = this.cropData.nonce;
+                    //the response may be missing (network error) or not an object (html error page of a php fatal error)
+                    const status = error?.response?.status ?? error?.status ?? 0;
+                    const data = (error?.response?.data && typeof error.response.data==='object') ? error.response.data : {};
+                    this.cropData = data;
+                    this.nonce = data.nonce;
                     delete this.cropData.nonce;
-                    this.errorMessage = 'ERROR';
-                    if(error.response.data.lang) this.errorMessage = error.response.data.lang.unknownError;
-                    if(error.status===403) {
-                        if(error.response.data.message) this.errorMessage = error.response.data.message;
-                        if(error.response.data.lang) this.errorMessage = error.response.data.lang.noPermission;
+
+                    //fallback if the server could not deliver the translations
+                    this.errorMessage = 'Error' + (status ? ' (HTTP '+status+')' : '') + ': the server could not process the request.';
+                    if(data.lang) this.errorMessage = data.lang.unknownError;
+                    if(status===404 && data.lang?.imageFileMissing) this.errorMessage = data.lang.imageFileMissing;
+                    if(status===403) {
+                        if(data.message) this.errorMessage = data.message;
+                        if(data.lang) this.errorMessage = data.lang.noPermission;
                     }
-                    console.error('crop-thumbnails connection error', this.errorMessage, this.cropData);
+                    console.error('crop-thumbnails connection error', this.errorMessage, status, this.cropData);
                 })
                 .finally(() => {
                     this.loading = false;
