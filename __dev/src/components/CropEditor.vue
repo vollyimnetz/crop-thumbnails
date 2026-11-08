@@ -16,11 +16,21 @@
             <div class="msg">{{errorMessage}}</div>
         </div>
 
-        <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !errorMessage">
+        <div class="cptWaitingWindow cptOriginalMissingMsg" v-if="needsSmallerSourceConfirmation">
+            <div class="msg">
+                <h3>{{lang.originalMissingHeadline}}</h3>
+                <p>{{lang.originalMissingText}}</p>
+                <p class="cptSourceResolution">{{lang.originalMissingResolution}} <strong>{{originalImage.width}} x {{originalImage.height}} {{lang.pixel}}</strong></p>
+                <button type="button" class="button button-primary button-hero cptConfirmSmallerSource" @click="smallerSourceConfirmed = true">{{lang.originalMissingConfirm}}</button>
+            </div>
+        </div>
+
+        <div class="mainWindow" v-if="!cropData.hiddenOnPostType && !errorMessage && !needsSmallerSourceConfirmation">
 
             <div class="cptSelectionPane" :class="{ cptImagesAreSelected : (selectedImageSizes.length>0) }">
                 <div class="cptSelectionPaneInner">
                     <Message v-if="sourceImageHasOrientation">{{lang.message_image_orientation}}</Message>
+                    <Message v-if="cropData.originalMissing">{{lang.originalMissingActive}} {{originalImage.width}} x {{originalImage.height}} {{lang.pixel}}</Message>
                     <div class="cptToolbar">
                         <label class="cptSameRatioMode" v-if="!options?.same_ratio_mode">
                             {{lang.label_same_ratio_mode}}
@@ -136,6 +146,7 @@ export default {
         largeHandles: false,
 
         errorMessage: false,
+        smallerSourceConfirmed: false,//the user has to confirm to crop from the scaled image if the original is missing
         cropBaseSize: null,
     }),
     computed:{
@@ -149,7 +160,11 @@ export default {
         },
         originalImage() {
             if(!this.cropData) return null;
-            return this.cropData.sourceImage.original_image;
+            //if the original is missing the server sends null - the scaled image ("full") is the source then
+            return this.cropData.sourceImage.original_image ?? this.cropData.sourceImage.full;
+        },
+        needsSmallerSourceConfirmation() {
+            return !!this.cropData?.originalMissing && !this.smallerSourceConfirmed && !this.errorMessage && !this.cropData.hiddenOnPostType;
         },
         filteredImageSizes() {
             let result = this.cropData.imageSizes;
@@ -191,7 +206,7 @@ export default {
             return false;
         },
         hasScaledFullImage() {
-            return this.cropData.sourceImage.full.width !== this.cropData.sourceImage.original_image.width;
+            return this.cropData.sourceImage.full.width !== this.originalImage.width;
         },
         isScaledFullImage() {
             return this.hasScaledFullImage && this.cropData.sourceImage.full.width === this.cropImage.width;
@@ -431,6 +446,9 @@ export default {
                         activeImageSizes : this.selectedImageSizesData
                     }
                 };
+                if(this.cropData.originalMissing && this.smallerSourceConfirmed) {
+                    cropRequest.crop_thumbnails.acceptSmallerSource = true;
+                }
 
                 saveCrop(cropRequest)
                     .then((response) => {

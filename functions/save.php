@@ -54,6 +54,9 @@ class CptSaveThumbnail {
 				throw new \Exception(__("ERROR: Can't find original image file!",'crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
 			}
 
+			//fails early (before anything is changed) if the original is missing and the user has not confirmed to crop from the smaller image
+			self::getCropSourcePath($input);
+
 
 			$imageMetadata = wp_get_attachment_metadata($input->sourceImageId, true);//get the attachement metadata of the post
 			if(empty($imageMetadata)) {
@@ -247,7 +250,7 @@ class CptSaveThumbnail {
 	public static function filter_doWpCrop($baseResult, $input, $croppedSize, $temporaryCopyFile, $currentFilePath) {
 		$input = apply_filters('crop_thumbnails_optimize_input_before_crop', $input);
 
-		$src = wp_get_original_image_path($input->sourceImageId);
+		$src = self::getCropSourcePath($input);
 		return \wp_crop_image(								// * @return string|WP_Error|false New filepath on success, WP_Error or false on failure.
 			$src,											// * @param string|int $src The source file or Attachment ID.
 			$input->selection->x,							// * @param int $src_x The start x position to crop from.
@@ -259,6 +262,46 @@ class CptSaveThumbnail {
 			false,											// * @param int $src_abs Optional. If the source crop points are absolute.
 			$temporaryCopyFile								// * @param string $dst_file Optional. The destination file to write to.
 		);
+	}
+
+	/**
+	 * Is the original image (the file before WordPress has scaled it down) missing, while the scaled image file still exists?
+	 * Only in this case it is possible to crop from the smaller (scaled) image.
+	 *
+	 * Use the filter 'crop_thumbnails_allow_cropping_from_scaled_image' (default true) to disable the fallback.
+	 *
+	 * @param int $imageId the attachment ID
+	 * @return boolean
+	 */
+	public static function isOriginalMissingButScaledImageAvailable($imageId) {
+		$originalPath = wp_get_original_image_path($imageId);
+		if(!empty($originalPath) && is_readable($originalPath)) {
+			return false;//original is available
+		}
+		$scaledPath = get_attached_file($imageId);
+		if(empty($scaledPath) || !is_readable($scaledPath)) {
+			return false;
+		}
+		if($originalPath === $scaledPath) {
+			return false;//this image was never scaled - the "original" is the attached file itself
+		}
+		return (bool) apply_filters('crop_thumbnails_allow_cropping_from_scaled_image', true, $imageId);
+	}
+
+	/**
+	 * The file to crop from: the original image - or, if the original is missing and the user has confirmed it, the scaled image.
+	 * @param object $input the validated input (property "acceptSmallerSource" is the confirmation of the user)
+	 * @return string path to the source file
+	 * @throws \Exception if the original is missing and the cropping from the smaller image is not confirmed
+	 */
+	public static function getCropSourcePath($input) {
+		if(self::isOriginalMissingButScaledImageAvailable($input->sourceImageId)) {
+			if(empty($input->acceptSmallerSource) || $input->acceptSmallerSource!==true) {
+				throw new \Exception(__('ERROR: The original image is missing. Cropping from the smaller image has to be confirmed.','crop-thumbnails'), 1);// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- the message is sent as JSON and rendered as text by the editor
+			}
+			return get_attached_file($input->sourceImageId);
+		}
+		return wp_get_original_image_path($input->sourceImageId);
 	}
 
 	/**

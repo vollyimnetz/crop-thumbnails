@@ -230,6 +230,21 @@ add_filter('crop_thumbnails_user_permission_check', function($oldValue, $imageId
 }, 10, 2);
 ```
 
+### FILTER `crop_thumbnails_allow_cropping_from_scaled_image`
+
+Since WordPress 5.3 large images are scaled down (`...-scaled.jpg`) and the unscaled original is kept as `original_image`. If this original file is missing (migration, cleanup, ...) the editor tells the user and shows the resolution of the remaining scaled image. If the user confirms, the crops are created from this smaller image. The confirmation is also checked on the server (`acceptSmallerSource` in the crop request).
+
+Return `false` to disable the fallback. The editor then shows the message that the image can not be cropped.
+
+Parameters: `$allow` (bool, default `true`), `$imageId` (int).
+
+Example
+```php
+add_filter('crop_thumbnails_allow_cropping_from_scaled_image', '__return_false');
+```
+
+The crop data (filter `crop_thumbnails_crop_data`) contains `originalMissing` (bool). If it is `true`, `sourceImage.original_image` is `null`.
+
 ### FILTER `crop_thumbnails_crop_data`
 
 Filter for changing the data used by the editor to crop an image. You may for example change the available image sizes in the frontend. You may use this in conjuction with `crop_thumbnails_active_image_sizes` to limit the image-sizes that can be cropped.
