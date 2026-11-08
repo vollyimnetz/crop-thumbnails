@@ -288,7 +288,22 @@ export default {
         --handleSize: 40px;
     }
 
+    --checkerLight: #fff;
+    --checkerDark: #c3c4c7;
+
     position: relative;
+
+    // checkerboard instead of black behind transparent images (same look as the WordPress default crop)
+    // - the background is visible outside of the selection, the stencil preview inside of it
+    .vue-advanced-cropper__background,
+    .vue-circle-stencil__preview {
+        background-color: var(--checkerLight);
+        background-image:
+            linear-gradient(45deg, var(--checkerDark) 25%, transparent 25%, transparent 75%, var(--checkerDark) 75%),
+            linear-gradient(45deg, var(--checkerDark) 25%, transparent 25%, transparent 75%, var(--checkerDark) 75%);
+        background-size: 16px 16px;
+        background-position: 0 0, 8px 8px;
+    }
 
     .cptLoadingSpinner { position: absolute; z-index: 2; left:calc(50% - 30px/2); top: calc(50% - 30px/2); }
     .cptOverlayMessage { position: absolute; z-index: 2; left:0; top:0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
@@ -303,6 +318,7 @@ export default {
 
 
     @include meta.load-css('vue-advanced-cropper/dist/theme.compact.scss');
+    .vue-advanced-cropper__foreground { opacity: 0.4; }
 
     &.noOptions .vue-advanced-cropper__foreground,
     &.noOptions .vue-rectangle-stencil { visibility:hidden; }
