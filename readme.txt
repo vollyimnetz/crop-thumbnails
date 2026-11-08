@@ -128,6 +128,7 @@ If you fork and planning to publish the forked plugin, please contact me.
 * fix crop filename keeping the source extension (e.g. "photo.jpg-150x150.webp") if `image_editor_output_format` is used
 * fix deleting a file that is still used by another image size when re-cropping
 * if the original of a scaled image is missing the editor now asks the user to confirm cropping from the smaller scaled image and shows its resolution (filter `crop_thumbnails_allow_cropping_from_scaled_image` to disable it)
+* if there is only one image size to crop it is selected automatically
 * the crop editor shows a checkerboard (like the WordPress default crop) instead of black behind transparent images
 * fix fatal error (HTTP 500, DivisionByZeroError on PHP 8) in the crop editor if the original of a scaled image is missing - the editor now shows a message instead (thanks to E1NSER)
 * fix: image sizes hidden for a post type (settings) are now also hidden when cropping from the media dialog inside the post editor (e.g. SCF/ACF image fields) - the post type is derived from the edited post

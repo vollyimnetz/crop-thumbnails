@@ -326,8 +326,20 @@ export default {
                         this.cropData.imageSizes.forEach(elem => {
                             elem.notYetCropped = elem.url === this.cropData.sourceImage.full.url;
                         });
+
+                        this.preselectSingleImageSize();
                     }
                 });
+        },
+        /**
+         * If there is only one image size to crop, there is nothing to choose - select it right away.
+         * (The user may still deselect it.)
+         */
+        preselectSingleImageSize() {
+            if(this.errorMessage || this.cropData.hiddenOnPostType) return;
+            if(!this.cropImage || this.cropData.imageSizes.length!==1) return;
+            if(this.selectedImageSizes.length>0) return;
+            this.toggleActive(this.cropData.imageSizes[0]);
         },
         isLowRes(image) {
             return isLowRes(image, this.realCurrentCropSize);
